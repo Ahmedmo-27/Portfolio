@@ -142,12 +142,6 @@ export default function Education() {
                       <Calendar className="w-4 h-4 text-accent-emerald" aria-hidden="true" />
                       <span className="text-muted">{education.expectedGraduation}</span>
                     </span>
-                    {education.gpa && (
-                      <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface text-sm">
-                        <Award className="w-4 h-4 text-accent-amber" aria-hidden="true" />
-                        <span className="text-muted">GPA: {education.gpa}</span>
-                      </span>
-                    )}
                   </div>
                 </div>
 
