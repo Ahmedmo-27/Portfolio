@@ -1,13 +1,21 @@
 import { motion } from 'framer-motion'
-import { ArrowDown, Download, Mail, ExternalLink, Github, Linkedin } from 'lucide-react'
+import { ArrowDown, Download, Mail, ExternalLink, Github, Linkedin, Code2, Terminal } from 'lucide-react'
 import { fadeInUp, staggerContainer } from '../utils/animations'
 import ProfileCard from './ProfileCard'
+import CircuitBoard from './CircuitBoard'
+import TypingEffect from './TypingEffect'
 
 export default function Hero() {
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
       {/* Background Elements */}
       <div className="absolute inset-0 overflow-hidden">
+        {/* Circuit Board Pattern */}
+        <CircuitBoard />
+        
+        {/* Tech Grid Overlay */}
+        <div className="tech-grid" />
+        
         {/* Grid Pattern */}
         <div 
           className="absolute inset-0 opacity-[0.03] dark:opacity-[0.02]"
@@ -18,14 +26,14 @@ export default function Hero() {
           }}
         />
         
-        {/* Floating Orbs */}
+        {/* Floating Orbs with tech glow */}
         <motion.div
           animate={{ 
             y: [0, -30, 0],
             opacity: [0.3, 0.5, 0.3]
           }}
           transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary-500/20 rounded-full blur-3xl"
+          className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary-500/20 rounded-full blur-3xl animate-pulse-glow"
         />
         <motion.div
           animate={{ 
@@ -34,6 +42,30 @@ export default function Hero() {
           }}
           transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 1 }}
           className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-accent-cyan/20 rounded-full blur-3xl"
+        />
+        
+        {/* Tech-themed decorative elements */}
+        <motion.div
+          animate={{ 
+            rotate: [0, 360],
+            opacity: [0.1, 0.2, 0.1]
+          }}
+          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+          className="absolute top-20 right-20 w-32 h-32 border border-primary-500/20 rounded-lg"
+          style={{
+            background: 'linear-gradient(45deg, transparent 30%, rgba(14, 165, 233, 0.1) 50%, transparent 70%)',
+          }}
+        />
+        <motion.div
+          animate={{ 
+            rotate: [360, 0],
+            opacity: [0.1, 0.2, 0.1]
+          }}
+          transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+          className="absolute bottom-20 left-20 w-24 h-24 border border-accent-cyan/20 rounded-full"
+          style={{
+            background: 'radial-gradient(circle, rgba(6, 182, 212, 0.1) 0%, transparent 70%)',
+          }}
         />
       </div>
 
@@ -63,18 +95,38 @@ export default function Hero() {
               <span className="gradient-text">Mostafa</span>
             </motion.h1>
 
-            {/* Title */}
+            {/* Title with typing effect */}
             <motion.div variants={fadeInUp} className="mb-6">
-              <p className="text-lg sm:text-xl md:text-2xl text-muted font-light tracking-wide">
-                <span className="text-primary-400">Software Engineer</span>
+              <div className="text-lg sm:text-xl md:text-2xl text-muted font-light tracking-wide font-mono">
+                <span className="text-primary-400">&lt;</span>
+                <TypingEffect 
+                  text="Software Engineer" 
+                  speed={80}
+                  className="text-primary-400"
+                />
+                <span className="text-primary-400"> /&gt;</span>
+              </div>
+              <p className="text-lg sm:text-xl md:text-2xl text-muted font-light tracking-wide mt-2">
+                <Code2 className="inline w-5 h-5 mr-2 text-primary-400" />
+                <span className="text-primary-400">DevOps & SRE</span>
                 <span className="mx-2 text-border">|</span>
-                <span>DevOps & SRE</span>
-              </p>
-              <p className="text-lg sm:text-xl md:text-2xl text-muted font-light tracking-wide mt-1">
                 <span>Full-Stack</span>
                 <span className="mx-2 text-border">|</span>
                 <span>Android Developer</span>
               </p>
+            </motion.div>
+            
+            {/* Tech Status Indicator */}
+            <motion.div 
+              variants={fadeInUp}
+              className="mb-6 flex justify-center lg:justify-start"
+            >
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-lg glass border border-primary-500/20 text-xs font-mono">
+                <Terminal className="w-4 h-4 text-primary-400" />
+                <span className="text-muted">Status:</span>
+                <span className="text-accent-emerald">ACTIVE</span>
+                <span className="w-2 h-2 rounded-full bg-accent-emerald animate-pulse" />
+              </div>
             </motion.div>
 
             {/* CTA Buttons */}
@@ -117,10 +169,10 @@ export default function Hero() {
               >
                 <Linkedin className="w-5 h-5" />
               </a>
-<a
-            href="mailto:ahmedmostafa2004@hotmail.com"
-            className="p-3 rounded-xl glass hover:bg-surface-hover text-muted hover:text-foreground transition-all duration-300 hover:-translate-y-1"
-          >
+              <a
+                href="mailto:ahmedmostafa2004@hotmail.com"
+                className="p-3 rounded-xl glass hover:bg-surface-hover text-muted hover:text-foreground transition-all duration-300 hover:-translate-y-1"
+              >
                 <Mail className="w-5 h-5" />
               </a>
             </motion.div>
@@ -128,11 +180,11 @@ export default function Hero() {
 
           {/* Right Content - Profile Card */}
           <div className="order-1 lg:order-2 flex justify-center lg:justify-end">
-            <ProfileCard className="w-full max-w-sm" />
+            <ProfileCard className="w-full max-w-sm" avatarUrl="/Ahmed Mostafa - Software Development Head Avatar.jpg" />
           </div>
         </div>
 
-        {/* Scroll Indicator */}
+        {/* Scroll Indicator with tech theme */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -144,11 +196,22 @@ export default function Hero() {
             transition={{ duration: 2, repeat: Infinity }}
             className="flex flex-col items-center gap-2 text-muted"
           >
-            <span className="text-xs uppercase tracking-widest">Scroll</span>
-            <ArrowDown className="w-4 h-4" />
+            <div className="flex items-center gap-2 font-mono text-xs">
+              <span className="text-primary-400">scroll</span>
+              <span className="text-border">(</span>
+              <span className="text-accent-cyan">↓</span>
+              <span className="text-border">)</span>
+            </div>
+            <motion.div
+              animate={{ y: [0, 5, 0] }}
+              transition={{ duration: 1.5, repeat: Infinity }}
+            >
+              <ArrowDown className="w-4 h-4 text-primary-400" />
+            </motion.div>
           </motion.div>
         </motion.div>
       </motion.div>
     </section>
   )
 }
+

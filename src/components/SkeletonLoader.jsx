@@ -1,11 +1,6 @@
 import { motion } from 'framer-motion'
 
-interface SkeletonLoaderProps {
-  className?: string
-  variant?: 'image' | 'text' | 'card' | 'avatar' | 'section'
-}
-
-export default function SkeletonLoader({ className = '', variant = 'image' }: SkeletonLoaderProps) {
+export default function SkeletonLoader({ className = '', variant = 'image' }) {
   const baseClasses = "animate-pulse bg-gradient-to-r from-surface via-surface-hover to-surface bg-[length:200%_100%]"
   
   // Section variant renders a more complex skeleton
@@ -60,13 +55,7 @@ export default function SkeletonLoader({ className = '', variant = 'image' }: Sk
 }
 
 // Media placeholder with skeleton loading state
-interface MediaSkeletonProps {
-  isLoading?: boolean
-  children?: React.ReactNode
-  className?: string
-}
-
-export function MediaSkeleton({ isLoading = true, children, className = '' }: MediaSkeletonProps) {
+export function MediaSkeleton({ isLoading = true, children, className = '' }) {
   if (isLoading) {
     return (
       <div className={`relative overflow-hidden rounded-xl ${className}`}>

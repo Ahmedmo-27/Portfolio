@@ -3,6 +3,7 @@ import { ThemeProvider } from './context/ThemeContext'
 import Navbar from './components/Navbar'
 import Hero from './components/Hero'
 import SkeletonLoader from './components/SkeletonLoader'
+import TechDivider from './components/TechDivider'
 
 // Lazy load components for better performance
 const About = lazy(() => import('./components/About'))
@@ -48,43 +49,43 @@ function AppContent() {
       <main id="main-content" role="main">
         <Hero />
         
-        {/* Section dividers with proper spacing */}
-        <div className="section-divider" aria-hidden="true" />
+        {/* Section dividers with tech theme */}
+        <TechDivider />
         <Suspense fallback={<SectionLoader />}>
           <About />
         </Suspense>
         
-        <div className="section-divider" aria-hidden="true" />
+        <TechDivider />
         <Suspense fallback={<SectionLoader />}>
           <Skills />
         </Suspense>
         
-        <div className="section-divider" aria-hidden="true" />
+        <TechDivider />
         <Suspense fallback={<SectionLoader />}>
           <Experience />
         </Suspense>
         
-        <div className="section-divider" aria-hidden="true" />
+        <TechDivider />
         <Suspense fallback={<SectionLoader />}>
           <Projects />
         </Suspense>
         
-        <div className="section-divider" aria-hidden="true" />
+        <TechDivider />
         <Suspense fallback={<SectionLoader />}>
           <Education />
         </Suspense>
         
-        <div className="section-divider" aria-hidden="true" />
+        <TechDivider />
         <Suspense fallback={<SectionLoader />}>
           <Volunteering />
         </Suspense>
         
-        <div className="section-divider" aria-hidden="true" />
+        <TechDivider />
         <Suspense fallback={<SectionLoader />}>
           <Achievements />
         </Suspense>
         
-        <div className="section-divider" aria-hidden="true" />
+        <TechDivider />
         <Suspense fallback={<SectionLoader />}>
           <Contact />
         </Suspense>
@@ -106,3 +107,4 @@ function App() {
 }
 
 export default App
+

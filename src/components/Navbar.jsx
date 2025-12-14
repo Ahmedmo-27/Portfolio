@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Menu, X, Code2 } from 'lucide-react'
+import { Menu, X } from 'lucide-react'
 import ThemeToggle from './ThemeToggle'
 
 const navLinks = [
@@ -42,7 +42,7 @@ export default function Navbar() {
 
   // Close mobile menu on escape key
   useEffect(() => {
-    const handleEscape = (e: KeyboardEvent) => {
+    const handleEscape = (e) => {
       if (e.key === 'Escape') {
         setIsMobileMenuOpen(false)
       }
@@ -64,7 +64,7 @@ export default function Navbar() {
   }, [isMobileMenuOpen])
 
   // Smooth scroll handler for navigation links
-  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+  const handleNavClick = (e, href) => {
     // Only handle hash links
     if (href.startsWith('#')) {
       e.preventDefault()
@@ -119,11 +119,18 @@ export default function Navbar() {
             whileHover={{ scale: 1.02 }}
             aria-label="Ahmed Mostafa - Home"
           >
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-accent-cyan flex items-center justify-center" aria-hidden="true">
-              <Code2 className="w-5 h-5 text-white" />
+            <div 
+              className="w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-300 bg-surface border border-border/50 group-hover:border-primary-500/50"
+              aria-hidden="true"
+            >
+              <img 
+                src="/Geometric AM logo design.png" 
+                alt="AM Logo" 
+                className="w-8 h-8 object-contain"
+              />
             </div>
             <span className="text-xl font-display font-bold text-foreground group-hover:text-primary-400 transition-colors">
-              Ahmed<span className="text-primary-400">.</span>
+              Ahmed<span className="text-primary-400 animate-pulse-glow">.</span>
             </span>
           </motion.a>
 
@@ -236,3 +243,4 @@ export default function Navbar() {
     </motion.header>
   )
 }
+

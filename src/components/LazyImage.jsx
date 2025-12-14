@@ -1,15 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { motion } from 'framer-motion'
 
-interface LazyImageProps {
-  src: string
-  alt: string
-  className?: string
-  placeholder?: string
-  aspectRatio?: 'video' | 'square' | 'portrait' | 'auto'
-  priority?: boolean
-}
-
 /**
  * LazyImage component with built-in lazy loading, blur placeholder, and animation
  * Usage: <LazyImage src="/path/to/image.jpg" alt="Description" />
@@ -23,11 +14,11 @@ export default function LazyImage({
   placeholder,
   aspectRatio = 'auto',
   priority = false
-}: LazyImageProps) {
+}) {
   const [isLoaded, setIsLoaded] = useState(false)
   const [isInView, setIsInView] = useState(priority)
   const [error, setError] = useState(false)
-  const imgRef = useRef<HTMLDivElement>(null)
+  const imgRef = useRef(null)
 
   const aspectRatioClasses = {
     video: 'aspect-video',
@@ -121,14 +112,7 @@ export default function LazyImage({
  * ProjectImage - Specialized component for project screenshots/videos
  * Includes placeholder text for where to add media
  */
-interface ProjectImageProps {
-  projectName: string
-  className?: string
-  src?: string
-  alt?: string
-}
-
-export function ProjectImage({ projectName, className = '', src, alt }: ProjectImageProps) {
+export function ProjectImage({ projectName, className = '', src, alt }) {
   if (src) {
     return (
       <LazyImage 

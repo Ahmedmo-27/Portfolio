@@ -1,36 +1,10 @@
 import { motion, useInView } from 'framer-motion'
-import { useRef, useState } from 'react'
-import { Cloud, Database, Layout, Smartphone, TestTube, Wrench, ChevronDown, ChevronUp } from 'lucide-react'
+import { useRef } from 'react'
+import { Cloud, Database, Layout, Smartphone, TestTube, Wrench } from 'lucide-react'
 import { fadeInUp, staggerContainer } from '../utils/animations'
+import CircuitBoard from './CircuitBoard'
 
-// Skill levels: 1 = Beginner, 2 = Intermediate, 3 = Advanced, 4 = Expert
-type SkillLevel = 1 | 2 | 3 | 4
-
-interface Skill {
-  name: string
-  level: SkillLevel
-}
-
-const skillLevelLabels: Record<SkillLevel, string> = {
-  1: 'Beginner',
-  2: 'Intermediate',
-  3: 'Advanced',
-  4: 'Expert',
-}
-
-const skillLevelColors: Record<SkillLevel, string> = {
-  1: 'bg-slate-400',
-  2: 'bg-blue-400',
-  3: 'bg-emerald-400',
-  4: 'bg-amber-400',
-}
-
-const skillCategories: {
-  title: string
-  icon: typeof Cloud
-  color: string
-  skills: Skill[]
-}[] = [
+const skillCategories = [
   {
     title: 'DevOps & Cloud',
     icon: Cloud,
@@ -134,32 +108,9 @@ const skillCategories: {
   },
 ]
 
-// Skill level indicator component
-function SkillLevelIndicator({ level }: { level: SkillLevel }) {
-  return (
-    <div 
-      className="flex gap-0.5 ml-auto" 
-      role="img" 
-      aria-label={`Skill level: ${skillLevelLabels[level]}`}
-      title={skillLevelLabels[level]}
-    >
-      {[1, 2, 3, 4].map((dot) => (
-        <span
-          key={dot}
-          className={`w-1.5 h-1.5 rounded-full transition-colors ${
-            dot <= level ? skillLevelColors[level] : 'bg-border'
-          }`}
-          aria-hidden="true"
-        />
-      ))}
-    </div>
-  )
-}
-
 export default function Skills() {
   const ref = useRef(null)
   const isInView = useInView(ref, { once: true, margin: '-100px' })
-  const [showLevels, setShowLevels] = useState(true)
 
   return (
     <section 
@@ -168,6 +119,8 @@ export default function Skills() {
       aria-labelledby="skills-heading"
     >
       {/* Background Elements */}
+      <CircuitBoard className="opacity-20" />
+      <div className="tech-grid opacity-15" />
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-surface/30 to-transparent" aria-hidden="true" />
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -190,42 +143,6 @@ export default function Skills() {
               A comprehensive toolkit spanning DevOps, full-stack development, 
               mobile engineering, and quality assurance.
             </p>
-          </motion.div>
-
-          {/* Skill Level Legend & Toggle */}
-          <motion.div 
-            variants={fadeInUp} 
-            className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8"
-          >
-            <button
-              onClick={() => setShowLevels(!showLevels)}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-surface border border-border hover:border-primary-500/40 text-muted hover:text-foreground transition-all text-sm"
-              aria-pressed={showLevels}
-            >
-              {showLevels ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-              {showLevels ? 'Hide' : 'Show'} Skill Levels
-            </button>
-            
-            {showLevels && (
-              <div className="flex flex-wrap items-center justify-center gap-4 text-xs text-muted">
-                <span className="flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-slate-400" />
-                  Beginner
-                </span>
-                <span className="flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-blue-400" />
-                  Intermediate
-                </span>
-                <span className="flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-emerald-400" />
-                  Advanced
-                </span>
-                <span className="flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-amber-400" />
-                  Expert
-                </span>
-              </div>
-            )}
           </motion.div>
 
           {/* Skills Grid */}
@@ -261,24 +178,25 @@ export default function Skills() {
                   </h3>
                 </div>
 
-                {/* Skills Tags with Levels */}
+                {/* Skills Tags */}
                 <div className="flex flex-wrap gap-1.5 md:gap-2" role="list" aria-label={`${category.title} skills`}>
                   {category.skills.map((skill) => (
                     <span 
                       key={skill.name} 
-                      className="tech-tag text-xs md:text-sm inline-flex items-center gap-2"
+                      className="tech-tag text-xs md:text-sm"
                       role="listitem"
                     >
                       {skill.name}
-                      {showLevels && <SkillLevelIndicator level={skill.level} />}
                     </span>
                   ))}
                 </div>
               </motion.article>
             ))}
           </div>
+
         </motion.div>
       </div>
     </section>
   )
 }
+

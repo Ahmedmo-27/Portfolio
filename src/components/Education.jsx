@@ -1,7 +1,8 @@
 import { motion, useInView } from 'framer-motion'
-import { useRef } from 'react'
-import { GraduationCap, Calendar, Award, BookOpen, ExternalLink, BadgeCheck } from 'lucide-react'
+import { useRef, useState } from 'react'
+import { GraduationCap, Calendar, Award, BookOpen, ExternalLink, BadgeCheck, ChevronUp } from 'lucide-react'
 import { fadeInUp, staggerContainer } from '../utils/animations'
+import ViewMoreButton from './ViewMoreButton'
 
 const education = {
   university: 'Misr International University (MIU)',
@@ -9,7 +10,6 @@ const education = {
   status: 'Junior (3rd Year)',
   expectedGraduation: 'Expected: 2026',
   location: 'Cairo, Egypt',
-  // TODO: Replace with your actual GPA or remove if not applicable
   gpa: '3.5/4.0',
   highlights: [
     'Focus on Software Engineering and Cloud Computing',
@@ -26,7 +26,6 @@ const certifications = [
     date: '2025',
     description: 'Android Mobile App Development with Kotlin and Jetpack Compose',
     color: 'from-green-500 to-emerald-500',
-    // TODO: Replace with actual certificate link
     link: '#',
     verified: true,
   },
@@ -36,7 +35,6 @@ const certifications = [
     date: '2025',
     description: 'Live Environment Support, CI/CD, Azure DevOps',
     color: 'from-blue-500 to-cyan-500',
-    // TODO: Replace with actual certificate link
     link: '#',
     verified: true,
   },
@@ -46,7 +44,6 @@ const certifications = [
     date: '2025',
     description: 'Selenium, API Testing with Postman, Automation Frameworks',
     color: 'from-orange-500 to-amber-500',
-    // TODO: Replace with actual certificate link
     link: '#',
     verified: true,
   },
@@ -56,7 +53,6 @@ const certifications = [
     date: '2025',
     description: 'Python, C++, Debugging, Testing - Top 5% among 300+ interns',
     color: 'from-indigo-500 to-violet-500',
-    // TODO: Replace with actual certificate link
     link: '#',
     verified: true,
   },
@@ -76,6 +72,9 @@ const coursework = [
 export default function Education() {
   const ref = useRef(null)
   const isInView = useInView(ref, { once: true, margin: '-100px' })
+  const [showAll, setShowAll] = useState(false)
+  const initialDisplayCount = 2
+  const displayedCertifications = showAll ? certifications : certifications.slice(0, initialDisplayCount)
 
   return (
     <section 
@@ -192,7 +191,7 @@ export default function Education() {
                   Professional Certifications
                 </h3>
                 
-                {certifications.map((cert, index) => (
+                {displayedCertifications.map((cert, index) => (
                   <motion.div
                     key={cert.title}
                     initial={{ opacity: 0, y: 20 }}
@@ -256,6 +255,26 @@ export default function Education() {
               </div>
             </motion.div>
           </div>
+
+          {/* View More Button */}
+          <motion.div
+            variants={fadeInUp}
+            className="mt-12 text-center flex flex-col items-center gap-4"
+          >
+            {certifications.length > initialDisplayCount && (
+              <ViewMoreButton
+                onClick={() => setShowAll(!showAll)}
+                text={showAll ? 'Show Less Certifications' : 'View More Certifications'}
+                variant="outline"
+                icon={showAll ? ChevronUp : undefined}
+              />
+            )}
+            <ViewMoreButton
+              href="#achievements"
+              text="View My Achievements"
+              variant="outline"
+            />
+          </motion.div>
         </motion.div>
       </div>
     </section>

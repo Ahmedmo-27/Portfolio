@@ -1,19 +1,12 @@
-import { createContext, useContext, useEffect, useState, ReactNode } from 'react'
+import { createContext, useContext, useEffect, useState } from 'react'
 
-type Theme = 'dark' | 'light'
+const ThemeContext = createContext(undefined)
 
-interface ThemeContextType {
-  theme: Theme
-  toggleTheme: () => void
-}
-
-const ThemeContext = createContext<ThemeContextType | undefined>(undefined)
-
-export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setTheme] = useState<Theme>(() => {
+export function ThemeProvider({ children }) {
+  const [theme, setTheme] = useState(() => {
     // Check localStorage first
     if (typeof window !== 'undefined') {
-      const stored = localStorage.getItem('portfolio-theme') as Theme
+      const stored = localStorage.getItem('portfolio-theme')
       if (stored) return stored
       // Check system preference
       if (window.matchMedia('(prefers-color-scheme: light)').matches) {

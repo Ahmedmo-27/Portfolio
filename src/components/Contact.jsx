@@ -12,9 +12,9 @@ export default function Contact() {
     subject: '',
     message: '',
   })
-  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
+  const [status, setStatus] = useState('idle')
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     setStatus('loading')
     
@@ -30,7 +30,7 @@ export default function Contact() {
     }
   }
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (e) => {
     setFormData(prev => ({
       ...prev,
       [e.target.name]: e.target.value
@@ -298,3 +298,4 @@ export default function Contact() {
     </section>
   )
 }
+

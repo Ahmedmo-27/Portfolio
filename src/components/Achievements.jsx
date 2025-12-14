@@ -1,7 +1,8 @@
 import { motion, useInView } from 'framer-motion'
-import { useRef } from 'react'
-import { Trophy, Medal, Award, Star, ExternalLink } from 'lucide-react'
+import { useRef, useState } from 'react'
+import { Trophy, Medal, Award, Star, ExternalLink, ChevronUp } from 'lucide-react'
 import { fadeInScale, staggerContainerSlow } from '../utils/animations'
+import ViewMoreButton from './ViewMoreButton'
 
 const achievements = [
   {
@@ -54,6 +55,7 @@ const achievements = [
 export default function Achievements() {
   const ref = useRef(null)
   const isInView = useInView(ref, { once: true, margin: '-100px' })
+  const [showAll, setShowAll] = useState(false)
 
   return (
     <section 
@@ -150,8 +152,9 @@ export default function Achievements() {
           </motion.div>
 
           {/* Other Achievements */}
-          <div className="grid md:grid-cols-2 gap-6">
-            {achievements.filter(a => !a.isHighlighted).map((achievement) => (
+          {showAll && (
+            <div className="grid md:grid-cols-2 gap-6">
+              {achievements.filter(a => !a.isHighlighted).map((achievement) => (
               <motion.article
                 key={achievement.title}
                 variants={fadeInScale}
@@ -203,10 +206,32 @@ export default function Achievements() {
                   <achievement.icon className="w-16 h-16" />
                 </div>
               </motion.article>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
+
+          {/* View More Button */}
+          <motion.div
+            variants={fadeInScale}
+            className="mt-12 text-center flex flex-col items-center gap-4"
+          >
+            {achievements.filter(a => !a.isHighlighted).length > 0 && (
+              <ViewMoreButton
+                onClick={() => setShowAll(!showAll)}
+                text={showAll ? 'Show Less Achievements' : 'View More Achievements'}
+                variant="outline"
+                icon={showAll ? ChevronUp : undefined}
+              />
+            )}
+            <ViewMoreButton
+              href="#contact"
+              text="Get In Touch"
+              variant="primary"
+            />
+          </motion.div>
         </motion.div>
       </div>
     </section>
   )
 }
+

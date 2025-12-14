@@ -1,7 +1,9 @@
 import { motion, useInView } from 'framer-motion'
 import { useRef, useState } from 'react'
-import { ExternalLink, Github, ChevronRight, Gem, Shield, Smartphone, Globe, Terminal, Image, Video, FileText, Play, Download } from 'lucide-react'
+import { ExternalLink, Github, ChevronRight, Gem, Shield, Smartphone, Globe, Terminal, Image, Video, FileText, Play, Download, ChevronUp } from 'lucide-react'
 import { fadeInUp, staggerContainerSlow } from '../utils/animations'
+import CircuitBoard from './CircuitBoard'
+import ViewMoreButton from './ViewMoreButton'
 
 const projects = [
   {
@@ -158,7 +160,10 @@ const projects = [
 export default function Projects() {
   const ref = useRef(null)
   const isInView = useInView(ref, { once: true, margin: '-100px' })
-  const [activeProject, setActiveProject] = useState<string | null>(null)
+  const [activeProject, setActiveProject] = useState(null)
+  const [showAll, setShowAll] = useState(false)
+  const initialDisplayCount = 2
+  const displayedProjects = showAll ? projects : projects.slice(0, initialDisplayCount)
 
   return (
     <section 
@@ -167,6 +172,8 @@ export default function Projects() {
       aria-labelledby="projects-heading"
     >
       {/* Background */}
+      <CircuitBoard className="opacity-15" />
+      <div className="tech-grid opacity-10" />
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-surface/30 to-transparent" aria-hidden="true" />
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -193,7 +200,7 @@ export default function Projects() {
 
           {/* Projects Grid */}
           <div className="space-y-8" role="list" aria-label="Project list">
-            {projects.map((project, index) => (
+            {displayedProjects.map((project, index) => (
               <motion.article
                 key={project.id}
                 variants={fadeInUp}
@@ -377,8 +384,30 @@ export default function Projects() {
               </motion.article>
             ))}
           </div>
+
+          {/* View More Button */}
+          <motion.div
+            variants={fadeInUp}
+            className="mt-12 text-center flex flex-col items-center gap-4"
+          >
+            {projects.length > initialDisplayCount && (
+              <ViewMoreButton
+                onClick={() => setShowAll(!showAll)}
+                text={showAll ? 'Show Less' : 'View More Projects'}
+                variant="outline"
+                icon={showAll ? ChevronUp : undefined}
+              />
+            )}
+            <ViewMoreButton
+              href="https://github.com/ahmedmo-27"
+              text="View All Projects on GitHub"
+              variant="primary"
+              icon={Github}
+            />
+          </motion.div>
         </motion.div>
       </div>
     </section>
   )
 }
+

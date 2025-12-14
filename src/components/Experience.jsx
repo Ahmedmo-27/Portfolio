@@ -1,14 +1,15 @@
 import { motion, useInView } from 'framer-motion'
-import { useRef } from 'react'
-import { Building2, Award, Code, Globe, Shield, Gem, Calendar, MapPin, Cpu } from 'lucide-react'
+import { useRef, useState } from 'react'
+import { Building2, Award, Code, Globe, Shield, Gem, Calendar, MapPin, Cpu, ChevronUp, ChevronRight } from 'lucide-react'
 import { fadeInLeft, staggerContainerSlow } from '../utils/animations'
+import ViewMoreButton from './ViewMoreButton'
 
 const experiences = [
   {
     company: 'National Bank of Egypt (NBE)',
     role: 'Live Environment Support — DevOps & Automation Intern',
-    period: 'Jul 2025',
-    location: 'Cairo, Egypt',
+    period: 'Jul 2025 – Aug 2025',
+    location: 'Giza, Egypt',
     icon: Building2,
     color: 'from-blue-500 to-cyan-500',
     highlights: [
@@ -23,7 +24,7 @@ const experiences = [
     company: 'DEPI – Digital Egyptian Pioneers Initiative',
     role: 'Android Mobile App Developer',
     period: 'Jun 2025 – Dec 2025',
-    location: 'Egypt',
+    location: 'Hybrid (Cairo, Egypt)',
     icon: Award,
     color: 'from-green-500 to-emerald-500',
     highlights: [
@@ -38,8 +39,8 @@ const experiences = [
   {
     company: 'Fuzetek',
     role: 'Software Engineering Intern',
-    period: 'Feb 2025 – Mar 2025',
-    location: 'Cairo, Egypt',
+    period: 'Feb 2025 – Apr 2025',
+    location: 'Remote',
     icon: Cpu,
     color: 'from-indigo-500 to-blue-500',
     highlights: [
@@ -53,7 +54,7 @@ const experiences = [
   {
     company: 'ITIDA Gigs Freelancing Program',
     role: 'Freelance Software Tester',
-    period: 'Feb 2025 – Jun 2025',
+    period: 'Feb 2025 – May 2025',
     location: 'Remote',
     icon: Code,
     color: 'from-orange-500 to-amber-500',
@@ -64,59 +65,14 @@ const experiences = [
       'Gained freelance & personal branding skillset',
     ],
     tags: ['Selenium', 'Postman', 'API Testing', 'Automation', 'QA'],
-  },
-  {
-    company: 'MSP-MIU (Student Branch)',
-    role: 'Full-Stack Developer',
-    period: '2025',
-    location: 'Cairo, Egypt',
-    icon: Globe,
-    color: 'from-violet-500 to-purple-500',
-    highlights: [
-      'Built and deployed msp-miu.tech website',
-      'Backend: Node.js + MySQL',
-      'Database hosted on DigitalOcean',
-      'Deployed application on Heroku',
-      'Managed GitHub with test/production branches',
-    ],
-    tags: ['Node.js', 'MySQL', 'DigitalOcean', 'Heroku', 'Git'],
-  },
-  {
-    company: 'Cybertopia (Digitopia 2025 — Semifinalist)',
-    role: 'Team Lead | Cybersecurity Honeypot Project',
-    period: '2025',
-    location: 'Egypt',
-    icon: Shield,
-    color: 'from-red-500 to-rose-500',
-    highlights: [
-      'Built full honeypot system with Cowrie on DigitalOcean',
-      'Captured 500K+ SSH attack logs from 300+ unique attackers',
-      'Processed logs through OSINT APIs and saved to PostgreSQL',
-      'Exposed 3 Node.js APIs for logs, OSINT summaries, and session summaries',
-      'Team reached SEMIFINALS of DIGITOPIA 2025',
-    ],
-    tags: ['Python', 'Cowrie', 'PostgreSQL', 'Node.js', 'OSINT', 'Cybersecurity'],
-  },
-  {
-    company: 'Vaultique (Best Web Project of 2025 — MIU)',
-    role: 'Creator & Full-Stack Developer',
-    period: '2025',
-    location: 'Cairo, Egypt',
-    icon: Gem,
-    color: 'from-amber-500 to-yellow-500',
-    highlights: [
-      'Luxury watch e-commerce platform',
-      'Tech: Node.js, Express, MongoDB, Stripe, Twilio, CI/CD pipelines',
-      'Includes 3D configurator (Three.js), internal dashboards, analytics',
-      'Recognized as Best Web Project of MIU 2025',
-    ],
-    tags: ['Node.js', 'Express', 'MongoDB', 'Stripe', 'Three.js', 'CI/CD'],
-  },
-]
+  }]
 
 export default function Experience() {
   const ref = useRef(null)
   const isInView = useInView(ref, { once: true, margin: '-100px' })
+  const [showAll, setShowAll] = useState(false)
+  const initialDisplayCount = 4
+  const displayedExperiences = showAll ? experiences : experiences.slice(0, initialDisplayCount)
 
   return (
     <section 
@@ -156,7 +112,7 @@ export default function Experience() {
 
             {/* Experience Items */}
             <div className="space-y-8 md:space-y-12">
-              {experiences.map((exp, index) => (
+              {displayedExperiences.map((exp, index) => (
                 <motion.article
                   key={exp.company}
                   variants={fadeInLeft}
@@ -240,8 +196,24 @@ export default function Experience() {
               ))}
             </div>
           </div>
+
+          {/* View More Button */}
+          <motion.div
+            variants={fadeInLeft}
+            className="mt-12 text-center"
+          >
+            {experiences.length > initialDisplayCount && (
+              <ViewMoreButton
+                onClick={() => setShowAll(!showAll)}
+                text={showAll ? 'Show Less' : 'View More Experience'}
+                variant="outline"
+                icon={showAll ? ChevronUp : ChevronRight}
+              />
+            )}
+          </motion.div>
         </motion.div>
       </div>
     </section>
   )
 }
+

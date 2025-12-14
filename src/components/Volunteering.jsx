@@ -1,7 +1,8 @@
 import { motion, useInView } from 'framer-motion'
-import { useRef } from 'react'
-import { Users, Trophy, Star, Target, Heart, Rocket, Calendar, ExternalLink } from 'lucide-react'
+import { useRef, useState } from 'react'
+import { Users, Trophy, Star, Target, Heart, Rocket, Calendar, ExternalLink, ChevronUp } from 'lucide-react'
 import { fadeInUp, staggerContainer } from '../utils/animations'
+import ViewMoreButton from './ViewMoreButton'
 
 const volunteeringExperiences = [
   {
@@ -17,7 +18,6 @@ const volunteeringExperiences = [
       'Mentored junior members in web development',
       'Organized technical workshops and coding sessions',
     ],
-    // TODO: Replace with actual link
     link: 'https://msp-miu.tech',
     isHighlighted: true,
   },
@@ -81,6 +81,9 @@ const leadershipHighlights = [
 export default function Volunteering() {
   const ref = useRef(null)
   const isInView = useInView(ref, { once: true, margin: '-100px' })
+  const [showAll, setShowAll] = useState(false)
+  const initialDisplayCount = 2
+  const displayedExperiences = showAll ? volunteeringExperiences : volunteeringExperiences.slice(0, initialDisplayCount)
 
   return (
     <section 
@@ -143,7 +146,7 @@ export default function Volunteering() {
 
           {/* Volunteering Experiences */}
           <div className="space-y-6">
-            {volunteeringExperiences.map((exp, index) => (
+            {displayedExperiences.map((exp, index) => (
               <motion.article
                 key={exp.organization}
                 variants={fadeInUp}
@@ -232,10 +235,31 @@ export default function Volunteering() {
             ))}
           </div>
 
+          {/* View More Button */}
+          <motion.div
+            variants={fadeInUp}
+            className="mt-12 text-center flex flex-col items-center gap-4"
+          >
+            {volunteeringExperiences.length > initialDisplayCount && (
+              <ViewMoreButton
+                onClick={() => setShowAll(!showAll)}
+                text={showAll ? 'Show Less' : 'View More Volunteering'}
+                variant="outline"
+                icon={showAll ? ChevronUp : undefined}
+              />
+            )}
+            <ViewMoreButton
+              href="https://msp-miu.tech"
+              text="Visit MSP-MIU Website"
+              variant="primary"
+              icon={ExternalLink}
+            />
+          </motion.div>
+
           {/* Call to Action */}
           <motion.div
             variants={fadeInUp}
-            className="mt-12 text-center"
+            className="mt-8 text-center"
           >
             <p className="text-muted text-sm md:text-base mb-4">
               Interested in collaborating or learning more about my community involvement?

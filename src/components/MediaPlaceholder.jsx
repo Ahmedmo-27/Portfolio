@@ -1,13 +1,6 @@
 import { motion } from 'framer-motion'
 import { Image, Video, FileText, Upload } from 'lucide-react'
 
-interface MediaPlaceholderProps {
-  type: 'image' | 'video' | 'document' | 'all'
-  title?: string
-  description?: string
-  className?: string
-}
-
 const icons = {
   image: Image,
   video: Video,
@@ -20,7 +13,7 @@ export default function MediaPlaceholder({
   title,
   description,
   className = '' 
-}: MediaPlaceholderProps) {
+}) {
   const Icon = icons[type]
 
   const defaultDescriptions = {
@@ -71,12 +64,7 @@ export default function MediaPlaceholder({
 }
 
 // Grid of multiple placeholders
-interface MediaPlaceholderGridProps {
-  projectName: string
-  className?: string
-}
-
-export function MediaPlaceholderGrid({ projectName, className = '' }: MediaPlaceholderGridProps) {
+export function MediaPlaceholderGrid({ projectName, className = '' }) {
   return (
     <div className={`grid grid-cols-3 gap-3 ${className}`}>
       <motion.div
