@@ -56,7 +56,7 @@ export default function About() {
   return (
     <section 
       id="about" 
-      className="py-24 md:py-32 relative overflow-hidden"
+      className="py-20 md:py-50 relative overflow-hidden"
       aria-labelledby="about-heading"
     >
       {/* Background decorative elements */}

@@ -63,6 +63,39 @@ export default function Navbar() {
     }
   }, [isMobileMenuOpen])
 
+  // Smooth scroll handler for navigation links
+  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    // Only handle hash links
+    if (href.startsWith('#')) {
+      e.preventDefault()
+      const targetId = href.slice(1)
+      const targetElement = document.getElementById(targetId)
+      
+      if (targetElement) {
+        // Get the actual navbar height dynamically
+        const navbar = document.querySelector('header')
+        const navbarHeight = navbar ? navbar.getBoundingClientRect().height : (window.innerWidth >= 768 ? 80 : 70)
+        
+        // Calculate the target scroll position
+        // Get element's position relative to document
+        const elementRect = targetElement.getBoundingClientRect()
+        const elementTop = elementRect.top + window.scrollY
+        // Account for navbar height plus some padding
+        const offset = navbarHeight - 40
+        const targetScrollY = elementTop - offset
+
+        // Scroll smoothly to the target position
+        window.scrollTo({
+          top: Math.max(0, targetScrollY),
+          behavior: 'smooth'
+        })
+      }
+      
+      // Close mobile menu if open
+      setIsMobileMenuOpen(false)
+    }
+  }
+
   return (
     <motion.header
       initial={{ y: -100 }}
@@ -78,6 +111,10 @@ export default function Navbar() {
           {/* Logo */}
           <motion.a
             href="#"
+            onClick={(e) => {
+              e.preventDefault()
+              window.scrollTo({ top: 0, behavior: 'smooth' })
+            }}
             className="flex items-center gap-2 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 rounded-lg"
             whileHover={{ scale: 1.02 }}
             aria-label="Ahmed Mostafa - Home"
@@ -96,6 +133,7 @@ export default function Navbar() {
               <motion.a
                 key={link.name}
                 href={link.href}
+                onClick={(e) => handleNavClick(e, link.href)}
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 + 0.3 }}
@@ -129,6 +167,7 @@ export default function Navbar() {
 
             <motion.a
               href="#contact"
+              onClick={(e) => handleNavClick(e, '#contact')}
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.8 }}
@@ -170,7 +209,7 @@ export default function Navbar() {
                   <a
                     key={link.name}
                     href={link.href}
-                    onClick={() => setIsMobileMenuOpen(false)}
+                    onClick={(e) => handleNavClick(e, link.href)}
                     className={`block px-4 py-3 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 ${
                       activeSection === link.href.slice(1)
                         ? 'text-primary-400 bg-primary-500/10'
@@ -183,7 +222,7 @@ export default function Navbar() {
                 ))}
                 <a
                   href="#contact"
-                  onClick={() => setIsMobileMenuOpen(false)}
+                  onClick={(e) => handleNavClick(e, '#contact')}
                   className="block mt-4 btn-primary text-center"
                   role="menuitem"
                 >

@@ -58,7 +58,7 @@ export default function Achievements() {
   return (
     <section 
       id="achievements" 
-      className="py-24 md:py-32 relative overflow-hidden"
+      className="py-20 md:py-50 relative overflow-hidden"
       aria-labelledby="achievements-heading"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

@@ -85,7 +85,7 @@ export default function Volunteering() {
   return (
     <section 
       id="volunteering" 
-      className="py-24 md:py-32 relative overflow-hidden"
+      className="py-20 md:py-50 relative overflow-hidden"
       aria-labelledby="volunteering-heading"
     >
       {/* Background */}

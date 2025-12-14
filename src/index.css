@@ -36,7 +36,13 @@
   
   html {
     scroll-behavior: smooth;
-    scroll-padding-top: 100px;
+    scroll-padding-top: 120px;
+  }
+  
+  @media (min-width: 768px) {
+    html {
+      scroll-padding-top: 140px;
+    }
   }
   
   body {
@@ -168,15 +174,15 @@
   .section-divider {
     width: 100%;
     height: 1px;
-    margin-top: -3rem;
-    margin-bottom: -3rem;
+    margin-top: -2rem;
+    margin-bottom: -2rem;
     background: linear-gradient(to right, transparent, var(--color-border), transparent);
   }
   
   @media (min-width: 768px) {
     .section-divider {
-      margin-top: -4rem;
-      margin-bottom: -4rem;
+      margin-top: -3rem;
+      margin-bottom: -3rem;
     }
   }
   

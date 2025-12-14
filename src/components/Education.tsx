@@ -80,7 +80,7 @@ export default function Education() {
   return (
     <section 
       id="education" 
-      className="py-24 md:py-32 relative overflow-hidden"
+      className="py-20 md:py-50 relative overflow-hidden"
       aria-labelledby="education-heading"
     >
       {/* Background Elements */}
