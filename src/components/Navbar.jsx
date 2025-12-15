@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import { AnimatePresence } from 'framer-motion'
 import { Menu, X } from 'lucide-react'
 import ThemeToggle from './ThemeToggle'
 import './Navbar.css'
@@ -100,15 +99,19 @@ export default function Navbar() {
         })
       }
       
-      // Close mobile menu if open
-      setIsMobileMenuOpen(false)
+      // Close mobile menu if open with a small delay for smoother UX
+      if (isMobileMenuOpen) {
+        setTimeout(() => {
+          setIsMobileMenuOpen(false)
+        }, 100)
+      }
     }
   }
 
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled ? 'glass py-3' : 'py-5'
+        isScrolled || isMobileMenuOpen ? 'glass py-3' : 'py-5'
       }`}
       role="banner"
     >

@@ -2,16 +2,13 @@ import React from 'react'
 import { motion } from 'framer-motion'
 import { Download, Mail, ExternalLink, Github, Linkedin, Code2 } from 'lucide-react'
 import ProfileCard from './ProfileCard'
-import CircuitBoard from './CircuitBoard'
 import './Hero.css'
 
 const Hero = () => {
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20 pb-12 md:pb-25">
       {/* Background Elements */}
       <div className="absolute inset-0 overflow-hidden">
-        {/* Circuit Board Pattern */}
-        <CircuitBoard />
         
         {/* Tech Grid Overlay */}
         <div className="tech-grid" />
@@ -19,55 +16,37 @@ const Hero = () => {
         {/* Grid Pattern */}
         <div className="absolute inset-0 hero-grid-pattern" />
         
-    
-        {/* Tech-themed decorative elements */}
-        <motion.div
-          animate={{ 
-            rotate: [0, 360],
-            opacity: [0.1, 0.2, 0.1]
-          }}
-          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-          className="absolute top-20 right-20 w-32 h-32 border border-primary-500/20 rounded-lg hero-decorative-gradient-1"
-        />
-        <motion.div
-          animate={{ 
-            rotate: [360, 0],
-            opacity: [0.1, 0.2, 0.1]
-          }}
-          transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-          className="absolute bottom-20 left-20 w-24 h-24 border border-accent-cyan/20 rounded-full hero-decorative-gradient-2"
-        />
       </div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+        <div className="grid lg:grid-cols-2 gap-8 md:gap-12 lg:gap-16 items-center">
           {/* Left Content */}
           <div className="text-center lg:text-left order-2 lg:order-1">
             {/* Status Badge */}
-            <div className="mb-6 flex justify-center lg:justify-start">
-              <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass text-sm text-muted">
+            <div className="mb-4 md:mb-6 flex justify-center lg:justify-start">
+              <span className="inline-flex items-center gap-2 px-3 py-1.5 md:px-4 md:py-2 rounded-full glass text-xs md:text-sm text-muted">
                 <span className="w-2 h-2 rounded-full bg-accent-emerald" />
                 Open to Opportunities
               </span>
             </div>
 
             {/* Name */}
-            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-display font-bold mb-4">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-display font-bold mb-3 md:mb-4">
               <span className="text-foreground">Ahmed</span>{' '}
               <span className="gradient-text">Mostafa</span>
             </h1>
 
             {/* Title with typing effect */}
-            <div className="mb-6">
-              <div className="text-lg sm:text-xl md:text-2xl text-muted font-light tracking-wide font-mono">
+            <div className="mb-4 md:mb-6">
+              <div className="text-base sm:text-lg md:text-xl lg:text-2xl text-muted font-light tracking-wide font-mono">
                 <span className="text-primary-400">&lt;</span>
                 <span className="text-primary-400">
                   Software Engineer
                 </span>
                 <span className="text-primary-400"> /&gt;</span>
               </div>
-              <p className="text-lg sm:text-xl md:text-2xl text-muted font-light tracking-wide mt-2">
-                <Code2 className="inline w-5 h-5 mr-2 text-primary-400" />
+              <p className="text-sm sm:text-base md:text-lg lg:text-xl text-muted font-light tracking-wide mt-2">
+                <Code2 className="inline w-4 h-4 md:w-5 md:h-5 mr-1.5 md:mr-2 text-primary-400" />
                 <span className="text-primary-400">DevOps & SRE</span>
                 <span className="mx-2 text-border">|</span>
                 <span>Full-Stack</span>
@@ -78,52 +57,52 @@ const Hero = () => {
             
 
             {/* CTA Buttons */}
-            <div className="flex flex-wrap items-center justify-center lg:justify-start gap-3 mb-8">
-              <a href="/Ahmed Mostafa's CV.pdf" download className="btn-primary">
-                <Download className="w-5 h-5" />
+            <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2 md:gap-3 mb-6 md:mb-8">
+              <a href="/Ahmed Mostafa's CV.pdf" download className="btn-primary text-sm md:text-base px-4 py-2 md:px-6 md:py-3">
+                <Download className="w-4 h-4 md:w-5 md:h-5" />
                 Download CV
               </a>
-              <a href="#contact" className="btn-secondary">
-                <Mail className="w-5 h-5" />
+              <a href="#contact" className="btn-secondary text-sm md:text-base px-4 py-2 md:px-6 md:py-3">
+                <Mail className="w-4 h-4 md:w-5 md:h-5" />
                 Contact Me
               </a>
-              <a href="#projects" className="btn-secondary">
-                <ExternalLink className="w-5 h-5" />
+              <a href="#projects" className="btn-secondary text-sm md:text-base px-4 py-2 md:px-6 md:py-3">
+                <ExternalLink className="w-4 h-4 md:w-5 md:h-5" />
                 View Projects
               </a>
             </div>
 
             {/* Social Links */}
-            <div className="flex items-center justify-center lg:justify-start gap-3">
+            <div className="flex items-center justify-center lg:justify-start gap-2 md:gap-3">
               <a
                 href="https://github.com/ahmedmo-27"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="p-3 rounded-xl glass hover:bg-surface-hover text-muted"
+                className="p-2.5 md:p-3 rounded-xl glass hover:bg-surface-hover text-muted"
               >
-                <Github className="w-5 h-5" />
+                <Github className="w-4 h-4 md:w-5 md:h-5" />
               </a>
               <a
                 href="https://linkedin.com/in/ahmedmostafa-swe"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="p-3 rounded-xl glass hover:bg-surface-hover text-muted"
+                className="p-2.5 md:p-3 rounded-xl glass hover:bg-surface-hover text-muted"
               >
-                <Linkedin className="w-5 h-5" />
+                <Linkedin className="w-4 h-4 md:w-5 md:h-5" />
               </a>
               <a
                 href="mailto:ahmedmostafa2004@hotmail.com"
-                className="p-3 rounded-xl glass hover:bg-surface-hover text-muted"
+                className="p-2.5 md:p-3 rounded-xl glass hover:bg-surface-hover text-muted"
               >
-                <Mail className="w-5 h-5" />
+                <Mail className="w-4 h-4 md:w-5 md:h-5" />
               </a>
             </div>
           </div>
 
           {/* Right Content - Profile Card */}
-          <div className="order-1 lg:order-2 flex justify-center lg:justify-end">
+          <div className="order-1 lg:order-2 flex justify-center lg:justify-end mb-6 md:mb-0">
             <ProfileCard 
-              className="w-full max-w-sm" 
+              className="w-full max-w-xs sm:max-w-sm" 
               avatarUrl="/Ahmed Mostafa - Software Development Head Avatar.jpg"
               priority={true}
             />
@@ -135,7 +114,7 @@ const Hero = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1.5, duration: 1 }}
-          className="absolute bottom-8 left-1/2 -translate-x-1/2"
+          className="absolute bottom-4 md:bottom-8 left-1/2 -translate-x-1/2 mt-[5px] md:mt-0"
         >
           <motion.div
             animate={{ y: [0, 10, 0] }}

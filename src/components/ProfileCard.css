@@ -118,6 +118,7 @@
   .pc-card-wrapper {
     margin-left: auto;
     margin-right: auto;
+    margin-top: 10px;
     width: 100%;
     max-width: 100%;
   }
@@ -264,16 +265,16 @@
   overflow: hidden;
   background-image: radial-gradient(
     farthest-corner circle at var(--pointer-x) var(--pointer-y),
-    hsl(248, 25%, 80%) 10%,
+    hsl(248, 25%, 80%) 12%,
     hsla(207, 40%, 30%, 0.8) 90%
   );
   mix-blend-mode: overlay;
-  filter: brightness(0.8);
+  filter: brightness(0.85) contrast(1.2);
   z-index: 4;
 }
 
 .light .pc-glare {
-  filter: brightness(1.05);
+  filter: brightness(1) contrast(1.2);
   background-image: radial-gradient(
     farthest-corner circle at var(--pointer-x) var(--pointer-y),
     hsla(249, 25%, 90%, 0.84) 5%,
@@ -392,6 +393,9 @@
 @media (max-width: 768px) {
   .pc-card-wrapper {
     perspective: 300px;
+    margin-top: 10px;
+    margin-left: auto;
+    margin-right: auto;
   }
 
   .pc-card {
@@ -425,12 +429,29 @@
 
   .pc-glare {
     filter: brightness(0.9) contrast(1.1);
+    background-image: radial-gradient(
+      farthest-corner circle at var(--pointer-x) var(--pointer-y),
+      hsl(248, 25%, 80%) 12%,
+      hsla(207, 40%, 30%, 0.8) 90%
+    );
+  }
+
+  .light .pc-glare {
+    filter: brightness(1.05) contrast(1.1);
+    background-image: radial-gradient(
+      farthest-corner circle at var(--pointer-x) var(--pointer-y),
+      hsla(249, 25%, 90%, 0.84) 5%,
+      hsla(207, 40%, 50%, 0.634) 90%
+    );
   }
 }
 
 @media (max-width: 480px) {
   .pc-card-wrapper {
     perspective: 250px;
+    margin-top: 10px;
+    margin-left: auto;
+    margin-right: auto;
   }
 
   .pc-card {
@@ -466,12 +487,29 @@
 
   .pc-glare {
     filter: brightness(0.5) contrast(1.0);
+    background-image: radial-gradient(
+      farthest-corner circle at var(--pointer-x) var(--pointer-y),
+      hsl(248, 25%, 80%) 12%,
+      hsla(207, 40%, 30%, 0.8) 90%
+    );
+  }
+
+  .light .pc-glare {
+    filter: brightness(1.05) contrast(1.0);
+    background-image: radial-gradient(
+      farthest-corner circle at var(--pointer-x) var(--pointer-y),
+      hsla(249, 25%, 90%, 0.84) 5%,
+      hsla(207, 40%, 50%, 0.634) 90%
+    );
   }
 }
 
 @media (max-width: 320px) {
   .pc-card-wrapper {
     perspective: 200px;
+    margin-top: 10px;
+    margin-left: auto;
+    margin-right: auto;
   }
 
   .pc-card {

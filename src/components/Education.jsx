@@ -1,7 +1,5 @@
-import { motion, useInView } from 'framer-motion'
-import { useRef } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import { GraduationCap, Calendar, Award, BookOpen, ExternalLink, BadgeCheck, ChevronUp } from 'lucide-react'
-import { fadeInUp, staggerContainer } from '../utils/animations'
 
 const education = {
   university: 'Misr International University (MIU)',
@@ -70,12 +68,33 @@ const coursework = [
 
 export default function Education() {
   const ref = useRef(null)
-  const isInView = useInView(ref, { once: true, margin: '-100px' })
+  const [isInView, setIsInView] = useState(false)
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsInView(true)
+        }
+      },
+      { threshold: 0.1, rootMargin: '-100px' }
+    )
+
+    if (ref.current) {
+      observer.observe(ref.current)
+    }
+
+    return () => {
+      if (ref.current) {
+        observer.unobserve(ref.current)
+      }
+    }
+  }, [])
 
   return (
     <section 
       id="education" 
-      className="py-20 md:py-50 relative overflow-hidden"
+      className="py-12 md:py-50 relative overflow-hidden"
       aria-labelledby="education-heading"
     >
       {/* Background Elements */}
@@ -83,14 +102,9 @@ export default function Education() {
       <div className="absolute bottom-1/4 -right-32 w-64 h-64 bg-primary-500/10 rounded-full blur-3xl" aria-hidden="true" />
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <motion.div
-          ref={ref}
-          variants={staggerContainer}
-          initial="hidden"
-          animate={isInView ? 'visible' : 'hidden'}
-        >
+        <div ref={ref}>
           {/* Section Header */}
-          <motion.div variants={fadeInUp} className="text-center mb-12 md:mb-16">
+          <div className={`text-center mb-12 md:mb-16 ${isInView ? 'animate-fade-in-up' : 'opacity-0'}`}>
             <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-accent-violet/10 border border-accent-violet/20 text-accent-violet text-sm font-medium mb-4">
               <span className="w-1.5 h-1.5 rounded-full bg-accent-violet" aria-hidden="true" />
               Education & Certifications
@@ -102,11 +116,11 @@ export default function Education() {
               My educational journey and professional certifications that have shaped 
               my expertise in software engineering and development.
             </p>
-          </motion.div>
+          </div>
 
           <div className="grid lg:grid-cols-2 gap-8 lg:gap-10">
             {/* Education Card */}
-            <motion.div variants={fadeInUp}>
+            <div className={isInView ? 'animate-fade-in-up animate-delay-2' : 'opacity-0'}>
               <div className="glass-card p-6 md:p-8 h-full">
                 {/* University Header */}
                 <div className="flex items-start gap-4 mb-6">
@@ -177,10 +191,10 @@ export default function Education() {
                   </div>
                 </div>
               </div>
-            </motion.div>
+            </div>
 
             {/* Certifications */}
-            <motion.div variants={fadeInUp}>
+            <div className={isInView ? 'animate-fade-in-up animate-delay-2' : 'opacity-0'}>
               <div className="space-y-4">
                 <h3 className="text-lg font-display font-bold text-foreground mb-4 flex items-center gap-2">
                   <BadgeCheck className="w-5 h-5 text-accent-emerald" />
@@ -188,13 +202,10 @@ export default function Education() {
                 </h3>
                 
                 {certifications.map((cert, index) => (
-                  <motion.div
+                  <div
                     key={cert.title}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={isInView ? { opacity: 1, y: 0 } : {}}
-                    transition={{ delay: index * 0.1 + 0.3 }}
-                    whileHover={{ y: -3, scale: 1.01 }}
-                    className="glass-card p-4 md:p-5 group relative overflow-hidden"
+                    className={`glass-card p-4 md:p-5 group relative overflow-hidden transition-transform hover:-translate-y-1 hover:scale-[1.01] ${isInView ? 'animate-fade-in-up' : 'opacity-0'}`}
+                    style={{ animationDelay: `${index * 0.1 + 0.3}s` }}
                     tabIndex={0}
                   >
                     {/* Background glow on hover */}
@@ -246,12 +257,12 @@ export default function Education() {
                         )}
                       </div>
                     </div>
-                  </motion.div>
+                  </div>
                 ))}
               </div>
-            </motion.div>
+            </div>
           </div>
-        </motion.div>
+        </div>
       </div>
     </section>
   )

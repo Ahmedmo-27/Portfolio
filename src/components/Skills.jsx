@@ -1,7 +1,5 @@
-import { motion, useInView } from 'framer-motion'
-import { useRef } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import { Cloud, Database, Layout, Smartphone, TestTube, Wrench } from 'lucide-react'
-import { fadeInUp, staggerContainer } from '../utils/animations'
 import CircuitBoard from './CircuitBoard'
 
 const skillCategories = [
@@ -109,12 +107,33 @@ const skillCategories = [
 
 export default function Skills() {
   const ref = useRef(null)
-  const isInView = useInView(ref, { once: true, margin: '-100px' })
+  const [isInView, setIsInView] = useState(false)
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsInView(true)
+        }
+      },
+      { threshold: 0.1, rootMargin: '-100px' }
+    )
+
+    if (ref.current) {
+      observer.observe(ref.current)
+    }
+
+    return () => {
+      if (ref.current) {
+        observer.unobserve(ref.current)
+      }
+    }
+  }, [])
 
   return (
     <section 
       id="skills" 
-      className="py-20 md:py-50 relative overflow-hidden"
+      className="py-12 md:py-50 relative overflow-hidden"
       aria-labelledby="skills-heading"
     >
       {/* Background Elements */}
@@ -123,14 +142,9 @@ export default function Skills() {
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-surface/30 to-transparent" aria-hidden="true" />
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <motion.div
-          ref={ref}
-          variants={staggerContainer}
-          initial="hidden"
-          animate={isInView ? 'visible' : 'hidden'}
-        >
+        <div ref={ref}>
           {/* Section Header */}
-          <motion.div variants={fadeInUp} className="text-center mb-12 md:mb-16">
+          <div className={`text-center mb-12 md:mb-16 ${isInView ? 'animate-fade-in-up' : 'opacity-0'}`}>
             <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-accent-cyan/10 border border-accent-cyan/20 text-accent-cyan text-sm font-medium mb-4">
               <span className="w-1.5 h-1.5 rounded-full bg-accent-cyan" aria-hidden="true" />
               Technical Skills
@@ -142,7 +156,7 @@ export default function Skills() {
               A comprehensive toolkit spanning DevOps, full-stack development, 
               mobile engineering, and quality assurance.
             </p>
-          </motion.div>
+          </div>
 
           {/* Skills Grid */}
           <div 
@@ -150,13 +164,11 @@ export default function Skills() {
             role="list"
             aria-label="Skill categories"
           >
-            {skillCategories.map((category) => (
-              <motion.article
+            {skillCategories.map((category, index) => (
+              <article
                 key={category.title}
-                variants={fadeInUp}
-                whileHover={{ y: -5 }}
-                whileFocus={{ y: -5 }}
-                className="glass-card p-5 md:p-6 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
+                className={`glass-card p-5 md:p-6 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 transition-transform hover:-translate-y-1 focus-visible:-translate-y-1 ${isInView ? 'animate-fade-in-up' : 'opacity-0'}`}
+                style={{ animationDelay: `${index * 0.1 + 0.2}s` }}
                 role="listitem"
                 tabIndex={0}
                 aria-labelledby={`skill-${category.title.replace(/\s+/g, '-')}`}
@@ -189,11 +201,11 @@ export default function Skills() {
                     </span>
                   ))}
                 </div>
-              </motion.article>
+              </article>
             ))}
           </div>
 
-        </motion.div>
+        </div>
       </div>
     </section>
   )

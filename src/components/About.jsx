@@ -1,7 +1,5 @@
-import { motion, useInView } from 'framer-motion'
-import { useRef } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import { GraduationCap, Globe, Briefcase, Rocket, Code2, Server, Trophy, FolderGit2, Building, Award } from 'lucide-react'
-import { fadeInUp, staggerContainer } from '../utils/animations'
 import CircuitBoard from './CircuitBoard'
 
 const highlights = [
@@ -52,12 +50,33 @@ const stats = [
 
 export default function About() {
   const ref = useRef(null)
-  const isInView = useInView(ref, { once: true, margin: '-100px' })
+  const [isInView, setIsInView] = useState(false)
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsInView(true)
+        }
+      },
+      { threshold: 0.1, rootMargin: '-100px' }
+    )
+
+    if (ref.current) {
+      observer.observe(ref.current)
+    }
+
+    return () => {
+      if (ref.current) {
+        observer.unobserve(ref.current)
+      }
+    }
+  }, [])
 
   return (
     <section 
       id="about" 
-      className="py-20 md:py-50 relative overflow-hidden"
+      className="py-12 md:py-50 relative overflow-hidden"
       aria-labelledby="about-heading"
     >
       {/* Background decorative elements */}
@@ -67,14 +86,9 @@ export default function About() {
       <div className="absolute bottom-1/4 -right-32 w-64 h-64 bg-accent-cyan/10 rounded-full blur-3xl" aria-hidden="true" />
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <motion.div
-          ref={ref}
-          variants={staggerContainer}
-          initial="hidden"
-          animate={isInView ? 'visible' : 'hidden'}
-        >
+        <div ref={ref}>
           {/* Section Header */}
-          <motion.div variants={fadeInUp} className="text-center mb-12 md:mb-16">
+          <div className={`text-center mb-12 md:mb-16 ${isInView ? 'animate-fade-in-up' : 'opacity-0'}`}>
             <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary-500/10 border border-primary-500/20 text-primary-400 text-sm font-medium mb-4">
               <span className="w-1.5 h-1.5 rounded-full bg-primary-400" aria-hidden="true" />
               About Me
@@ -86,21 +100,17 @@ export default function About() {
               A passionate Software Engineer specializing in cloud-driven development, 
               DevOps automation, full-stack engineering, and scalable mobile applications.
             </p>
-          </motion.div>
+          </div>
 
           {/* Stats Row - Enhanced */}
-          <motion.div 
-            variants={fadeInUp}
-            className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-12 md:mb-16"
+          <div 
+            className={`grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-12 md:mb-16 ${isInView ? 'animate-fade-in-up animate-delay-2' : 'opacity-0'}`}
           >
             {stats.map((stat, index) => (
-              <motion.div
+              <div
                 key={stat.label}
-                initial={{ opacity: 0, y: 20 }}
-                animate={isInView ? { opacity: 1, y: 0 } : {}}
-                transition={{ delay: index * 0.1 + 0.3 }}
-                whileHover={{ y: -5, scale: 1.02 }}
-                className="relative group"
+                className={`relative group transition-transform hover:-translate-y-1 hover:scale-[1.02] ${isInView ? 'animate-fade-in-up' : 'opacity-0'}`}
+                style={{ animationDelay: `${index * 0.1 + 0.3}s` }}
               >
                 <div className="text-center p-6 md:p-7 rounded-2xl glass-card h-full">
                   <div className={`w-12 h-12 mx-auto mb-4 rounded-xl bg-surface flex items-center justify-center ${stat.color}`}>
@@ -111,14 +121,14 @@ export default function About() {
                   </div>
                   <div className="text-sm md:text-base text-muted font-medium">{stat.label}</div>
                 </div>
-              </motion.div>
+              </div>
             ))}
-          </motion.div>
+          </div>
 
           {/* Main Content - Improved Layout */}
           <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 mb-12 md:mb-16">
             {/* Left Column - Bio & Specializations */}
-            <motion.div variants={fadeInUp} className="space-y-6">
+            <div className={`space-y-6 ${isInView ? 'animate-fade-in-up animate-delay-3' : 'opacity-0'}`}>
               <div className="glass-card p-6 md:p-8">
                 <h3 className="text-xl md:text-2xl font-display font-bold text-foreground mb-5 flex items-center gap-3">
                   <span className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-accent-cyan flex items-center justify-center shadow-lg">
@@ -178,12 +188,11 @@ export default function About() {
                   </div>
                 </div>
               </div>
-            </motion.div>
+            </div>
 
             {/* Right Column - Highlights Grid */}
-            <motion.div 
-              variants={fadeInUp}
-              className="space-y-6"
+            <div 
+              className={`space-y-6 ${isInView ? 'animate-fade-in-up animate-delay-3' : 'opacity-0'}`}
             >
               <div className="glass-card p-6 md:p-8">
                 <h3 className="text-lg md:text-xl font-display font-bold text-foreground mb-5">
@@ -195,13 +204,10 @@ export default function About() {
                   aria-label="Key highlights"
                 >
                   {highlights.map((item, index) => (
-                    <motion.div
+                    <div
                       key={item.title}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={isInView ? { opacity: 1, y: 0 } : {}}
-                      transition={{ delay: index * 0.08 + 0.4 }}
-                      whileHover={{ y: -5, scale: 1.02 }}
-                      className="glass-card p-4 md:p-5 group cursor-default relative overflow-hidden"
+                      className={`glass-card p-4 md:p-5 group cursor-default relative overflow-hidden transition-transform hover:-translate-y-1 hover:scale-[1.02] ${isInView ? 'animate-fade-in-up' : 'opacity-0'}`}
+                      style={{ animationDelay: `${index * 0.08 + 0.4}s` }}
                       role="listitem"
                       tabIndex={0}
                     >
@@ -227,17 +233,16 @@ export default function About() {
                           </p>
                         </div>
                       </div>
-                    </motion.div>
+                    </div>
                   ))}
                 </div>
               </div>
-            </motion.div>
+            </div>
           </div>
 
           {/* Recognition Banner - Enhanced */}
-          <motion.div
-            variants={fadeInUp}
-            className="relative overflow-hidden mb-12 md:mb-16"
+          <div
+            className={`relative overflow-hidden mb-12 md:mb-16 ${isInView ? 'animate-fade-in-up animate-delay-4' : 'opacity-0'}`}
           >
             <div className="relative rounded-2xl p-6 md:p-10 bg-gradient-to-r from-accent-amber/10 via-primary-500/10 to-accent-emerald/10 border border-accent-amber/30 backdrop-blur-sm">
               {/* Decorative glow */}
@@ -268,8 +273,8 @@ export default function About() {
                 </div>
               </div>
             </div>
-          </motion.div>
-        </motion.div>
+          </div>
+        </div>
       </div>
     </section>
   )

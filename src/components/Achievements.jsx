@@ -1,7 +1,5 @@
-import { motion, useInView } from 'framer-motion'
-import { useRef, useState } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import { Trophy, Medal, Award, Star, ExternalLink, ChevronUp } from 'lucide-react'
-import { fadeInScale, staggerContainerSlow } from '../utils/animations'
 import ViewMoreButton from './ViewMoreButton'
 
 const achievements = [
@@ -54,24 +52,40 @@ const achievements = [
 
 export default function Achievements() {
   const ref = useRef(null)
-  const isInView = useInView(ref, { once: true, margin: '-100px' })
+  const [isInView, setIsInView] = useState(false)
   const [showAll, setShowAll] = useState(false)
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsInView(true)
+        }
+      },
+      { threshold: 0.1, rootMargin: '-100px' }
+    )
+
+    if (ref.current) {
+      observer.observe(ref.current)
+    }
+
+    return () => {
+      if (ref.current) {
+        observer.unobserve(ref.current)
+      }
+    }
+  }, [])
 
   return (
     <section 
       id="achievements" 
-      className="py-20 md:py-50 relative overflow-hidden"
+      className="py-12 md:py-50 relative overflow-hidden"
       aria-labelledby="achievements-heading"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <motion.div
-          ref={ref}
-          variants={staggerContainerSlow}
-          initial="hidden"
-          animate={isInView ? 'visible' : 'hidden'}
-        >
+        <div ref={ref}>
           {/* Section Header */}
-          <motion.div variants={fadeInScale} className="text-center mb-16">
+          <div className={`text-center mb-16 ${isInView ? 'animate-fade-in-scale' : 'opacity-0'}`}>
             <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-accent-amber/10 border border-accent-amber/20 text-accent-amber text-sm font-medium mb-4">
               <span className="w-1.5 h-1.5 rounded-full bg-accent-amber" aria-hidden="true" />
               Achievements
@@ -83,18 +97,16 @@ export default function Achievements() {
               Highlights of accomplishments and recognition received throughout 
               my academic and professional journey.
             </p>
-          </motion.div>
+          </div>
 
           {/* Highlighted Achievements - Featured Cards */}
-          <motion.div variants={fadeInScale} className="mb-8">
+          <div className={`mb-8 ${isInView ? 'animate-fade-in-scale animate-delay-2' : 'opacity-0'}`}>
             <div className="grid md:grid-cols-2 gap-6">
-              {achievements.filter(a => a.isHighlighted).map((achievement) => (
-                <motion.article
+              {achievements.filter(a => a.isHighlighted).map((achievement, index) => (
+                <article
                   key={achievement.title}
-                  variants={fadeInScale}
-                  whileHover={{ y: -8, scale: 1.02 }}
-                  whileFocus={{ y: -8, scale: 1.02 }}
-                  className={`relative overflow-hidden rounded-2xl p-6 sm:p-8 border-2 ${achievement.borderColor} ${achievement.bgColor} group cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500`}
+                  className={`relative overflow-hidden rounded-2xl p-6 sm:p-8 border-2 ${achievement.borderColor} ${achievement.bgColor} group cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 transition-transform hover:-translate-y-2 hover:scale-[1.02] focus-visible:-translate-y-2 focus-visible:scale-[1.02] ${isInView ? 'animate-fade-in-scale' : 'opacity-0'}`}
+                  style={{ animationDelay: `${index * 0.15 + 0.2}s` }}
                   tabIndex={0}
                   aria-labelledby={`achievement-${achievement.title.replace(/\s+/g, '-')}`}
                 >
@@ -146,21 +158,19 @@ export default function Achievements() {
                   <div className="absolute bottom-4 right-4 opacity-10" aria-hidden="true">
                     <achievement.icon className="w-20 sm:w-28 h-20 sm:h-28" />
                   </div>
-                </motion.article>
+                </article>
               ))}
             </div>
-          </motion.div>
+          </div>
 
           {/* Other Achievements */}
           {showAll && (
             <div className="grid md:grid-cols-2 gap-6">
-              {achievements.filter(a => !a.isHighlighted).map((achievement) => (
-              <motion.article
+              {achievements.filter(a => !a.isHighlighted).map((achievement, index) => (
+              <article
                 key={achievement.title}
-                variants={fadeInScale}
-                whileHover={{ y: -5, scale: 1.01 }}
-                whileFocus={{ y: -5, scale: 1.01 }}
-                className="relative glass-card p-6 group overflow-hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
+                className={`relative glass-card p-6 group overflow-hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 transition-transform hover:-translate-y-1 hover:scale-[1.01] focus-visible:-translate-y-1 focus-visible:scale-[1.01] ${isInView ? 'animate-fade-in-scale' : 'opacity-0'}`}
+                style={{ animationDelay: `${index * 0.1 + 0.3}s` }}
                 tabIndex={0}
                 aria-labelledby={`achievement-other-${achievement.title.replace(/\s+/g, '-')}`}
               >
@@ -205,15 +215,14 @@ export default function Achievements() {
                 <div className="absolute bottom-3 right-3 opacity-10" aria-hidden="true">
                   <achievement.icon className="w-16 h-16" />
                 </div>
-              </motion.article>
+              </article>
               ))}
             </div>
           )}
 
           {/* View More Button */}
-          <motion.div
-            variants={fadeInScale}
-            className="mt-12 text-center flex flex-col items-center gap-4"
+          <div
+            className={`mt-12 text-center flex flex-col items-center gap-4 ${isInView ? 'animate-fade-in-scale animate-delay-4' : 'opacity-0'}`}
           >
             {achievements.filter(a => !a.isHighlighted).length > 0 && (
               <ViewMoreButton
@@ -228,8 +237,8 @@ export default function Achievements() {
               text="Get In Touch"
               variant="primary"
             />
-          </motion.div>
-        </motion.div>
+          </div>
+        </div>
       </div>
     </section>
   )

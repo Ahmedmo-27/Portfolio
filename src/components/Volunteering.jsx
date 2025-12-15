@@ -1,7 +1,5 @@
-import { motion, useInView } from 'framer-motion'
-import { useRef, useState } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import { Users, Trophy, Star, Target, Heart, Rocket, Calendar, ExternalLink, ChevronUp } from 'lucide-react'
-import { fadeInUp, staggerContainer } from '../utils/animations'
 import ViewMoreButton from './ViewMoreButton'
 
 const volunteeringExperiences = [
@@ -80,29 +78,45 @@ const leadershipHighlights = [
 
 export default function Volunteering() {
   const ref = useRef(null)
-  const isInView = useInView(ref, { once: true, margin: '-100px' })
+  const [isInView, setIsInView] = useState(false)
   const [showAll, setShowAll] = useState(false)
   const initialDisplayCount = 2
   const displayedExperiences = showAll ? volunteeringExperiences : volunteeringExperiences.slice(0, initialDisplayCount)
 
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsInView(true)
+        }
+      },
+      { threshold: 0.1, rootMargin: '-100px' }
+    )
+
+    if (ref.current) {
+      observer.observe(ref.current)
+    }
+
+    return () => {
+      if (ref.current) {
+        observer.unobserve(ref.current)
+      }
+    }
+  }, [])
+
   return (
     <section 
       id="volunteering" 
-      className="py-20 md:py-50 relative overflow-hidden"
+      className="py-12 md:py-50 relative overflow-hidden"
       aria-labelledby="volunteering-heading"
     >
       {/* Background */}
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-surface/30 to-transparent" aria-hidden="true" />
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <motion.div
-          ref={ref}
-          variants={staggerContainer}
-          initial="hidden"
-          animate={isInView ? 'visible' : 'hidden'}
-        >
+        <div ref={ref}>
           {/* Section Header */}
-          <motion.div variants={fadeInUp} className="text-center mb-12 md:mb-16">
+          <div className={`text-center mb-12 md:mb-16 ${isInView ? 'animate-fade-in-up' : 'opacity-0'}`}>
             <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-accent-emerald/10 border border-accent-emerald/20 text-accent-emerald text-sm font-medium mb-4">
               <span className="w-1.5 h-1.5 rounded-full bg-accent-emerald" aria-hidden="true" />
               Leadership & Volunteering
@@ -114,21 +128,17 @@ export default function Volunteering() {
               Active participation in student organizations, hackathons, and leadership 
               roles that have shaped my collaborative and management skills.
             </p>
-          </motion.div>
+          </div>
 
           {/* Leadership Highlights Bar */}
-          <motion.div 
-            variants={fadeInUp}
-            className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-12 md:mb-16"
+          <div 
+            className={`grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-12 md:mb-16 ${isInView ? 'animate-fade-in-up animate-delay-2' : 'opacity-0'}`}
           >
             {leadershipHighlights.map((highlight, index) => (
-              <motion.div
+              <div
                 key={highlight.title}
-                initial={{ opacity: 0, y: 20 }}
-                animate={isInView ? { opacity: 1, y: 0 } : {}}
-                transition={{ delay: index * 0.1 + 0.2 }}
-                whileHover={{ y: -5, scale: 1.02 }}
-                className="glass-card p-4 text-center group"
+                className={`glass-card p-4 text-center group transition-transform hover:-translate-y-1 hover:scale-[1.02] ${isInView ? 'animate-fade-in-up' : 'opacity-0'}`}
+                style={{ animationDelay: `${index * 0.1 + 0.2}s` }}
                 tabIndex={0}
               >
                 <div className={`w-10 h-10 mx-auto mb-3 rounded-xl bg-surface flex items-center justify-center ${highlight.color}`}>
@@ -140,17 +150,17 @@ export default function Volunteering() {
                 <p className="text-muted/60 text-xs">
                   {highlight.context}
                 </p>
-              </motion.div>
+              </div>
             ))}
-          </motion.div>
+          </div>
 
           {/* Volunteering Experiences */}
           <div className="space-y-6">
             {displayedExperiences.map((exp, index) => (
-              <motion.article
+              <article
                 key={exp.organization}
-                variants={fadeInUp}
-                className={exp.isHighlighted ? 'relative' : ''}
+                className={`${exp.isHighlighted ? 'relative' : ''} ${isInView ? 'animate-fade-in-up' : 'opacity-0'}`}
+                style={{ animationDelay: `${index * 0.15 + 0.2}s` }}
                 role="article"
                 aria-labelledby={`vol-title-${index}`}
               >
@@ -164,10 +174,8 @@ export default function Volunteering() {
                   </div>
                 )}
 
-                <motion.div
-                  whileHover={{ y: -5 }}
-                  whileFocus={{ y: -5 }}
-                  className={`glass-card p-5 md:p-6 group ${exp.isHighlighted ? 'ring-1 ring-accent-emerald/20' : ''}`}
+                <div
+                  className={`glass-card p-5 md:p-6 group transition-transform hover:-translate-y-1 focus-visible:-translate-y-1 ${exp.isHighlighted ? 'ring-1 ring-accent-emerald/20' : ''}`}
                   tabIndex={0}
                 >
                   <div className="flex flex-col md:flex-row md:items-start gap-4 md:gap-6">
@@ -230,15 +238,14 @@ export default function Volunteering() {
                       )}
                     </div>
                   </div>
-                </motion.div>
-              </motion.article>
+                </div>
+              </article>
             ))}
           </div>
 
           {/* View More Button */}
-          <motion.div
-            variants={fadeInUp}
-            className="mt-12 text-center flex flex-col items-center gap-4"
+          <div
+            className={`mt-12 text-center flex flex-col items-center gap-4 ${isInView ? 'animate-fade-in-up animate-delay-4' : 'opacity-0'}`}
           >
             {volunteeringExperiences.length > initialDisplayCount && (
               <ViewMoreButton
@@ -254,12 +261,11 @@ export default function Volunteering() {
               variant="primary"
               icon={ExternalLink}
             />
-          </motion.div>
+          </div>
 
           {/* Call to Action */}
-          <motion.div
-            variants={fadeInUp}
-            className="mt-8 text-center"
+          <div
+            className={`mt-8 text-center ${isInView ? 'animate-fade-in-up animate-delay-5' : 'opacity-0'}`}
           >
             <p className="text-muted text-sm md:text-base mb-4">
               Interested in collaborating or learning more about my community involvement?
@@ -271,8 +277,8 @@ export default function Volunteering() {
               <Users className="w-5 h-5" aria-hidden="true" />
               Let's Connect
             </a>
-          </motion.div>
-        </motion.div>
+          </div>
+        </div>
       </div>
     </section>
   )

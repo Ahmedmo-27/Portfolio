@@ -1,7 +1,5 @@
-import { motion, useInView } from 'framer-motion'
-import { useRef, useState } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import { Mail, MapPin, Send, Github, Linkedin, CheckCircle, AlertCircle, Loader2 } from 'lucide-react'
-import { fadeInUp, staggerContainer } from '../utils/animations'
 
 const contactInfo = [
   {
@@ -33,7 +31,7 @@ const socialLinks = [
 
 export default function Contact() {
   const ref = useRef(null)
-  const isInView = useInView(ref, { once: true, margin: '-100px' })
+  const [isInView, setIsInView] = useState(false)
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -65,24 +63,40 @@ export default function Contact() {
     }))
   }
 
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsInView(true)
+        }
+      },
+      { threshold: 0.1, rootMargin: '-100px' }
+    )
+
+    if (ref.current) {
+      observer.observe(ref.current)
+    }
+
+    return () => {
+      if (ref.current) {
+        observer.unobserve(ref.current)
+      }
+    }
+  }, [])
+
   return (
     <section 
       id="contact" 
-      className="py-20 md:py-50 relative overflow-hidden"
+      className="py-12 md:py-50 relative overflow-hidden"
       aria-labelledby="contact-heading"
     >
       {/* Background */}
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-surface/30 to-transparent" aria-hidden="true" />
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <motion.div
-          ref={ref}
-          variants={staggerContainer}
-          initial="hidden"
-          animate={isInView ? 'visible' : 'hidden'}
-        >
+        <div ref={ref}>
           {/* Section Header */}
-          <motion.div variants={fadeInUp} className="text-center mb-12 md:mb-16">
+          <div className={`text-center mb-12 md:mb-16 ${isInView ? 'animate-fade-in-up' : 'opacity-0'}`}>
             <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary-500/10 border border-primary-500/20 text-primary-400 text-sm font-medium mb-4">
               <span className="w-1.5 h-1.5 rounded-full bg-primary-400" aria-hidden="true" />
               Contact
@@ -94,11 +108,11 @@ export default function Contact() {
               Have a project in mind or want to discuss opportunities? 
               I'd love to hear from you.
             </p>
-          </motion.div>
+          </div>
 
           <div className="grid lg:grid-cols-2 gap-8 lg:gap-12">
             {/* Contact Info */}
-            <motion.div variants={fadeInUp} className="space-y-6 md:space-y-8">
+            <div className={`space-y-6 md:space-y-8 ${isInView ? 'animate-fade-in-up animate-delay-2' : 'opacity-0'}`}>
               <div>
                 <h3 className="text-xl md:text-2xl font-display font-bold text-foreground mb-4 md:mb-6">
                   Get in Touch
@@ -159,7 +173,7 @@ export default function Contact() {
               {/* Availability Status */}
               <div className="glass-card p-4 md:p-6" role="status" aria-live="polite">
                 <div className="flex items-center gap-2 md:gap-3 mb-2 md:mb-3">
-                  <span className="w-2.5 md:w-3 h-2.5 md:h-3 rounded-full bg-accent-emerald animate-pulse" aria-hidden="true" />
+                  <span className="w-2.5 md:w-3 h-2.5 md:h-3 rounded-full bg-accent-emerald" aria-hidden="true" />
                   <span className="text-accent-emerald font-medium text-sm md:text-base">Available for Opportunities</span>
                 </div>
                 <p className="text-muted text-xs md:text-sm">
@@ -167,10 +181,10 @@ export default function Contact() {
                   or software engineering opportunities.
                 </p>
               </div>
-            </motion.div>
+            </div>
 
             {/* Contact Form */}
-            <motion.div variants={fadeInUp}>
+            <div className={isInView ? 'animate-fade-in-up animate-delay-2' : 'opacity-0'}>
               <form 
                 onSubmit={handleSubmit} 
                 className="glass-card p-5 sm:p-6 md:p-8 space-y-4 md:space-y-6"
@@ -291,9 +305,9 @@ export default function Contact() {
                   </a>
                 </p>
               </form>
-            </motion.div>
+            </div>
           </div>
-        </motion.div>
+        </div>
       </div>
     </section>
   )

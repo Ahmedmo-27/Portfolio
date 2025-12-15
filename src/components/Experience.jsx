@@ -1,7 +1,5 @@
-import { motion, useInView } from 'framer-motion'
-import { useRef, useState, useMemo } from 'react'
+import { useRef, useState, useMemo, useEffect } from 'react'
 import { Building2, Award, Code, Globe, Shield, Gem, Calendar, MapPin, Cpu, ChevronUp, ChevronRight } from 'lucide-react'
-import { fadeInLeft, staggerContainerSlow } from '../utils/animations'
 import ViewMoreButton from './ViewMoreButton'
 
 const experiences = [
@@ -69,8 +67,29 @@ const experiences = [
 
 export default function Experience() {
   const ref = useRef(null)
-  const isInView = useInView(ref, { once: true, margin: '-100px' })
+  const [isInView, setIsInView] = useState(false)
   const [showAll, setShowAll] = useState(false)
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsInView(true)
+        }
+      },
+      { threshold: 0.1, rootMargin: '-100px' }
+    )
+
+    if (ref.current) {
+      observer.observe(ref.current)
+    }
+
+    return () => {
+      if (ref.current) {
+        observer.unobserve(ref.current)
+      }
+    }
+  }, [])
   const initialDisplayCount = 4
   const displayedExperiences = useMemo(() => {
     return showAll ? experiences : experiences.slice(0, initialDisplayCount)
@@ -79,18 +98,13 @@ export default function Experience() {
   return (
     <section 
       id="experience" 
-      className="py-20 md:py-50 relative overflow-hidden"
+      className="py-12 md:py-50 relative overflow-hidden"
       aria-labelledby="experience-heading"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <motion.div
-          ref={ref}
-          variants={staggerContainerSlow}
-          initial="hidden"
-          animate={isInView ? 'visible' : 'hidden'}
-        >
+        <div ref={ref}>
           {/* Section Header */}
-          <motion.div variants={fadeInLeft} className="text-center mb-12 md:mb-16">
+          <div className={`text-center mb-12 md:mb-16 ${isInView ? 'animate-fade-in-left' : 'opacity-0'}`}>
             <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-accent-emerald/10 border border-accent-emerald/20 text-accent-emerald text-sm font-medium mb-4">
               <span className="w-1.5 h-1.5 rounded-full bg-accent-emerald" aria-hidden="true" />
               Experience
@@ -102,7 +116,7 @@ export default function Experience() {
               A track record of impactful contributions across internships, 
               freelance projects, and academic achievements.
             </p>
-          </motion.div>
+          </div>
 
           {/* Timeline */}
           <div className="relative" role="list" aria-label="Work experience timeline">
@@ -115,12 +129,12 @@ export default function Experience() {
             {/* Experience Items */}
             <div className="space-y-8 md:space-y-12">
               {displayedExperiences.map((exp, index) => (
-                <motion.article
+                <article
                   key={exp.company}
-                  variants={fadeInLeft}
                   className={`relative flex flex-col md:flex-row gap-6 md:gap-8 ${
                     index % 2 === 0 ? 'md:flex-row-reverse' : ''
-                  }`}
+                  } ${isInView ? 'animate-fade-in-left' : 'opacity-0'}`}
+                  style={{ animationDelay: `${index * 0.15 + 0.2}s` }}
                   role="listitem"
                   aria-labelledby={`exp-title-${index}`}
                 >
@@ -132,10 +146,8 @@ export default function Experience() {
 
                   {/* Content Card */}
                   <div className={`md:w-1/2 ${index % 2 === 0 ? 'md:pr-8 lg:pr-12' : 'md:pl-8 lg:pl-12'} pl-10 md:pl-0`}>
-                    <motion.div
-                      whileHover={{ y: -5 }}
-                      whileFocus={{ y: -5 }}
-                      className="glass-card p-4 sm:p-6 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
+                    <div
+                      className="glass-card p-4 sm:p-6 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 transition-transform hover:-translate-y-1 focus-visible:-translate-y-1"
                       tabIndex={0}
                     >
                       {/* Header */}
@@ -189,20 +201,19 @@ export default function Experience() {
                           </span>
                         ))}
                       </div>
-                    </motion.div>
+                    </div>
                   </div>
 
                   {/* Spacer for opposite side */}
                   <div className="hidden md:block md:w-1/2" aria-hidden="true" />
-                </motion.article>
+                </article>
               ))}
             </div>
           </div>
 
           {/* View More Button */}
-          <motion.div
-            variants={fadeInLeft}
-            className="mt-12 text-center"
+          <div
+            className={`mt-12 text-center ${isInView ? 'animate-fade-in-left animate-delay-4' : 'opacity-0'}`}
           >
             {experiences.length > initialDisplayCount && (
               <ViewMoreButton
@@ -212,8 +223,8 @@ export default function Experience() {
                 icon={showAll ? ChevronUp : ChevronRight}
               />
             )}
-          </motion.div>
-        </motion.div>
+          </div>
+        </div>
       </div>
     </section>
   )

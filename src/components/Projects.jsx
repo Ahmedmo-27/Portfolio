@@ -1,7 +1,5 @@
-import { motion, useInView } from 'framer-motion'
-import { useRef, useState, useMemo } from 'react'
+import { useRef, useState, useMemo, useEffect } from 'react'
 import { ExternalLink, Github, ChevronRight, Gem, Shield, Smartphone, Globe, Terminal, Image, Video, FileText, Play, Download, ChevronUp } from 'lucide-react'
-import { fadeInUp, staggerContainerSlow } from '../utils/animations'
 import CircuitBoard from './CircuitBoard'
 import ViewMoreButton from './ViewMoreButton'
 
@@ -159,8 +157,29 @@ const projects = [
 
 export default function Projects() {
   const ref = useRef(null)
-  const isInView = useInView(ref, { once: true, margin: '-100px' })
+  const [isInView, setIsInView] = useState(false)
   const [activeProject, setActiveProject] = useState(null)
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsInView(true)
+        }
+      },
+      { threshold: 0.1, rootMargin: '-100px' }
+    )
+
+    if (ref.current) {
+      observer.observe(ref.current)
+    }
+
+    return () => {
+      if (ref.current) {
+        observer.unobserve(ref.current)
+      }
+    }
+  }, [])
   const [showAll, setShowAll] = useState(false)
   const initialDisplayCount = 2
   const displayedProjects = useMemo(() => {
@@ -170,7 +189,7 @@ export default function Projects() {
   return (
     <section 
       id="projects" 
-      className="py-20 md:py-50 relative overflow-hidden"
+      className="py-12 md:py-50 relative overflow-hidden"
       aria-labelledby="projects-heading"
     >
       {/* Background */}
@@ -179,14 +198,9 @@ export default function Projects() {
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-surface/30 to-transparent" aria-hidden="true" />
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <motion.div
-          ref={ref}
-          variants={staggerContainerSlow}
-          initial="hidden"
-          animate={isInView ? 'visible' : 'hidden'}
-        >
+        <div ref={ref}>
           {/* Section Header */}
-          <motion.div variants={fadeInUp} className="text-center mb-16">
+          <div className={`text-center mb-16 ${isInView ? 'animate-fade-in-up' : 'opacity-0'}`}>
             <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-accent-violet/10 border border-accent-violet/20 text-accent-violet text-sm font-medium mb-4">
               <span className="w-1.5 h-1.5 rounded-full bg-accent-violet" aria-hidden="true" />
               Projects
@@ -198,17 +212,17 @@ export default function Projects() {
               A showcase of production-ready applications, award-winning projects, 
               and innovative solutions across various domains.
             </p>
-          </motion.div>
+          </div>
 
           {/* Projects Grid */}
           <div className="space-y-8" role="list" aria-label="Project list">
             {displayedProjects.map((project, index) => (
-              <motion.article
+              <article
                 key={project.id}
-                variants={fadeInUp}
+                className={`${project.isHighlighted ? 'relative' : ''} ${isInView ? 'animate-fade-in-up' : 'opacity-0'}`}
+                style={{ animationDelay: `${index * 0.15 + 0.2}s` }}
                 role="listitem"
                 aria-labelledby={`project-title-${project.id}`}
-                className={project.isHighlighted ? 'relative' : ''}
               >
                 {/* Highlighted badge for achievements */}
                 {project.isHighlighted && (
@@ -219,10 +233,8 @@ export default function Projects() {
                   </div>
                 )}
 
-                <motion.div
-                  whileHover={{ y: -5 }}
-                  whileFocus={{ y: -5 }}
-                  className={`glass-card overflow-hidden group ${project.isHighlighted ? 'ring-2 ring-accent-amber/30' : ''}`}
+                <div
+                  className={`glass-card overflow-hidden group transition-transform hover:-translate-y-1 focus-visible:-translate-y-1 ${project.isHighlighted ? 'ring-2 ring-accent-amber/30' : ''}`}
                   tabIndex={0}
                   role="article"
                 >
@@ -338,12 +350,9 @@ export default function Projects() {
                           Key Features
                         </button>
                         {activeProject === project.id && (
-                          <motion.ul
+                          <ul
                             id={`features-${project.id}`}
-                            initial={{ opacity: 0, height: 0 }}
-                            animate={{ opacity: 1, height: 'auto' }}
-                            exit={{ opacity: 0, height: 0 }}
-                            className="mt-3 space-y-2 pl-6"
+                            className="mt-3 space-y-2 pl-6 animate-fade-in-up"
                             role="list"
                           >
                             {project.features.map((feature, i) => (
@@ -352,7 +361,7 @@ export default function Projects() {
                                 {feature}
                               </li>
                             ))}
-                          </motion.ul>
+                          </ul>
                         )}
                       </div>
 
@@ -382,15 +391,14 @@ export default function Projects() {
                       </div>
                     </div>
                   </div>
-                </motion.div>
-              </motion.article>
+                </div>
+              </article>
             ))}
           </div>
 
           {/* View More Button */}
-          <motion.div
-            variants={fadeInUp}
-            className="mt-12 text-center flex flex-col items-center gap-4"
+          <div
+            className={`mt-12 text-center flex flex-col items-center gap-4 ${isInView ? 'animate-fade-in-up animate-delay-4' : 'opacity-0'}`}
           >
             {projects.length > initialDisplayCount && (
               <ViewMoreButton
@@ -406,8 +414,8 @@ export default function Projects() {
               variant="primary"
               icon={Github}
             />
-          </motion.div>
-        </motion.div>
+          </div>
+        </div>
       </div>
     </section>
   )
