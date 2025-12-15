@@ -1,0 +1,72 @@
+/* Education Component Styles */
+
+/* Background decorative elements */
+.education-bg-blur-1 {
+  position: absolute;
+  top: 15%;
+  left: -6rem;
+  width: 14rem;
+  height: 14rem;
+  background-color: rgb(139 92 246 / 0.10);
+  border-radius: 9999px;
+  filter: blur(3.5rem);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.dark .education-bg-blur-1 {
+  background-color: rgb(139 92 246 / 0.10);
+}
+
+.light .education-bg-blur-1 {
+  background-color: rgb(124 58 237 / 0.10);
+}
+
+.education-bg-blur-2 {
+  position: absolute;
+  bottom: 10%;
+  right: -6rem;
+  width: 14rem;
+  height: 14rem;
+  background-color: rgb(59 130 246 / 0.08);
+  border-radius: 9999px;
+  filter: blur(3.5rem);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.dark .education-bg-blur-2 {
+  background-color: rgb(59 130 246 / 0.08);
+}
+
+.light .education-bg-blur-2 {
+  background-color: rgb(37 99 235 / 0.08);
+}
+
+/* Animation delay utilities for certification cards */
+.education-cert-item {
+  animation-delay: var(--animation-delay, 0.3s);
+}
+
+/* Fine-tuning for the education layout to feel balanced with Projects section */
+.education-layout {
+  position: relative;
+  z-index: 1;
+}
+
+.education-layout .glass-card {
+  height: 100%;
+}
+
+/* Make the certifications grid scrollable on very small heights instead of overflowing the page */
+@media (max-width: 768px) {
+  .education-layout {
+    gap: 2rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .education-layout {
+    align-items: flex-start;
+  }
+}
