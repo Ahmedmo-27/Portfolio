@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion'
+import './SkeletonLoader.css'
 
 export default function SkeletonLoader({ className = '', variant = 'image' }) {
   const baseClasses = "animate-pulse bg-gradient-to-r from-surface via-surface-hover to-surface bg-[length:200%_100%]"
@@ -15,16 +16,29 @@ export default function SkeletonLoader({ className = '', variant = 'image' }) {
       >
         {/* Section header skeleton */}
         <div className="text-center space-y-4">
-          <div className={`${baseClasses} h-6 w-32 rounded-full mx-auto`} style={{ animation: 'shimmer 2s ease-in-out infinite' }} />
-          <div className={`${baseClasses} h-10 w-64 rounded-lg mx-auto`} style={{ animation: 'shimmer 2s ease-in-out infinite' }} />
-          <div className={`${baseClasses} h-4 w-96 max-w-full rounded-md mx-auto`} style={{ animation: 'shimmer 2s ease-in-out infinite' }} />
+          <div className={`${baseClasses} h-6 w-32 rounded-full mx-auto skeleton-shimmer`} />
+          <div className={`${baseClasses} h-10 w-64 rounded-lg mx-auto skeleton-shimmer`} />
+          <div className={`${baseClasses} h-4 w-96 max-w-full rounded-md mx-auto skeleton-shimmer`} />
         </div>
         
         {/* Content grid skeleton */}
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {[1, 2, 3, 4, 5, 6].map((i) => (
-            <div key={i} className={`${baseClasses} h-48 rounded-2xl`} style={{ animation: 'shimmer 2s ease-in-out infinite', animationDelay: `${i * 0.1}s` }} />
-          ))}
+          {[1, 2, 3, 4, 5, 6].map((i) => {
+            const delayClasses = [
+              'skeleton-shimmer-delay-1',
+              'skeleton-shimmer-delay-2',
+              'skeleton-shimmer-delay-3',
+              'skeleton-shimmer-delay-4',
+              'skeleton-shimmer-delay-5',
+              'skeleton-shimmer-delay-6'
+            ]
+            return (
+              <div 
+                key={i} 
+                className={`${baseClasses} h-48 rounded-2xl ${delayClasses[i - 1]}`}
+              />
+            )
+          })}
         </div>
         <span className="sr-only">Loading section...</span>
       </motion.div>
@@ -42,10 +56,7 @@ export default function SkeletonLoader({ className = '', variant = 'image' }) {
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className={`${baseClasses} ${variants[variant]} ${className}`}
-      style={{
-        animation: 'shimmer 2s ease-in-out infinite',
-      }}
+      className={`${baseClasses} ${variants[variant]} ${className} skeleton-shimmer`}
       role="status"
       aria-label="Loading..."
     >

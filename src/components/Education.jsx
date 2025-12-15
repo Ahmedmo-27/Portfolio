@@ -1,8 +1,7 @@
 import { motion, useInView } from 'framer-motion'
-import { useRef, useState } from 'react'
+import { useRef } from 'react'
 import { GraduationCap, Calendar, Award, BookOpen, ExternalLink, BadgeCheck, ChevronUp } from 'lucide-react'
 import { fadeInUp, staggerContainer } from '../utils/animations'
-import ViewMoreButton from './ViewMoreButton'
 
 const education = {
   university: 'Misr International University (MIU)',
@@ -72,9 +71,6 @@ const coursework = [
 export default function Education() {
   const ref = useRef(null)
   const isInView = useInView(ref, { once: true, margin: '-100px' })
-  const [showAll, setShowAll] = useState(false)
-  const initialDisplayCount = 2
-  const displayedCertifications = showAll ? certifications : certifications.slice(0, initialDisplayCount)
 
   return (
     <section 
@@ -153,7 +149,7 @@ export default function Education() {
                   <ul className="space-y-2" role="list">
                     {education.highlights.map((highlight, index) => (
                       <li 
-                        key={index} 
+                        key={`education-highlight-${index}`} 
                         className="flex items-start gap-2 text-muted text-sm"
                       >
                         <span className="w-1.5 h-1.5 rounded-full bg-primary-500 mt-1.5 flex-shrink-0" aria-hidden="true" />
@@ -191,7 +187,7 @@ export default function Education() {
                   Professional Certifications
                 </h3>
                 
-                {displayedCertifications.map((cert, index) => (
+                {certifications.map((cert, index) => (
                   <motion.div
                     key={cert.title}
                     initial={{ opacity: 0, y: 20 }}
@@ -255,26 +251,6 @@ export default function Education() {
               </div>
             </motion.div>
           </div>
-
-          {/* View More Button */}
-          <motion.div
-            variants={fadeInUp}
-            className="mt-12 text-center flex flex-col items-center gap-4"
-          >
-            {certifications.length > initialDisplayCount && (
-              <ViewMoreButton
-                onClick={() => setShowAll(!showAll)}
-                text={showAll ? 'Show Less Certifications' : 'View More Certifications'}
-                variant="outline"
-                icon={showAll ? ChevronUp : undefined}
-              />
-            )}
-            <ViewMoreButton
-              href="#achievements"
-              text="View My Achievements"
-              variant="outline"
-            />
-          </motion.div>
         </motion.div>
       </div>
     </section>

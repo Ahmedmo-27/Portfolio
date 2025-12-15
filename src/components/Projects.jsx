@@ -1,5 +1,5 @@
 import { motion, useInView } from 'framer-motion'
-import { useRef, useState } from 'react'
+import { useRef, useState, useMemo } from 'react'
 import { ExternalLink, Github, ChevronRight, Gem, Shield, Smartphone, Globe, Terminal, Image, Video, FileText, Play, Download, ChevronUp } from 'lucide-react'
 import { fadeInUp, staggerContainerSlow } from '../utils/animations'
 import CircuitBoard from './CircuitBoard'
@@ -163,7 +163,9 @@ export default function Projects() {
   const [activeProject, setActiveProject] = useState(null)
   const [showAll, setShowAll] = useState(false)
   const initialDisplayCount = 2
-  const displayedProjects = showAll ? projects : projects.slice(0, initialDisplayCount)
+  const displayedProjects = useMemo(() => {
+    return showAll ? projects : projects.slice(0, initialDisplayCount)
+  }, [showAll])
 
   return (
     <section 
@@ -345,7 +347,7 @@ export default function Projects() {
                             role="list"
                           >
                             {project.features.map((feature, i) => (
-                              <li key={i} className="flex items-start gap-2 text-muted text-sm">
+                              <li key={`${project.id}-feature-${i}`} className="flex items-start gap-2 text-muted text-sm">
                                 <span className="w-1.5 h-1.5 rounded-full bg-accent-cyan mt-1.5 flex-shrink-0" aria-hidden="true" />
                                 {feature}
                               </li>

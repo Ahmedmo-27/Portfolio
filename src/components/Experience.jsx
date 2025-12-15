@@ -1,5 +1,5 @@
 import { motion, useInView } from 'framer-motion'
-import { useRef, useState } from 'react'
+import { useRef, useState, useMemo } from 'react'
 import { Building2, Award, Code, Globe, Shield, Gem, Calendar, MapPin, Cpu, ChevronUp, ChevronRight } from 'lucide-react'
 import { fadeInLeft, staggerContainerSlow } from '../utils/animations'
 import ViewMoreButton from './ViewMoreButton'
@@ -72,7 +72,9 @@ export default function Experience() {
   const isInView = useInView(ref, { once: true, margin: '-100px' })
   const [showAll, setShowAll] = useState(false)
   const initialDisplayCount = 4
-  const displayedExperiences = showAll ? experiences : experiences.slice(0, initialDisplayCount)
+  const displayedExperiences = useMemo(() => {
+    return showAll ? experiences : experiences.slice(0, initialDisplayCount)
+  }, [showAll])
 
   return (
     <section 
@@ -172,7 +174,7 @@ export default function Experience() {
                       {/* Highlights */}
                       <ul className="space-y-1.5 md:space-y-2 mb-3 md:mb-4" role="list">
                         {exp.highlights.map((highlight, i) => (
-                          <li key={i} className="flex items-start gap-2 text-muted text-xs sm:text-sm">
+                          <li key={`${exp.company}-highlight-${i}`} className="flex items-start gap-2 text-muted text-xs sm:text-sm">
                             <span className="w-1.5 h-1.5 rounded-full bg-primary-500 mt-1.5 md:mt-2 flex-shrink-0" aria-hidden="true" />
                             {highlight}
                           </li>

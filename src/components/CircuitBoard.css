@@ -1,0 +1,6 @@
+/* CircuitBoard Component Styles */
+
+.circuit-board svg {
+  mix-blend-mode: screen;
+}
+

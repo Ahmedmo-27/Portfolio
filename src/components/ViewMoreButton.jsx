@@ -1,14 +1,16 @@
+import React from 'react'
 import { motion } from 'framer-motion'
 import { ChevronRight, ExternalLink, ArrowRight } from 'lucide-react'
 
-export default function ViewMoreButton({ 
-  onClick, 
-  href, 
-  text = 'View More', 
-  variant = 'default',
-  className = '',
-  icon: CustomIcon = ChevronRight 
-}) {
+const ViewMoreButton = (props) => {
+  const {
+    onClick,
+    href,
+    text = 'View More',
+    variant = 'default',
+    className = '',
+    icon: CustomIcon = ChevronRight
+  } = props
   const baseClasses = "inline-flex items-center gap-2 px-4 py-2 rounded-lg font-medium text-sm transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
   
   const variants = {
@@ -55,4 +57,6 @@ export default function ViewMoreButton({
     </motion.button>
   )
 }
+
+export default React.memo(ViewMoreButton)
 

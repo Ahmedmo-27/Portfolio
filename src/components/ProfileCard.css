@@ -9,37 +9,15 @@
   --rotate-y: 0deg;
   --background-x: 50%;
   --background-y: 50%;
-  --grain: url('/Grain.jpg');
   --icon: url('/Geometric AM logo design.png');
-  --behind-gradient: none;
   --behind-glow-color: rgba(125, 190, 255, 0.67);
   --behind-glow-size: 25%;
   --inner-gradient: none;
-  --sunpillar-1: hsl(2, 100%, 73%);
-  --sunpillar-2: hsl(53, 100%, 69%);
-  --sunpillar-3: hsl(93, 100%, 69%);
-  --sunpillar-4: hsl(176, 100%, 76%);
-  --sunpillar-5: hsl(228, 100%, 74%);
-  --sunpillar-6: hsl(283, 100%, 73%);
-  --sunpillar-clr-1: var(--sunpillar-1);
-  --sunpillar-clr-2: var(--sunpillar-2);
-  --sunpillar-clr-3: var(--sunpillar-3);
-  --sunpillar-clr-4: var(--sunpillar-4);
-  --sunpillar-clr-5: var(--sunpillar-5);
-  --sunpillar-clr-6: var(--sunpillar-6);
   --card-radius: 30px;
   
   /* Theme-aware colors - Dark mode (default) */
   --pc-card-bg: rgba(15, 23, 42, 0.95);
   --pc-card-shadow: rgba(0, 0, 0, 0.8);
-  --pc-text-primary: rgba(241, 245, 249, 0.95);
-  --pc-text-secondary: rgba(241, 245, 249, 0.7);
-  --pc-text-muted: rgba(148, 163, 184, 0.8);
-  --pc-user-info-bg: rgba(30, 41, 59, 0.6);
-  --pc-user-info-border: rgba(51, 65, 85, 0.4);
-  --pc-contact-btn-bg: rgba(30, 41, 59, 0.5);
-  --pc-contact-btn-border: rgba(51, 65, 85, 0.5);
-  --pc-contact-btn-text: rgba(241, 245, 249, 0.9);
   --pc-gradient-start: #ffffff;
   --pc-gradient-end: #6f6fbe;
   --pc-gradient-end-alt: #4a4ac0;
@@ -49,14 +27,6 @@
 .light {
   --pc-card-bg: rgba(248, 250, 252, 0.29);
   --pc-card-shadow: rgba(0, 0, 0, 0.15);
-  --pc-text-primary: rgba(15, 23, 42, 0.95);
-  --pc-text-secondary: rgba(15, 23, 42, 0.7);
-  --pc-text-muted: rgba(100, 116, 139, 0.8);
-  --pc-user-info-bg: rgba(241, 245, 249, 0.7);
-  --pc-user-info-border: rgba(203, 213, 225, 0.5);
-  --pc-contact-btn-bg: rgba(241, 245, 249, 0.8);
-  --pc-contact-btn-border: rgba(203, 213, 225, 0.6);
-  --pc-contact-btn-text: rgba(15, 23, 42, 0.9);
   --pc-gradient-start: #0f172a;
   --pc-gradient-end: #0ea5e9;
   --pc-gradient-end-alt: #0284c7;
@@ -68,26 +38,124 @@
   transform: translate3d(0, 0, 0.1px);
   position: relative;
   touch-action: none;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Loading skeleton state */
+.pc-card-loading {
+  perspective: none;
+}
+
+.pc-card-skeleton {
+  height: 80svh;
+  max-height: 540px;
+  aspect-ratio: 0.718;
+  border-radius: var(--card-radius);
+  background: var(--pc-card-bg);
+  border: 1px solid var(--color-border);
+  position: relative;
+  overflow: hidden;
+}
+
+.pc-card-skeleton::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.05),
+    transparent
+  );
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@media (max-width: 768px) {
+  .pc-card-skeleton {
+    height: 70svh;
+    max-height: 450px;
+    min-height: 400px;
+  }
+}
+
+@media (max-width: 480px) {
+  .pc-card-skeleton {
+    height: 65svh;
+    max-height: 420px;
+    min-height: 350px;
+  }
+}
+
+@media (max-width: 320px) {
+  .pc-card-skeleton {
+    height: 60svh;
+    max-height: 360px;
+    min-height: 320px;
+  }
+}
+
+/* Touch device optimizations */
+.pc-touch-device {
+  perspective: 400px;
+}
+
+.pc-touch-device .pc-card-shell {
+  transform-style: preserve-3d;
+}
+
+/* Ensure card is centered on mobile */
+@media (max-width: 1023px) {
+  .pc-card-wrapper {
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .pc-card-shell {
+    width: 100%;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .pc-card {
+    margin: 0 auto;
+    max-width: 100%;
+  }
 }
 
 .pc-behind {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  background: radial-gradient(
-    circle at var(--pointer-x) var(--pointer-y),
-    var(--behind-glow-color) 0%,
-    transparent var(--behind-glow-size)
-  );
-  filter: blur(50px) saturate(1.1);
-  opacity: calc(0.8 * var(--card-opacity));
-  transition: opacity 200ms ease;
+  display: none;
 }
 
 .light .pc-behind {
   filter: blur(35px) saturate(1.0) brightness(0.7);
   opacity: calc(0.5 * var(--card-opacity));
+}
+
+/* Reduce blur on mobile for better performance */
+@media (max-width: 768px) {
+  .pc-behind {
+    filter: blur(30px) saturate(1.0);
+    opacity: calc(0.6 * var(--card-opacity));
+  }
+
+  .light .pc-behind {
+    filter: blur(25px) saturate(0.9) brightness(0.7);
+    opacity: calc(0.4 * var(--card-opacity));
+  }
 }
 
 .pc-card-wrapper:hover,
@@ -116,6 +184,13 @@
   backface-visibility: hidden;
   overflow: hidden;
   border: 1px solid var(--color-border);
+  will-change: transform;
+}
+
+/* Optimize for touch devices */
+.pc-touch-device .pc-card {
+  will-change: auto;
+  transform: translateZ(0);
 }
 
 .pc-card:hover,
@@ -162,159 +237,47 @@
   transform: none;
 }
 
-.pc-shine {
-  --space: 5%;
-  --angle: -45deg;
-  mask-image: var(--icon);
-  -webkit-mask-image: var(--icon);
-  mask-mode: alpha;
-  -webkit-mask-mode: alpha;
-  mask-repeat: repeat;
-  -webkit-mask-repeat: repeat;
-  mask-size: 120px 120px;
-  -webkit-mask-size: 95px 62px;
-  mask-position: 0 0;
-  -webkit-mask-position: 0 0;
-  transform: translate3d(0, 0, 1px) rotate(-45deg);
-  transform-origin: center center;
-  overflow: visible;
-  z-index: 10;
-  inset: 0;
-  position: absolute;
-  background-image:
-    repeating-linear-gradient(
-      0deg,
-      var(--sunpillar-clr-1) calc(var(--space) * 1),
-      var(--sunpillar-clr-2) calc(var(--space) * 2),
-      var(--sunpillar-clr-3) calc(var(--space) * 3),
-      var(--sunpillar-clr-4) calc(var(--space) * 4),
-      var(--sunpillar-clr-5) calc(var(--space) * 5),
-      var(--sunpillar-clr-6) calc(var(--space) * 6),
-      var(--sunpillar-clr-1) calc(var(--space) * 7)
-    ),
-    repeating-linear-gradient(
-      var(--angle),
-      var(--color-background) 0%,
-      hsl(180, 10%, 60%) 3.8%,
-      hsl(180, 29%, 66%) 4.5%,
-      hsl(180, 10%, 60%) 5.2%,
-      var(--color-background) 10%,
-      var(--color-background) 12%
-    );
-  background-position:
-    0 var(--background-y),
-    var(--background-x) var(--background-y);
-  background-blend-mode: color, hard-light;
-  background-size:
-    500% 500%,
-    300% 300%;
-  background-repeat: repeat;
-  transition: filter 0.4s ease, opacity 0.4s ease, transform 0.4s ease, inset 0.4s ease;
-  filter: brightness(1) contrast(1.3) saturate(0.5);
-  animation: holo-bg 18s linear infinite;
-  animation-play-state: paused;
-  mix-blend-mode: screen;
-  opacity: 0;
-}
-
-.light .pc-shine {
-  filter: brightness(0.9) contrast(1.2) saturate(0.4);
-}
-
-.pc-shine::before,
-.pc-shine::after {
+.pc-inside::after {
   content: '';
+  position: absolute;
+  bottom: 20px;
+  right: 5px;
+  width: 120px;
+  height: 70px;
+  background-image: var(--icon);
+  background-size: contain;
+  background-repeat: no-repeat;
   background-position: center;
-  background-size: cover;
-  grid-area: 1/1;
-  opacity: 0;
-  transition: opacity 0.8s ease;
+  opacity: 0.6;
+  transition: opacity 0.3s ease;
+  z-index: 6;
+  pointer-events: none;
 }
 
-.pc-card:hover .pc-shine,
-.pc-card.active .pc-shine {
-  filter: brightness(1.1) contrast(1.6) saturate(0.7);
-  animation-play-state: running;
-  opacity: 0.5;
-  transform: translate3d(0, 0, 1px) rotate(-45deg) scale(1.2);
-  inset: -10%;
+.pc-card:hover .pc-inside::after,
+.pc-card.active .pc-inside::after {
+  opacity: 0.9;
 }
-
-.pc-card:hover .pc-shine::before,
-.pc-card.active .pc-shine::before,
-.pc-card:hover .pc-shine::after,
-.pc-card.active .pc-shine::after {
-  opacity: 1;
-}
-
-.pc-shine::before {
-  background-image:
-    linear-gradient(
-      45deg,
-      var(--sunpillar-4),
-      var(--sunpillar-5),
-      var(--sunpillar-6),
-      var(--sunpillar-1),
-      var(--sunpillar-2),
-      var(--sunpillar-3)
-    ),
-    radial-gradient(circle at var(--pointer-x) var(--pointer-y), hsl(0, 0%, 70%) 0%, hsla(0, 0%, 30%, 0.2) 90%),
-    var(--grain);
-  background-size:
-    250% 250%,
-    100% 100%,
-    200px 200px;
-  background-position:
-    var(--pointer-x) var(--pointer-y),
-    center,
-    calc(var(--pointer-x) * 0.02) calc(var(--pointer-y) * 0.02);
-  background-blend-mode: color-dodge, normal, overlay;
-  background-repeat: no-repeat, no-repeat, repeat;
-  filter: brightness(calc(2 - var(--pointer-from-center))) contrast(calc(var(--pointer-from-center) + 2))
-    saturate(calc(0.5 + var(--pointer-from-center)));
-  mix-blend-mode: luminosity;
-}
-
-.light .pc-shine::before {
-  mix-blend-mode: multiply;
-  opacity: 0.7;
-  background-blend-mode: color-dodge, normal, soft-light;
-}
-
-.pc-shine::after {
-  background-position:
-    0 var(--background-y),
-    calc(var(--background-x) * 0.4) calc(var(--background-y) * 0.5),
-    center;
-  background-size:
-    200% 300%,
-    700% 700%,
-    100% 100%;
-  mix-blend-mode: difference;
-  filter: brightness(0.8) contrast(1.5);
-}
-
 
 .pc-glare {
   transform: translate3d(0, 0, 1.1px);
   overflow: hidden;
   background-image: radial-gradient(
     farthest-corner circle at var(--pointer-x) var(--pointer-y),
-    hsl(248, 25%, 80%) 12%,
+    hsl(248, 25%, 80%) 10%,
     hsla(207, 40%, 30%, 0.8) 90%
   );
   mix-blend-mode: overlay;
-  filter: brightness(0.8) contrast(1.2);
+  filter: brightness(0.8);
   z-index: 4;
-  transition: filter 0.3s ease;
 }
 
 .light .pc-glare {
-  filter: brightness(1.1) contrast(1.1);
+  filter: brightness(1.05);
   background-image: radial-gradient(
     farthest-corner circle at var(--pointer-x) var(--pointer-y),
-    hsl(248, 25%, 90%) 12%,
-    hsla(207, 40%, 50%, 0.6) 90%
+    hsla(249, 25%, 90%, 0.84) 5%,
+    hsla(207, 40%, 50%, 0.634) 90%
   );
 }
 
@@ -343,8 +306,13 @@
   bottom: -1px;
   backface-visibility: hidden;
   will-change: transform;
-  transition: transform 120ms ease-out;
+  transition: transform 120ms ease-out, opacity 0.3s ease;
 }
+
+.pc-avatar-content .avatar.avatar-error {
+  opacity: 0.3;
+}
+
 
 .pc-avatar-content::before {
   content: '';
@@ -353,97 +321,6 @@
   z-index: 1;
   backdrop-filter: none;
   pointer-events: none;
-}
-
-.pc-user-info {
-  position: absolute;
-  --ui-inset: 20px;
-  --ui-radius-bias: 6px;
-  bottom: var(--ui-inset);
-  left: var(--ui-inset);
-  right: var(--ui-inset);
-  z-index: 2;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: var(--pc-user-info-bg);
-  backdrop-filter: blur(30px);
-  border: 1px solid var(--pc-user-info-border);
-  border-radius: calc(max(0px, var(--card-radius) - var(--ui-inset) + var(--ui-radius-bias)));
-  padding: 12px 14px;
-  pointer-events: auto;
-  transition: background 0.3s ease, border-color 0.3s ease;
-}
-
-.pc-user-details {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.pc-mini-avatar {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  overflow: hidden;
-  border: 1px solid var(--pc-user-info-border);
-  flex-shrink: 0;
-  transition: border-color 0.3s ease;
-}
-
-.pc-mini-avatar img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 50%;
-}
-
-.pc-user-text {
-  display: flex;
-  align-items: flex-start;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.pc-handle {
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--pc-text-primary);
-  line-height: 1;
-  transition: color 0.3s ease;
-}
-
-.pc-status {
-  font-size: 14px;
-  color: var(--pc-text-secondary);
-  line-height: 1;
-  transition: color 0.3s ease;
-}
-
-.pc-contact-btn {
-  border: 1px solid var(--pc-contact-btn-border);
-  border-radius: 8px;
-  padding: 12px 16px;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--pc-contact-btn-text);
-  background: var(--pc-contact-btn-bg);
-  cursor: pointer;
-  transition: all 0.2s ease;
-  backdrop-filter: blur(10px);
-}
-
-.pc-contact-btn:hover {
-  border-color: var(--color-muted);
-  background: var(--color-surface-hover);
-  transform: translateY(-1px);
-  transition: all 0.2s ease;
-}
-
-.pc-contact-btn:focus-visible {
-  outline: 2px solid transparent;
-  outline-offset: 2px;
-  box-shadow: 0 0 0 2px var(--color-background), 0 0 0 4px rgba(14, 165, 233, 0.5);
 }
 
 .pc-content:not(.pc-avatar-content) {
@@ -511,26 +388,17 @@
   }
 }
 
-@keyframes holo-bg {
-  0% {
-    background-position:
-      0 var(--background-y),
-      0 0,
-      center;
-  }
-
-  100% {
-    background-position:
-      0 var(--background-y),
-      90% 90%,
-      center;
-  }
-}
 
 @media (max-width: 768px) {
+  .pc-card-wrapper {
+    perspective: 300px;
+  }
+
   .pc-card {
     height: 70svh;
     max-height: 450px;
+    min-height: 400px;
+    background-size: 150px 150px, 100% 100%;
   }
 
   .pc-details {
@@ -539,126 +407,125 @@
 
   .pc-details h3 {
     font-size: min(4svh, 2.5em);
+    line-height: 1.1;
+  }
+
+  .pc-inside::after {
+    width: 80px;
+    height: 50px;
+    bottom: 15px;
+    right: 15px;
   }
 
   .pc-details p {
     font-size: 14px;
+    line-height: 1.3;
   }
 
-  .pc-user-info {
-    --ui-inset: 15px;
-    padding: 10px 12px;
-  }
 
-  .pc-mini-avatar {
-    width: 28px;
-    height: 28px;
-  }
-
-  .pc-user-details {
-    gap: 10px;
-  }
-
-  .pc-handle {
-    font-size: 13px;
-  }
-
-  .pc-status {
-    font-size: 10px;
-  }
-
-  .pc-contact-btn {
-    padding: 6px 12px;
-    font-size: 11px;
+  .pc-glare {
+    filter: brightness(0.9) contrast(1.1);
   }
 }
 
 @media (max-width: 480px) {
+  .pc-card-wrapper {
+    perspective: 250px;
+  }
+
   .pc-card {
-    height: 60svh;
-    max-height: 380px;
+    height: 65svh;
+    max-height: 420px;
+    min-height: 350px;
   }
 
   .pc-details {
     top: 1.5em;
+    padding: 0 1rem;
+  }
+
+  .pc-details h3 {
+    font-size: min(3.5svh, 2em);
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+  }
+
+  .pc-inside::after {
+    width: 60px;
+    height: 40px;
+    bottom: 12px;
+    right: 12px;
+  }
+
+  .pc-details p {
+    font-size: 13px;
+    top: -8px;
+    line-height: 1.4;
+  }
+
+
+  .pc-glare {
+    filter: brightness(0.5) contrast(1.0);
+  }
+}
+
+@media (max-width: 320px) {
+  .pc-card-wrapper {
+    perspective: 200px;
+  }
+
+  .pc-card {
+    height: 60svh;
+    max-height: 360px;
+    min-height: 320px;
+  }
+
+  .pc-details {
+    top: 1.2em;
+    padding: 0 0.75rem;
+  }
+
+  .pc-details h3 {
+    font-size: min(3svh, 1.75em);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+
+  .pc-inside::after {
+    width: 50px;
+    height: 35px;
+    bottom: 10px;
+    right: 10px;
+  }
+
+  .pc-details p {
+    font-size: 12px;
+    top: -6px;
+    line-height: 1.3;
+  }
+
+}
+
+/* Additional mobile optimizations */
+@media (max-width: 768px) and (orientation: landscape) {
+  .pc-card {
+    height: 80svh;
+    max-height: 500px;
+  }
+
+  .pc-details {
+    top: 1em;
   }
 
   .pc-details h3 {
     font-size: min(3.5svh, 2em);
   }
-
-  .pc-details p {
-    font-size: 12px;
-    top: -8px;
-  }
-
-  .pc-user-info {
-    --ui-inset: 12px;
-    padding: 8px 10px;
-  }
-
-  .pc-mini-avatar {
-    width: 24px;
-    height: 24px;
-  }
-
-  .pc-user-details {
-    gap: 8px;
-  }
-
-  .pc-handle {
-    font-size: 12px;
-  }
-
-  .pc-status {
-    font-size: 9px;
-  }
-
-  .pc-contact-btn {
-    padding: 5px 10px;
-    font-size: 10px;
-    border-radius: 50px;
-  }
 }
 
-@media (max-width: 320px) {
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
   .pc-card {
-    height: 55svh;
-    max-height: 320px;
+    animation: none;
   }
 
-  .pc-details h3 {
-    font-size: min(3svh, 1.5em);
-  }
-
-  .pc-details p {
-    font-size: 11px;
-  }
-
-  .pc-user-info {
-    padding: 6px 8px;
-  }
-
-  .pc-mini-avatar {
-    width: 20px;
-    height: 20px;
-  }
-
-  .pc-user-details {
-    gap: 6px;
-  }
-
-  .pc-handle {
-    font-size: 11px;
-  }
-
-  .pc-status {
-    font-size: 8px;
-  }
-
-  .pc-contact-btn {
-    padding: 4px 8px;
-    font-size: 9px;
-    border-radius: 50px;
-  }
 }

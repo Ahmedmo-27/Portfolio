@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { AnimatePresence } from 'framer-motion'
 import { Menu, X } from 'lucide-react'
 import ThemeToggle from './ThemeToggle'
+import './Navbar.css'
 
 const navLinks = [
   { name: 'About', href: '#about' },
@@ -18,25 +19,33 @@ export default function Navbar() {
   const [activeSection, setActiveSection] = useState('')
 
   useEffect(() => {
+    let ticking = false
+    
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50)
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          setIsScrolled(window.scrollY > 50)
 
-      // Update active section based on scroll position
-      const sections = navLinks.map(link => link.href.slice(1))
-      const currentSection = sections.find(section => {
-        const element = document.getElementById(section)
-        if (element) {
-          const rect = element.getBoundingClientRect()
-          return rect.top <= 150 && rect.bottom >= 150
-        }
-        return false
-      })
-      if (currentSection) {
-        setActiveSection(currentSection)
+          // Update active section based on scroll position
+          const sections = navLinks.map(link => link.href.slice(1))
+          const currentSection = sections.find(section => {
+            const element = document.getElementById(section)
+            if (element) {
+              const rect = element.getBoundingClientRect()
+              return rect.top <= 150 && rect.bottom >= 150
+            }
+            return false
+          })
+          if (currentSection) {
+            setActiveSection(currentSection)
+          }
+          ticking = false
+        })
+        ticking = true
       }
     }
 
-    window.addEventListener('scroll', handleScroll)
+    window.addEventListener('scroll', handleScroll, { passive: true })
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
@@ -54,12 +63,12 @@ export default function Navbar() {
   // Prevent body scroll when mobile menu is open
   useEffect(() => {
     if (isMobileMenuOpen) {
-      document.body.style.overflow = 'hidden'
+      document.body.classList.add('navbar-menu-open')
     } else {
-      document.body.style.overflow = ''
+      document.body.classList.remove('navbar-menu-open')
     }
     return () => {
-      document.body.style.overflow = ''
+      document.body.classList.remove('navbar-menu-open')
     }
   }, [isMobileMenuOpen])
 
@@ -97,10 +106,7 @@ export default function Navbar() {
   }
 
   return (
-    <motion.header
-      initial={{ y: -100 }}
-      animate={{ y: 0 }}
-      transition={{ duration: 0.6, ease: 'easeOut' }}
+    <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isScrolled ? 'glass py-3' : 'py-5'
       }`}
@@ -109,14 +115,13 @@ export default function Navbar() {
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" role="navigation" aria-label="Main navigation">
         <div className="flex items-center justify-between">
           {/* Logo */}
-          <motion.a
+          <a
             href="#"
             onClick={(e) => {
               e.preventDefault()
               window.scrollTo({ top: 0, behavior: 'smooth' })
             }}
-            className="flex items-center gap-2 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 rounded-lg"
-            whileHover={{ scale: 1.02 }}
+            className="flex items-center gap-2 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 rounded-lg transition-transform hover:scale-[1.02]"
             aria-label="Ahmed Mostafa - Home"
           >
             <div 
@@ -132,18 +137,15 @@ export default function Navbar() {
             <span className="text-xl font-display font-bold text-foreground group-hover:text-primary-400 transition-colors">
               Ahmed<span className="text-primary-400 animate-pulse-glow">.</span>
             </span>
-          </motion.a>
+          </a>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-1" role="menubar">
-            {navLinks.map((link, index) => (
-              <motion.a
+            {navLinks.map((link) => (
+              <a
                 key={link.name}
                 href={link.href}
                 onClick={(e) => handleNavClick(e, link.href)}
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 + 0.3 }}
                 className={`px-4 py-2 font-medium transition-colors relative group rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 ${
                   activeSection === link.href.slice(1) 
                     ? 'text-primary-400' 
@@ -159,29 +161,21 @@ export default function Navbar() {
                   }`}
                   aria-hidden="true"
                 />
-              </motion.a>
+              </a>
             ))}
             
             {/* Theme Toggle */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.7 }}
-              className="ml-2"
-            >
+            <div className="ml-2">
               <ThemeToggle />
-            </motion.div>
+            </div>
 
-            <motion.a
+            <a
               href="#contact"
               onClick={(e) => handleNavClick(e, '#contact')}
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.8 }}
               className="ml-2 btn-primary text-sm"
             >
               Let's Connect
-            </motion.a>
+            </a>
           </div>
 
           {/* Mobile Menu Button */}
@@ -200,17 +194,12 @@ export default function Navbar() {
         </div>
 
         {/* Mobile Menu */}
-        <AnimatePresence>
-          {isMobileMenuOpen && (
-            <motion.div
-              id="mobile-menu"
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.3 }}
-              className="md:hidden overflow-hidden"
-              role="menu"
-            >
+        {isMobileMenuOpen && (
+          <div
+            id="mobile-menu"
+            className="md:hidden overflow-hidden animate-mobile-menu-open"
+            role="menu"
+          >
               <div className="py-4 space-y-1">
                 {navLinks.map((link) => (
                   <a
@@ -236,11 +225,10 @@ export default function Navbar() {
                   Let's Talk
                 </a>
               </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+          </div>
+        )}
       </nav>
-    </motion.header>
+    </header>
   )
 }
 

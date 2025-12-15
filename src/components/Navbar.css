@@ -1,0 +1,23 @@
+/* Navbar Component Styles */
+
+/* Body scroll lock when mobile menu is open */
+body.navbar-menu-open {
+  overflow: hidden;
+}
+
+/* Lightweight mobile menu animation */
+@keyframes mobile-menu-open {
+  from {
+    opacity: 0;
+    max-height: 0;
+  }
+  to {
+    opacity: 1;
+    max-height: 500px;
+  }
+}
+
+.animate-mobile-menu-open {
+  animation: mobile-menu-open 0.2s ease-out forwards;
+}
+

@@ -1,10 +1,13 @@
+import React, { useMemo } from 'react'
 import { motion } from 'framer-motion'
 import { Code2, Terminal, Cpu } from 'lucide-react'
 
 const techIcons = [Code2, Terminal, Cpu]
 
-export default function TechDivider({ variant = 'default' }) {
-  const Icon = techIcons[Math.floor(Math.random() * techIcons.length)]
+const TechDivider = ({ variant = 'default' }) => {
+  const Icon = useMemo(() => {
+    return techIcons[Math.floor(Math.random() * techIcons.length)]
+  }, [])
   
   return (
     <motion.div
@@ -23,4 +26,6 @@ export default function TechDivider({ variant = 'default' }) {
     </motion.div>
   )
 }
+
+export default React.memo(TechDivider)
 

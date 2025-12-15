@@ -1,9 +1,8 @@
 import { motion, useInView } from 'framer-motion'
-import { useRef, useState } from 'react'
+import { useRef } from 'react'
 import { GraduationCap, Globe, Briefcase, Rocket, Code2, Server, Trophy, FolderGit2, Building, Award } from 'lucide-react'
 import { fadeInUp, staggerContainer } from '../utils/animations'
 import CircuitBoard from './CircuitBoard'
-import ViewMoreButton from './ViewMoreButton'
 
 const highlights = [
   {
@@ -45,7 +44,7 @@ const highlights = [
 ]
 
 const stats = [
-  { value: '5+', label: 'Projects', icon: FolderGit2, color: 'text-primary-400' },
+  { value: '20+', label: 'Projects', icon: FolderGit2, color: 'text-primary-400' },
   { value: '4', label: 'Internships', icon: Building, color: 'text-accent-cyan' },
   { value: '500K+', label: 'Attack Logs', icon: Server, color: 'text-accent-emerald' },
   { value: '2', label: 'Awards', icon: Award, color: 'text-accent-amber' },
@@ -54,7 +53,6 @@ const stats = [
 export default function About() {
   const ref = useRef(null)
   const isInView = useInView(ref, { once: true, margin: '-100px' })
-  const [showMore, setShowMore] = useState(false)
 
   return (
     <section 
@@ -180,14 +178,6 @@ export default function About() {
                   </div>
                 </div>
               </div>
-
-              {/* Quote */}
-              <blockquote className="relative glass-card p-6 md:p-8 border-l-4 border-primary-500 overflow-hidden">
-                <div className="absolute -top-2 -left-2 text-6xl text-primary-500/10 font-serif" aria-hidden="true">"</div>
-                <p className="relative text-foreground font-medium italic text-base md:text-lg leading-relaxed">
-                  Driven by building reliable systems, modern applications, and optimized user experiences.
-                </p>
-              </blockquote>
             </motion.div>
 
             {/* Right Column - Highlights Grid */}
@@ -279,42 +269,8 @@ export default function About() {
               </div>
             </div>
           </motion.div>
-
-          {/* View More Button */}
-          <motion.div
-            variants={fadeInUp}
-            className="text-center"
-          >
-            <ViewMoreButton
-              onClick={() => setShowMore(!showMore)}
-              text={showMore ? 'Show Less' : 'View More About Me'}
-              variant="outline"
-            />
-            {showMore && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                exit={{ opacity: 0, height: 0 }}
-                className="mt-8 glass-card p-6 md:p-8 text-left max-w-4xl mx-auto"
-              >
-                <h4 className="text-xl font-display font-bold text-foreground mb-4">Additional Information</h4>
-                <div className="space-y-4 text-muted leading-relaxed">
-                  <p>
-                    I'm passionate about building scalable systems and solving complex problems. 
-                    My approach combines technical excellence with practical solutions that deliver real value.
-                  </p>
-                  <p>
-                    When I'm not coding, I enjoy contributing to open-source projects, participating in 
-                    hackathons, and mentoring fellow developers. I believe in continuous learning and 
-                    staying updated with the latest technologies and best practices.
-                  </p>
-                </div>
-              </motion.div>
-            )}
-          </motion.div>
         </motion.div>
       </div>
     </section>
   )
 }
-

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useCallback, useMemo } from 'react';
+import React, { useEffect, useRef, useCallback, useMemo, useState } from 'react';
 import './ProfileCard.css';
 
 // Default gradient adapts to theme via CSS variables
@@ -36,16 +36,65 @@ const ProfileCardComponent = ({
   status = 'Open to Opportunities',
   contactText = 'Contact Me',
   showUserInfo = true,
-  onContactClick
+  onContactClick,
+  priority = false,
+  rootMargin = '50px'
 }) => {
   const wrapRef = useRef(null);
   const shellRef = useRef(null);
+  const containerRef = useRef(null);
 
   const enterTimerRef = useRef(null);
   const leaveRafRef = useRef(null);
 
+  const [isInView, setIsInView] = useState(priority);
+  const [shouldLoad, setShouldLoad] = useState(priority);
+
+  // Intersection Observer for lazy loading
+  useEffect(() => {
+    if (priority || shouldLoad) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsInView(true);
+          // Small delay to ensure DOM is ready
+          requestAnimationFrame(() => {
+            setShouldLoad(true);
+          });
+          observer.disconnect();
+        }
+      },
+      {
+        rootMargin,
+        threshold: 0.01,
+      }
+    );
+
+    const currentRef = containerRef.current;
+    if (currentRef) {
+      observer.observe(currentRef);
+    }
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [priority, shouldLoad, rootMargin]);
+
+  // Detect if device is touch-capable
+  const isTouchDevice = useMemo(() => {
+    return 'ontouchstart' in window || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0;
+  }, []);
+
+  // Disable tilt on mobile touch devices unless explicitly enabled
+  const shouldEnableTilt = useMemo(() => {
+    if (!enableTilt) return false;
+    if (isTouchDevice && !enableMobileTilt) return false;
+    return true;
+  }, [enableTilt, enableMobileTilt, isTouchDevice]);
+
   const tiltEngine = useMemo(() => {
-    if (!enableTilt) return null;
+    if (!shouldEnableTilt) return null;
 
     let rafId = null;
     let running = false;
@@ -60,52 +109,85 @@ const ProfileCardComponent = ({
     const INITIAL_TAU = 0.6;
     let initialUntil = 0;
 
+    // Cache dimensions to avoid repeated DOM queries
+    let cachedWidth = 0;
+    let cachedHeight = 0;
+    let dimensionsDirty = true;
+
+    const getDimensions = () => {
+      if (dimensionsDirty) {
+        const shell = shellRef.current;
+        if (shell) {
+          cachedWidth = shell.clientWidth || 1;
+          cachedHeight = shell.clientHeight || 1;
+          dimensionsDirty = false;
+        }
+      }
+      return { width: cachedWidth, height: cachedHeight };
+    };
+
     const setVarsFromXY = (x, y) => {
-      const shell = shellRef.current;
       const wrap = wrapRef.current;
-      if (!shell || !wrap) return;
+      if (!wrap) return;
 
-      const width = shell.clientWidth || 1;
-      const height = shell.clientHeight || 1;
+      const { width, height } = getDimensions();
+      const invWidth = 100 / width;
+      const invHeight = 100 / height;
 
-      const percentX = clamp((100 / width) * x);
-      const percentY = clamp((100 / height) * y);
+      const percentX = clamp(invWidth * x);
+      const percentY = clamp(invHeight * y);
 
       const centerX = percentX - 50;
       const centerY = percentY - 50;
 
-      const properties = {
-        '--pointer-x': `${percentX}%`,
-        '--pointer-y': `${percentY}%`,
-        '--background-x': `${adjust(percentX, 0, 100, 35, 65)}%`,
-        '--background-y': `${adjust(percentY, 0, 100, 35, 65)}%`,
-        '--pointer-from-center': `${clamp(Math.hypot(percentY - 50, percentX - 50) / 50, 0, 1)}`,
-        '--pointer-from-top': `${percentY / 100}`,
-        '--pointer-from-left': `${percentX / 100}`,
-        '--rotate-x': `${round(-(centerX / 5))}deg`,
-        '--rotate-y': `${round(centerY / 4)}deg`
-      };
+      // Pre-calculate common values
+      const percentXDiv100 = percentX * 0.01;
+      const percentYDiv100 = percentY * 0.01;
+      const centerDist = Math.hypot(centerY, centerX);
+      const pointerFromCenter = clamp(centerDist * 0.02, 0, 1);
 
-      for (const [k, v] of Object.entries(properties)) wrap.style.setProperty(k, v);
+      // Batch all style updates in a single operation
+      wrap.style.cssText = [
+        `--pointer-x:${percentX}%`,
+        `--pointer-y:${percentY}%`,
+        `--background-x:${adjust(percentX, 0, 100, 35, 65)}%`,
+        `--background-y:${adjust(percentY, 0, 100, 35, 65)}%`,
+        `--pointer-from-center:${pointerFromCenter}`,
+        `--pointer-from-top:${percentYDiv100}`,
+        `--pointer-from-left:${percentXDiv100}`,
+        `--rotate-x:${round(-centerX * 0.2)}deg`,
+        `--rotate-y:${round(centerY * 0.25)}deg`
+      ].join(';') + ';';
     };
 
     const step = (ts) => {
       if (!running) return;
-      if (lastTs === 0) lastTs = ts;
-      const dt = (ts - lastTs) / 1000;
+      
+      const dt = lastTs === 0 ? 0 : (ts - lastTs) * 0.001;
       lastTs = ts;
+
+      // Early exit if delta time is too small (prevents unnecessary calculations)
+      if (dt < 0.001) {
+        rafId = requestAnimationFrame(step);
+        return;
+      }
 
       const tau = ts < initialUntil ? INITIAL_TAU : DEFAULT_TAU;
       const k = 1 - Math.exp(-dt / tau);
 
-      currentX += (targetX - currentX) * k;
-      currentY += (targetY - currentY) * k;
+      const diffX = targetX - currentX;
+      const diffY = targetY - currentY;
+      
+      currentX += diffX * k;
+      currentY += diffY * k;
 
       setVarsFromXY(currentX, currentY);
 
-      const stillFar = Math.abs(targetX - currentX) > 0.05 || Math.abs(targetY - currentY) > 0.05;
+      // Use squared distance for comparison (faster than Math.abs)
+      const distSq = diffX * diffX + diffY * diffY;
+      const thresholdSq = 0.0025; // 0.05^2
 
-      if (stillFar || document.hasFocus()) {
+      if (distSq > thresholdSq || document.hasFocus()) {
         rafId = requestAnimationFrame(step);
       } else {
         running = false;
@@ -136,9 +218,15 @@ const ProfileCardComponent = ({
         start();
       },
       toCenter() {
-        const shell = shellRef.current;
-        if (!shell) return;
-        this.setTarget(shell.clientWidth / 2, shell.clientHeight / 2);
+        const { width, height } = getDimensions();
+        if (width === 0 || height === 0) return;
+        this.setTarget(width * 0.5, height * 0.5);
+      },
+      invalidateDimensions() {
+        dimensionsDirty = true;
+      },
+      getDimensions() {
+        return getDimensions();
       },
       beginInitial(durationMs) {
         initialUntil = performance.now() + durationMs;
@@ -154,11 +242,28 @@ const ProfileCardComponent = ({
         lastTs = 0;
       }
     };
-  }, [enableTilt]);
+  }, [shouldEnableTilt]);
+
+  // Cache rect to avoid repeated getBoundingClientRect calls
+  const rectCacheRef = useRef({ left: 0, top: 0, width: 0, height: 0 });
+  const rectCacheValidRef = useRef(false);
 
   const getOffsets = (evt, el) => {
-    const rect = el.getBoundingClientRect();
-    return { x: evt.clientX - rect.left, y: evt.clientY - rect.top };
+    if (!rectCacheValidRef.current) {
+      const rect = el.getBoundingClientRect();
+      rectCacheRef.current = {
+        left: rect.left,
+        top: rect.top,
+        width: rect.width,
+        height: rect.height
+      };
+      rectCacheValidRef.current = true;
+    }
+    const cached = rectCacheRef.current;
+    return { 
+      x: evt.clientX - cached.left, 
+      y: evt.clientY - cached.top 
+    };
   };
 
   const handlePointerMove = useCallback(
@@ -211,28 +316,42 @@ const ProfileCardComponent = ({
 
   const handleDeviceOrientation = useCallback(
     (event) => {
-      const shell = shellRef.current;
-      if (!shell || !tiltEngine) return;
+      if (!tiltEngine) return;
 
       const { beta, gamma } = event;
       if (beta == null || gamma == null) return;
 
-      const centerX = shell.clientWidth / 2;
-      const centerY = shell.clientHeight / 2;
-      const x = clamp(centerX + gamma * mobileTiltSensitivity, 0, shell.clientWidth);
-      const y = clamp(
-        centerY + (beta - ANIMATION_CONFIG.DEVICE_BETA_OFFSET) * mobileTiltSensitivity,
-        0,
-        shell.clientHeight
-      );
-
-      tiltEngine.setTarget(x, y);
+      // Use cached dimensions if available
+      const dimensions = tiltEngine.getDimensions ? tiltEngine.getDimensions() : null;
+      if (!dimensions || dimensions.width === 0 || dimensions.height === 0) {
+        const shell = shellRef.current;
+        if (!shell) return;
+        const centerX = shell.clientWidth * 0.5;
+        const centerY = shell.clientHeight * 0.5;
+        const x = clamp(centerX + gamma * mobileTiltSensitivity, 0, shell.clientWidth);
+        const y = clamp(
+          centerY + (beta - ANIMATION_CONFIG.DEVICE_BETA_OFFSET) * mobileTiltSensitivity,
+          0,
+          shell.clientHeight
+        );
+        tiltEngine.setTarget(x, y);
+      } else {
+        const centerX = dimensions.width * 0.5;
+        const centerY = dimensions.height * 0.5;
+        const x = clamp(centerX + gamma * mobileTiltSensitivity, 0, dimensions.width);
+        const y = clamp(
+          centerY + (beta - ANIMATION_CONFIG.DEVICE_BETA_OFFSET) * mobileTiltSensitivity,
+          0,
+          dimensions.height
+        );
+        tiltEngine.setTarget(x, y);
+      }
     },
     [tiltEngine, mobileTiltSensitivity]
   );
 
   useEffect(() => {
-    if (!enableTilt || !tiltEngine) return;
+    if (!shouldEnableTilt || !tiltEngine || !shouldLoad) return;
 
     const shell = shellRef.current;
     if (!shell) return;
@@ -242,9 +361,10 @@ const ProfileCardComponent = ({
     const pointerLeaveHandler = handlePointerLeave;
     const deviceOrientationHandler = handleDeviceOrientation;
 
-    shell.addEventListener('pointerenter', pointerEnterHandler);
-    shell.addEventListener('pointermove', pointerMoveHandler);
-    shell.addEventListener('pointerleave', pointerLeaveHandler);
+    // Use passive listeners for better scroll performance
+    shell.addEventListener('pointerenter', pointerEnterHandler, { passive: true });
+    shell.addEventListener('pointermove', pointerMoveHandler, { passive: true });
+    shell.addEventListener('pointerleave', pointerLeaveHandler, { passive: true });
 
     const handleClick = () => {
       if (!enableMobileTilt || location.protocol !== 'https:') return;
@@ -264,11 +384,31 @@ const ProfileCardComponent = ({
     };
     shell.addEventListener('click', handleClick);
 
-    const initialX = (shell.clientWidth || 0) - ANIMATION_CONFIG.INITIAL_X_OFFSET;
-    const initialY = ANIMATION_CONFIG.INITIAL_Y_OFFSET;
+    // Invalidate dimension cache on mount/resize
+    if (tiltEngine.invalidateDimensions) {
+      tiltEngine.invalidateDimensions();
+    }
+    
+    // Adjust initial offsets for mobile devices
+    const isMobile = window.innerWidth <= 768;
+    const xOffset = isMobile ? ANIMATION_CONFIG.INITIAL_X_OFFSET * 0.5 : ANIMATION_CONFIG.INITIAL_X_OFFSET;
+    const yOffset = isMobile ? ANIMATION_CONFIG.INITIAL_Y_OFFSET * 0.5 : ANIMATION_CONFIG.INITIAL_Y_OFFSET;
+    
+    const shellWidth = shell.clientWidth || 0;
+    const initialX = shellWidth - xOffset;
+    const initialY = yOffset;
     tiltEngine.setImmediate(initialX, initialY);
     tiltEngine.toCenter();
     tiltEngine.beginInitial(ANIMATION_CONFIG.INITIAL_DURATION);
+
+    // Handle resize to invalidate cache
+    const handleResize = () => {
+      rectCacheValidRef.current = false;
+      if (tiltEngine.invalidateDimensions) {
+        tiltEngine.invalidateDimensions();
+      }
+    };
+    window.addEventListener('resize', handleResize, { passive: true });
 
     return () => {
       shell.removeEventListener('pointerenter', pointerEnterHandler);
@@ -276,13 +416,15 @@ const ProfileCardComponent = ({
       shell.removeEventListener('pointerleave', pointerLeaveHandler);
       shell.removeEventListener('click', handleClick);
       window.removeEventListener('deviceorientation', deviceOrientationHandler);
+      window.removeEventListener('resize', handleResize);
       if (enterTimerRef.current) window.clearTimeout(enterTimerRef.current);
       if (leaveRafRef.current) cancelAnimationFrame(leaveRafRef.current);
       tiltEngine.cancel();
       shell.classList.remove('entering');
+      rectCacheValidRef.current = false;
     };
   }, [
-    enableTilt,
+    shouldEnableTilt,
     enableMobileTilt,
     tiltEngine,
     handlePointerMove,
@@ -308,35 +450,49 @@ const ProfileCardComponent = ({
   }, [onContactClick]);
 
   return (
-    <div ref={wrapRef} className={`pc-card-wrapper ${className}`.trim()} style={cardStyle}>
-      {behindGlowEnabled && <div className="pc-behind" />}
-      <div ref={shellRef} className="pc-card-shell">
-        <section className="pc-card">
-          <div className="pc-inside">
-            <div className="pc-shine" />
-            <div className="pc-glare" />
-            <div className="pc-content pc-avatar-content">
-              <img
-                className="avatar"
-                src={avatarUrl}
-                alt={`${name || 'Ahmed Mostafa'} avatar`}
-                loading="lazy"
-                onError={e => {
-                  const t = e.target;
-                  console.error('Failed to load avatar image:', avatarUrl);
-                  t.style.opacity = '0.3';
-                }}
-              />
-            </div>
-            <div className="pc-content">
-              <div className="pc-details">
-                <h3>{name}</h3>
-                <p>{title}</p>
+    <div 
+      ref={(node) => {
+        containerRef.current = node;
+        wrapRef.current = node;
+      }}
+      className={`pc-card-wrapper ${isTouchDevice ? 'pc-touch-device' : ''} ${!shouldLoad ? 'pc-card-loading' : ''} ${className}`.trim()}
+      style={shouldLoad ? cardStyle : undefined}
+    >
+      {shouldLoad ? (
+        <>
+          {behindGlowEnabled && <div className="pc-behind" />}
+          <div ref={shellRef} className="pc-card-shell">
+            <section className="pc-card">
+              <div className="pc-inside">
+                <div className="pc-shine" />
+                <div className="pc-glare" />
+                <div className="pc-content pc-avatar-content">
+                  <img
+                    className="avatar"
+                    src={avatarUrl}
+                    alt={`${name || 'Ahmed Mostafa'} avatar`}
+                    loading={priority ? 'eager' : 'lazy'}
+                    decoding="async"
+                    onError={e => {
+                      const t = e.target;
+                      console.error('Failed to load avatar image:', avatarUrl);
+                      t.classList.add('avatar-error');
+                    }}
+                  />
+                </div>
+                <div className="pc-content">
+                  <div className="pc-details">
+                    <h3>{name}</h3>
+                    <p>{title}</p>
+                  </div>
+                </div>
               </div>
-            </div>
+            </section>
           </div>
-        </section>
-      </div>
+        </>
+      ) : (
+        <div className="pc-card-skeleton" aria-hidden="true" />
+      )}
     </div>
   );
 };

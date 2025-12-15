@@ -3,6 +3,34 @@ import { useRef, useState } from 'react'
 import { Mail, MapPin, Send, Github, Linkedin, CheckCircle, AlertCircle, Loader2 } from 'lucide-react'
 import { fadeInUp, staggerContainer } from '../utils/animations'
 
+const contactInfo = [
+  {
+    icon: Mail,
+    label: 'Email',
+    value: 'ahmedmostafa2004@hotmail.com',
+    href: 'mailto:ahmedmostafa2004@hotmail.com',
+  },
+  {
+    icon: MapPin,
+    label: 'Location',
+    value: 'Cairo, Egypt',
+    href: null,
+  },
+]
+
+const socialLinks = [
+  {
+    icon: Github,
+    label: 'GitHub',
+    href: 'https://github.com/ahmedmo-27',
+  },
+  {
+    icon: Linkedin,
+    label: 'LinkedIn',
+    href: 'https://linkedin.com/in/ahmedmostafa-swe',
+  },
+]
+
 export default function Contact() {
   const ref = useRef(null)
   const isInView = useInView(ref, { once: true, margin: '-100px' })
@@ -36,34 +64,6 @@ export default function Contact() {
       [e.target.name]: e.target.value
     }))
   }
-
-  const contactInfo = [
-    {
-      icon: Mail,
-      label: 'Email',
-      value: 'ahmedmostafa2004@hotmail.com',
-      href: 'mailto:ahmedmostafa2004@hotmail.com',
-    },
-    {
-      icon: MapPin,
-      label: 'Location',
-      value: 'Cairo, Egypt',
-      href: null,
-    },
-  ]
-
-  const socialLinks = [
-    {
-      icon: Github,
-      label: 'GitHub',
-      href: 'https://github.com/ahmedmo-27',
-    },
-    {
-      icon: Linkedin,
-      label: 'LinkedIn',
-      href: 'https://linkedin.com/in/ahmedmostafa-swe',
-    },
-  ]
 
   return (
     <section 

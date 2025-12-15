@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 
 export default function TypingEffect({ 
@@ -11,6 +11,11 @@ export default function TypingEffect({
   const [displayedText, setDisplayedText] = useState('')
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isComplete, setIsComplete] = useState(false)
+  const onCompleteRef = useRef(onComplete)
+
+  useEffect(() => {
+    onCompleteRef.current = onComplete
+  }, [onComplete])
 
   useEffect(() => {
     if (currentIndex < text.length) {
@@ -22,9 +27,9 @@ export default function TypingEffect({
       return () => clearTimeout(timeout)
     } else if (!isComplete) {
       setIsComplete(true)
-      if (onComplete) onComplete()
+      if (onCompleteRef.current) onCompleteRef.current()
     }
-  }, [currentIndex, text, speed, isComplete, onComplete])
+  }, [currentIndex, text, speed, isComplete])
 
   return (
     <span className={className}>

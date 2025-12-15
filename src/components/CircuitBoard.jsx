@@ -1,10 +1,11 @@
-import { motion } from 'framer-motion'
+import React from 'react'
+import './CircuitBoard.css'
 
-export default function CircuitBoard({ className = '' }) {
+const CircuitBoard = ({ className = '' }) => {
   return (
     <div className={`circuit-board ${className}`} aria-hidden="true">
       {/* Additional circuit nodes */}
-      <svg className="absolute inset-0 w-full h-full opacity-20" style={{ mixBlendMode: 'screen' }}>
+      <svg className="absolute inset-0 w-full h-full opacity-20">
         <defs>
           <pattern id="circuit-pattern" x="0" y="0" width="50" height="50" patternUnits="userSpaceOnUse">
             <circle cx="25" cy="25" r="1" fill="currentColor" className="text-primary-500" />
@@ -17,4 +18,6 @@ export default function CircuitBoard({ className = '' }) {
     </div>
   )
 }
+
+export default React.memo(CircuitBoard)
 
