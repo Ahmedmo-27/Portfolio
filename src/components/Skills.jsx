@@ -1,6 +1,7 @@
 import { useRef, useState, useEffect } from 'react'
 import { Cloud, Database, Layout, Smartphone, TestTube, Wrench } from 'lucide-react'
 import CircuitBoard from './CircuitBoard'
+import './Skills.css'
 
 const skillCategories = [
   {
@@ -167,8 +168,10 @@ export default function Skills() {
             {skillCategories.map((category, index) => (
               <article
                 key={category.title}
-                className={`glass-card p-5 md:p-6 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 transition-transform hover:-translate-y-1 focus-visible:-translate-y-1 ${isInView ? 'animate-fade-in-up' : 'opacity-0'}`}
-                style={{ animationDelay: `${index * 0.1 + 0.2}s` }}
+                ref={(el) => {
+                  if (el) el.style.setProperty('--animation-delay', `${index * 0.1 + 0.2}s`)
+                }}
+                className={`glass-card p-5 md:p-6 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 transition-transform hover:-translate-y-1 focus-visible:-translate-y-1 skills-category-item ${isInView ? 'animate-fade-in-up' : 'opacity-0'}`}
                 role="listitem"
                 tabIndex={0}
                 aria-labelledby={`skill-${category.title.replace(/\s+/g, '-')}`}

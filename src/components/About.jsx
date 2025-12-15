@@ -1,6 +1,7 @@
 import { useRef, useState, useEffect } from 'react'
 import { GraduationCap, Globe, Briefcase, Rocket, Code2, Server, Trophy, FolderGit2, Building, Award } from 'lucide-react'
 import CircuitBoard from './CircuitBoard'
+import './About.css'
 
 const highlights = [
   {
@@ -82,8 +83,8 @@ export default function About() {
       {/* Background decorative elements */}
       <CircuitBoard className="opacity-30" />
       <div className="tech-grid opacity-20" />
-      <div className="absolute top-1/4 -left-32 w-64 h-64 bg-primary-500/10 rounded-full blur-3xl" aria-hidden="true" />
-      <div className="absolute bottom-1/4 -right-32 w-64 h-64 bg-accent-cyan/10 rounded-full blur-3xl" aria-hidden="true" />
+      <div className="about-bg-blur-1" aria-hidden="true" />
+      <div className="about-bg-blur-2" aria-hidden="true" />
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div ref={ref}>
@@ -109,8 +110,10 @@ export default function About() {
             {stats.map((stat, index) => (
               <div
                 key={stat.label}
-                className={`relative group transition-transform hover:-translate-y-1 hover:scale-[1.02] ${isInView ? 'animate-fade-in-up' : 'opacity-0'}`}
-                style={{ animationDelay: `${index * 0.1 + 0.3}s` }}
+                ref={(el) => {
+                  if (el) el.style.setProperty('--animation-delay', `${index * 0.1 + 0.3}s`)
+                }}
+                className={`relative group transition-transform hover:-translate-y-1 hover:scale-[1.02] about-stat-item ${isInView ? 'animate-fade-in-up' : 'opacity-0'}`}
               >
                 <div className="text-center p-6 md:p-7 rounded-2xl glass-card h-full">
                   <div className={`w-12 h-12 mx-auto mb-4 rounded-xl bg-surface flex items-center justify-center ${stat.color}`}>
@@ -206,8 +209,10 @@ export default function About() {
                   {highlights.map((item, index) => (
                     <div
                       key={item.title}
-                      className={`glass-card p-4 md:p-5 group cursor-default relative overflow-hidden transition-transform hover:-translate-y-1 hover:scale-[1.02] ${isInView ? 'animate-fade-in-up' : 'opacity-0'}`}
-                      style={{ animationDelay: `${index * 0.08 + 0.4}s` }}
+                      ref={(el) => {
+                        if (el) el.style.setProperty('--animation-delay', `${index * 0.08 + 0.4}s`)
+                      }}
+                      className={`glass-card p-4 md:p-5 group cursor-default relative overflow-hidden transition-transform hover:-translate-y-1 hover:scale-[1.02] about-highlight-item ${isInView ? 'animate-fade-in-up' : 'opacity-0'}`}
                       role="listitem"
                       tabIndex={0}
                     >

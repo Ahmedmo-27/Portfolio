@@ -1,50 +1,67 @@
 import { useRef, useState, useEffect } from 'react'
 import { Users, Trophy, Star, Target, Heart, Rocket, Calendar, ExternalLink, ChevronUp } from 'lucide-react'
 import ViewMoreButton from './ViewMoreButton'
+import './Volunteering.css'
 
+// Real volunteering & leadership roles
 const volunteeringExperiences = [
   {
-    organization: 'Microsoft Student Partners (MSP-MIU)',
-    role: 'Software Development Head / Full-Stack Developer',
-    period: '2024 – Present',
+    organization: 'Sprints',
+    role: 'Student Ambassador',
+    period: 'Nov 2025 – Present',
+    icon: Heart,
+    color: 'from-rose-500 to-red-500',
+    description:
+      'Representing Sprints on campus, supporting students, and promoting technical programs and initiatives.',
+    achievements: [
+      'Acted as a liaison between Sprints and university students to promote tech opportunities',
+      'Helped students discover relevant learning paths and resources',
+      'Supported organization of info sessions and engagement activities',
+    ],
+    isHighlighted: true,
+  },
+  {
+    organization: 'MSP Tech Club - MIU',
+    role: 'Head of Software Development',
+    period: 'Sep 2025 – Present',
     icon: Rocket,
     color: 'from-violet-500 to-purple-500',
-    description: 'Leading technical initiatives and building web applications for the student community.',
+    description:
+      'Leading the software development department and building impactful projects for the MSP Tech Club community.',
     achievements: [
-      'Built and deployed the official msp-miu.tech website',
-      'Led a team of developers on multiple projects',
-      'Mentored junior members in web development',
-      'Organized technical workshops and coding sessions',
+      'Developing the official club website using React, Node.js, and MySQL',
+      'Leading a department of 25+ volunteers across frontend, backend, and UI/UX',
+      'Creating modern project ideas for members in Python, JavaScript, C++, MySQL, React, and Angular',
+      'Mentoring members and reviewing code to ensure clean, maintainable implementations',
     ],
-    link: 'https://msp-miu.tech',
     isHighlighted: true,
   },
   {
-    organization: 'DIGITOPIA 2025',
-    role: 'Team Lead - Cybertopia Project',
-    period: '2025',
-    icon: Trophy,
+    organization: 'MIU - Model United Nations & Arab League',
+    role: 'Delegate (ICJ Council)',
+    period: 'Sep 2023 – May 2024',
+    icon: Star,
     color: 'from-amber-500 to-yellow-500',
-    description: 'Led a team to develop an innovative cybersecurity honeypot platform.',
+    description:
+      'Participated as a delegate in ICJ Council simulations, working on global issues and diplomatic resolutions.',
     achievements: [
-      'Reached competition SEMIFINALS',
-      'Managed team coordination and task delegation',
-      'Presented project to judges and industry experts',
-      'Captured 500K+ SSH attack logs for research',
+      'Held a key role in the ICJ Council, excelling in research, debate, and resolution drafting',
+      'Sharpened public speaking, cross-cultural collaboration, and conflict resolution skills',
+      'Collaborated with multi-delegate teams to negotiate and pass resolutions',
     ],
-    isHighlighted: true,
   },
   {
-    organization: 'MIU Tech Community',
-    role: 'Active Member & Contributor',
-    period: '2023 – Present',
+    organization: 'IEEE MIU SB',
+    role: 'Public Relations Specialist',
+    period: 'Sep 2024 – May 2025',
     icon: Users,
     color: 'from-blue-500 to-cyan-500',
-    description: 'Contributing to the university tech community through knowledge sharing and peer support.',
+    description:
+      'Handled public relations and communication efforts to support IEEE MIU SB events and initiatives.',
     achievements: [
-      'Participated in multiple hackathons and coding competitions',
-      'Helped peers with programming assignments and projects',
-      'Contributed to open-source university projects',
+      'Coordinated student activities and communication strategies to boost engagement',
+      'Collaborated with teams to promote key events and technical sessions',
+      'Helped grow event participation and visibility across the student community',
     ],
   },
 ]
@@ -137,8 +154,10 @@ export default function Volunteering() {
             {leadershipHighlights.map((highlight, index) => (
               <div
                 key={highlight.title}
-                className={`glass-card p-4 text-center group transition-transform hover:-translate-y-1 hover:scale-[1.02] ${isInView ? 'animate-fade-in-up' : 'opacity-0'}`}
-                style={{ animationDelay: `${index * 0.1 + 0.2}s` }}
+                ref={(el) => {
+                  if (el) el.style.setProperty('--animation-delay', `${index * 0.1 + 0.2}s`)
+                }}
+                className={`glass-card p-4 text-center group transition-transform hover:-translate-y-1 hover:scale-[1.02] volunteering-highlight-item ${isInView ? 'animate-fade-in-up' : 'opacity-0'}`}
                 tabIndex={0}
               >
                 <div className={`w-10 h-10 mx-auto mb-3 rounded-xl bg-surface flex items-center justify-center ${highlight.color}`}>
@@ -159,8 +178,10 @@ export default function Volunteering() {
             {displayedExperiences.map((exp, index) => (
               <article
                 key={exp.organization}
-                className={`${exp.isHighlighted ? 'relative' : ''} ${isInView ? 'animate-fade-in-up' : 'opacity-0'}`}
-                style={{ animationDelay: `${index * 0.15 + 0.2}s` }}
+                ref={(el) => {
+                  if (el) el.style.setProperty('--animation-delay', `${index * 0.15 + 0.2}s`)
+                }}
+                className={`${exp.isHighlighted ? 'relative' : ''} volunteering-experience-item ${isInView ? 'animate-fade-in-up' : 'opacity-0'}`}
                 role="article"
                 aria-labelledby={`vol-title-${index}`}
               >

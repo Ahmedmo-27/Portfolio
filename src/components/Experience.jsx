@@ -1,6 +1,7 @@
 import { useRef, useState, useMemo, useEffect } from 'react'
 import { Building2, Award, Code, Globe, Shield, Gem, Calendar, MapPin, Cpu, ChevronUp, ChevronRight } from 'lucide-react'
 import ViewMoreButton from './ViewMoreButton'
+import './Experience.css'
 
 const experiences = [
   {
@@ -131,10 +132,12 @@ export default function Experience() {
               {displayedExperiences.map((exp, index) => (
                 <article
                   key={exp.company}
+                  ref={(el) => {
+                    if (el) el.style.setProperty('--animation-delay', `${index * 0.15 + 0.2}s`)
+                  }}
                   className={`relative flex flex-col md:flex-row gap-6 md:gap-8 ${
                     index % 2 === 0 ? 'md:flex-row-reverse' : ''
-                  } ${isInView ? 'animate-fade-in-left' : 'opacity-0'}`}
-                  style={{ animationDelay: `${index * 0.15 + 0.2}s` }}
+                  } experience-item ${isInView ? 'animate-fade-in-left' : 'opacity-0'}`}
                   role="listitem"
                   aria-labelledby={`exp-title-${index}`}
                 >

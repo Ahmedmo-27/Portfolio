@@ -1,0 +1,15 @@
+/* Achievements Component Styles */
+
+/* Animation delay utilities for featured achievements */
+.achievements-featured-item {
+  animation-delay: var(--animation-delay, 0.2s);
+}
+
+/* Animation delay utilities for other achievements */
+.achievements-other-item {
+  animation-delay: var(--animation-delay, 0.3s);
+}
+
+
+
+

@@ -1,7 +1,8 @@
 import { useRef, useState, useMemo, useEffect } from 'react'
-import { ExternalLink, Github, ChevronRight, Gem, Shield, Smartphone, Globe, Terminal, Image, Video, FileText, Play, Download, ChevronUp } from 'lucide-react'
+import { ExternalLink, Github, ChevronRight, Gem, Shield, Smartphone, Globe, Terminal, FileText, Play, Download, ChevronUp } from 'lucide-react'
 import CircuitBoard from './CircuitBoard'
 import ViewMoreButton from './ViewMoreButton'
+import './Projects.css'
 
 const projects = [
   {
@@ -20,19 +21,24 @@ const projects = [
       'SMS notifications via Twilio',
     ],
     links: {
-      demo: '#',
-      github: '#',
+      demo: 'https://vaultique.live',
+      github: 'https://github.com/ahmedmo-27/Vaultique',
     },
     ctas: [
-      { label: 'View Demo', icon: Play, href: '#' },
-      { label: 'Source Code', icon: Github, href: '#' },
+      { label: 'View Website', icon: ExternalLink, href: 'https://vaultique.live' },
+      { label: 'View Source Code', icon: Github, href: 'https://github.com/ahmedmo-27/Vaultique' },
     ],
     award: 'Best Web Project of MIU 2025',
     isHighlighted: true,
     media: {
-      screenshots: 'Insert Vaultique screenshots here (homepage, product pages, 3D configurator, admin dashboard)',
-      video: 'Insert video demo showing the full user journey and 3D configurator',
-      presentation: 'Insert project presentation or architecture diagrams',
+      screenshots: [
+        '/Screenshot 2025-08-05 002942.png',
+        '/Screenshot 2025-08-05 032735.png',
+        '/Screenshot 2025-08-05 032859.png',
+        '/Screenshot 2025-08-05 033035.png'
+      ],
+      video: null,
+      presentation: null,
     },
   },
   {
@@ -52,18 +58,18 @@ const projects = [
     ],
     links: {
       demo: '#',
-      github: '#',
+      github: 'https://github.com/CyberTopians/Cybertopia',
     },
     ctas: [
-      { label: 'View Project', icon: ExternalLink, href: '#' },
+      { label: 'View Source Code', icon: Github, href: 'https://github.com/CyberTopians/Cybertopia' },
       { label: 'Documentation', icon: FileText, href: '#' },
     ],
     award: 'DIGITOPIA 2025 Semifinalist',
     isHighlighted: true,
     media: {
-      screenshots: 'Insert Cybertopia dashboard, attack visualization, and log analysis screenshots',
-      video: 'Insert demo video showing real-time attack monitoring',
-      presentation: 'Insert architecture diagram and competition presentation',
+      screenshots: [],
+      video: null,
+      presentation: null,
     },
   },
   {
@@ -91,9 +97,9 @@ const projects = [
     ],
     award: 'DEPI Achiever Level Certificate',
     media: {
-      screenshots: 'Insert Android app screenshots (home, movie details, search, favorites)',
-      video: 'Insert app walkthrough video or screen recording',
-      presentation: 'Insert app store graphics or feature breakdown slides',
+      screenshots: [],
+      video: null,
+      presentation: null,
     },
   },
   {
@@ -113,16 +119,16 @@ const projects = [
     ],
     links: {
       demo: 'https://msp-miu.tech',
-      github: '#',
+      github: 'https://github.com/MSP-Tech-Club-MIU/MSP-MIU-Website',
     },
     ctas: [
-      { label: 'Visit Site', icon: ExternalLink, href: 'https://msp-miu.tech' },
-      { label: 'View Code', icon: Github, href: '#' },
+      { label: 'View Website', icon: ExternalLink, href: 'https://msp-miu.tech' },
+      { label: 'View Code', icon: Github, href: 'https://github.com/MSP-Tech-Club-MIU/MSP-MIU-Website' },
     ],
     media: {
-      screenshots: 'Insert msp-miu.tech homepage, events page, and team page screenshots',
-      video: 'Insert website tour video',
-      presentation: 'Insert site architecture or feature overview',
+      screenshots: [],
+      video: null,
+      presentation: null,
     },
   },
   {
@@ -148,9 +154,9 @@ const projects = [
       { label: 'Documentation', icon: FileText, href: '#' },
     ],
     media: {
-      screenshots: 'Insert terminal screenshots showing script execution and output',
-      video: 'Insert demo of automation pipeline in action',
-      presentation: 'Insert pipeline architecture diagrams and documentation screenshots',
+      screenshots: [],
+      video: null,
+      presentation: null,
     },
   },
 ]
@@ -159,6 +165,7 @@ export default function Projects() {
   const ref = useRef(null)
   const [isInView, setIsInView] = useState(false)
   const [activeProject, setActiveProject] = useState(null)
+  const [activeScreenshotIndex, setActiveScreenshotIndex] = useState({})
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -219,8 +226,10 @@ export default function Projects() {
             {displayedProjects.map((project, index) => (
               <article
                 key={project.id}
-                className={`${project.isHighlighted ? 'relative' : ''} ${isInView ? 'animate-fade-in-up' : 'opacity-0'}`}
-                style={{ animationDelay: `${index * 0.15 + 0.2}s` }}
+                ref={(el) => {
+                  if (el) el.style.setProperty('--animation-delay', `${index * 0.15 + 0.2}s`)
+                }}
+                className={`${project.isHighlighted ? 'relative' : ''} projects-item ${isInView ? 'animate-fade-in-up' : 'opacity-0'}`}
                 role="listitem"
                 aria-labelledby={`project-title-${project.id}`}
               >
@@ -241,74 +250,102 @@ export default function Projects() {
                   <div className={`grid ${index === 0 ? 'lg:grid-cols-5' : 'lg:grid-cols-2'} gap-0`}>
                     {/* Media Section */}
                     <div className={`${index === 0 ? 'lg:col-span-3' : ''} relative bg-surface/50 p-4 sm:p-6`}>
-                      {/* Main Placeholder Area */}
-                      <div 
-                        className="aspect-video rounded-xl bg-surface border-2 border-dashed border-border overflow-hidden relative group/media hover:border-primary-500/50 focus-within:border-primary-500/50 transition-colors"
-                        role="img"
-                        aria-label={`${project.title} project preview - ${project.media.screenshots}`}
-                      >
-                        {/* Background Icon */}
-                        <div className="absolute inset-0 flex items-center justify-center" aria-hidden="true">
-                          <div className={`w-16 sm:w-24 h-16 sm:h-24 rounded-2xl sm:rounded-3xl bg-gradient-to-br ${project.color} opacity-20 flex items-center justify-center`}>
-                            <project.icon className="w-8 sm:w-12 h-8 sm:h-12 text-foreground opacity-50" />
-                          </div>
-                        </div>
-                        
-                        {/* Hover Overlay with instructions */}
-                        <div className="absolute inset-0 bg-card/95 flex flex-col items-center justify-center opacity-0 group-hover/media:opacity-100 focus-within:opacity-100 transition-opacity duration-300 p-4">
-                          <p className="text-foreground font-medium text-center mb-3 text-sm sm:text-base">
-                            {project.media.screenshots}
-                          </p>
-                          <div className="flex flex-wrap justify-center gap-2">
-                            <span className="px-2 py-1 rounded-lg bg-primary-500/20 text-primary-400 text-xs">PNG/JPG</span>
-                            <span className="px-2 py-1 rounded-lg bg-accent-cyan/20 text-accent-cyan text-xs">GIF</span>
-                            <span className="px-2 py-1 rounded-lg bg-accent-emerald/20 text-accent-emerald text-xs">MP4</span>
-                          </div>
-                        </div>
+                      <div className="aspect-video rounded-xl bg-surface overflow-hidden relative">
+                        {Array.isArray(project.media?.screenshots) && project.media.screenshots.length > 0 && (
+                          <>
+                            <img
+                              src={
+                                project.media.screenshots[
+                                  activeScreenshotIndex[project.id] ?? 0
+                                ]
+                              }
+                              alt={project.title}
+                              className="w-full h-full object-cover"
+                            />
 
-                        {/* Award Badge */}
-                        {project.award && (
-                          <div className="absolute top-2 sm:top-3 right-2 sm:right-3 z-10">
-                            <span className="inline-flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full bg-accent-amber/20 border border-accent-amber/30 text-accent-amber text-[10px] sm:text-xs font-semibold backdrop-blur-sm">
-                              🏆 <span className="hidden sm:inline">{project.award}</span>
-                              <span className="sm:hidden">Award</span>
-                            </span>
+                            {project.media.screenshots.length > 1 && (
+                              <div className="absolute inset-y-0 left-0 right-0 flex items-center justify-between px-2 sm:px-3 pointer-events-none">
+                                <button
+                                  type="button"
+                                  className="pointer-events-auto inline-flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-black/40 hover:bg-black/60 text-white text-xs sm:text-sm transition-colors"
+                                  aria-label="Previous screenshot"
+                                  onClick={(e) => {
+                                    e.stopPropagation()
+                                    setActiveScreenshotIndex((prev) => {
+                                      const current = prev[project.id] ?? 0
+                                      const total = project.media.screenshots.length
+                                      const next = (current - 1 + total) % total
+                                      return { ...prev, [project.id]: next }
+                                    })
+                                  }}
+                                >
+                                  ‹
+                                </button>
+                                <button
+                                  type="button"
+                                  className="pointer-events-auto inline-flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-black/40 hover:bg-black/60 text-white text-xs sm:text-sm transition-colors"
+                                  aria-label="Next screenshot"
+                                  onClick={(e) => {
+                                    e.stopPropagation()
+                                    setActiveScreenshotIndex((prev) => {
+                                      const current = prev[project.id] ?? 0
+                                      const total = project.media.screenshots.length
+                                      const next = (current + 1) % total
+                                      return { ...prev, [project.id]: next }
+                                    })
+                                  }}
+                                >
+                                  ›
+                                </button>
+                              </div>
+                            )}
+
+                            {project.media.screenshots.length > 1 && (
+                              <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5">
+                                {project.media.screenshots.map((_, i) => {
+                                  const current = activeScreenshotIndex[project.id] ?? 0
+                                  const isActive = i === current
+                                  return (
+                                    <button
+                                      key={i}
+                                      type="button"
+                                      className={`h-1.5 rounded-full transition-all ${
+                                        isActive ? 'w-5 bg-white' : 'w-2 bg-white/40'
+                                      }`}
+                                      aria-label={`Go to screenshot ${i + 1}`}
+                                      onClick={(e) => {
+                                        e.stopPropagation()
+                                        setActiveScreenshotIndex((prev) => ({
+                                          ...prev,
+                                          [project.id]: i,
+                                        }))
+                                      }}
+                                    />
+                                  )
+                                })}
+                              </div>
+                            )}
+                          </>
+                        )}
+
+                        {(!Array.isArray(project.media?.screenshots) || project.media.screenshots.length === 0) && (
+                          <div className="absolute inset-0 flex items-center justify-center" aria-hidden="true">
+                            <div className={`w-16 sm:w-24 h-16 sm:h-24 rounded-2xl sm:rounded-3xl bg-gradient-to-br ${project.color} opacity-30 flex items-center justify-center`}>
+                              <project.icon className="w-8 sm:w-12 h-8 sm:h-12 text-foreground opacity-60" />
+                            </div>
                           </div>
                         )}
                       </div>
 
-                      {/* Media Type Placeholders */}
-                      <div className="grid grid-cols-3 gap-2 sm:gap-3 mt-3">
-                        <button
-                          className="rounded-lg bg-surface border border-border hover:border-primary-500/40 focus-visible:border-primary-500 focus-visible:ring-2 focus-visible:ring-primary-500 p-2 sm:p-3 flex flex-col items-center gap-1 sm:gap-2 transition-colors group/item"
-                          aria-label={`Add screenshots for ${project.title}`}
-                        >
-                          <Image className="w-4 sm:w-5 h-4 sm:h-5 text-muted group-hover/item:text-primary-400 transition-colors" aria-hidden="true" />
-                          <span className="text-[9px] sm:text-[10px] text-muted text-center leading-tight">
-                            Screenshots
+                      {/* Award Badge */}
+                      {project.award && (
+                        <div className="absolute top-2 sm:top-3 right-2 sm:right-3 z-10">
+                          <span className="inline-flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full bg-accent-amber/20 border border-accent-amber/30 text-accent-amber text-[10px] sm:text-xs font-semibold backdrop-blur-sm">
+                            🏆 <span className="hidden sm:inline">{project.award}</span>
+                            <span className="sm:hidden">Award</span>
                           </span>
-                        </button>
-                        
-                        <button
-                          className="rounded-lg bg-surface border border-border hover:border-accent-cyan/40 focus-visible:border-accent-cyan focus-visible:ring-2 focus-visible:ring-accent-cyan p-2 sm:p-3 flex flex-col items-center gap-1 sm:gap-2 transition-colors group/item"
-                          aria-label={`Add video demo for ${project.title}`}
-                        >
-                          <Video className="w-4 sm:w-5 h-4 sm:h-5 text-muted group-hover/item:text-accent-cyan transition-colors" aria-hidden="true" />
-                          <span className="text-[9px] sm:text-[10px] text-muted text-center leading-tight">
-                            Video Demo
-                          </span>
-                        </button>
-                        
-                        <button
-                          className="rounded-lg bg-surface border border-border hover:border-accent-emerald/40 focus-visible:border-accent-emerald focus-visible:ring-2 focus-visible:ring-accent-emerald p-2 sm:p-3 flex flex-col items-center gap-1 sm:gap-2 transition-colors group/item"
-                          aria-label={`Add presentation for ${project.title}`}
-                        >
-                          <FileText className="w-4 sm:w-5 h-4 sm:h-5 text-muted group-hover/item:text-accent-emerald transition-colors" aria-hidden="true" />
-                          <span className="text-[9px] sm:text-[10px] text-muted text-center leading-tight">
-                            Presentation
-                          </span>
-                        </button>
-                      </div>
+                        </div>
+                      )}
                     </div>
 
                     {/* Content Section */}

@@ -1,0 +1,10 @@
+/* Projects Component Styles */
+
+/* Animation delay utilities for project items */
+.projects-item {
+  animation-delay: var(--animation-delay, 0.2s);
+}
+
+
+
+

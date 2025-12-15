@@ -1,0 +1,10 @@
+/* Skills Component Styles */
+
+/* Animation delay utilities for skill category items */
+.skills-category-item {
+  animation-delay: var(--animation-delay, 0.2s);
+}
+
+
+
+

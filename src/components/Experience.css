@@ -1,0 +1,10 @@
+/* Experience Component Styles */
+
+/* Animation delay utilities for experience items */
+.experience-item {
+  animation-delay: var(--animation-delay, 0.2s);
+}
+
+
+
+

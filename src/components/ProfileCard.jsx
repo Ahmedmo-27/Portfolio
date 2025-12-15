@@ -433,17 +433,18 @@ const ProfileCardComponent = ({
     handleDeviceOrientation
   ]);
 
-  const cardStyle = useMemo(
-    () =>
-      ({
-        '--icon': iconUrl ? `url(${iconUrl})` : 'none',
-        '--grain': grainUrl ? `url(${grainUrl})` : 'none',
-        '--inner-gradient': innerGradient ?? DEFAULT_INNER_GRADIENT,
-        '--behind-glow-color': behindGlowColor ?? 'rgba(125, 190, 255, 0.67)',
-        '--behind-glow-size': behindGlowSize ?? '50%'
-      }),
-    [iconUrl, grainUrl, innerGradient, behindGlowColor, behindGlowSize]
-  );
+  // Set CSS variables via ref instead of inline style (JSX file, so no TypeScript generic)
+  const cardWrapperRef = useRef(null);
+  
+  useEffect(() => {
+    if (cardWrapperRef.current && shouldLoad) {
+      cardWrapperRef.current.style.setProperty('--icon', iconUrl ? `url(${iconUrl})` : 'none');
+      cardWrapperRef.current.style.setProperty('--grain', grainUrl ? `url(${grainUrl})` : 'none');
+      cardWrapperRef.current.style.setProperty('--inner-gradient', innerGradient ?? DEFAULT_INNER_GRADIENT);
+      cardWrapperRef.current.style.setProperty('--behind-glow-color', behindGlowColor ?? 'rgba(125, 190, 255, 0.67)');
+      cardWrapperRef.current.style.setProperty('--behind-glow-size', behindGlowSize ?? '50%');
+    }
+  }, [iconUrl, grainUrl, innerGradient, behindGlowColor, behindGlowSize, shouldLoad]);
 
   const handleContactClick = useCallback(() => {
     if (onContactClick) onContactClick();
@@ -454,9 +455,9 @@ const ProfileCardComponent = ({
       ref={(node) => {
         containerRef.current = node;
         wrapRef.current = node;
+        cardWrapperRef.current = node;
       }}
       className={`pc-card-wrapper ${isTouchDevice ? 'pc-touch-device' : ''} ${!shouldLoad ? 'pc-card-loading' : ''} ${className}`.trim()}
-      style={shouldLoad ? cardStyle : undefined}
     >
       {shouldLoad ? (
         <>

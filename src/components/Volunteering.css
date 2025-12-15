@@ -1,0 +1,15 @@
+/* Volunteering Component Styles */
+
+/* Animation delay utilities for leadership highlights */
+.volunteering-highlight-item {
+  animation-delay: var(--animation-delay, 0.2s);
+}
+
+/* Animation delay utilities for volunteering experiences */
+.volunteering-experience-item {
+  animation-delay: var(--animation-delay, 0.2s);
+}
+
+
+
+
