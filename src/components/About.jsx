@@ -179,7 +179,7 @@ export default function About() {
                     <div className="w-2.5 h-2.5 rounded-full bg-accent-violet mt-1.5 flex-shrink-0" />
                     <div>
                       <span className="text-accent-violet font-semibold text-sm md:text-base block mb-1">DevOps</span>
-                      <span className="text-muted text-xs md:text-sm">CI/CD, Docker, GitHub Actions, Azure DevOps</span>
+                      <span className="text-muted text-xs md:text-sm">CI/CD, Docker, GitHub Actions, Scripting, Cloudflare R2</span>
                     </div>
                   </div>
                   <div className="flex items-start gap-3">

@@ -21,7 +21,7 @@ const skillCategories = [
       { name: 'Monitoring'},
       { name: 'Logging Pipelines'},
       { name: 'Deployment Pipelines'},
-      { name: 'R2 Cloud Storage'},
+      { name: 'Cloudflare R2'},
       { name: 'CDN Management'}
     ],
   },
@@ -33,7 +33,7 @@ const skillCategories = [
       { name: 'Node.js'},
       { name: 'Express'},
       { name: 'MongoDB'},
-      { name: 'Mongoose'},
+      { name: 'PHP'},
       { name: 'PostgreSQL'},
       { name: 'MySQL'},
       { name: 'REST APIs'},
@@ -68,6 +68,7 @@ const skillCategories = [
       { name: 'OkHttp'},
       { name: 'Firebase Auth'},
       { name: 'Firestore'},
+      { name: 'Android WebView'},
       { name: 'MVVM Architecture'},
       { name: 'Material Design 3'},
       { name: 'Room Database'},
@@ -101,7 +102,8 @@ const skillCategories = [
       { name: 'Stripe Integration'},
       { name: 'Twilio'},
       { name: 'Firebase'},
-      { name: 'Heroku'}
+      { name: 'Heroku'},
+      { name: 'Figma'}
     ],
   },
 ]

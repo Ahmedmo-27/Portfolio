@@ -109,16 +109,18 @@ const projects = [
     id: 'msp-miu',
     title: 'MSP-MIU Website',
     subtitle: 'Student Organization Portal',
-    description: 'Official website for Microsoft Student Partners at MIU. Built with Node.js backend and MySQL database, deployed on DigitalOcean and Heroku.',
+    description: 'Official website for Microsoft Student Partners at MIU. Includes an Android WebView app version, and serves static assets from Cloudflare R2. Built with Node.js backend and MySQL database, deployed on DigitalOcean and Heroku.',
     icon: Globe,
     color: 'from-violet-500 to-purple-500',
-    tech: ['Node.js', 'Express', 'MySQL', 'DigitalOcean', 'Heroku', 'Git'],
+    tech: ['Node.js', 'Express', 'MySQL', 'DigitalOcean', 'Heroku', 'Git', 'Cloudflare R2', 'Android WebView'],
     features: [
       'Full-stack web application',
+      'Android WebView app version (APK)',
       'MySQL database on DigitalOcean',
       'Heroku deployment',
       'Git workflow with test/production branches',
       'Responsive design',
+      'Static assets served from Cloudflare R2',
     ],
     links: {
       demo: 'https://msp-miu.tech',
@@ -176,9 +178,39 @@ export default function Projects() {
   const [activeProject, setActiveProject] = useState(null)
   const [activeMediaIndex, setActiveMediaIndex] = useState({})
   const [portraitVideos, setPortraitVideos] = useState({})
+  const [mediaShouldLoad, setMediaShouldLoad] = useState({}) // projectId -> boolean
   const [csvPreviewData, setCsvPreviewData] = useState({}) // key -> { header: string[], rows: string[][], delimiter: string }
   const [csvPreviewStatus, setCsvPreviewStatus] = useState({}) // idle | loading | loaded | error
   const [csvSearch, setCsvSearch] = useState({}) // key -> search string
+
+  const projectItemElsRef = useRef({}) // projectId -> HTMLElement
+  const mediaObserverRef = useRef(null)
+
+  // Lazy load heavy media (images/videos/pdf embeds) when the project card approaches viewport
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue
+          const projectId = entry.target?.dataset?.projectId
+          if (!projectId) continue
+          setMediaShouldLoad((prev) => (prev[projectId] ? prev : { ...prev, [projectId]: true }))
+          observer.unobserve(entry.target)
+        }
+      },
+      { threshold: 0.1, rootMargin: '200px' }
+    )
+
+    mediaObserverRef.current = observer
+    for (const el of Object.values(projectItemElsRef.current)) {
+      if (el) observer.observe(el)
+    }
+
+    return () => {
+      observer.disconnect()
+      mediaObserverRef.current = null
+    }
+  }, [])
 
   const fileExt = (src) => {
     if (!src || typeof src !== 'string') return ''
@@ -356,8 +388,15 @@ export default function Projects() {
             {displayedProjects.map((project, index) => (
               <article
                 key={project.id}
+                data-project-id={project.id}
                 ref={(el) => {
-                  if (el) el.style.setProperty('--animation-delay', `${index * 0.15 + 0.2}s`)
+                  if (el) {
+                    el.style.setProperty('--animation-delay', `${index * 0.15 + 0.2}s`)
+                    projectItemElsRef.current[project.id] = el
+                    if (mediaObserverRef.current) mediaObserverRef.current.observe(el)
+                  } else {
+                    delete projectItemElsRef.current[project.id]
+                  }
                 }}
                 className={`${project.isHighlighted ? 'relative' : ''} projects-item ${isInView ? 'animate-fade-in-up' : 'opacity-0'}`}
                 role="listitem"
@@ -387,6 +426,7 @@ export default function Projects() {
                           const currentIndex = activeMediaIndex[project.id] ?? 0
                           const safeIndex = total > 0 ? Math.min(Math.max(0, currentIndex), total - 1) : 0
                           const current = total > 0 ? galleryItems[safeIndex] : null
+                          const shouldLoadThisMedia = index === 0 || mediaShouldLoad[project.id]
 
                           if (!current) {
                             return (
@@ -398,6 +438,19 @@ export default function Projects() {
                             )
                           }
 
+                          // Lazy-load heavy media types (but still render lightweight placeholders)
+                          if (!shouldLoadThisMedia && (current.type === 'image' || current.type === 'video' || current.type === 'pdf')) {
+                            return (
+                              <div className="absolute inset-0 flex items-center justify-center" aria-hidden="true">
+                                <div
+                                  className={`w-16 sm:w-24 h-16 sm:h-24 rounded-2xl sm:rounded-3xl bg-gradient-to-br ${project.color} opacity-30 flex items-center justify-center`}
+                                >
+                                  <project.icon className="w-8 sm:w-12 h-8 sm:h-12 text-foreground opacity-60" />
+                                </div>
+                              </div>
+                            )
+                          }
+
                           return (
                             <>
                               {current.type === 'image' && (
@@ -405,6 +458,8 @@ export default function Projects() {
                                   src={assetUrl(current.src)}
                                   alt={project.title}
                                   className="w-full h-full object-cover"
+                                  loading="lazy"
+                                  decoding="async"
                                 />
                               )}
 
@@ -423,7 +478,7 @@ export default function Projects() {
                                         : 'w-full h-full object-cover'
                                     }
                                     controls
-                                    preload="metadata"
+                                    preload={shouldLoadThisMedia ? 'metadata' : 'none'}
                                     playsInline
                                     onLoadedMetadata={(e) => {
                                       const v = e.currentTarget
@@ -631,6 +686,9 @@ export default function Projects() {
                                     aria-label="Previous media"
                                     onClick={(e) => {
                                       e.stopPropagation()
+                                      setMediaShouldLoad((prev) =>
+                                        prev[project.id] ? prev : { ...prev, [project.id]: true }
+                                      )
                                       setActiveMediaIndex((prev) => {
                                         const cur = prev[project.id] ?? 0
                                         const next = (cur - 1 + total) % total
@@ -646,6 +704,9 @@ export default function Projects() {
                                     aria-label="Next media"
                                     onClick={(e) => {
                                       e.stopPropagation()
+                                      setMediaShouldLoad((prev) =>
+                                        prev[project.id] ? prev : { ...prev, [project.id]: true }
+                                      )
                                       setActiveMediaIndex((prev) => {
                                         const cur = prev[project.id] ?? 0
                                         const next = (cur + 1) % total
@@ -682,6 +743,9 @@ export default function Projects() {
                                         aria-label={label}
                                         onClick={(e) => {
                                           e.stopPropagation()
+                                          setMediaShouldLoad((prev) =>
+                                            prev[project.id] ? prev : { ...prev, [project.id]: true }
+                                          )
                                           setActiveMediaIndex((prev) => ({
                                             ...prev,
                                             [project.id]: i,
@@ -728,7 +792,7 @@ export default function Projects() {
                       </div>
 
                       {/* Description */}
-                      <p className="text-muted text-sm sm:text-base mb-4 flex-grow">
+                      <p className="text-muted text-sm sm:text-base mb-4">
                         {project.description}
                       </p>
 
@@ -763,7 +827,7 @@ export default function Projects() {
                       </div>
 
                       {/* Tech Stack */}
-                      <div className="flex flex-wrap gap-1.5 sm:gap-2 mb-4">
+                      <div className="flex flex-wrap gap-1.5 sm:gap-2 mt-10 mb-3">
                         {project.tech.map((tech) => (
                           <span key={tech} className="tech-tag text-xs">
                             {tech}

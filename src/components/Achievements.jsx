@@ -105,7 +105,7 @@ export default function Achievements() {
                   ref={(el) => {
                     if (el) el.style.setProperty('--animation-delay', `${index * 0.15 + 0.2}s`)
                   }}
-                  className={`relative overflow-hidden rounded-2xl p-6 sm:p-8 border-2 ${achievement.borderColor} ${achievement.bgColor} group cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 transition-transform hover:-translate-y-2 hover:scale-[1.02] focus-visible:-translate-y-2 focus-visible:scale-[1.02] achievements-featured-item ${isInView ? 'animate-fade-in-scale' : 'opacity-0'}`}
+                  className={`relative overflow-hidden rounded-2xl p-6 sm:p-8 border-2 ${achievement.borderColor} ${achievement.bgColor} group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 transition-transform hover:-translate-y-2 hover:scale-[1.02] focus-visible:-translate-y-2 focus-visible:scale-[1.02] achievements-featured-item ${isInView ? 'animate-fade-in-scale' : 'opacity-0'}`}
                   tabIndex={0}
                   aria-labelledby={`achievement-${achievement.title.replace(/\s+/g, '-')}`}
                 >

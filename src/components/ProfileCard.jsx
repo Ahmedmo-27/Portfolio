@@ -28,16 +28,10 @@ const ProfileCardComponent = ({
   behindGlowSize,
   className = '',
   enableTilt = true,
-  enableMobileTilt = false,
-  mobileTiltSensitivity = 5,
-  miniAvatarUrl = assetUrl('Ahmed Mostafa - Software Development Head.jpg'),
+  enableMobileTilt = true,
+  mobileTiltSensitivity = 1,
   name = 'Ahmed Mostafa',
   title = 'Software Engineer',
-  handle = 'ahmedmostafa-swe',
-  status = 'Open to Opportunities',
-  contactText = 'Contact Me',
-  showUserInfo = true,
-  onContactClick,
   priority = false,
   rootMargin = '50px'
 }) => {
@@ -147,18 +141,17 @@ const ProfileCardComponent = ({
       const centerDist = Math.hypot(centerY, centerX);
       const pointerFromCenter = clamp(centerDist * 0.02, 0, 1);
 
-      // Batch all style updates in a single operation
-      wrap.style.cssText = [
-        `--pointer-x:${percentX}%`,
-        `--pointer-y:${percentY}%`,
-        `--background-x:${adjust(percentX, 0, 100, 35, 65)}%`,
-        `--background-y:${adjust(percentY, 0, 100, 35, 65)}%`,
-        `--pointer-from-center:${pointerFromCenter}`,
-        `--pointer-from-top:${percentYDiv100}`,
-        `--pointer-from-left:${percentXDiv100}`,
-        `--rotate-x:${round(-centerX * 0.2)}deg`,
-        `--rotate-y:${round(centerY * 0.25)}deg`
-      ].join(';') + ';';
+      // IMPORTANT: do not overwrite style.cssText here; the wrapper also stores other CSS variables
+      // like --icon / --grain / --inner-gradient. Overwriting cssText would clear them.
+      wrap.style.setProperty('--pointer-x', `${percentX}%`);
+      wrap.style.setProperty('--pointer-y', `${percentY}%`);
+      wrap.style.setProperty('--background-x', `${adjust(percentX, 0, 100, 35, 65)}%`);
+      wrap.style.setProperty('--background-y', `${adjust(percentY, 0, 100, 35, 65)}%`);
+      wrap.style.setProperty('--pointer-from-center', `${pointerFromCenter}`);
+      wrap.style.setProperty('--pointer-from-top', `${percentYDiv100}`);
+      wrap.style.setProperty('--pointer-from-left', `${percentXDiv100}`);
+      wrap.style.setProperty('--rotate-x', `${round(-centerX * 0.2)}deg`);
+      wrap.style.setProperty('--rotate-y', `${round(centerY * 0.25)}deg`);
     };
 
     const step = (ts) => {
@@ -446,10 +439,6 @@ const ProfileCardComponent = ({
       cardWrapperRef.current.style.setProperty('--behind-glow-size', behindGlowSize ?? '50%');
     }
   }, [iconUrl, grainUrl, innerGradient, behindGlowColor, behindGlowSize, shouldLoad]);
-
-  const handleContactClick = useCallback(() => {
-    if (onContactClick) onContactClick();
-  }, [onContactClick]);
 
   return (
     <div 
