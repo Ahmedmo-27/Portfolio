@@ -14,17 +14,13 @@
     "dev:full": "npm run dev"
   },
   "dependencies": {
-    "clsx": "^2.1.1",
     "dotenv": "^17.2.3",
     "express": "^4.18.2",
     "framer-motion": "^12.23.26",
     "lucide-react": "^0.561.0",
-    "motion-dom": "^12.23.23",
-    "motion-utils": "^12.23.6",
     "nodemailer": "^7.0.11",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
-    "tailwind-merge": "^3.4.0",
     "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {

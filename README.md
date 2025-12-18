@@ -1,181 +1,140 @@
-# Ahmed Mostafa - Portfolio Website
+# Ahmed Mostafa — Portfolio Website
 
-A modern, professional portfolio website built with React, TypeScript, Vite, and TailwindCSS. Features a premium dark/light theme system with smooth transitions.
+Modern, responsive developer portfolio built with **React 19 + Vite** and a small **Express** backend for the contact form (`POST /api/contact`).
 
-## 🚀 Tech Stack
+## Tech Stack
 
-- **Framework:** React 19 + TypeScript
-- **Build Tool:** Vite
-- **Styling:** TailwindCSS with CSS Variables
+- **Frontend:** React 19 (JavaScript/JSX), Vite
+- **Styling:** TailwindCSS + CSS variables
 - **Animations:** Framer Motion
 - **Icons:** Lucide React
-- **Theme:** Dark/Light mode with localStorage persistence
+- **Backend:** Express + Nodemailer (SMTP)
+- **Runtime:** Node.js 18+ (ESM project)
 
-## ✨ Features
+## Features
 
-- 🌙 **Dark/Light Mode** - Smooth theme toggle with system preference detection
-- 🎨 **Premium Design** - Corporate, dev-focused aesthetic with glassmorphism
-- 📱 **Fully Responsive** - Optimized for all screen sizes
-- ⚡ **Fast Loading** - Vite-powered development and builds
-- 🎯 **SEO Optimized** - Meta tags and semantic HTML
-- 📧 **Contact Form** - Sends email via backend (`/api/contact`) using Nodemailer + SMTP
-- 🖼️ **Media Placeholders** - Clear slots for project screenshots, videos, and presentations
+- **Dark/Light mode** with persistence (localStorage) + smooth transitions
+- **Responsive layout** optimized for mobile → desktop
+- **SEO-friendly** structure/meta tags
+- **Contact form** with validation, honeypot, and basic rate-limiting
+- **Media support** with optional Cloudflare R2 public base URL
+- **PDFs served inline** (both dev + production)
 
-## 🛠️ Getting Started
+## Getting Started
 
 ### Prerequisites
 
-- Node.js 18+ 
-- npm or yarn
+- Node.js 18+
+- npm (or yarn/pnpm if you prefer)
 
-### R2 (Cloudflare) media assets (optional)
-
-If you want **all images/PDFs** to be loaded from Cloudflare R2, set:
-
-- `VITE_R2_PUBLIC_URL` (example: `https://your-public-bucket-domain`)
-
-### Installation
+### Install
 
 ```bash
-# Install dependencies
 npm install
-
-# Start development server
-npm run dev
-
-# Build for production
-npm run build
-
-# Preview production build
-npm run preview
 ```
 
-## 📁 Project Structure
+### Run locally (recommended)
+
+This starts **both**:
+- Vite dev server (frontend)
+- Express server on `http://localhost:3000` (API)
+
+```bash
+npm run dev
+```
+
+The frontend calls `/api/contact`, which is proxied in dev to the Express server.
+
+### Environment Variables
+
+Create a `.env` file in the project root (don’t commit it).
+
+```bash
+# Backend (Express / Nodemailer)
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_SECURE=false
+SMTP_USER=your_email@gmail.com
+SMTP_PASS=your_app_password
+CONTACT_TO_EMAIL=your_email@gmail.com
+# Optional:
+CONTACT_FROM_EMAIL=your_email@gmail.com
+SITE_URL=https://your-domain.com
+BRAND_NAME=Ahmed Mostafa
+BRAND_LOGO_URL=https://your-domain.com/logo.png
+
+# Frontend (Vite)
+# If set, images/PDFs can be built/loaded from an R2 public base URL
+VITE_R2_PUBLIC_URL=https://your-public-bucket-domain
+```
+
+## Production
+
+### Build
+
+```bash
+npm run build
+```
+
+### Run (serves `dist/` + `/api`)
+
+In production, the Express server serves the built frontend from `dist/` and handles `/api/contact`.
+
+```bash
+npm run start
+```
+
+### Note about `npm run preview`
+
+`npm run preview` runs Vite’s preview server (frontend only). For a full production-like run (frontend + API), use `npm run build` then `npm run start`.
+
+## Project Structure
 
 ```
 src/
-├── components/
-│   ├── Navbar.tsx          # Navigation with theme toggle
-│   ├── ThemeToggle.tsx     # Dark/light mode switcher
-│   ├── ProfileCard.tsx     # Hero section profile card
-│   ├── Hero.tsx            # Hero section with profile
-│   ├── About.tsx           # About section
-│   ├── Skills.tsx          # Technical skills grid
-│   ├── Experience.tsx      # Work experience timeline
-│   ├── Projects.tsx        # Projects with media placeholders
-│   ├── Achievements.tsx    # Awards & recognition
-│   ├── Contact.tsx         # Contact form & info
-│   ├── Footer.tsx          # Site footer
-│   └── MediaPlaceholder.tsx # Reusable media placeholder
-├── context/
-│   └── ThemeContext.tsx    # Theme provider & hook
-├── utils/
-│   └── animations.ts       # Framer Motion variants
-├── App.tsx                 # Main app with ThemeProvider
-├── main.tsx                # Entry point
-└── index.css               # Global styles & theme variables
+├── components/               # UI sections and shared components (.jsx/.css)
+├── context/                  # Theme provider
+├── utils/                    # Helpers (animations, asset URL helpers, ...)
+├── App.jsx                   # App composition
+├── main.jsx                  # Entry point
+└── index.css                 # Global styles + theme variables
+
+server/
+├── mailApi.js                # POST /api/contact
+├── emailConfig.js            # SMTP + brand/contact config from env
+└── contactEmailTemplate.js   # Styled HTML + text email body
+
+server.js                     # Express app (API + serving dist/)
 ```
 
-## 🎨 Theme System
+## Customization
 
-The portfolio uses CSS custom properties for seamless theme switching:
+- **Sections/content:** update components in `src/components/` (e.g. `Hero.jsx`, `Projects.jsx`, `Experience.jsx`, `Contact.jsx`)
+- **Social links:** typically in `Hero.jsx`, `Contact.jsx`, and `Footer.jsx`
+- **Theme/styling:** `src/index.css` + Tailwind classes (see `tailwind.config.js`)
+- **Profile image/static assets:** place files in `public/` and reference them via `/your-file.png`
 
-### Dark Mode (Default)
-- Deep slate backgrounds
-- High contrast text
-- Subtle gradient overlays
+## Troubleshooting
 
-### Light Mode
-- Clean white/gray backgrounds  
-- Darker text for readability
-- Softer gradient accents
+- **`server_not_configured`**
+  - Ensure the required env vars exist: `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `CONTACT_TO_EMAIL`.
+- **`smtp_tls_failed` / “self-signed certificate in certificate chain”**
+  - Usually caused by VPN/corporate proxy/antivirus SSL inspection. Try a different network or disable SSL inspection.
+- **`smtp_auth_failed`**
+  - For Gmail, use an **App Password** (not your normal password).
+- **`rate_limited`**
+  - The backend applies a small per-IP limit to reduce spam.
 
-### Theme Variables
-```css
---color-background    /* Page background */
---color-foreground    /* Primary text */
---color-card          /* Card backgrounds */
---color-surface       /* Surface elements */
---color-border        /* Borders */
---color-muted         /* Secondary text */
-```
+## Notes
 
-## 📝 Customization
+- Performance docs: `PERFORMANCE_ANALYSIS.md`, `HEAVIEST_COMPONENTS.md`
+- Deployment entrypoint: `server.js` (see `Procfile`)
 
-### Adding Your Profile Photo
+## License
 
-In `ProfileCard.tsx`, uncomment and update:
-```tsx
-<img 
-  src="/profile-photo.jpg" 
-  alt="Ahmed Mostafa" 
-  className="w-full h-full object-cover"
-/>
-```
+MIT — see `LICENSE`.
 
-### Adding Project Media
-
-Each project has dedicated placeholders for:
-- **Screenshots** - Product/app screenshots
-- **Video Demo** - Walkthrough or demo videos
-- **Presentation** - Architecture diagrams, slides, PDFs
-
-Replace the placeholder components with actual media:
-```tsx
-<img src="/projects/vaultique-1.png" alt="Vaultique Dashboard" />
-<video src="/projects/demo.mp4" controls />
-```
-
-### Contact Form Integration
-
-The contact form calls `POST /api/contact` (proxied in dev to the backend) which sends email via Nodemailer + SMTP.
-
-Add these to your `.env` (server-side):
-
-- `SMTP_HOST` (example: `smtp.gmail.com`)
-- `SMTP_PORT` (example: `587`)
-- `SMTP_SECURE` (`false` for 587/STARTTLS, `true` for 465)
-- `SMTP_USER` (your email)
-- `SMTP_PASS` (for Gmail: an **App Password**, not your normal password)
-
-If you see `smtp_tls_failed` / “self-signed certificate in certificate chain”, it’s usually caused by a VPN/corporate proxy/antivirus doing SSL inspection. Try disabling SSL inspection/VPN or use a network without interception.
-
-### Updating Links
-
-Update social and project links in:
-- `Hero.tsx` - Social links
-- `ProfileCard.tsx` - Profile info
-- `Projects.tsx` - Demo/GitHub links
-- `Contact.tsx` - Social links
-- `Footer.tsx` - Navigation & social
-
-## 🎭 Design Tokens
-
-### Typography
-- **Display:** Syne (headings)
-- **Body:** Outfit (paragraphs)
-- **Code:** JetBrains Mono (technical)
-
-### Colors
-- **Primary:** Sky blue (#0ea5e9)
-- **Accent Cyan:** #06b6d4
-- **Accent Emerald:** #10b981
-- **Accent Violet:** #8b5cf6
-- **Accent Amber:** #f59e0b
-
-### Components
-- `.glass` - Glassmorphism effect
-- `.glass-card` - Card with glass styling
-- `.btn-primary` - Primary action button
-- `.btn-secondary` - Secondary button
-- `.tech-tag` - Technology tags
-- `.gradient-text` - Gradient text effect
-
-## 📄 License
-
-This project is open source and available under the MIT License.
-
-## 👤 Author
+## Author
 
 **Ahmed Mostafa**
 - Email: ahmedmostafa.swe1@gmail.com
