@@ -4,15 +4,14 @@ import './Education.css'
 
 const education = {
   university: 'Misr International University (MIU)',
-  degree: 'Bachelor of Science in Software Engineering',
+  degree: 'Bachelor of Computer Science majoring in Software Engineering',
   status: 'Junior (3rd Year)',
-  expectedGraduation: 'Expected: 2026',
+  expectedGraduation: 'Expected: 2027',
   location: 'Cairo, Egypt',
-  gpa: '3.5/4.0',
   highlights: [
     'Focus on Software Engineering and Cloud Computing',
     'Best Web Project Award (Vaultique) - 2025',
-    'Active member of Microsoft Student Partners (MSP)',
+    'Active software development head of Microsoft Student Partners (MSP - MIU)',
     'Completed coursework in Data Structures, Algorithms, Databases, and Software Architecture',
   ],
 }
@@ -25,11 +24,9 @@ const certifications = [
     issuer: 'Microsoft',
     date: 'Sep 2025',
     type: 'Course',
-    credentialId: null,
     color: 'from-sky-500 to-blue-500',
     skills: ['Cloud Computing'],
-    link: '#',
-    verified: true,
+    link: 'https://learn.microsoft.com/en-us/users/ahmedmostafa-2739/achievements/q5psmbce?ref=https%3A%2F%2F',
   },
   {
     id: 'sprints-devops-foundations',
@@ -37,11 +34,9 @@ const certifications = [
     issuer: 'Sprints x Microsoft',
     date: 'Sep 2025',
     type: 'Bootcamp',
-    credentialId: 'ID - SPR - 1J04S5',
     color: 'from-blue-500 to-cyan-500',
     skills: ['Containerization', 'AWS', 'Cloud Computing', 'Docker'],
-    link: '#',
-    verified: true,
+    link: 'https://sprints.ai/en-eg/journeys/learning/ID%20-%20SPR%20-%201J04S5/view-certificate-serial',
   },
   {
     id: 'almentor-first-time-employee',
@@ -49,11 +44,9 @@ const certifications = [
     issuer: 'almentor',
     date: 'Jul 2025',
     type: 'Course Certificate',
-    credentialId: 'ejrgidgyx8',
     color: 'from-emerald-500 to-teal-500',
     skills: ['Career Readiness', 'Workplace Culture'],
-    link: '#',
-    verified: true,
+    link: 'https://nbe.almentor.net/en/certificate/ejrgidgyx8',
   },
   {
     id: 'almentor-communication',
@@ -61,11 +54,9 @@ const certifications = [
     issuer: 'almentor',
     date: 'Jul 2025',
     type: 'Course Certificate',
-    credentialId: 'mosnrpl1',
     color: 'from-violet-500 to-purple-500',
     skills: ['Communication', 'Presentation'],
-    link: '#',
-    verified: true,
+    link: 'https://nbe.almentor.net/en/certificate/mosnrpl1',
   },
   {
     id: 'almentor-work-ethics',
@@ -73,11 +64,9 @@ const certifications = [
     issuer: 'almentor',
     date: 'Jul 2025',
     type: 'Course Certificate',
-    credentialId: 'nvxaqlr57',
     color: 'from-amber-500 to-orange-500',
     skills: ['Work Ethics', 'Professionalism'],
-    link: '#',
-    verified: true,
+    link: 'https://nbe.almentor.net/en/certificate/nvxaqlr57',
   },
   {
     id: 'odc-istqb',
@@ -85,7 +74,6 @@ const certifications = [
     issuer: 'Orange Digital Center Egypt',
     date: 'Feb 2025',
     type: 'Course',
-    credentialId: null,
     color: 'from-rose-500 to-red-500',
     skills: [
       'Manual Testing',
@@ -95,7 +83,6 @@ const certifications = [
       'QA',
     ],
     link: '#',
-    verified: true,
   },
   {
     id: 'linkedin-selenium',
@@ -103,11 +90,9 @@ const certifications = [
     issuer: 'LinkedIn Learning',
     date: 'Feb 2025',
     type: 'Course Certificate',
-    credentialId: null,
     color: 'from-indigo-500 to-blue-500',
     skills: ['Selenium', 'Test Automation', 'Selenium WebDriver'],
-    link: '#',
-    verified: true,
+    link: 'https://www.linkedin.com/learning/certificates/7a699f72b731343cd7f7c99e9c1f6f9532949d8da03bd8c6c80879bd2211e8e4?lipi=urn%3Ali%3Apage%3Ad_flagship3_profile_view_base_certifications_details%3BdoZ7TmQQQjSZgZwOhm8HNg%3D%3D',
   },
   {
     id: 'linkedin-testing-foundations',
@@ -115,11 +100,9 @@ const certifications = [
     issuer: 'LinkedIn Learning',
     date: 'Feb 2025',
     type: 'Course Certificate',
-    credentialId: null,
     color: 'from-slate-500 to-sky-500',
     skills: ['Software QA', 'Software Testing'],
-    link: '#',
-    verified: true,
+    link: 'https://www.linkedin.com/learning/certificates/1deb502ef86347d4fdfd89a14944755c9e3cf60f3ce271d5dbd74240383049c9?lipi=urn%3Ali%3Apage%3Ad_flagship3_profile_view_base_certifications_details%3BdoZ7TmQQQjSZgZwOhm8HNg%3D%3D',
   },
   {
     id: 'scaler-cpp-essentials',
@@ -127,11 +110,9 @@ const certifications = [
     issuer: 'Scaler',
     date: 'Jun 2024',
     type: 'Course Certificate',
-    credentialId: null,
     color: 'from-cyan-500 to-emerald-500',
     skills: ['C++'],
-    link: '#',
-    verified: true,
+    link: 'https://moonshot.scaler.com/s/li/3OObsvS0Ws',
   },
   {
     id: 'ctc-english-level-16',
@@ -140,11 +121,9 @@ const certifications = [
     issuer: 'Cambridge Training College Britain',
     date: 'Aug 2022',
     type: 'Diploma',
-    credentialId: '25032062820',
     color: 'from-blue-500 to-indigo-500',
     skills: ['English', 'Translation', 'Business English'],
-    link: '#',
-    verified: true,
+    link: 'https://www.ctcbritain.org/certificate.php?serial=25032062820',
   },
   {
     id: 'goethe-a2-german',
@@ -152,35 +131,41 @@ const certifications = [
     issuer: 'Goethe-Institut Kairo',
     date: 'Feb 2019',
     type: 'Language Certificate',
-    credentialId: null,
     color: 'from-emerald-500 to-lime-500',
     skills: ['German'],
     link: '#',
-    verified: true,
   },
 ]
 
 const coursework = [
   'Data Structures & Algorithms',
-  'Database Systems',
-  'Software Architecture',
+  'Algorithm Analysis & Design',
+  'Database Management Systems',
+  'Human-Computer Interaction',
+  'Computer Organization & Architecture',
   'Operating Systems',
   'Computer Networks',
   'Web Development',
-  'Mobile App Development',
-  'Cloud Computing',
+  'Artificial Intelligence'
 ]
 
 export default function Education() {
   const ref = useRef(null)
   const [isInView, setIsInView] = useState(false)
   const [showAllCerts, setShowAllCerts] = useState(false)
+  const [expandedCertSkills, setExpandedCertSkills] = useState({})
 
-  // Show a subset of certifications by default to keep layout compact
   const CERTS_INITIAL_DISPLAY = 6
   const displayedCertifications = showAllCerts
     ? certifications
     : certifications.slice(0, CERTS_INITIAL_DISPLAY)
+
+  const toggleCertSkills = (certId) => {
+    setExpandedCertSkills((prev) => ({
+      ...prev,
+      [certId]: !prev[certId],
+    }))
+  }
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -312,7 +297,7 @@ export default function Education() {
                     <BadgeCheck className="w-5 h-5 text-accent-emerald" />
                     Licenses & Certifications
                   </h3>
-                  <span className="text-[11px] uppercase tracking-wide text-muted/70">
+                  <span className="text-[11px] uppercase tracking-wide text-muted-foreground/70">
                     {certifications.length} credentials
                   </span>
                 </div>
@@ -348,18 +333,12 @@ export default function Education() {
                             <div className="min-w-0">
                               <p className="text-[13px] sm:text-sm font-semibold text-foreground leading-snug line-clamp-2 flex items-center gap-1.5">
                                 {cert.title}
-                                {cert.verified && (
-                                  <BadgeCheck
-                                    className="w-3.5 h-3.5 text-accent-emerald flex-shrink-0"
-                                    aria-label="Verified certification"
-                                  />
-                                )}
                               </p>
                               <p className="text-[11px] sm:text-xs font-medium text-primary-400 truncate">
                                 {cert.issuer}
                               </p>
                             </div>
-                            <span className="text-[10px] text-muted/70 flex-shrink-0">
+                            <span className="text-[10px] text-muted-foreground/70 flex-shrink-0">
                               {cert.date}
                             </span>
                           </div>
@@ -369,16 +348,11 @@ export default function Education() {
                               <span className="w-1 h-1 rounded-full bg-accent-emerald" aria-hidden="true" />
                               {cert.type}
                             </span>
-                            {cert.credentialId && (
-                              <span className="text-[10px] text-muted/70 truncate">
-                                ID: {cert.credentialId}
-                              </span>
-                            )}
                           </div>
 
                           {Array.isArray(cert.skills) && cert.skills.length > 0 && (
                             <div className="flex flex-wrap gap-1 mt-1">
-                              {cert.skills.slice(0, 3).map((skill) => (
+                              {(expandedCertSkills[cert.id] ? cert.skills : cert.skills.slice(0, 3)).map((skill) => (
                                 <span
                                   key={`${cert.id}-${skill}`}
                                   className="rounded-full bg-surface/80 px-1.5 py-0.5 text-[10px] text-muted border border-border/60"
@@ -387,9 +361,25 @@ export default function Education() {
                                 </span>
                               ))}
                               {cert.skills.length > 3 && (
-                                <span className="text-[10px] text-primary-400">
-                                  +{cert.skills.length - 3} more
-                                </span>
+                                <button
+                                  type="button"
+                                  onClick={(e) => {
+                                    e.preventDefault()
+                                    e.stopPropagation()
+                                    toggleCertSkills(cert.id)
+                                  }}
+                                  className="text-[10px] text-primary-400 hover:text-primary-300 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 rounded-md px-1"
+                                  aria-expanded={!!expandedCertSkills[cert.id]}
+                                  aria-label={
+                                    expandedCertSkills[cert.id]
+                                      ? `Show fewer skills for ${cert.title}`
+                                      : `Show ${cert.skills.length - 3} more skills for ${cert.title}`
+                                  }
+                                >
+                                  {expandedCertSkills[cert.id]
+                                    ? 'Show less'
+                                    : `+${cert.skills.length - 3} more`}
+                                </button>
                               )}
                             </div>
                           )}

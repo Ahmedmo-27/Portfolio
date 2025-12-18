@@ -2,6 +2,7 @@ import React from 'react'
 import { motion } from 'framer-motion'
 import { Download, Mail, ExternalLink, Github, Linkedin, Code2 } from 'lucide-react'
 import ProfileCard from './ProfileCard'
+import { assetUrl } from '../utils/assetUrl'
 import './Hero.css'
 
 const Hero = () => {
@@ -58,7 +59,7 @@ const Hero = () => {
 
             {/* CTA Buttons */}
             <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2 md:gap-3 mb-6 md:mb-8">
-              <a href="/Ahmed Mostafa's CV.pdf" download className="btn-primary text-sm md:text-base px-4 py-2 md:px-6 md:py-3">
+              <a href={assetUrl("Ahmed Mostafa's CV.pdf")} download className="btn-primary text-sm md:text-base px-4 py-2 md:px-6 md:py-3" target="_blank">
                 <Download className="w-4 h-4 md:w-5 md:h-5" />
                 Download CV
               </a>
@@ -91,7 +92,7 @@ const Hero = () => {
                 <Linkedin className="w-4 h-4 md:w-5 md:h-5" />
               </a>
               <a
-                href="mailto:ahmedmostafa2004@hotmail.com"
+                href="mailto:ahmedmostafa.swe1@gmail.com"
                 className="p-2.5 md:p-3 rounded-xl glass hover:bg-surface-hover text-muted"
               >
                 <Mail className="w-4 h-4 md:w-5 md:h-5" />
@@ -103,7 +104,6 @@ const Hero = () => {
           <div className="order-1 lg:order-2 flex justify-center lg:justify-end mb-6 md:mb-0">
             <ProfileCard 
               className="w-full max-w-xs sm:max-w-sm" 
-              avatarUrl="/Ahmed Mostafa - Software Development Head Avatar.jpg"
               priority={true}
             />
           </div>

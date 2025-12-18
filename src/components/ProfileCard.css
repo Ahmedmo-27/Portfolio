@@ -9,7 +9,8 @@
   --rotate-y: 0deg;
   --background-x: 50%;
   --background-y: 50%;
-  --icon: url('/Geometric AM logo design.png');
+  /* Set by ProfileCard at runtime (so it can come from R2). Keep empty by default. */
+  --icon: none;
   --behind-glow-color: rgba(125, 190, 255, 0.67);
   --behind-glow-size: 25%;
   --inner-gradient: none;

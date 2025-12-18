@@ -5,8 +5,8 @@ const contactInfo = [
   {
     icon: Mail,
     label: 'Email',
-    value: 'ahmedmostafa2004@hotmail.com',
-    href: 'mailto:ahmedmostafa2004@hotmail.com',
+    value: 'ahmedmostafa.swe1@gmail.com',
+    href: 'mailto:ahmedmostafa.swe1@gmail.com',
   },
   {
     icon: MapPin,
@@ -39,19 +39,112 @@ export default function Contact() {
     message: '',
   })
   const [status, setStatus] = useState('idle')
+  const [statusMessage, setStatusMessage] = useState('')
+  const [honeypot, setHoneypot] = useState('')
+
+  const isEmail = (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(value || '').trim())
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     setStatus('loading')
-    
-    // Simulate form submission - Replace with actual email service integration
-    try {
-      await new Promise(resolve => setTimeout(resolve, 1500))
-      setStatus('success')
-      setFormData({ name: '', email: '', subject: '', message: '' })
-      setTimeout(() => setStatus('idle'), 3000)
-    } catch {
+    setStatusMessage('')
+
+    // Basic anti-bot honeypot: real users won't fill this hidden field
+    if (honeypot) {
       setStatus('error')
+      setStatusMessage('Failed to send. Please try again.')
+      setTimeout(() => setStatus('idle'), 3000)
+      return
+    }
+
+    const name = formData.name.trim()
+    const email = formData.email.trim()
+    const subject = formData.subject.trim()
+    const message = formData.message.trim()
+
+    if (!name || name.length < 2) {
+      setStatus('error')
+      setStatusMessage('Please enter your name.')
+      setTimeout(() => setStatus('idle'), 3000)
+      return
+    }
+    if (!isEmail(email)) {
+      setStatus('error')
+      setStatusMessage('Please enter a valid email address.')
+      setTimeout(() => setStatus('idle'), 3000)
+      return
+    }
+    if (!subject || subject.length < 3) {
+      setStatus('error')
+      setStatusMessage('Please enter a subject.')
+      setTimeout(() => setStatus('idle'), 3000)
+      return
+    }
+    if (!message || message.length < 10) {
+      setStatus('error')
+      setStatusMessage('Please enter a longer message (at least 10 characters).')
+      setTimeout(() => setStatus('idle'), 3000)
+      return
+    }
+    
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name,
+          email,
+          subject,
+          message,
+          company: honeypot, // honeypot field name used by server
+        }),
+      })
+
+      const payload = await res.json().catch(() => null)
+      if (!res.ok || !payload?.ok) {
+        const errCode = payload?.error || 'send_failed'
+        if (errCode === 'server_not_configured') {
+          throw new Error('server_not_configured')
+        }
+        if (errCode === 'smtp_auth_failed') {
+          throw new Error('smtp_auth_failed')
+        }
+          if (errCode === 'smtp_tls_failed') {
+            throw new Error('smtp_tls_failed')
+          }
+        if (errCode === 'smtp_connection_failed') {
+          throw new Error('smtp_connection_failed')
+        }
+        if (errCode === 'invalid_json' || errCode === 'validation') {
+          throw new Error('validation')
+        }
+        throw new Error('send_failed')
+      }
+
+      setStatus('success')
+      setStatusMessage('Message sent successfully. I\'ll get back to you soon.')
+      setFormData({ name: '', email: '', subject: '', message: '' })
+      setHoneypot('')
+      setTimeout(() => setStatus('idle'), 3000)
+    } catch (err) {
+      // Avoid leaking details, but keep it helpful
+      setStatus('error')
+      const code = String(err?.message || '')
+      if (code === 'server_not_configured') {
+        setStatusMessage('Backend email is not configured yet (SMTP env vars missing).')
+      } else if (code === 'smtp_auth_failed') {
+        setStatusMessage('SMTP authentication failed. Check Gmail App Password / SMTP credentials.')
+      } else if (code === 'smtp_tls_failed') {
+        setStatusMessage(
+          'SMTP TLS failed (certificate issue). This is usually caused by a VPN/corporate proxy/antivirus doing SSL inspection. Try disabling SSL inspection/VPN or use a network without interception.'
+        )
+      } else if (code === 'smtp_connection_failed') {
+        setStatusMessage('SMTP connection failed. Check SMTP host/port and network/firewall.')
+      } else if (code === 'validation') {
+        setStatusMessage('Please check your inputs and try again.')
+      } else {
+        setStatusMessage('Failed to send. Please try again or email me directly.')
+      }
       setTimeout(() => setStatus('idle'), 3000)
     }
   }
@@ -134,7 +227,7 @@ export default function Contact() {
                       <item.icon className="w-4 md:w-5 h-4 md:h-5 text-primary-400" />
                     </div>
                     <div>
-                      <p className="text-muted/60 text-xs md:text-sm">{item.label}</p>
+                      <p className="text-muted-foreground/60 text-xs md:text-sm">{item.label}</p>
                       {item.href ? (
                         <a 
                           href={item.href}
@@ -152,7 +245,7 @@ export default function Contact() {
 
               {/* Social Links */}
               <div>
-                <p className="text-muted/60 text-xs md:text-sm mb-3 md:mb-4">Find me on</p>
+                <p className="text-muted-foreground/60 text-xs md:text-sm mb-3 md:mb-4">Find me on</p>
                 <div className="flex gap-3" role="list" aria-label="Social media links">
                   {socialLinks.map((social) => (
                     <a
@@ -226,6 +319,21 @@ export default function Contact() {
                 </div>
 
                 <div>
+                  {/* Honeypot (anti-bot). Hidden visually but present for simple spam protection. */}
+                  <label className="sr-only" htmlFor="company">
+                    Company
+                  </label>
+                  <input
+                    id="company"
+                    name="company"
+                    type="text"
+                    value={honeypot}
+                    onChange={(e) => setHoneypot(e.target.value)}
+                    className="hidden"
+                    tabIndex={-1}
+                    autoComplete="off"
+                  />
+
                   <label htmlFor="subject" className="block text-xs md:text-sm font-medium text-muted mb-1.5 md:mb-2">
                     Subject <span className="text-red-400" aria-hidden="true">*</span>
                   </label>
@@ -295,13 +403,20 @@ export default function Contact() {
                   {status === 'error' && 'Failed to send message. Please try again.'}
                 </div>
 
-                <p className="text-center text-muted/60 text-xs md:text-sm">
+                {/* Visible status message */}
+                {statusMessage && (
+                  <p className="text-center text-xs md:text-sm text-muted">
+                    {statusMessage}
+                  </p>
+                )}
+
+                <p className="text-center text-muted-foreground/60 text-xs md:text-sm">
                   Or email me directly at{' '}
                   <a 
-                    href="mailto:ahmedmostafa2004@hotmail.com" 
+                    href="mailto:ahmedmostafa.swe1@gmail.com" 
                     className="text-primary-400 hover:underline focus-visible:underline focus-visible:outline-none"
                   >
-                    ahmedmostafa2004@hotmail.com
+                    ahmedmostafa.swe1@gmail.com
                   </a>
                 </p>
               </form>
@@ -312,4 +427,3 @@ export default function Contact() {
     </section>
   )
 }
-

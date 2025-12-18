@@ -2,11 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/png" href="/Geometric AM logo design.png" />
-    <link rel="apple-touch-icon" href="/Geometric AM logo design.png" />
-    <link rel="apple-touch-icon" sizes="180x180" href="/Geometric AM logo design.png" />
-    <link rel="icon" type="image/png" sizes="32x32" href="/Geometric AM logo design.png" />
-    <link rel="icon" type="image/png" sizes="16x16" href="/Geometric AM logo design.png" />
+    <!-- Only local static asset we keep in /public -->
+    <link rel="icon" type="image/svg+xml" href="%VITE_R2_PUBLIC_URL%/Assets/Geometric%20AM%20logo%20design.png" />
+    <!-- Optional: Use R2-hosted icons for mobile/home-screen -->
+    <link rel="apple-touch-icon" href="%VITE_R2_PUBLIC_URL%/Assets/Geometric%20AM%20logo%20design.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
     
     <!-- Primary Meta Tags -->
@@ -35,7 +34,6 @@
     
     <!-- Windows Tiles -->
     <meta name="msapplication-TileColor" content="#020617" />
-    <meta name="msapplication-config" content="/browserconfig.xml" />
     
     <!-- Google Site Verification -->
     <!-- TODO: Add your Google Search Console verification code -->
@@ -57,8 +55,8 @@
     <meta property="og:title" content="Ahmed Mostafa | Software Engineer - DevOps, Full-Stack & Android Developer" />
     <meta property="og:description" content="Software Engineer specializing in DevOps, CI/CD, Full-Stack Development, and Android. Building modern, scalable applications." />
     <!-- TODO: Add your Open Graph image (recommended size: 1200x630px) -->
-    <meta property="og:image" content="https://ahmed-mostafa-portfolio-8efdd2d8c482.herokuapp.com/Geometric%20AM%20logo%20design.png" />
-    <meta property="og:image:secure_url" content="https://ahmed-mostafa-portfolio-8efdd2d8c482.herokuapp.com/Geometric%20AM%20logo%20design.png" />
+    <meta property="og:image" content="%VITE_R2_PUBLIC_URL%/Assets/og-image.png" />
+    <meta property="og:image:secure_url" content="%VITE_R2_PUBLIC_URL%/Assets/og-image.png" />
     <meta property="og:image:type" content="image/png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
@@ -73,7 +71,7 @@
     <meta name="twitter:title" content="Ahmed Mostafa | Software Engineer - DevOps, Full-Stack & Android Developer" />
     <meta name="twitter:description" content="Software Engineer specializing in DevOps, CI/CD, Full-Stack Development, and Android. Building modern, scalable applications." />
     <!-- TODO: Add your Twitter card image -->
-    <meta name="twitter:image" content="https://ahmed-mostafa-portfolio-8efdd2d8c482.herokuapp.com/Geometric%20AM%20logo%20design.png" />
+    <meta name="twitter:image" content="%VITE_R2_PUBLIC_URL%/Assets/og-image.png" />
     <meta name="twitter:image:alt" content="Ahmed Mostafa - Software Engineer Portfolio" />
     
     <!-- Theme Color for mobile browsers -->
@@ -89,8 +87,8 @@
       "jobTitle": "Software Engineer",
       "description": "Software Engineer specializing in DevOps, Full-Stack Development, and Android",
       "url": "https://ahmed-mostafa-portfolio-8efdd2d8c482.herokuapp.com",
-      "image": "https://ahmed-mostafa-portfolio-8efdd2d8c482.herokuapp.com/Geometric%20AM%20logo%20design.png",
-      "email": "ahmedmostafa2004@hotmail.com",
+      "image": "%VITE_R2_PUBLIC_URL%/Assets/og-image.png",
+      "email": "ahmedmostafa.swe1@gmail.com",
       "telephone": "+201229004551",
       "address": {
         "@type": "PostalAddress",
@@ -175,7 +173,7 @@
         "@type": "Person",
         "name": "Ahmed Mostafa",
         "jobTitle": "Software Engineer",
-        "email": "ahmedmostafa2004@hotmail.com",
+        "email": "ahmedmostafa.swe1@gmail.com",
         "sameAs": [
           "https://github.com/ahmedmo-27",
           "https://linkedin.com/in/ahmedmostafa-swe"
@@ -201,7 +199,7 @@
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
     <!-- Preload critical assets -->
-    <link rel="preload" href="/Ahmed Mostafa - Software Development Head.jpg" as="image" />
+    <!-- All media is served from R2 via VITE_R2_PUBLIC_URL -->
   </head>
   <body>
     <div id="root"></div>

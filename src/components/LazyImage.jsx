@@ -149,7 +149,7 @@ export function ProjectImage({ projectName, className = '', src, alt }) {
       <p className="text-muted text-sm font-medium mb-1">
         {projectName} Screenshot
       </p>
-      <p className="text-muted/60 text-xs">
+      <p className="text-muted-foreground/60 text-xs">
         TODO: Add project screenshots or video
       </p>
     </div>

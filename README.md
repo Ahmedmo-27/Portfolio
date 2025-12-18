@@ -18,7 +18,7 @@ A modern, professional portfolio website built with React, TypeScript, Vite, and
 - 📱 **Fully Responsive** - Optimized for all screen sizes
 - ⚡ **Fast Loading** - Vite-powered development and builds
 - 🎯 **SEO Optimized** - Meta tags and semantic HTML
-- 📧 **Contact Form** - Ready for email service integration
+- 📧 **Contact Form** - Sends email via backend (`/api/contact`) using Nodemailer + SMTP
 - 🖼️ **Media Placeholders** - Clear slots for project screenshots, videos, and presentations
 
 ## 🛠️ Getting Started
@@ -27,6 +27,12 @@ A modern, professional portfolio website built with React, TypeScript, Vite, and
 
 - Node.js 18+ 
 - npm or yarn
+
+### R2 (Cloudflare) media assets (optional)
+
+If you want **all images/PDFs** to be loaded from Cloudflare R2, set:
+
+- `VITE_R2_PUBLIC_URL` (example: `https://your-public-bucket-domain`)
 
 ### Installation
 
@@ -122,13 +128,17 @@ Replace the placeholder components with actual media:
 
 ### Contact Form Integration
 
-Connect to EmailJS, Formspree, or your backend in `Contact.tsx`:
-```tsx
-const handleSubmit = async (e: React.FormEvent) => {
-  // Add your email service integration here
-  await emailjs.send(serviceId, templateId, formData)
-}
-```
+The contact form calls `POST /api/contact` (proxied in dev to the backend) which sends email via Nodemailer + SMTP.
+
+Add these to your `.env` (server-side):
+
+- `SMTP_HOST` (example: `smtp.gmail.com`)
+- `SMTP_PORT` (example: `587`)
+- `SMTP_SECURE` (`false` for 587/STARTTLS, `true` for 465)
+- `SMTP_USER` (your email)
+- `SMTP_PASS` (for Gmail: an **App Password**, not your normal password)
+
+If you see `smtp_tls_failed` / “self-signed certificate in certificate chain”, it’s usually caused by a VPN/corporate proxy/antivirus doing SSL inspection. Try disabling SSL inspection/VPN or use a network without interception.
 
 ### Updating Links
 
@@ -168,6 +178,6 @@ This project is open source and available under the MIT License.
 ## 👤 Author
 
 **Ahmed Mostafa**
-- Email: ahmedmostafa2004@hotmail.com
+- Email: ahmedmostafa.swe1@gmail.com
 - GitHub: [@ahmedmo-27](https://github.com/ahmedmo-27)
 - LinkedIn: [Ahmed Mostafa](https://linkedin.com/in/ahmedmostafa-swe)

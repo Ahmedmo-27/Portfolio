@@ -1,11 +1,12 @@
 import { motion } from 'framer-motion'
-import { Code2, Heart, Github, Linkedin, Mail, ArrowUp } from 'lucide-react'
+import { Heart, Github, Linkedin, Mail, ArrowUp } from 'lucide-react'
+import { assetUrl } from '../utils/assetUrl'
 
 const navLinks = [
   { name: 'About', href: '#about' },
-  { name: 'Skills', href: '#skills' },
   { name: 'Experience', href: '#experience' },
   { name: 'Projects', href: '#projects' },
+  { name: 'Skills', href: '#skills' },
   { name: 'Education', href: '#education' },
   { name: 'Volunteering', href: '#volunteering' },
   { name: 'Contact', href: '#contact' },
@@ -14,7 +15,7 @@ const navLinks = [
 const socialLinks = [
   { icon: Github, href: 'https://github.com/ahmedmo-27', label: 'GitHub' },
   { icon: Linkedin, href: 'https://linkedin.com/in/ahmedmostafa-swe', label: 'LinkedIn' },
-  { icon: Mail, href: 'mailto:ahmedmostafa2004@hotmail.com', label: 'Email' },
+  { icon: Mail, href: 'mailto:ahmedmostafa.swe1@gmail.com', label: 'Email' },
 ]
 
 export default function Footer() {
@@ -36,8 +37,15 @@ export default function Footer() {
               className="flex items-center gap-2 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 rounded-lg w-fit"
               aria-label="Ahmed Mostafa - Back to top"
             >
-              <div className="w-9 md:w-10 h-9 md:h-10 rounded-xl bg-gradient-to-br from-primary-500 to-accent-cyan flex items-center justify-center" aria-hidden="true">
-                <Code2 className="w-4 md:w-5 h-4 md:h-5 text-white" />
+              <div
+                className="w-9 md:w-10 h-9 md:h-10 rounded-xl flex items-center justify-center transition-all duration-300 bg-surface border border-border/60 group-hover:border-primary-500/40"
+                aria-hidden="true"
+              >
+                <img
+                  src={assetUrl('/Assets/Geometric AM logo design.png')}
+                  alt=""
+                  className="w-6 md:w-7 h-6 md:h-7 object-contain opacity-90 dark:opacity-100 dark:drop-shadow-[0_0_12px_rgba(56,189,248,0.25)]"
+                />
               </div>
               <span className="text-lg md:text-xl font-display font-bold text-foreground group-hover:text-primary-400 transition-colors">
                 Ahmed<span className="text-primary-400">.</span>
@@ -83,7 +91,7 @@ export default function Footer() {
         {/* Divider */}
         <div className="mt-6 md:mt-8 pt-6 md:pt-8 border-t border-border">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-            <p className="text-muted/60 text-xs md:text-sm flex items-center gap-1">
+            <p className="text-muted-foreground/60 text-xs md:text-sm flex items-center gap-1">
               © {new Date().getFullYear()} Ahmed Mostafa. Built with{' '}
               <Heart className="w-3.5 md:w-4 h-3.5 md:h-4 text-red-500 inline" aria-label="love" /> 
               and React.

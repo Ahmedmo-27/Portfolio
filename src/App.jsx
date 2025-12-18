@@ -36,7 +36,6 @@ function AppContent() {
 
   return (
     <div className={`min-h-screen transition-opacity duration-700 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
-      {/* Skip to main content link for accessibility */}
       <a 
         href="#main-content" 
         className="skip-link"
@@ -57,7 +56,7 @@ function AppContent() {
         
         <TechDivider />
         <Suspense fallback={<SectionLoader />}>
-          <Skills />
+          <Achievements />
         </Suspense>
         
         <TechDivider />
@@ -72,17 +71,17 @@ function AppContent() {
         
         <TechDivider />
         <Suspense fallback={<SectionLoader />}>
+          <Skills />
+        </Suspense>
+        
+        <TechDivider />
+        <Suspense fallback={<SectionLoader />}>
           <Education />
         </Suspense>
         
         <TechDivider />
         <Suspense fallback={<SectionLoader />}>
           <Volunteering />
-        </Suspense>
-        
-        <TechDivider />
-        <Suspense fallback={<SectionLoader />}>
-          <Achievements />
         </Suspense>
         
         <TechDivider />

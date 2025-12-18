@@ -164,8 +164,8 @@ export default function About() {
                   <div className="flex items-start gap-3">
                     <div className="w-2.5 h-2.5 rounded-full bg-accent-cyan mt-1.5 flex-shrink-0" />
                     <div>
-                      <span className="text-accent-cyan font-semibold text-sm md:text-base block mb-1">Backend</span>
-                      <span className="text-muted text-xs md:text-sm">Node.js, Express, MongoDB</span>
+                      <span className="text-accent-cyan font-semibold text-sm md:text-base block mb-1">Web Development</span>
+                      <span className="text-muted text-xs md:text-sm">MERN Stack, MYSQL, PostgreSQL</span>
                     </div>
                   </div>
                   <div className="flex items-start gap-3">
@@ -179,14 +179,14 @@ export default function About() {
                     <div className="w-2.5 h-2.5 rounded-full bg-accent-violet mt-1.5 flex-shrink-0" />
                     <div>
                       <span className="text-accent-violet font-semibold text-sm md:text-base block mb-1">DevOps</span>
-                      <span className="text-muted text-xs md:text-sm">CI/CD, Docker, Azure</span>
+                      <span className="text-muted text-xs md:text-sm">CI/CD, Docker, GitHub Actions, Azure DevOps</span>
                     </div>
                   </div>
                   <div className="flex items-start gap-3">
                     <div className="w-2.5 h-2.5 rounded-full bg-accent-amber mt-1.5 flex-shrink-0" />
                     <div>
                       <span className="text-accent-amber font-semibold text-sm md:text-base block mb-1">Testing</span>
-                      <span className="text-muted text-xs md:text-sm">Selenium, Postman</span>
+                      <span className="text-muted text-xs md:text-sm">Selenium WebDriver, Postman, JUnit, Mockito</span>
                     </div>
                   </div>
                 </div>

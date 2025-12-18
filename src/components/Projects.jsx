@@ -2,6 +2,7 @@ import { useRef, useState, useMemo, useEffect } from 'react'
 import { ExternalLink, Github, ChevronRight, Gem, Shield, Smartphone, Globe, Terminal, FileText, Play, Download, ChevronUp } from 'lucide-react'
 import CircuitBoard from './CircuitBoard'
 import ViewMoreButton from './ViewMoreButton'
+import { assetUrl } from '../utils/assetUrl'
 import './Projects.css'
 
 const projects = [
@@ -32,10 +33,11 @@ const projects = [
     isHighlighted: true,
     media: {
       screenshots: [
-        '/Screenshot 2025-08-05 002942.png',
-        '/Screenshot 2025-08-05 032735.png',
-        '/Screenshot 2025-08-05 032859.png',
-        '/Screenshot 2025-08-05 033035.png'
+        '/Projects/Vaultique (1).png',
+        '/Projects/Vaultique (2).png',
+        '/Projects/Vaultique (3).png',
+        '/Projects/Vaultique (4).png',
+        '/Projects/Vaultique (5).png'
       ],
       video: null,
       presentation: null,
@@ -54,22 +56,23 @@ const projects = [
       '500K+ SSH attack logs captured',
       '300+ unique attackers identified',
       'OSINT API integration for threat intel',
-      '3 REST APIs for data exposure',
+      '3 REST APIs for data exposure'
     ],
     links: {
-      demo: '#',
-      github: 'https://github.com/CyberTopians/Cybertopia',
+      github: 'https://github.com/CyberTopians/Cybertopia'
     },
     ctas: [
-      { label: 'View Source Code', icon: Github, href: 'https://github.com/CyberTopians/Cybertopia' },
-      { label: 'Documentation', icon: FileText, href: '#' },
+      { label: 'View Source Code', icon: Github, href: 'https://github.com/CyberTopians/Cybertopia' }
     ],
     award: 'DIGITOPIA 2025 Semifinalist',
     isHighlighted: true,
     media: {
       screenshots: [],
       video: null,
-      presentation: null,
+      presentation: [
+        assetUrl('/Projects/Cowrie_Json_Sessions.csv'),
+        assetUrl('/Projects/OSINT Report.csv'),
+        assetUrl('/Projects/Summary.csv')]
     },
   },
   {
@@ -88,17 +91,17 @@ const projects = [
       'Movie reviews & similar movies',
     ],
     links: {
-      demo: 'https://cinemeteor-5a5e0cee6735.herokuapp.com',
-      github: '#',
+      demo: assetUrl('/Projects/Cinemeteor.apk'),
+      github: 'https://github.com/DEPI-3-Android/Cinemeteor',
     },
     ctas: [
-      { label: 'Live Demo', icon: Play, href: 'https://cinemeteor-5a5e0cee6735.herokuapp.com' },
-      { label: 'Download APK', icon: Download, href: '#' },
+      { label: 'Download APK', icon: Download, href: assetUrl('/Projects/Cinemeteor.apk') },
+      { label: 'View Source Code', icon: Github, href: 'https://github.com/DEPI-3-Android/Cinemeteor' },
     ],
-    award: 'DEPI Achiever Level Certificate',
+    isHighlighted: true,
     media: {
-      screenshots: [],
-      video: null,
+      screenshots: ['/Projects/Cinemeteor.png'],
+      video: assetUrl('/Projects/Cinemeteor Demo Video.mp4'),
       presentation: null,
     },
   },
@@ -122,11 +125,16 @@ const projects = [
       github: 'https://github.com/MSP-Tech-Club-MIU/MSP-MIU-Website',
     },
     ctas: [
-      { label: 'View Website', icon: ExternalLink, href: 'https://msp-miu.tech' },
-      { label: 'View Code', icon: Github, href: 'https://github.com/MSP-Tech-Club-MIU/MSP-MIU-Website' },
+      { label: 'View Website', icon: Globe, href: 'https://msp-miu.tech' },
+      { label: 'Download APK', icon: Download, href: assetUrl('/Projects/MSP-MIU.apk') },
+      { label: 'View Source Code', icon: Github, href: 'https://github.com/MSP-Tech-Club-MIU/MSP-MIU-Website' },
     ],
+    isHighlighted: true,
     media: {
-      screenshots: [],
+      screenshots: ['/Projects/MSP - MIU (1).png',
+         '/Projects/MSP - MIU (2).png', 
+         '/Projects/MSP - MIU (3).png', 
+         '/Projects/MSP - MIU (4).png'],
       video: null,
       presentation: null,
     },
@@ -147,16 +155,17 @@ const projects = [
       'Production deployment automation',
     ],
     links: {
-      github: '#',
+      github: 'https://github.com/NBE-DevOps-Internship-2025/Deployment-Automation-for-Banking-Systems'
     },
     ctas: [
-      { label: 'View Scripts', icon: Github, href: '#' },
-      { label: 'Documentation', icon: FileText, href: '#' },
+      { label: 'View Scripts', icon: Github, href: 'https://github.com/NBE-DevOps-Internship-2025/Deployment-Automation-for-Banking-Systems' },
+      { label: 'Documentation', icon: FileText, href: assetUrl('/Projects/DevOps.pdf') },
     ],
+    isHighlighted: true,
     media: {
       screenshots: [],
       video: null,
-      presentation: null,
+      presentation: assetUrl('/Projects/DevOps.pdf'),
     },
   },
 ]
@@ -165,7 +174,128 @@ export default function Projects() {
   const ref = useRef(null)
   const [isInView, setIsInView] = useState(false)
   const [activeProject, setActiveProject] = useState(null)
-  const [activeScreenshotIndex, setActiveScreenshotIndex] = useState({})
+  const [activeMediaIndex, setActiveMediaIndex] = useState({})
+  const [portraitVideos, setPortraitVideos] = useState({})
+  const [csvPreviewData, setCsvPreviewData] = useState({}) // key -> { header: string[], rows: string[][], delimiter: string }
+  const [csvPreviewStatus, setCsvPreviewStatus] = useState({}) // idle | loading | loaded | error
+  const [csvSearch, setCsvSearch] = useState({}) // key -> search string
+
+  const fileExt = (src) => {
+    if (!src || typeof src !== 'string') return ''
+    const withoutQuery = src.split('?')[0]
+    const lastDot = withoutQuery.lastIndexOf('.')
+    if (lastDot === -1) return ''
+    return withoutQuery.slice(lastDot + 1).toLowerCase()
+  }
+
+  const detectDelimiter = (text) => {
+    const sample = (text || '').split(/\r?\n/).slice(0, 5).join('\n')
+    const candidates = [',', ';', '\t', '|']
+    let best = ','
+    let bestScore = -1
+    for (const d of candidates) {
+      const score = (sample.match(new RegExp(`\\${d}`, 'g')) || []).length
+      if (score > bestScore) {
+        bestScore = score
+        best = d
+      }
+    }
+    return best
+  }
+
+  // Lightweight CSV parser (handles quoted fields, escaped quotes)
+  const parseCsv = (text, delimiter, maxRows = 30, maxCols = 20) => {
+    const rows = []
+    let row = []
+    let field = ''
+    let inQuotes = false
+
+    const pushField = () => {
+      row.push(field)
+      field = ''
+    }
+
+    const pushRow = () => {
+      // Trim trailing empty columns
+      while (row.length && row[row.length - 1] === '') row.pop()
+      rows.push(row.slice(0, maxCols))
+      row = []
+    }
+
+    for (let i = 0; i < text.length; i++) {
+      const c = text[i]
+      if (inQuotes) {
+        if (c === '"') {
+          const next = text[i + 1]
+          if (next === '"') {
+            field += '"'
+            i++
+          } else {
+            inQuotes = false
+          }
+        } else {
+          field += c
+        }
+      } else {
+        if (c === '"') {
+          inQuotes = true
+        } else if (c === delimiter) {
+          pushField()
+        } else if (c === '\n') {
+          pushField()
+          pushRow()
+          if (rows.length >= maxRows) break
+        } else if (c === '\r') {
+          // ignore \r (handled by \n)
+        } else {
+          field += c
+        }
+      }
+    }
+
+    if (rows.length < maxRows) {
+      pushField()
+      // Only push if we have any content
+      if (row.some((x) => x !== '')) pushRow()
+    }
+
+    const header = rows.length > 0 ? rows[0].map((h) => (h || '').trim()) : []
+    const bodyRows = rows.length > 1 ? rows.slice(1) : []
+    return { header, rows: bodyRows }
+  }
+
+  const getGalleryItems = (project) => {
+    const items = []
+
+    if (Array.isArray(project.media?.screenshots)) {
+      for (const src of project.media.screenshots) {
+        if (src) items.push({ type: 'image', src })
+      }
+    }
+
+    if (project.media?.video) {
+      items.push({ type: 'video', src: project.media.video })
+    }
+
+    // PDF / slides / docs
+    if (Array.isArray(project.media?.presentation)) {
+      for (const src of project.media.presentation) {
+        if (!src) continue
+        const ext = fileExt(src)
+        if (ext === 'pdf') items.push({ type: 'pdf', src })
+        else if (ext === 'csv') items.push({ type: 'csv', src })
+        else items.push({ type: 'file', src })
+      }
+    } else if (project.media?.presentation) {
+      const src = project.media.presentation
+      const ext = fileExt(src)
+      if (ext === 'pdf') items.push({ type: 'pdf', src })
+      else if (ext === 'csv') items.push({ type: 'csv', src })
+      else items.push({ type: 'file', src })
+    }
+
+    return items
+  }
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -251,90 +381,320 @@ export default function Projects() {
                     {/* Media Section */}
                     <div className={`${index === 0 ? 'lg:col-span-3' : ''} relative bg-surface/50 p-4 sm:p-6`}>
                       <div className="aspect-video rounded-xl bg-surface overflow-hidden relative">
-                        {Array.isArray(project.media?.screenshots) && project.media.screenshots.length > 0 && (
-                          <>
-                            <img
-                              src={
-                                project.media.screenshots[
-                                  activeScreenshotIndex[project.id] ?? 0
-                                ]
-                              }
-                              alt={project.title}
-                              className="w-full h-full object-cover"
-                            />
+                        {(() => {
+                          const galleryItems = getGalleryItems(project)
+                          const total = galleryItems.length
+                          const currentIndex = activeMediaIndex[project.id] ?? 0
+                          const safeIndex = total > 0 ? Math.min(Math.max(0, currentIndex), total - 1) : 0
+                          const current = total > 0 ? galleryItems[safeIndex] : null
 
-                            {project.media.screenshots.length > 1 && (
-                              <div className="absolute inset-y-0 left-0 right-0 flex items-center justify-between px-2 sm:px-3 pointer-events-none">
-                                <button
-                                  type="button"
-                                  className="pointer-events-auto inline-flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-black/40 hover:bg-black/60 text-white text-xs sm:text-sm transition-colors"
-                                  aria-label="Previous screenshot"
-                                  onClick={(e) => {
-                                    e.stopPropagation()
-                                    setActiveScreenshotIndex((prev) => {
-                                      const current = prev[project.id] ?? 0
-                                      const total = project.media.screenshots.length
-                                      const next = (current - 1 + total) % total
-                                      return { ...prev, [project.id]: next }
-                                    })
-                                  }}
-                                >
-                                  ‹
-                                </button>
-                                <button
-                                  type="button"
-                                  className="pointer-events-auto inline-flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-black/40 hover:bg-black/60 text-white text-xs sm:text-sm transition-colors"
-                                  aria-label="Next screenshot"
-                                  onClick={(e) => {
-                                    e.stopPropagation()
-                                    setActiveScreenshotIndex((prev) => {
-                                      const current = prev[project.id] ?? 0
-                                      const total = project.media.screenshots.length
-                                      const next = (current + 1) % total
-                                      return { ...prev, [project.id]: next }
-                                    })
-                                  }}
-                                >
-                                  ›
-                                </button>
-                              </div>
-                            )}
-
-                            {project.media.screenshots.length > 1 && (
-                              <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5">
-                                {project.media.screenshots.map((_, i) => {
-                                  const current = activeScreenshotIndex[project.id] ?? 0
-                                  const isActive = i === current
-                                  return (
-                                    <button
-                                      key={i}
-                                      type="button"
-                                      className={`h-1.5 rounded-full transition-all ${
-                                        isActive ? 'w-5 bg-white' : 'w-2 bg-white/40'
-                                      }`}
-                                      aria-label={`Go to screenshot ${i + 1}`}
-                                      onClick={(e) => {
-                                        e.stopPropagation()
-                                        setActiveScreenshotIndex((prev) => ({
-                                          ...prev,
-                                          [project.id]: i,
-                                        }))
-                                      }}
-                                    />
-                                  )
-                                })}
-                              </div>
-                            )}
-                          </>
-                        )}
-
-                        {(!Array.isArray(project.media?.screenshots) || project.media.screenshots.length === 0) && (
+                          if (!current) {
+                            return (
                           <div className="absolute inset-0 flex items-center justify-center" aria-hidden="true">
                             <div className={`w-16 sm:w-24 h-16 sm:h-24 rounded-2xl sm:rounded-3xl bg-gradient-to-br ${project.color} opacity-30 flex items-center justify-center`}>
                               <project.icon className="w-8 sm:w-12 h-8 sm:h-12 text-foreground opacity-60" />
                             </div>
                           </div>
-                        )}
+                            )
+                          }
+
+                          return (
+                            <>
+                              {current.type === 'image' && (
+                                <img
+                                  src={assetUrl(current.src)}
+                                  alt={project.title}
+                                  className="w-full h-full object-cover"
+                                />
+                              )}
+
+                              {current.type === 'video' && (
+                                <div
+                                  className={`w-full h-full ${
+                                    portraitVideos[project.id]
+                                      ? 'bg-black/90 flex items-center justify-center'
+                                      : ''
+                                  }`}
+                                >
+                                  <video
+                                    className={
+                                      portraitVideos[project.id]
+                                        ? 'h-full w-auto max-w-full object-contain'
+                                        : 'w-full h-full object-cover'
+                                    }
+                                    controls
+                                    preload="metadata"
+                                    playsInline
+                                    onLoadedMetadata={(e) => {
+                                      const v = e.currentTarget
+                                      // Portrait screen-recordings look best centered (no cropping)
+                                      const isPortrait = v.videoHeight > v.videoWidth
+                                      setPortraitVideos((prev) => {
+                                        if (prev[project.id] === isPortrait) return prev
+                                        return { ...prev, [project.id]: isPortrait }
+                                      })
+                                    }}
+                                  >
+                                    <source src={assetUrl(current.src)} type="video/mp4" />
+                                    Your browser does not support the video tag.
+                                  </video>
+                                </div>
+                              )}
+
+                              {current.type === 'pdf' && (
+                                <div className="w-full h-full bg-surface/70 relative">
+                                  <object
+                                    data={assetUrl(current.src)}
+                                    type="application/pdf"
+                                    className="w-full h-full"
+                                    aria-label={`${project.title} PDF preview`}
+                                  >
+                                    <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-6">
+                                      <p className="text-sm text-muted mb-3">
+                                        PDF preview isn&apos;t supported here.
+                                      </p>
+                                      <a
+                                        href={assetUrl(current.src)}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="btn-cta"
+                                      >
+                                        <FileText className="w-4 h-4" aria-hidden="true" />
+                                        Open PDF
+                                      </a>
+                                    </div>
+                                  </object>
+                                </div>
+                              )}
+
+                              {(current.type === 'csv' || current.type === 'file') && (
+                                <div className="w-full h-full bg-surface/70 flex flex-col items-center justify-center text-center p-6">
+                                  {(() => {
+                                    const csvKey = `${project.id}::${String(current.src)}`
+                                    const status = csvPreviewStatus[csvKey]
+                                    const data = csvPreviewData[csvKey]
+                                    const search = csvSearch[csvKey] || ''
+                                    const filteredRows =
+                                      current.type === 'csv' && data?.rows
+                                        ? data.rows.filter((r) =>
+                                            !search
+                                              ? true
+                                              : r.some((cell) =>
+                                                  String(cell || '')
+                                                    .toLowerCase()
+                                                    .includes(search.toLowerCase())
+                                                )
+                                          )
+                                        : []
+
+                                    return (
+                                      <>
+                                  <div className="w-16 h-16 rounded-2xl bg-surface border border-border flex items-center justify-center mb-4">
+                                    <FileText className="w-7 h-7 text-primary-400" aria-hidden="true" />
+                                  </div>
+                                  <p className="text-sm font-semibold text-foreground mb-1">
+                                    {current.type === 'csv' ? 'Data file (CSV)' : 'Document'}
+                                  </p>
+                                  <p className="text-xs text-muted mb-4 break-all">
+                                    {String(current.src).split('/').pop()}
+                                  </p>
+                                  <div className="flex flex-wrap gap-2 justify-center">
+                                    <a
+                                      href={assetUrl(current.src)}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="btn-cta"
+                                    >
+                                      <FileText className="w-4 h-4" aria-hidden="true" />
+                                      {current.type === 'csv' ? 'Open CSV' : 'Open file'}
+                                    </a>
+
+                                    {current.type === 'csv' && (
+                                      <button
+                                        type="button"
+                                        className="btn-cta"
+                                        onClick={async (e) => {
+                                          e.stopPropagation()
+                                          if (csvPreviewStatus[csvKey] === 'loading') return
+                                          if (csvPreviewStatus[csvKey] === 'loaded') {
+                                            setCsvPreviewStatus((prev) => ({ ...prev, [csvKey]: 'idle' }))
+                                            return
+                                          }
+
+                                          setCsvPreviewStatus((prev) => ({ ...prev, [csvKey]: 'loading' }))
+                                          try {
+                                            // Try to keep it lightweight: request only the first chunk.
+                                            // (Requires CORS allowing Range header; R2 supports range reads)
+                                            const res = await fetch(assetUrl(current.src), {
+                                              headers: { Range: 'bytes=0-60000' },
+                                            })
+                                            const txt = await res.text()
+                                            const delimiter = detectDelimiter(txt)
+                                            const parsed = parseCsv(txt, delimiter, 30, 20)
+                                            setCsvPreviewData((prev) => ({
+                                              ...prev,
+                                              [csvKey]: { ...parsed, delimiter },
+                                            }))
+                                            setCsvPreviewStatus((prev) => ({ ...prev, [csvKey]: 'loaded' }))
+                                          } catch {
+                                            setCsvPreviewStatus((prev) => ({ ...prev, [csvKey]: 'error' }))
+                                          }
+                                        }}
+                                      >
+                                        <FileText className="w-4 h-4" aria-hidden="true" />
+                                        {status === 'loaded' ? 'Hide preview' : 'Preview'}
+                                      </button>
+                                    )}
+                                  </div>
+
+                                  {current.type === 'csv' && status === 'loading' && (
+                                    <p className="mt-4 text-xs text-muted">Loading preview…</p>
+                                  )}
+
+                                  {current.type === 'csv' && status === 'error' && (
+                                    <p className="mt-4 text-xs text-muted">
+                                      Preview unavailable (likely CORS). Open the CSV instead.
+                                    </p>
+                                  )}
+
+                                  {current.type === 'csv' && status === 'loaded' && data && (
+                                    <div className="mt-4 w-full max-w-5xl">
+                                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-3">
+                                        <div className="text-[11px] text-muted">
+                                          Showing up to <span className="text-foreground font-semibold">30</span> rows
+                                          and <span className="text-foreground font-semibold">20</span> columns
+                                        </div>
+                                        <input
+                                          value={search}
+                                          onChange={(e) =>
+                                            setCsvSearch((prev) => ({
+                                              ...prev,
+                                              [csvKey]: e.target.value,
+                                            }))
+                                          }
+                                          placeholder="Search rows…"
+                                          className="w-full sm:w-64 rounded-lg bg-surface border border-border px-3 py-2 text-xs text-foreground placeholder:text-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
+                                        />
+                                      </div>
+
+                                      <div className="rounded-xl border border-border/60 overflow-hidden bg-black/20">
+                                        <div className="max-h-56 overflow-auto">
+                                          <table className="min-w-full text-left text-[11px]">
+                                            {data.header.length > 0 && (
+                                              <thead className="sticky top-0 bg-surface/95 backdrop-blur border-b border-border/60">
+                                                <tr>
+                                                  {data.header.map((h, idx) => (
+                                                    <th
+                                                      key={idx}
+                                                      className="px-3 py-2 font-semibold text-foreground whitespace-nowrap"
+                                                    >
+                                                      {h || `col_${idx + 1}`}
+                                                    </th>
+                                                  ))}
+                                                </tr>
+                                              </thead>
+                                            )}
+                                            <tbody>
+                                              {(filteredRows.length ? filteredRows : data.rows).map((r, ri) => (
+                                                <tr
+                                                  key={ri}
+                                                  className={ri % 2 === 0 ? 'bg-transparent' : 'bg-black/20'}
+                                                >
+                                                  {(data.header.length ? data.header : r).map((_, ci) => (
+                                                    <td
+                                                      key={ci}
+                                                      className="px-3 py-2 text-muted whitespace-nowrap max-w-[220px] truncate"
+                                                      title={String(r[ci] ?? '')}
+                                                    >
+                                                      {String(r[ci] ?? '')}
+                                                    </td>
+                                                  ))}
+                                                </tr>
+                                              ))}
+                                            </tbody>
+                                          </table>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  )}
+                                      </>
+                                    )
+                                  })()}
+                                </div>
+                              )}
+
+                              {total > 1 && (
+                                <div className="absolute inset-y-0 left-0 right-0 flex items-center justify-between px-2 sm:px-3 pointer-events-none">
+                                  <button
+                                    type="button"
+                                    className="pointer-events-auto inline-flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-black/40 hover:bg-black/60 text-white text-xs sm:text-sm transition-colors"
+                                    aria-label="Previous media"
+                                    onClick={(e) => {
+                                      e.stopPropagation()
+                                      setActiveMediaIndex((prev) => {
+                                        const cur = prev[project.id] ?? 0
+                                        const next = (cur - 1 + total) % total
+                                        return { ...prev, [project.id]: next }
+                                      })
+                                    }}
+                                  >
+                                    ‹
+                                  </button>
+                                  <button
+                                    type="button"
+                                    className="pointer-events-auto inline-flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-black/40 hover:bg-black/60 text-white text-xs sm:text-sm transition-colors"
+                                    aria-label="Next media"
+                                    onClick={(e) => {
+                                      e.stopPropagation()
+                                      setActiveMediaIndex((prev) => {
+                                        const cur = prev[project.id] ?? 0
+                                        const next = (cur + 1) % total
+                                        return { ...prev, [project.id]: next }
+                                      })
+                                    }}
+                                  >
+                                    ›
+                                  </button>
+                                </div>
+                              )}
+
+                              {total > 1 && (
+                                <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5">
+                                  {galleryItems.map((item, i) => {
+                                    const isActive = i === safeIndex
+                                    const label =
+                                      item.type === 'video'
+                                        ? 'Go to video'
+                                        : item.type === 'pdf'
+                                          ? 'Go to document'
+                                          : item.type === 'csv'
+                                            ? 'Go to data file'
+                                            : item.type === 'file'
+                                              ? 'Go to file'
+                                        : `Go to screenshot ${i + 1}`
+                                    return (
+                                      <button
+                                        key={`${item.type}-${i}`}
+                                        type="button"
+                                        className={`h-1.5 rounded-full transition-all ${
+                                          isActive ? 'w-5 bg-white' : 'w-2 bg-white/40'
+                                        }`}
+                                        aria-label={label}
+                                        onClick={(e) => {
+                                          e.stopPropagation()
+                                          setActiveMediaIndex((prev) => ({
+                                            ...prev,
+                                            [project.id]: i,
+                                          }))
+                                        }}
+                                      />
+                                    )
+                                  })}
+                                </div>
+                              )}
+                            </>
+                          )
+                        })()}
                       </div>
 
                       {/* Award Badge */}
@@ -450,6 +810,7 @@ export default function Projects() {
               text="View All Projects on GitHub"
               variant="primary"
               icon={Github}
+              target="_blank"
             />
           </div>
         </div>

@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useCallback, useMemo, useState } from 'react';
 import './ProfileCard.css';
+import { assetUrl } from '../utils/assetUrl'
 
 // Default gradient adapts to theme via CSS variables
 const DEFAULT_INNER_GRADIENT = 'linear-gradient(145deg, rgba(96, 73, 110, 0.55) 0%, rgba(113, 196, 255, 0.27) 100%)';
@@ -18,9 +19,9 @@ const adjust = (v, fMin, fMax, tMin, tMax) =>
   round(tMin + ((tMax - tMin) * (v - fMin)) / (fMax - fMin));
 
 const ProfileCardComponent = ({
-  avatarUrl = '/Ahmed Mostafa - Software Development Head Avatar.jpg',
-  iconUrl = '/Geometric AM logo design.png',
-  grainUrl = '/Grain.jpg',
+  avatarUrl = assetUrl('/Assets/Ahmed Mostafa - Software Development Head Avatar.jpg'),
+  iconUrl = assetUrl('/Assets/Geometric AM logo design.png'),
+  grainUrl = assetUrl('/Assets/Grain.jpg'),
   innerGradient,
   behindGlowEnabled = true,
   behindGlowColor,
@@ -29,7 +30,7 @@ const ProfileCardComponent = ({
   enableTilt = true,
   enableMobileTilt = false,
   mobileTiltSensitivity = 5,
-  miniAvatarUrl = '/Ahmed Mostafa - Software Development Head.jpg',
+  miniAvatarUrl = assetUrl('Ahmed Mostafa - Software Development Head.jpg'),
   name = 'Ahmed Mostafa',
   title = 'Software Engineer',
   handle = 'ahmedmostafa-swe',

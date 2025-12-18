@@ -1,15 +1,16 @@
 import { useState, useEffect } from 'react'
 import { Menu, X } from 'lucide-react'
 import ThemeToggle from './ThemeToggle'
+import { assetUrl } from '../utils/assetUrl'
 import './Navbar.css'
 
 const navLinks = [
   { name: 'About', href: '#about' },
-  { name: 'Skills', href: '#skills' },
   { name: 'Experience', href: '#experience' },
   { name: 'Projects', href: '#projects' },
+  { name: 'Skills', href: '#skills' },
   { name: 'Education', href: '#education' },
-  { name: 'Contact', href: '#contact' },
+  { name: 'Contact', href: '#contact' }
 ]
 
 export default function Navbar() {
@@ -27,11 +28,14 @@ export default function Navbar() {
 
           // Update active section based on scroll position
           const sections = navLinks.map(link => link.href.slice(1))
+          const navbar = document.querySelector('header')
+          const navbarHeight = navbar ? navbar.getBoundingClientRect().height : (window.innerWidth >= 768 ? 80 : 70)
+          const probeY = navbarHeight + 24
           const currentSection = sections.find(section => {
             const element = document.getElementById(section)
             if (element) {
               const rect = element.getBoundingClientRect()
-              return rect.top <= 150 && rect.bottom >= 150
+              return rect.top <= probeY && rect.bottom >= probeY
             }
             return false
           })
@@ -79,31 +83,35 @@ export default function Navbar() {
       const targetId = href.slice(1)
       const targetElement = document.getElementById(targetId)
       
-      if (targetElement) {
+      const scrollToTarget = () => {
+        if (!targetElement) return
+
         // Get the actual navbar height dynamically
         const navbar = document.querySelector('header')
         const navbarHeight = navbar ? navbar.getBoundingClientRect().height : (window.innerWidth >= 768 ? 80 : 70)
-        
+
         // Calculate the target scroll position
-        // Get element's position relative to document
         const elementRect = targetElement.getBoundingClientRect()
         const elementTop = elementRect.top + window.scrollY
-        // Account for navbar height plus some padding
-        const offset = navbarHeight - 40
+        // Account for navbar height plus a small gap so headings don't sit under the navbar
+        const offset = navbarHeight + 16
         const targetScrollY = elementTop - offset
 
-        // Scroll smoothly to the target position
         window.scrollTo({
           top: Math.max(0, targetScrollY),
           behavior: 'smooth'
         })
       }
-      
-      // Close mobile menu if open with a small delay for smoother UX
+
+      // On mobile, unlock scroll + close the menu first, then scroll (mobile browsers can ignore scrollTo while overflow is hidden)
       if (isMobileMenuOpen) {
-        setTimeout(() => {
-          setIsMobileMenuOpen(false)
-        }, 100)
+        setIsMobileMenuOpen(false)
+        document.body.classList.remove('navbar-menu-open')
+        window.requestAnimationFrame(() => {
+          window.requestAnimationFrame(scrollToTarget)
+        })
+      } else {
+        scrollToTarget()
       }
     }
   }
@@ -132,7 +140,7 @@ export default function Navbar() {
               aria-hidden="true"
             >
               <img 
-                src="/Geometric AM logo design.png" 
+                src={assetUrl('/Assets/Geometric AM logo design.png')}
                 alt="AM Logo" 
                 className="w-8 h-8 object-contain"
               />

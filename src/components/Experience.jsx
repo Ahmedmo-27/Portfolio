@@ -1,6 +1,7 @@
 import { useRef, useState, useMemo, useEffect } from 'react'
-import { Building2, Award, Code, Globe, Shield, Gem, Calendar, MapPin, Cpu, ChevronUp, ChevronRight } from 'lucide-react'
+import { Building2, Award, Code, Globe, Shield, Gem, Calendar, MapPin, Cpu, ChevronUp, ChevronRight, FileText, ExternalLink } from 'lucide-react'
 import ViewMoreButton from './ViewMoreButton'
+import { assetUrl } from '../utils/assetUrl'
 import './Experience.css'
 
 const experiences = [
@@ -18,6 +19,8 @@ const experiences = [
       'Improved deployment reliability for mission-critical operations',
     ],
     tags: ['Bash', 'PowerShell', 'Azure DevOps', 'CI/CD', 'Automation'],
+    documents: [{ label: 'Recommendation Letter (PDF)', href: '/Experience/NBE Letter of Recommendation.pdf' }],
+    certificate: [{ label: 'Internship Certificate', href: '/Experience/NBE.jpg' }],
   },
   {
     company: 'DEPI – Digital Egyptian Pioneers Initiative',
@@ -34,6 +37,7 @@ const experiences = [
       'Awarded Achiever Level Certificate',
     ],
     tags: ['Kotlin', 'Jetpack Compose', 'Room', 'Retrofit', 'Firebase'],
+    // documents: [{ label: 'Completion Certificate', href: '/certificates/depi-certificate.pdf' }],
   },
   {
     company: 'Fuzetek',
@@ -49,6 +53,8 @@ const experiences = [
       'Worked across small development projects',
     ],
     tags: ['Python', 'C++', 'Problem Solving', 'Debugging', 'Testing'],
+    certificate: [{ label: 'Internship Certificate', href: '/Experience/Fuzetek.jpg' }],
+    documents: [{ label: 'Achiever Post', href: '/Experience/Achiever Post.png' }],
   },
   {
     company: 'ITIDA Gigs Freelancing Program',
@@ -64,12 +70,15 @@ const experiences = [
       'Gained freelance & personal branding skillset',
     ],
     tags: ['Selenium', 'Postman', 'API Testing', 'Automation', 'QA'],
+    documents: [{ label: 'Program Certificate', href: '/Experience/ITIDA + GIGS.jpg' }],
   }]
 
 export default function Experience() {
   const ref = useRef(null)
   const [isInView, setIsInView] = useState(false)
   const [showAll, setShowAll] = useState(false)
+
+  const toArray = (v) => (Array.isArray(v) ? v : v ? [v] : [])
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -204,6 +213,43 @@ export default function Experience() {
                           </span>
                         ))}
                       </div>
+
+                      {/* Certificate / Documents (supports multiple files) */}
+                      {(() => {
+                        const attachments = [
+                          ...toArray(exp.documents),
+                          ...toArray(exp.certificate),
+                        ].filter(Boolean)
+
+                        if (attachments.length === 0) return null
+
+                        return (
+                        <div className="mt-3 md:mt-4 pt-3 md:pt-4 border-t border-border/60">
+                          <p className="text-xs font-semibold text-foreground mb-2">
+                            Certificate / Documents
+                          </p>
+                          <div className="flex flex-wrap gap-2">
+                            {attachments.map((doc) => {
+                              const resolvedHref = assetUrl(doc.href)
+                              const isExternal = typeof resolvedHref === 'string' && resolvedHref.startsWith('http')
+                              return (
+                                <a
+                                  key={`${exp.company}-${doc.label}-${doc.href}`}
+                                  href={resolvedHref}
+                                  target={isExternal ? '_blank' : undefined}
+                                  rel={isExternal ? 'noopener noreferrer' : undefined}
+                                  className="inline-flex items-center gap-1.5 rounded-lg bg-surface border border-border px-2.5 py-1.5 text-[11px] text-primary-400 hover:text-primary-300 hover:border-primary-500/30 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
+                                >
+                                  <FileText className="w-3.5 h-3.5" aria-hidden="true" />
+                                  <span className="truncate max-w-[220px]">{doc.label}</span>
+                                  {isExternal && <ExternalLink className="w-3.5 h-3.5 opacity-80" aria-hidden="true" />}
+                                </a>
+                              )
+                            })}
+                          </div>
+                        </div>
+                        )
+                      })()}
                     </div>
                   </div>
 

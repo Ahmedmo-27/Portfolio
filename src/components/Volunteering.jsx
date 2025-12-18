@@ -66,32 +66,7 @@ const volunteeringExperiences = [
   },
 ]
 
-const leadershipHighlights = [
-  {
-    title: 'Best Web Project Award',
-    context: 'MIU 2025',
-    icon: Trophy,
-    color: 'text-accent-amber',
-  },
-  {
-    title: 'DIGITOPIA Semifinalist',
-    context: '2025 Competition',
-    icon: Star,
-    color: 'text-accent-violet',
-  },
-  {
-    title: 'Top 5% Performance',
-    context: 'Among 300+ Interns',
-    icon: Target,
-    color: 'text-accent-emerald',
-  },
-  {
-    title: 'Dev Team Lead',
-    context: 'MSP-MIU',
-    icon: Rocket,
-    color: 'text-primary-400',
-  },
-]
+
 
 export default function Volunteering() {
   const ref = useRef(null)
@@ -136,7 +111,7 @@ export default function Volunteering() {
           <div className={`text-center mb-12 md:mb-16 ${isInView ? 'animate-fade-in-up' : 'opacity-0'}`}>
             <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-accent-emerald/10 border border-accent-emerald/20 text-accent-emerald text-sm font-medium mb-4">
               <span className="w-1.5 h-1.5 rounded-full bg-accent-emerald" aria-hidden="true" />
-              Leadership & Volunteering
+              Volunteering Experiences
             </span>
             <h2 id="volunteering-heading" className="section-heading mb-6">
               Community <span className="gradient-text">Involvement</span>
@@ -147,31 +122,6 @@ export default function Volunteering() {
             </p>
           </div>
 
-          {/* Leadership Highlights Bar */}
-          <div 
-            className={`grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-12 md:mb-16 ${isInView ? 'animate-fade-in-up animate-delay-2' : 'opacity-0'}`}
-          >
-            {leadershipHighlights.map((highlight, index) => (
-              <div
-                key={highlight.title}
-                ref={(el) => {
-                  if (el) el.style.setProperty('--animation-delay', `${index * 0.1 + 0.2}s`)
-                }}
-                className={`glass-card p-4 text-center group transition-transform hover:-translate-y-1 hover:scale-[1.02] volunteering-highlight-item ${isInView ? 'animate-fade-in-up' : 'opacity-0'}`}
-                tabIndex={0}
-              >
-                <div className={`w-10 h-10 mx-auto mb-3 rounded-xl bg-surface flex items-center justify-center ${highlight.color}`}>
-                  <highlight.icon className="w-5 h-5" aria-hidden="true" />
-                </div>
-                <h3 className="text-foreground font-semibold text-sm mb-1">
-                  {highlight.title}
-                </h3>
-                <p className="text-muted/60 text-xs">
-                  {highlight.context}
-                </p>
-              </div>
-            ))}
-          </div>
 
           {/* Volunteering Experiences */}
           <div className="space-y-6">
@@ -222,7 +172,7 @@ export default function Volunteering() {
                             {exp.role}
                           </p>
                         </div>
-                        <span className="inline-flex items-center gap-1.5 text-muted/60 text-sm flex-shrink-0">
+                        <span className="inline-flex items-center gap-1.5 text-muted-foreground/60 text-sm flex-shrink-0">
                           <Calendar className="w-4 h-4" aria-hidden="true" />
                           {exp.period}
                         </span>

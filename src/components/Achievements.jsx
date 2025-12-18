@@ -1,14 +1,12 @@
 import { useRef, useState, useEffect } from 'react'
-import { Trophy, Medal, Award, Star, ExternalLink, ChevronUp } from 'lucide-react'
-import ViewMoreButton from './ViewMoreButton'
+import { Trophy, Medal, Star, ExternalLink, FileText } from 'lucide-react'
+import { assetUrl } from '../utils/assetUrl'
 import './Achievements.css'
 
 const achievements = [
   {
     title: 'Best Web Project of 2025',
     organization: 'Misr International University',
-    project: 'Vaultique',
-    projectLink: '#projects',
     description: 'Recognized for building an exceptional e-commerce platform with 3D configurator, payment integration, and comprehensive analytics.',
     icon: Trophy,
     color: 'from-amber-400 to-yellow-500',
@@ -19,8 +17,6 @@ const achievements = [
   {
     title: 'Semifinalist in DIGITOPIA 2025',
     organization: 'Digitopia Competition',
-    project: 'Cybertopia',
-    projectLink: '#projects',
     description: 'Team reached semifinals with an innovative cybersecurity honeypot system capturing 500K+ SSH attack logs.',
     icon: Medal,
     color: 'from-slate-300 to-slate-400',
@@ -29,32 +25,32 @@ const achievements = [
     isHighlighted: true,
   },
   {
-    title: 'DEPI Achiever Level Certificate',
-    organization: 'Digital Egyptian Pioneers Initiative',
-    project: 'Cinemeteor',
-    projectLink: '#projects',
-    description: 'Awarded for outstanding performance in Android mobile app development program with Kotlin and Jetpack Compose.',
-    icon: Award,
-    color: 'from-green-400 to-emerald-500',
-    bgColor: 'bg-emerald-500/10',
-    borderColor: 'border-emerald-500/30',
+    title: 'Recommendation Letter (NBE Internship)',
+    organization: 'National Bank of Egypt (NBE)',
+    description:
+      'Recommendation letter from my internship supervisor Eng. John Samy Shokry (SQL DBA Supervisor).',
+    icon: FileText,
+    color: 'from-blue-400 to-cyan-500',
+    bgColor: 'bg-cyan-500/10',
+    borderColor: 'border-cyan-500/30',
+    pdfUrl: '/Experience/NBE Letter of Recommendation.pdf',
+    isHighlighted: true,
   },
   {
     title: 'Top Performer',
     organization: 'Multiple Internships',
-    project: 'NBE, DEPI, ITIDA',
-    description: 'Consistently recognized as a top performer across internships at National Bank of Egypt, DEPI, and ITIDA programs.',
+    description: 'Consistently recognized as a top performer across internships at National Bank of Egypt, DEPI, ITIDA + GIGS program, and Fuzetek.',
     icon: Star,
     color: 'from-blue-400 to-cyan-500',
     bgColor: 'bg-cyan-500/10',
     borderColor: 'border-cyan-500/30',
+    isHighlighted: true,
   },
 ]
 
 export default function Achievements() {
   const ref = useRef(null)
   const [isInView, setIsInView] = useState(false)
-  const [showAll, setShowAll] = useState(false)
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -139,22 +135,30 @@ export default function Achievements() {
                     <p className="text-primary-400 font-medium text-sm mb-1">
                       {achievement.organization}
                     </p>
-                    {achievement.projectLink ? (
-                      <a 
-                        href={achievement.projectLink}
-                        className="inline-flex items-center gap-1 text-muted/60 text-sm mb-4 hover:text-primary-400 transition-colors"
-                      >
-                        Project: {achievement.project}
-                        <ExternalLink className="w-3 h-3" aria-hidden="true" />
-                      </a>
-                    ) : (
-                      <p className="text-muted/60 text-sm mb-4">
-                        Project: {achievement.project}
-                      </p>
-                    )}
                     <p className="text-muted text-sm sm:text-base">
                       {achievement.description}
                     </p>
+
+                    {achievement.pdfUrl && (
+                      <div className="mt-5">
+                        {(() => {
+                          const pdfHref = assetUrl(achievement.pdfUrl)
+                          return (
+                            <>
+                              <a
+                                href={pdfHref}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-1.5 text-primary-400 hover:text-primary-300 transition-colors text-sm font-medium"
+                              >
+                                Open recommendation letter (PDF)
+                                <ExternalLink className="w-4 h-4" aria-hidden="true" />
+                              </a>
+                            </>
+                          )
+                        })()}
+                      </div>
+                    )}
                   </div>
 
                   {/* Decorative background icon */}
@@ -167,85 +171,63 @@ export default function Achievements() {
           </div>
 
           {/* Other Achievements */}
-          {showAll && (
-            <div className="grid md:grid-cols-2 gap-6">
-              {achievements.filter(a => !a.isHighlighted).map((achievement, index) => (
-              <article
-                key={achievement.title}
-                ref={(el) => {
-                  if (el) el.style.setProperty('--animation-delay', `${index * 0.1 + 0.3}s`)
-                }}
-                className={`relative glass-card p-6 group overflow-hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 transition-transform hover:-translate-y-1 hover:scale-[1.01] focus-visible:-translate-y-1 focus-visible:scale-[1.01] achievements-other-item ${isInView ? 'animate-fade-in-scale' : 'opacity-0'}`}
-                tabIndex={0}
-                aria-labelledby={`achievement-other-${achievement.title.replace(/\s+/g, '-')}`}
-              >
-                {/* Background Gradient */}
-                <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${achievement.color} opacity-10 blur-3xl group-hover:opacity-20 transition-opacity`} aria-hidden="true" />
-                
-                {/* Icon */}
-                <div className={`relative w-14 h-14 rounded-xl bg-gradient-to-br ${achievement.color} flex items-center justify-center mb-4 shadow-lg`} aria-hidden="true">
-                  <achievement.icon className="w-7 h-7 text-dark-900" />
-                </div>
+          <div className="grid md:grid-cols-2 gap-6">
+            {achievements.filter(a => !a.isHighlighted).map((achievement, index) => (
+            <article
+              key={achievement.title}
+              ref={(el) => {
+                if (el) el.style.setProperty('--animation-delay', `${index * 0.1 + 0.3}s`)
+              }}
+              className={`relative glass-card p-6 group overflow-hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 transition-transform hover:-translate-y-1 hover:scale-[1.01] focus-visible:-translate-y-1 focus-visible:scale-[1.01] achievements-other-item ${isInView ? 'animate-fade-in-scale' : 'opacity-0'}`}
+              tabIndex={0}
+              aria-labelledby={`achievement-other-${achievement.title.replace(/\s+/g, '-')}`}
+            >
+              {/* Background Gradient */}
+              <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${achievement.color} opacity-10 blur-3xl group-hover:opacity-20 transition-opacity`} aria-hidden="true" />
+              
+              {/* Icon */}
+              <div className={`relative w-14 h-14 rounded-xl bg-gradient-to-br ${achievement.color} flex items-center justify-center mb-4 shadow-lg`} aria-hidden="true">
+                <achievement.icon className="w-7 h-7 text-dark-900" />
+              </div>
 
-                {/* Content */}
-                <div className="relative">
-                  <h3 
-                    id={`achievement-other-${achievement.title.replace(/\s+/g, '-')}`}
-                    className="text-lg font-display font-bold text-foreground mb-2"
+              {/* Content */}
+              <div className="relative">
+                <h3 
+                  id={`achievement-other-${achievement.title.replace(/\s+/g, '-')}`}
+                  className="text-lg font-display font-bold text-foreground mb-2"
+                >
+                  {achievement.title}
+                </h3>
+                <p className="text-primary-400 font-medium text-sm mb-1">
+                  {achievement.organization}
+                </p>
+                {achievement.projectLink ? (
+                  <a 
+                    href={achievement.projectLink}
+                    className="inline-flex items-center gap-1 text-muted-foreground/60 text-sm mb-3 hover:text-primary-400 transition-colors"
                   >
-                    {achievement.title}
-                  </h3>
-                  <p className="text-primary-400 font-medium text-sm mb-1">
-                    {achievement.organization}
+                    Project: {achievement.project}
+                    <ExternalLink className="w-3 h-3" aria-hidden="true" />
+                  </a>
+                ) : (
+                  <p className="text-muted-foreground/60 text-sm mb-3">
+                    Project: {achievement.project}
                   </p>
-                  {achievement.projectLink ? (
-                    <a 
-                      href={achievement.projectLink}
-                      className="inline-flex items-center gap-1 text-muted/60 text-sm mb-3 hover:text-primary-400 transition-colors"
-                    >
-                      Project: {achievement.project}
-                      <ExternalLink className="w-3 h-3" aria-hidden="true" />
-                    </a>
-                  ) : (
-                    <p className="text-muted/60 text-sm mb-3">
-                      Project: {achievement.project}
-                    </p>
-                  )}
-                  <p className="text-muted text-sm">
-                    {achievement.description}
-                  </p>
-                </div>
+                )}
+                <p className="text-muted text-sm">
+                  {achievement.description}
+                </p>
+              </div>
 
-                {/* Decorative Elements */}
-                <div className="absolute bottom-3 right-3 opacity-10" aria-hidden="true">
-                  <achievement.icon className="w-16 h-16" />
-                </div>
-              </article>
-              ))}
-            </div>
-          )}
-
-          {/* View More Button */}
-          <div
-            className={`mt-12 text-center flex flex-col items-center gap-4 ${isInView ? 'animate-fade-in-scale animate-delay-4' : 'opacity-0'}`}
-          >
-            {achievements.filter(a => !a.isHighlighted).length > 0 && (
-              <ViewMoreButton
-                onClick={() => setShowAll(!showAll)}
-                text={showAll ? 'Show Less Achievements' : 'View More Achievements'}
-                variant="outline"
-                icon={showAll ? ChevronUp : undefined}
-              />
-            )}
-            <ViewMoreButton
-              href="#contact"
-              text="Get In Touch"
-              variant="primary"
-            />
+              {/* Decorative Elements */}
+              <div className="absolute bottom-3 right-3 opacity-10" aria-hidden="true">
+                <achievement.icon className="w-16 h-16" />
+              </div>
+            </article>
+            ))}
           </div>
         </div>
       </div>
     </section>
-  )
+  );
 }
-
