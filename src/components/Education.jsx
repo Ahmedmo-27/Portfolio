@@ -65,7 +65,7 @@ const certifications = [
     issuer: 'almentor',
     date: 'Jul 2025',
     type: 'Course Certificate',
-    color: 'from-amber-500 to-orange-500',
+    color: 'from-rose-500 to-red-500',
     skills: ['Work Ethics', 'Professionalism'],
     link: 'https://nbe.almentor.net/en/certificate/nvxaqlr57',
   },
@@ -75,7 +75,7 @@ const certifications = [
     issuer: 'Orange Digital Center Egypt',
     date: 'Feb 2025',
     type: 'Course',
-    color: 'from-rose-500 to-red-500',
+    color: 'from-amber-500 to-orange-500',
     skills: [
       'Manual Testing',
       'Functional Testing',
@@ -83,7 +83,7 @@ const certifications = [
       'STLC',
       'QA',
     ],
-    link: '#',
+    link: '/Certificates/ISTQB Foundations ODC.jpg',
   },
   {
     id: 'linkedin-selenium',
@@ -363,17 +363,24 @@ export default function Education() {
                             </div>
                           )}
 
-                          {cert.link && (
-                            <a
-                              href={cert.link}
-                              target={cert.link.startsWith('http') ? '_blank' : undefined}
-                              rel={cert.link.startsWith('http') ? 'noopener noreferrer' : undefined}
-                              className="inline-flex items-center gap-1 mt-1.5 text-[11px] text-primary-400 hover:text-primary-300 focus-visible:text-primary-300 transition-colors"
-                            >
-                              Show credential
-                              <ExternalLink className="w-3 h-3" aria-hidden="true" />
-                            </a>
-                          )}
+                          {(() => {
+                            const credentialLink = typeof cert.link === 'string' ? cert.link.trim() : ''
+                            const hasCredentialLink = credentialLink && credentialLink !== '#'
+                            if (!hasCredentialLink) return null
+
+                            const isExternal = credentialLink.startsWith('http')
+                            return (
+                              <a
+                                href={credentialLink}
+                                target={isExternal ? '_blank' : undefined}
+                                rel={isExternal ? 'noopener noreferrer' : undefined}
+                                className="inline-flex items-center gap-1 mt-1.5 text-[11px] text-primary-400 hover:text-primary-300 focus-visible:text-primary-300 transition-colors"
+                              >
+                                Show credential
+                                <ExternalLink className="w-3 h-3" aria-hidden="true" />
+                              </a>
+                            )
+                          })()}
                         </div>
                       </div>
                     </article>
