@@ -266,8 +266,8 @@
   overflow: hidden;
   background-image: radial-gradient(
     farthest-corner circle at var(--pointer-x) var(--pointer-y),
-    hsl(248, 25%, 80%) 12%,
-    hsla(207, 40%, 30%, 0.8) 90%
+    hsl(248, 25%, 85%) 12%,
+    hsla(207, 40%, 38%, 0.88) 90%
   );
   mix-blend-mode: overlay;
   filter: brightness(0.85) contrast(1.2);
@@ -278,7 +278,7 @@
   filter: brightness(1) contrast(1.2);
   background-image: radial-gradient(
     farthest-corner circle at var(--pointer-x) var(--pointer-y),
-    hsla(249, 25%, 90%, 0.84) 5%,
+    hsla(249, 25%, 90%, 0.915) 5%,
     hsla(207, 40%, 50%, 0.634) 90%
   );
 }
