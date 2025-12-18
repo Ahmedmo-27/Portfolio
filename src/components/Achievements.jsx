@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from 'react'
+import { useInViewOnce } from '../utils/useInViewOnce'
 import { Trophy, Medal, Star, ExternalLink, FileText } from 'lucide-react'
 import { assetUrl } from '../utils/assetUrl'
 import './Achievements.css'
@@ -49,29 +49,7 @@ const achievements = [
 ]
 
 export default function Achievements() {
-  const ref = useRef(null)
-  const [isInView, setIsInView] = useState(false)
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsInView(true)
-        }
-      },
-      { threshold: 0.1, rootMargin: '-100px' }
-    )
-
-    if (ref.current) {
-      observer.observe(ref.current)
-    }
-
-    return () => {
-      if (ref.current) {
-        observer.unobserve(ref.current)
-      }
-    }
-  }, [])
+  const { ref, isInView } = useInViewOnce()
 
   return (
     <section 

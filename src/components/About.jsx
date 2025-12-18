@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from 'react'
+import { useInViewOnce } from '../utils/useInViewOnce'
 import { GraduationCap, Globe, Briefcase, Rocket, Code2, Server, Trophy, FolderGit2, Building, Award } from 'lucide-react'
 import CircuitBoard from './CircuitBoard'
 import './About.css'
@@ -50,29 +50,7 @@ const stats = [
 ]
 
 export default function About() {
-  const ref = useRef(null)
-  const [isInView, setIsInView] = useState(false)
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsInView(true)
-        }
-      },
-      { threshold: 0.1, rootMargin: '-100px' }
-    )
-
-    if (ref.current) {
-      observer.observe(ref.current)
-    }
-
-    return () => {
-      if (ref.current) {
-        observer.unobserve(ref.current)
-      }
-    }
-  }, [])
+  const { ref, isInView } = useInViewOnce()
 
   return (
     <section 

@@ -1,5 +1,6 @@
-import { useRef, useState, useEffect } from 'react'
+import { useState } from 'react'
 import { Mail, MapPin, Send, Github, Linkedin, CheckCircle, AlertCircle, Loader2 } from 'lucide-react'
+import { useInViewOnce } from '../utils/useInViewOnce'
 
 const contactInfo = [
   {
@@ -30,8 +31,7 @@ const socialLinks = [
 ]
 
 export default function Contact() {
-  const ref = useRef(null)
-  const [isInView, setIsInView] = useState(false)
+  const { ref, isInView } = useInViewOnce()
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -155,27 +155,6 @@ export default function Contact() {
       [e.target.name]: e.target.value
     }))
   }
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsInView(true)
-        }
-      },
-      { threshold: 0.1, rootMargin: '-100px' }
-    )
-
-    if (ref.current) {
-      observer.observe(ref.current)
-    }
-
-    return () => {
-      if (ref.current) {
-        observer.unobserve(ref.current)
-      }
-    }
-  }, [])
 
   return (
     <section 

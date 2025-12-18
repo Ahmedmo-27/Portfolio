@@ -1,5 +1,6 @@
-import { useRef, useState, useEffect } from 'react'
+import { useState } from 'react'
 import { GraduationCap, Calendar, Award, BookOpen, ExternalLink, BadgeCheck, ChevronUp } from 'lucide-react'
+import { useInViewOnce } from '../utils/useInViewOnce'
 import './Education.css'
 
 const education = {
@@ -150,8 +151,7 @@ const coursework = [
 ]
 
 export default function Education() {
-  const ref = useRef(null)
-  const [isInView, setIsInView] = useState(false)
+  const { ref, isInView } = useInViewOnce()
   const [showAllCerts, setShowAllCerts] = useState(false)
   const [expandedCertSkills, setExpandedCertSkills] = useState({})
 
@@ -166,27 +166,6 @@ export default function Education() {
       [certId]: !prev[certId],
     }))
   }
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsInView(true)
-        }
-      },
-      { threshold: 0.1, rootMargin: '-100px' }
-    )
-
-    if (ref.current) {
-      observer.observe(ref.current)
-    }
-
-    return () => {
-      if (ref.current) {
-        observer.unobserve(ref.current)
-      }
-    }
-  }, [])
 
   return (
     <section 

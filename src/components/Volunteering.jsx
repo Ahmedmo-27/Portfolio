@@ -1,6 +1,7 @@
-import { useRef, useState, useEffect } from 'react'
+import { useState } from 'react'
 import { Users, Trophy, Star, Target, Heart, Rocket, Calendar, ExternalLink, ChevronUp } from 'lucide-react'
 import ViewMoreButton from './ViewMoreButton'
+import { useInViewOnce } from '../utils/useInViewOnce'
 import './Volunteering.css'
 
 // Real volunteering & leadership roles
@@ -69,32 +70,10 @@ const volunteeringExperiences = [
 
 
 export default function Volunteering() {
-  const ref = useRef(null)
-  const [isInView, setIsInView] = useState(false)
+  const { ref, isInView } = useInViewOnce()
   const [showAll, setShowAll] = useState(false)
   const initialDisplayCount = 2
   const displayedExperiences = showAll ? volunteeringExperiences : volunteeringExperiences.slice(0, initialDisplayCount)
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsInView(true)
-        }
-      },
-      { threshold: 0.1, rootMargin: '-100px' }
-    )
-
-    if (ref.current) {
-      observer.observe(ref.current)
-    }
-
-    return () => {
-      if (ref.current) {
-        observer.unobserve(ref.current)
-      }
-    }
-  }, [])
 
   return (
     <section 

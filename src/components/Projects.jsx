@@ -3,6 +3,7 @@ import { ExternalLink, Github, ChevronRight, Gem, Shield, Smartphone, Globe, Ter
 import CircuitBoard from './CircuitBoard'
 import ViewMoreButton from './ViewMoreButton'
 import { assetUrl } from '../utils/assetUrl'
+import { useInViewOnce } from '../utils/useInViewOnce'
 import './Projects.css'
 
 const projects = [
@@ -173,8 +174,7 @@ const projects = [
 ]
 
 export default function Projects() {
-  const ref = useRef(null)
-  const [isInView, setIsInView] = useState(false)
+  const { ref, isInView } = useInViewOnce()
   const [activeProject, setActiveProject] = useState(null)
   const [activeMediaIndex, setActiveMediaIndex] = useState({})
   const [portraitVideos, setPortraitVideos] = useState({})
@@ -329,26 +329,6 @@ export default function Projects() {
     return items
   }
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsInView(true)
-        }
-      },
-      { threshold: 0.1, rootMargin: '-100px' }
-    )
-
-    if (ref.current) {
-      observer.observe(ref.current)
-    }
-
-    return () => {
-      if (ref.current) {
-        observer.unobserve(ref.current)
-      }
-    }
-  }, [])
   const [showAll, setShowAll] = useState(false)
   const initialDisplayCount = 2
   const displayedProjects = useMemo(() => {

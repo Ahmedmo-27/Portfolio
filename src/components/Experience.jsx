@@ -1,7 +1,8 @@
-import { useRef, useState, useMemo, useEffect } from 'react'
+import { useState, useMemo } from 'react'
 import { Building2, Award, Code, Globe, Shield, Gem, Calendar, MapPin, Cpu, ChevronUp, ChevronRight, FileText, ExternalLink } from 'lucide-react'
 import ViewMoreButton from './ViewMoreButton'
 import { assetUrl } from '../utils/assetUrl'
+import { useInViewOnce } from '../utils/useInViewOnce'
 import './Experience.css'
 
 const experiences = [
@@ -74,32 +75,10 @@ const experiences = [
   }]
 
 export default function Experience() {
-  const ref = useRef(null)
-  const [isInView, setIsInView] = useState(false)
+  const { ref, isInView } = useInViewOnce()
   const [showAll, setShowAll] = useState(false)
 
   const toArray = (v) => (Array.isArray(v) ? v : v ? [v] : [])
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsInView(true)
-        }
-      },
-      { threshold: 0.1, rootMargin: '-100px' }
-    )
-
-    if (ref.current) {
-      observer.observe(ref.current)
-    }
-
-    return () => {
-      if (ref.current) {
-        observer.unobserve(ref.current)
-      }
-    }
-  }, [])
   const initialDisplayCount = 4
   const displayedExperiences = useMemo(() => {
     return showAll ? experiences : experiences.slice(0, initialDisplayCount)

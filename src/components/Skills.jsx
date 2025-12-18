@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from 'react'
+import { useInViewOnce } from '../utils/useInViewOnce'
 import { Cloud, Database, Layout, Smartphone, TestTube, Wrench } from 'lucide-react'
 import CircuitBoard from './CircuitBoard'
 import './Skills.css'
@@ -109,29 +109,7 @@ const skillCategories = [
 ]
 
 export default function Skills() {
-  const ref = useRef(null)
-  const [isInView, setIsInView] = useState(false)
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsInView(true)
-        }
-      },
-      { threshold: 0.1, rootMargin: '-100px' }
-    )
-
-    if (ref.current) {
-      observer.observe(ref.current)
-    }
-
-    return () => {
-      if (ref.current) {
-        observer.unobserve(ref.current)
-      }
-    }
-  }, [])
+  const { ref, isInView } = useInViewOnce()
 
   return (
     <section 
