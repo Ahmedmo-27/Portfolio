@@ -1,5 +1,5 @@
 import { useInViewOnce } from '../utils/useInViewOnce'
-import { GraduationCap, Globe, Briefcase, Rocket, Code2, Server, Trophy, FolderGit2, Building, Award } from 'lucide-react'
+import { GraduationCap, Globe, Rocket, Code2, Server, FolderGit2, Award } from 'lucide-react'
 import CircuitBoard from './CircuitBoard'
 import './About.css'
 
@@ -11,28 +11,22 @@ const highlights = [
     color: 'from-blue-500 to-indigo-500',
   },
   {
-    icon: Server,
-    title: 'DevOps & Cloud',
-    description: 'Automation, CI/CD, and cloud deployments',
-    color: 'from-violet-500 to-purple-500',
+    icon: Code2,
+    title: 'Backend & Full-Stack',
+    description: 'REST APIs, Node.js, databases, and React',
+    color: 'from-emerald-500 to-teal-500',
   },
   {
-    icon: Code2,
-    title: 'Full-Stack & Android',
-    description: 'Web applications to mobile apps',
-    color: 'from-emerald-500 to-teal-500',
+    icon: Server,
+    title: 'DevOps Interest',
+    description: 'CI/CD, automation, and cloud infrastructure',
+    color: 'from-violet-500 to-purple-500',
   },
   {
     icon: Globe,
     title: 'Languages',
     description: 'English (C2) • German (A2)',
     color: 'from-amber-500 to-orange-500',
-  },
-  {
-    icon: Briefcase,
-    title: '4 Internships',
-    description: 'NBE, DEPI, ITIDA, Fuzetek',
-    color: 'from-rose-500 to-pink-500',
   },
   {
     icon: Rocket,
@@ -43,9 +37,8 @@ const highlights = [
 ]
 
 const stats = [
-  { value: '20+', label: 'Projects', icon: FolderGit2, color: 'text-primary-400' },
-  { value: '4', label: 'Internships', icon: Building, color: 'text-accent-cyan' },
-  { value: '500K+', label: 'Attack Logs', icon: Server, color: 'text-accent-emerald' },
+  { value: '10+', label: 'Full-Stack Applications', icon: FolderGit2, color: 'text-primary-400' },
+  { value: '500K+', label: 'SSH Logs Analyzed', icon: Server, color: 'text-accent-emerald', tooltip: 'Cybersecurity honeypot project (DIGITOPIA 2025)' },
   { value: '2', label: 'Awards', icon: Award, color: 'text-accent-amber' },
 ]
 
@@ -76,14 +69,14 @@ export default function About() {
               Building <span className="gradient-text">Modern Solutions</span>
             </h2>
             <p className="section-subheading mx-auto text-balance max-w-3xl">
-              A passionate Software Engineer specializing in cloud-driven development, 
-              DevOps automation, full-stack engineering, and scalable mobile applications.
+              A Junior Software Engineer specializing in backend and full-stack development, 
+              with hands-on experience building scalable APIs, web applications, and DevOps automation.
             </p>
           </div>
 
           {/* Stats Row - Enhanced */}
           <div 
-            className={`grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-12 md:mb-16 ${isInView ? 'animate-fade-in-up animate-delay-2' : 'opacity-0'}`}
+            className={`grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 mb-12 md:mb-16 ${isInView ? 'animate-fade-in-up animate-delay-2' : 'opacity-0'}`}
           >
             {stats.map((stat, index) => (
               <div
@@ -93,7 +86,7 @@ export default function About() {
                 }}
                 className={`relative group transition-transform hover:-translate-y-1 hover:scale-[1.02] about-stat-item ${isInView ? 'animate-fade-in-up' : 'opacity-0'}`}
               >
-                <div className="text-center p-6 md:p-7 rounded-2xl glass-card h-full">
+                <div className="text-center p-6 md:p-7 rounded-2xl glass-card h-full" title={stat.tooltip || ''}>
                   <div className={`w-12 h-12 mx-auto mb-4 rounded-xl bg-surface flex items-center justify-center ${stat.color}`}>
                     <stat.icon className="w-6 h-6" />
                   </div>
@@ -101,6 +94,11 @@ export default function About() {
                     {stat.value}
                   </div>
                   <div className="text-sm md:text-base text-muted font-medium">{stat.label}</div>
+                  {stat.tooltip && (
+                    <div className="mt-2 text-xs text-muted-foreground/70 italic">
+                      {stat.tooltip}
+                    </div>
+                  )}
                 </div>
               </div>
             ))}
@@ -120,15 +118,15 @@ export default function About() {
                 <div className="space-y-4 text-muted leading-relaxed text-sm md:text-base">
                   <p>
                     I'm a <span className="text-foreground font-medium">Junior Software Engineering student</span> at 
-                    Misr International University with expertise in <span className="text-primary-400">DevOps</span>, 
-                    cloud infrastructure, and full-stack development.
+                    Misr International University, specializing in <span className="text-primary-400">backend and full-stack development</span>. 
+                    I'm passionate about building scalable APIs, RESTful services, and modern web applications.
                   </p>
                   <p>
                     Through internships at <span className="text-foreground font-medium">NBE</span>, 
                     <span className="text-foreground font-medium"> DEPI</span>,
                     <span className="text-foreground font-medium"> ITIDA</span>, and
-                    <span className="text-foreground font-medium"> Fuzetek</span>, I've built production systems 
-                    and proven my ability to deliver real-world solutions.
+                    <span className="text-foreground font-medium"> Fuzetek</span>, I've developed production-ready 
+                    backend services, automated deployment pipelines, and full-stack applications that solve real business problems.
                   </p>
                 </div>
               </div>
@@ -140,31 +138,31 @@ export default function About() {
                 </h3>
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div className="flex items-start gap-3">
-                    <div className="w-2.5 h-2.5 rounded-full bg-accent-cyan mt-1.5 flex-shrink-0" />
+                    <div className="w-2.5 h-2.5 rounded-full bg-accent-emerald mt-1.5 flex-shrink-0" />
                     <div>
-                      <span className="text-accent-cyan font-semibold text-sm md:text-base block mb-1">Web Development</span>
-                      <span className="text-muted text-xs md:text-sm">MERN Stack, MYSQL, PostgreSQL</span>
+                      <span className="text-accent-emerald font-semibold text-sm md:text-base block mb-1">Backend Development</span>
+                      <span className="text-muted text-xs md:text-sm">Node.js, Express, MongoDB, PostgreSQL, MySQL, REST APIs</span>
                     </div>
                   </div>
                   <div className="flex items-start gap-3">
-                    <div className="w-2.5 h-2.5 rounded-full bg-accent-emerald mt-1.5 flex-shrink-0" />
+                    <div className="w-2.5 h-2.5 rounded-full bg-accent-cyan mt-1.5 flex-shrink-0" />
                     <div>
-                      <span className="text-accent-emerald font-semibold text-sm md:text-base block mb-1">Mobile</span>
-                      <span className="text-muted text-xs md:text-sm">Kotlin, Jetpack Compose</span>
+                      <span className="text-accent-cyan font-semibold text-sm md:text-base block mb-1">Frontend Development</span>
+                      <span className="text-muted text-xs md:text-sm">React, JavaScript, TypeScript, Tailwind CSS</span>
                     </div>
                   </div>
                   <div className="flex items-start gap-3">
                     <div className="w-2.5 h-2.5 rounded-full bg-accent-violet mt-1.5 flex-shrink-0" />
                     <div>
-                      <span className="text-accent-violet font-semibold text-sm md:text-base block mb-1">DevOps</span>
-                      <span className="text-muted text-xs md:text-sm">CI/CD, Docker, GitHub Actions, Scripting, Cloudflare R2</span>
+                      <span className="text-accent-violet font-semibold text-sm md:text-base block mb-1">DevOps & Automation</span>
+                      <span className="text-muted text-xs md:text-sm">CI/CD, Docker, GitHub Actions, Bash, Cloudflare R2</span>
                     </div>
                   </div>
                   <div className="flex items-start gap-3">
                     <div className="w-2.5 h-2.5 rounded-full bg-accent-amber mt-1.5 flex-shrink-0" />
                     <div>
-                      <span className="text-accent-amber font-semibold text-sm md:text-base block mb-1">Testing</span>
-                      <span className="text-muted text-xs md:text-sm">Selenium WebDriver, Postman, JUnit, Mockito</span>
+                      <span className="text-accent-amber font-semibold text-sm md:text-base block mb-1">Testing & QA</span>
+                      <span className="text-muted text-xs md:text-sm">Postman, API Testing, Selenium, JUnit, Mockito</span>
                     </div>
                   </div>
                 </div>
@@ -223,40 +221,6 @@ export default function About() {
             </div>
           </div>
 
-          {/* Recognition Banner - Enhanced */}
-          <div
-            className={`relative overflow-hidden mb-12 md:mb-16 ${isInView ? 'animate-fade-in-up animate-delay-4' : 'opacity-0'}`}
-          >
-            <div className="relative rounded-2xl p-6 md:p-10 bg-gradient-to-r from-accent-amber/10 via-primary-500/10 to-accent-emerald/10 border border-accent-amber/30 backdrop-blur-sm">
-              {/* Decorative glow */}
-              <div className="absolute top-0 left-1/4 w-40 h-40 bg-accent-amber/20 rounded-full blur-3xl" aria-hidden="true" />
-              <div className="absolute bottom-0 right-1/4 w-40 h-40 bg-primary-500/20 rounded-full blur-3xl" aria-hidden="true" />
-              
-              <div className="relative flex flex-col sm:flex-row items-center sm:items-start gap-6">
-                {/* Trophy icon */}
-                <div className="flex-shrink-0">
-                  <div className="w-20 h-20 md:w-24 md:h-24 rounded-2xl bg-gradient-to-br from-accent-amber to-yellow-500 flex items-center justify-center shadow-lg shadow-accent-amber/30">
-                    <Trophy className="w-10 h-10 md:w-12 md:h-12 text-dark-900" />
-                  </div>
-                </div>
-                
-                {/* Text content */}
-                <div className="text-center sm:text-left flex-1">
-                  <h3 className="text-xl md:text-2xl font-display font-bold text-foreground mb-3">
-                    Top Performer Recognition
-                  </h3>
-                  <p className="text-muted text-sm md:text-base leading-relaxed">
-                    Recognized as a <span className="text-primary-400 font-semibold">top performer</span> across 
-                    internships at <span className="text-foreground font-medium">NBE</span>, 
-                    <span className="text-foreground font-medium"> DEPI</span>, 
-                    <span className="text-foreground font-medium"> ITIDA</span>, and 
-                    <span className="text-foreground font-medium"> Fuzetek</span> — ranked in the 
-                    <span className="text-accent-emerald font-semibold"> top 5%</span> among 300+ interns.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     </section>

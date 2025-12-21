@@ -42,17 +42,15 @@ const Hero = () => {
               <div className="text-base sm:text-lg md:text-xl lg:text-2xl text-muted font-light tracking-wide font-mono">
                 <span className="text-primary-400">&lt;</span>
                 <span className="text-primary-400">
-                  Software Engineer
+                  Junior Software Engineer
                 </span>
                 <span className="text-primary-400"> /&gt;</span>
               </div>
               <p className="text-sm sm:text-base md:text-lg lg:text-xl text-muted font-light tracking-wide mt-2">
                 <Code2 className="inline w-4 h-4 md:w-5 md:h-5 mr-1.5 md:mr-2 text-primary-400" />
-                <span className="text-primary-400">DevOps & SRE</span>
+                <span className="text-primary-400">Backend & Full-Stack</span>
                 <span className="mx-2 text-border">|</span>
-                <span>Full-Stack</span>
-                <span className="mx-2 text-border">|</span>
-                <span>Android Developer</span>
+                <span>DevOps Interest</span>
               </p>
             </div>
             

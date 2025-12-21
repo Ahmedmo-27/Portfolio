@@ -5,27 +5,6 @@ import './Skills.css'
 
 const skillCategories = [
   {
-    title: 'DevOps & Cloud',
-    icon: Cloud,
-    color: 'from-blue-500 to-cyan-500',
-    skills: [
-      { name: 'Docker'},
-      { name: 'CI/CD'},
-      { name: 'Azure DevOps'},
-      { name: 'GitHub Actions'},
-      { name: 'Bash'},
-      { name: 'PowerShell'},
-      { name: 'Linux'},
-      { name: 'DigitalOcean'},
-      { name: 'Systemd'},
-      { name: 'Monitoring'},
-      { name: 'Logging Pipelines'},
-      { name: 'Deployment Pipelines'},
-      { name: 'Cloudflare R2'},
-      { name: 'CDN Management'}
-    ],
-  },
-  {
     title: 'Backend & Databases',
     icon: Database,
     color: 'from-emerald-500 to-teal-500',
@@ -33,9 +12,9 @@ const skillCategories = [
       { name: 'Node.js'},
       { name: 'Express'},
       { name: 'MongoDB'},
-      { name: 'PHP'},
       { name: 'PostgreSQL'},
       { name: 'MySQL'},
+      { name: 'PHP'},
       { name: 'REST APIs'},
       { name: 'JWT Authentication'},
       { name: 'API Design'},
@@ -47,31 +26,29 @@ const skillCategories = [
     color: 'from-violet-500 to-purple-500',
     skills: [
       { name: 'React'},
-      { name: 'Vite'},
-      { name: 'HTML5'},
-      { name: 'CSS3'},
       { name: 'JavaScript'},
       { name: 'TypeScript'},
+      { name: 'Vite'},
       { name: 'Tailwind CSS'},
-      { name: 'Angular'},
+      { name: 'HTML5'},
+      { name: 'CSS3'},
       { name: 'Responsive Design'},
     ],
   },
   {
-    title: 'Android Development',
-    icon: Smartphone,
-    color: 'from-green-500 to-emerald-500',
+    title: 'DevOps & Cloud',
+    icon: Cloud,
+    color: 'from-blue-500 to-cyan-500',
     skills: [
-      { name: 'Kotlin'},
-      { name: 'Jetpack Compose'},
-      { name: 'Retrofit'},
-      { name: 'OkHttp'},
-      { name: 'Firebase Auth'},
-      { name: 'Firestore'},
-      { name: 'Android WebView'},
-      { name: 'MVVM Architecture'},
-      { name: 'Material Design 3'},
-      { name: 'Room Database'},
+      { name: 'Docker'},
+      { name: 'CI/CD'},
+      { name: 'Azure DevOps'},
+      { name: 'GitHub Actions'},
+      { name: 'Bash'},
+      { name: 'PowerShell'},
+      { name: 'Linux'},
+      { name: 'Cloudflare R2'},
+      { name: 'DigitalOcean'},
     ],
   },
   {
@@ -79,15 +56,13 @@ const skillCategories = [
     icon: TestTube,
     color: 'from-orange-500 to-amber-500',
     skills: [
-      { name: 'Selenium WebDriver'},
       { name: 'Postman'},
+      { name: 'API Testing'},
+      { name: 'Selenium WebDriver'},
       { name: 'JUnit'},
       { name: 'Mockito'},
-      { name: 'Espresso'},
-      { name: 'STLC'},
       { name: 'Test Case Design'},
       { name: 'Bug Reporting'},
-      { name: 'API Testing'},
     ],
   },
   {
@@ -97,13 +72,20 @@ const skillCategories = [
     skills: [
       { name: 'Git'},
       { name: 'GitHub'},
-      { name: 'XAMPP'},
-      { name: 'Three.js'},
-      { name: 'Stripe Integration'},
-      { name: 'Twilio'},
       { name: 'Firebase'},
+      { name: 'Stripe Integration'},
       { name: 'Heroku'},
-      { name: 'Figma'}
+      { name: 'Figma'},
+    ],
+  },
+  {
+    title: 'Additional Skills',
+    icon: Smartphone,
+    color: 'from-green-500 to-emerald-500',
+    skills: [
+      { name: 'Kotlin'},
+      { name: 'Android Development'},
+      { name: 'Jetpack Compose'},
     ],
   },
 ]
@@ -134,8 +116,8 @@ export default function Skills() {
               My <span className="gradient-text">Tech Stack</span>
             </h2>
             <p className="section-subheading mx-auto">
-              A comprehensive toolkit spanning DevOps, full-stack development, 
-              mobile engineering, and quality assurance.
+              Focused on backend and full-stack development, with DevOps automation experience 
+              and a strong foundation in building scalable APIs and web applications.
             </p>
           </div>
 

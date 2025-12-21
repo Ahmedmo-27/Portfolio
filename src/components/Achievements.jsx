@@ -1,5 +1,5 @@
 import { useInViewOnce } from '../utils/useInViewOnce'
-import { Trophy, Medal, Star, ExternalLink, FileText } from 'lucide-react'
+import { Trophy, Medal, Star, ExternalLink } from 'lucide-react'
 import { assetUrl } from '../utils/assetUrl'
 import './Achievements.css'
 
@@ -22,18 +22,6 @@ const achievements = [
     color: 'from-slate-300 to-slate-400',
     bgColor: 'bg-slate-500/10',
     borderColor: 'border-slate-500/30',
-    isHighlighted: true,
-  },
-  {
-    title: 'Recommendation Letter (NBE Internship)',
-    organization: 'National Bank of Egypt (NBE)',
-    description:
-      'Recommendation letter from my internship supervisor Eng. John Samy Shokry (SQL DBA Supervisor).',
-    icon: FileText,
-    color: 'from-blue-400 to-cyan-500',
-    bgColor: 'bg-cyan-500/10',
-    borderColor: 'border-cyan-500/30',
-    pdfUrl: '/Experience/NBE Letter of Recommendation.pdf',
     isHighlighted: true,
   },
   {

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { GraduationCap, Calendar, Award, BookOpen, ExternalLink, BadgeCheck, ChevronUp } from 'lucide-react'
+import { GraduationCap, Calendar, Award, BookOpen, ExternalLink, BadgeCheck } from 'lucide-react'
 import { useInViewOnce } from '../utils/useInViewOnce'
 import './Education.css'
 
@@ -11,7 +11,6 @@ const education = {
   location: 'Cairo, Egypt',
   highlights: [
     'Focus on Software Engineering and Cloud Computing',
-    'Best Web Project Award (Vaultique) - 2025',
     'Active software development head of Microsoft Student Partners (MSP - MIU)',
     'Completed coursework in Data Structures, Algorithms, Databases, and Software Architecture',
   ],
@@ -38,36 +37,6 @@ const certifications = [
     color: 'from-blue-500 to-cyan-500',
     skills: ['Containerization', 'AWS', 'Cloud Computing', 'Docker'],
     link: 'https://sprints.ai/en-eg/journeys/learning/ID%20-%20SPR%20-%201J04S5/view-certificate-serial',
-  },
-  {
-    id: 'almentor-first-time-employee',
-    title: 'First-Time Employee',
-    issuer: 'almentor',
-    date: 'Jul 2025',
-    type: 'Course Certificate',
-    color: 'from-emerald-500 to-teal-500',
-    skills: ['Career Readiness', 'Workplace Culture'],
-    link: 'https://nbe.almentor.net/en/certificate/ejrgidgyx8',
-  },
-  {
-    id: 'almentor-communication',
-    title: 'Mastering Effective Communication Skills',
-    issuer: 'almentor',
-    date: 'Jul 2025',
-    type: 'Course Certificate',
-    color: 'from-violet-500 to-purple-500',
-    skills: ['Communication', 'Presentation'],
-    link: 'https://nbe.almentor.net/en/certificate/mosnrpl1',
-  },
-  {
-    id: 'almentor-work-ethics',
-    title: 'Work Ethics',
-    issuer: 'almentor',
-    date: 'Jul 2025',
-    type: 'Course Certificate',
-    color: 'from-rose-500 to-red-500',
-    skills: ['Work Ethics', 'Professionalism'],
-    link: 'https://nbe.almentor.net/en/certificate/nvxaqlr57',
   },
   {
     id: 'odc-istqb',
@@ -114,28 +83,7 @@ const certifications = [
     color: 'from-cyan-500 to-emerald-500',
     skills: ['C++'],
     link: 'https://moonshot.scaler.com/s/li/3OObsvS0Ws',
-  },
-  {
-    id: 'ctc-english-level-16',
-    title:
-      'English Language Level 16 (General English, Phonetics, Conversation, Business English, Translation)',
-    issuer: 'Cambridge Training College Britain',
-    date: 'Aug 2022',
-    type: 'Diploma',
-    color: 'from-blue-500 to-indigo-500',
-    skills: ['English', 'Translation', 'Business English'],
-    link: 'https://www.ctcbritain.org/certificate.php?serial=25032062820',
-  },
-  {
-    id: 'goethe-a2-german',
-    title: 'A2 German',
-    issuer: 'Goethe-Institut Kairo',
-    date: 'Feb 2019',
-    type: 'Language Certificate',
-    color: 'from-emerald-500 to-lime-500',
-    skills: ['German'],
-    link: '#',
-  },
+  }
 ]
 
 const coursework = [
@@ -152,13 +100,7 @@ const coursework = [
 
 export default function Education() {
   const { ref, isInView } = useInViewOnce()
-  const [showAllCerts, setShowAllCerts] = useState(false)
   const [expandedCertSkills, setExpandedCertSkills] = useState({})
-
-  const CERTS_INITIAL_DISPLAY = 6
-  const displayedCertifications = showAllCerts
-    ? certifications
-    : certifications.slice(0, CERTS_INITIAL_DISPLAY)
 
   const toggleCertSkills = (certId) => {
     setExpandedCertSkills((prev) => ({
@@ -283,7 +225,7 @@ export default function Education() {
 
                 {/* Primary approach: compact grid of cards (Projects-like, smaller) */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5 md:gap-6 lg:gap-8">
-                  {displayedCertifications.map((cert, index) => (
+                  {certifications.map((cert, index) => (
                     <article
                       key={cert.id}
                       ref={(el) => {
@@ -386,20 +328,6 @@ export default function Education() {
                     </article>
                   ))}
                 </div>
-
-                {certifications.length > 6 && (
-                  <button
-                    type="button"
-                    onClick={() => setShowAllCerts((prev) => !prev)}
-                    className="mx-auto mt-2 text-[11px] sm:text-xs text-primary-400 hover:text-primary-300 transition-colors flex items-center gap-1"
-                  >
-                    {showAllCerts ? 'Show fewer certifications' : 'Show all certifications'}
-                    <ChevronUp
-                      className={`w-3 h-3 transition-transform ${showAllCerts ? '' : 'rotate-180'}`}
-                      aria-hidden="true"
-                    />
-                  </button>
-                )}
 
                 {/* Alternative approach (if ever needed): switch to a simple stacked list.
                     Keeping the grid as the primary UX to match the Projects style

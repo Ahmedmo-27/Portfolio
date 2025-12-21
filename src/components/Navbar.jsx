@@ -5,12 +5,12 @@ import { assetUrl } from '../utils/assetUrl'
 import './Navbar.css'
 
 const navLinks = [
-  { name: 'About', href: '#about' },
-  { name: 'Experience', href: '#experience' },
-  { name: 'Projects', href: '#projects' },
-  { name: 'Skills', href: '#skills' },
-  { name: 'Education', href: '#education' },
-  { name: 'Contact', href: '#contact' }
+  { name: 'About', href: '/#about' },
+  { name: 'Experience', href: '/#experience' },
+  { name: 'Projects', href: '/#projects' },
+  { name: 'Skills', href: '/#skills' },
+  { name: 'Education', href: '/#education' },
+  { name: 'Contact', href: '/#contact' }
 ]
 
 export default function Navbar() {
@@ -77,11 +77,21 @@ export default function Navbar() {
 
   // Smooth scroll handler for navigation links
   const handleNavClick = (e, href) => {
-    // Only handle hash links
-    if (href.startsWith('#')) {
+    // Extract hash from href (handles both '#section' and '/#section' formats)
+    const hashMatch = href.match(/#(.+)/)
+    if (hashMatch) {
       e.preventDefault()
-      const targetId = href.slice(1)
+      const targetId = hashMatch[1]
       const targetElement = document.getElementById(targetId)
+      
+      // Store mobile menu state before closing
+      const wasMobileMenuOpen = isMobileMenuOpen
+      
+      // Close mobile menu immediately when a link is clicked
+      if (wasMobileMenuOpen) {
+        setIsMobileMenuOpen(false)
+        document.body.classList.remove('navbar-menu-open')
+      }
       
       const scrollToTarget = () => {
         if (!targetElement) return
@@ -103,10 +113,8 @@ export default function Navbar() {
         })
       }
 
-      // On mobile, unlock scroll + close the menu first, then scroll (mobile browsers can ignore scrollTo while overflow is hidden)
-      if (isMobileMenuOpen) {
-        setIsMobileMenuOpen(false)
-        document.body.classList.remove('navbar-menu-open')
+      // On mobile, wait for menu to close before scrolling (mobile browsers can ignore scrollTo while overflow is hidden)
+      if (wasMobileMenuOpen) {
         window.requestAnimationFrame(() => {
           window.requestAnimationFrame(scrollToTarget)
         })
@@ -233,7 +241,7 @@ export default function Navbar() {
                   className="block mt-4 btn-primary text-center"
                   role="menuitem"
                 >
-                  Let's Talk
+                  Let's Connect
                 </a>
               </div>
           </div>

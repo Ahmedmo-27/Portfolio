@@ -44,11 +44,9 @@ const volunteeringExperiences = [
     icon: Star,
     color: 'from-amber-500 to-yellow-500',
     description:
-      'Participated as a delegate in ICJ Council simulations, working on global issues and diplomatic resolutions.',
+      'Participated as a delegate in ICJ Council simulations, developing public speaking and cross-cultural collaboration skills.',
     achievements: [
       'Held a key role in the ICJ Council, excelling in research, debate, and resolution drafting',
-      'Sharpened public speaking, cross-cultural collaboration, and conflict resolution skills',
-      'Collaborated with multi-delegate teams to negotiate and pass resolutions',
     ],
   },
   {
@@ -211,22 +209,6 @@ export default function Volunteering() {
               variant="primary"
               icon={ExternalLink}
             />
-          </div>
-
-          {/* Call to Action */}
-          <div
-            className={`mt-8 text-center ${isInView ? 'animate-fade-in-up animate-delay-5' : 'opacity-0'}`}
-          >
-            <p className="text-muted text-sm md:text-base mb-4">
-              Interested in collaborating or learning more about my community involvement?
-            </p>
-            <a
-              href="#contact"
-              className="btn-secondary inline-flex items-center gap-2"
-            >
-              <Users className="w-5 h-5" aria-hidden="true" />
-              Let's Connect
-            </a>
           </div>
         </div>
       </div>

@@ -249,8 +249,8 @@ export default function Contact() {
                   <span className="text-accent-emerald font-medium text-sm md:text-base">Available for Opportunities</span>
                 </div>
                 <p className="text-muted text-xs md:text-sm">
-                  Looking for internships, DevOps/SRE roles, Android positions, 
-                  or software engineering opportunities.
+                  Seeking Junior Software Engineer roles in backend and full-stack development. 
+                  Open to internships and full-time positions where I can contribute to building scalable APIs and web applications.
                 </p>
               </div>
             </div>
