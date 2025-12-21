@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { Menu, X } from 'lucide-react'
 import ThemeToggle from './ThemeToggle'
 import { assetUrl } from '../utils/assetUrl'
@@ -13,12 +14,57 @@ const navLinks = [
   { name: 'Contact', href: '/#contact' }
 ]
 
+// Helper function to extract section ID from href
+const getSectionId = (href) => {
+  const hashMatch = href.match(/#(.+)/)
+  return hashMatch ? hashMatch[1] : ''
+}
+
 export default function Navbar() {
+  const location = useLocation()
+  const navigate = useNavigate()
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [activeSection, setActiveSection] = useState('')
+  
+  // Check if we're on the home page
+  const isHomePage = location.pathname === '/'
 
+  // Update active section from URL hash on mount and route change
   useEffect(() => {
+    if (isHomePage) {
+      const hash = location.hash.slice(1) // Remove the '#' from hash
+      if (hash) {
+        // Check if the section exists before setting it
+        const element = document.getElementById(hash)
+        if (element) {
+          setActiveSection(hash)
+          // Scroll to section after a brief delay to ensure DOM is ready
+          setTimeout(() => {
+            const navbar = document.querySelector('header')
+            const navbarHeight = navbar ? navbar.getBoundingClientRect().height : (window.innerWidth >= 768 ? 80 : 70)
+            const elementRect = element.getBoundingClientRect()
+            const elementTop = elementRect.top + window.scrollY
+            const offset = navbarHeight + 16
+            const targetScrollY = elementTop - offset
+            window.scrollTo({
+              top: Math.max(0, targetScrollY),
+              behavior: 'smooth'
+            })
+          }, 100)
+        }
+      } else {
+        setActiveSection('')
+      }
+    } else {
+      setActiveSection('')
+    }
+  }, [location.pathname, location.hash, isHomePage])
+
+  // Scroll-based section detection (only on home page)
+  useEffect(() => {
+    if (!isHomePage) return
+    
     let ticking = false
     
     const handleScroll = () => {
@@ -27,20 +73,52 @@ export default function Navbar() {
           setIsScrolled(window.scrollY > 50)
 
           // Update active section based on scroll position
-          const sections = navLinks.map(link => link.href.slice(1))
+          // Extract section IDs from hrefs (e.g., '/#about' -> 'about')
+          const sections = navLinks.map(link => getSectionId(link.href))
           const navbar = document.querySelector('header')
           const navbarHeight = navbar ? navbar.getBoundingClientRect().height : (window.innerWidth >= 768 ? 80 : 70)
           const probeY = navbarHeight + 24
-          const currentSection = sections.find(section => {
-            const element = document.getElementById(section)
+          
+          // Find the section that is currently in view
+          // Check sections in reverse order to prioritize the most recent one
+          let currentSection = null
+          const scrollY = window.scrollY
+          
+          for (let i = sections.length - 1; i >= 0; i--) {
+            const sectionId = sections[i]
+            const element = document.getElementById(sectionId)
             if (element) {
               const rect = element.getBoundingClientRect()
-              return rect.top <= probeY && rect.bottom >= probeY
+              const elementTop = rect.top + scrollY
+              const elementBottom = rect.bottom + scrollY
+              
+              // Section is active if:
+              // 1. The probe point (navbar + offset) is within the section's vertical bounds, OR
+              // 2. We've scrolled past the section's top (accounting for navbar) but haven't reached the next section
+              const sectionStart = elementTop - navbarHeight
+              const sectionEnd = elementBottom
+              
+              if (scrollY >= sectionStart && scrollY < sectionEnd) {
+                currentSection = sectionId
+                break
+              }
             }
-            return false
-          })
+          }
+          
           if (currentSection) {
             setActiveSection(currentSection)
+            // Update URL hash without triggering scroll
+            if (location.hash !== `#${currentSection}`) {
+            window.history.replaceState(null, '', `#${currentSection}`)
+            }
+          } else {
+            // If no section is found and we're at the top, clear active section
+            if (window.scrollY < 100) {
+              setActiveSection('')
+              if (location.hash) {
+                window.history.replaceState(null, '', location.pathname)
+              }
+            }
           }
           ticking = false
         })
@@ -49,8 +127,10 @@ export default function Navbar() {
     }
 
     window.addEventListener('scroll', handleScroll, { passive: true })
+    // Initial check
+    handleScroll()
     return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
+  }, [isHomePage, location.hash, location.pathname])
 
   // Close mobile menu on escape key
   useEffect(() => {
@@ -82,7 +162,6 @@ export default function Navbar() {
     if (hashMatch) {
       e.preventDefault()
       const targetId = hashMatch[1]
-      const targetElement = document.getElementById(targetId)
       
       // Store mobile menu state before closing
       const wasMobileMenuOpen = isMobileMenuOpen
@@ -93,9 +172,16 @@ export default function Navbar() {
         document.body.classList.remove('navbar-menu-open')
       }
       
+      // If not on home page, navigate to home first, then scroll to section
+      if (!isHomePage) {
+        navigate(`/#${targetId}`)
+        return
+      }
+      
+      const targetElement = document.getElementById(targetId)
+      if (!targetElement) return
+      
       const scrollToTarget = () => {
-        if (!targetElement) return
-
         // Get the actual navbar height dynamically
         const navbar = document.querySelector('header')
         const navbarHeight = navbar ? navbar.getBoundingClientRect().height : (window.innerWidth >= 768 ? 80 : 70)
@@ -111,6 +197,9 @@ export default function Navbar() {
           top: Math.max(0, targetScrollY),
           behavior: 'smooth'
         })
+        
+        // Update URL hash
+        window.history.replaceState(null, '', `#${targetId}`)
       }
 
       // On mobile, wait for menu to close before scrolling (mobile browsers can ignore scrollTo while overflow is hidden)
@@ -135,10 +224,12 @@ export default function Navbar() {
         <div className="flex items-center justify-between">
           {/* Logo */}
           <a
-            href="#"
+            href="/"
             onClick={(e) => {
               e.preventDefault()
+              navigate('/')
               window.scrollTo({ top: 0, behavior: 'smooth' })
+              setActiveSection('')
             }}
             className="flex items-center gap-2 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 rounded-lg transition-transform hover:scale-[1.02]"
             aria-label="Ahmed Mostafa - Home"
@@ -166,17 +257,17 @@ export default function Navbar() {
                 href={link.href}
                 onClick={(e) => handleNavClick(e, link.href)}
                 className={`px-4 py-2 font-medium transition-colors relative group rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 ${
-                  activeSection === link.href.slice(1) 
+                  activeSection === getSectionId(link.href) 
                     ? 'text-primary-400' 
                     : 'text-muted hover:text-foreground'
                 }`}
                 role="menuitem"
-                aria-current={activeSection === link.href.slice(1) ? 'page' : undefined}
+                aria-current={activeSection === getSectionId(link.href) ? 'page' : undefined}
               >
                 {link.name}
                 <span 
                   className={`absolute bottom-0 left-1/2 -translate-x-1/2 h-0.5 bg-gradient-to-r from-primary-500 to-accent-cyan transition-all duration-300 ${
-                    activeSection === link.href.slice(1) ? 'w-full' : 'w-0 group-hover:w-full'
+                    activeSection === getSectionId(link.href) ? 'w-full' : 'w-0 group-hover:w-full'
                   }`}
                   aria-hidden="true"
                 />
@@ -226,7 +317,7 @@ export default function Navbar() {
                     href={link.href}
                     onClick={(e) => handleNavClick(e, link.href)}
                     className={`block px-4 py-3 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 ${
-                      activeSection === link.href.slice(1)
+                      activeSection === getSectionId(link.href)
                         ? 'text-primary-400 bg-primary-500/10'
                         : 'text-muted hover:text-foreground hover:bg-surface'
                     }`}
