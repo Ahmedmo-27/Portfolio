@@ -1,6 +1,7 @@
 import { useInViewOnce } from '../utils/useInViewOnce'
-import { Trophy, Medal, Star, ExternalLink } from 'lucide-react'
+import { Trophy, Medal, Star, ExternalLink, FileText, Download } from 'lucide-react'
 import { assetUrl } from '../utils/assetUrl'
+import { useNavigate } from 'react-router-dom'
 import './Achievements.css'
 
 const achievements = [
@@ -13,6 +14,7 @@ const achievements = [
     bgColor: 'bg-amber-500/10',
     borderColor: 'border-amber-500/30',
     isHighlighted: true,
+    website: 'https://vaultique.live',
   },
   {
     title: 'Semifinalist in DIGITOPIA 2025',
@@ -22,6 +24,18 @@ const achievements = [
     color: 'from-slate-300 to-slate-400',
     bgColor: 'bg-slate-500/10',
     borderColor: 'border-slate-500/30',
+    isHighlighted: true,
+    showProjectsLink: true,
+  },
+  {
+    title: 'Recommendation Letter (NBE Internship)',
+    organization: 'National Bank of Egypt (NBE)',
+    description: 'Received a recommendation letter from my internship supervisor.',
+    icon: FileText,
+    color: 'from-blue-400 to-cyan-500',
+    bgColor: 'bg-cyan-500/10',
+    borderColor: 'border-cyan-500/30',
+    pdfUrl: '/Experience/NBE Letter of Recommendation.pdf',
     isHighlighted: true,
   },
   {
@@ -33,11 +47,55 @@ const achievements = [
     bgColor: 'bg-cyan-500/10',
     borderColor: 'border-cyan-500/30',
     isHighlighted: true,
-  },
+    showExperienceLink: true,
+  }
 ]
 
 export default function Achievements() {
   const { ref, isInView } = useInViewOnce()
+  const navigate = useNavigate()
+  
+  const handleExperienceClick = (e) => {
+    e.preventDefault()
+    navigate('/#experience')
+    // Smooth scroll to experience section after navigation
+    setTimeout(() => {
+      const experienceSection = document.getElementById('experience')
+      if (experienceSection) {
+        const navbar = document.querySelector('header')
+        const navbarHeight = navbar ? navbar.getBoundingClientRect().height : 80
+        const elementRect = experienceSection.getBoundingClientRect()
+        const elementTop = elementRect.top + window.scrollY
+        const offset = navbarHeight + 16
+        const targetScrollY = elementTop - offset
+        window.scrollTo({
+          top: Math.max(0, targetScrollY),
+          behavior: 'smooth'
+        })
+      }
+    }, 100)
+  }
+
+  const handleProjectsClick = (e) => {
+    e.preventDefault()
+    navigate('/#projects')
+    // Smooth scroll to projects section after navigation
+    setTimeout(() => {
+      const projectsSection = document.getElementById('projects')
+      if (projectsSection) {
+        const navbar = document.querySelector('header')
+        const navbarHeight = navbar ? navbar.getBoundingClientRect().height : 80
+        const elementRect = projectsSection.getBoundingClientRect()
+        const elementTop = elementRect.top + window.scrollY
+        const offset = navbarHeight + 16
+        const targetScrollY = elementTop - offset
+        window.scrollTo({
+          top: Math.max(0, targetScrollY),
+          behavior: 'smooth'
+        })
+      }
+    }, 100)
+  }
 
   return (
     <section 
@@ -105,24 +163,64 @@ export default function Achievements() {
                       {achievement.description}
                     </p>
 
-                    {achievement.pdfUrl && (
-                      <div className="mt-5">
-                        {(() => {
-                          const pdfHref = assetUrl(achievement.pdfUrl)
-                          return (
-                            <>
-                              <a
-                                href={pdfHref}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="inline-flex items-center gap-1.5 text-primary-400 hover:text-primary-300 transition-colors text-sm font-medium"
-                              >
-                                Open recommendation letter (PDF)
-                                <ExternalLink className="w-4 h-4" aria-hidden="true" />
-                              </a>
-                            </>
-                          )
-                        })()}
+                    {(achievement.website || achievement.pdfUrl || achievement.showExperienceLink || achievement.showProjectsLink) && (
+                      <div className="mt-5 flex flex-wrap gap-4">
+                        {achievement.website && (
+                          <a
+                            href={achievement.website}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1.5 text-primary-400 hover:text-primary-300 transition-colors text-sm font-medium"
+                          >
+                            Visit Website
+                            <ExternalLink className="w-4 h-4" aria-hidden="true" />
+                          </a>
+                        )}
+                        {achievement.pdfUrl && (
+                          <>
+                            {(() => {
+                              const pdfHref = assetUrl(achievement.pdfUrl)
+                              return (
+                                <a
+                                  href={pdfHref}
+                                  download
+                                  className="inline-flex items-center gap-1.5 text-primary-400 hover:text-primary-300 transition-colors text-sm font-medium"
+                                >
+                                  <Download className="w-4 h-4" aria-hidden="true" />
+                                  Download PDF
+                                </a>
+                              )
+                            })()}
+                            <a
+                              href="/#experience"
+                              onClick={handleExperienceClick}
+                              className="inline-flex items-center gap-1.5 text-primary-400 hover:text-primary-300 transition-colors text-sm font-medium"
+                            >
+                              View Experience
+                              <ExternalLink className="w-4 h-4" aria-hidden="true" />
+                            </a>
+                          </>
+                        )}
+                        {achievement.showExperienceLink && !achievement.pdfUrl && (
+                          <a
+                            href="/#experience"
+                            onClick={handleExperienceClick}
+                            className="inline-flex items-center gap-1.5 text-primary-400 hover:text-primary-300 transition-colors text-sm font-medium"
+                          >
+                            View Experience
+                            <ExternalLink className="w-4 h-4" aria-hidden="true" />
+                          </a>
+                        )}
+                        {achievement.showProjectsLink && (
+                          <a
+                            href="/#projects"
+                            onClick={handleProjectsClick}
+                            className="inline-flex items-center gap-1.5 text-primary-400 hover:text-primary-300 transition-colors text-sm font-medium"
+                          >
+                            View Projects
+                            <ExternalLink className="w-4 h-4" aria-hidden="true" />
+                          </a>
+                        )}
                       </div>
                     )}
                   </div>
