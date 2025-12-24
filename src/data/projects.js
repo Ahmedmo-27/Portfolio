@@ -1,4 +1,4 @@
-import { Gem, Shield, Smartphone, Globe, Terminal, ExternalLink, Github, Download, FileText } from 'lucide-react'
+import { Gem, Shield, Smartphone, Globe, Terminal, ExternalLink, Github, Download, FileText, Mic, ClipboardList, Brain, Newspaper } from 'lucide-react'
 import { assetUrl } from '../utils/assetUrl'
 
 export const projects = [
@@ -164,6 +164,132 @@ export const projects = [
       screenshots: [],
       video: null,
       presentation: assetUrl('/Projects/DevOps.pdf'),
+    },
+  },
+  {
+    id: 'voicescript',
+    title: 'VoiceScript',
+    subtitle: 'Voice Transcription & Note-Taking App',
+    description: 'A modern full-stack voice transcription and note-taking application that converts speech to text in real-time. Supports both live recording and audio file uploads with advanced note organization features.',
+    icon: Mic,
+    color: 'from-purple-500 to-pink-500',
+    tech: ['React', 'Node.js', 'Express', 'MySQL', 'Python', 'Flask', 'SpeechRecognition'],
+    features: [
+      'Real-time voice transcription',
+      'Audio file upload (WAV, MP3, MP4, M4A, FLAC, OGG, WebM)',
+      'Note management with rich text support',
+      'Categories & color-coded tags',
+      'Full-text search functionality',
+      'User authentication & admin dashboard',
+      'Multi-language transcription support',
+      'Dark/light theme toggle',
+      'Pin important notes',
+    ],
+    links: {
+      github: 'https://github.com/ahmedmo-27/VoiceScript'
+    },
+    ctas: [
+      { label: 'View Source Code', icon: Github, href: 'https://github.com/ahmedmo-27/VoiceScript' },
+    ],
+    isHighlighted: false,
+    media: {
+      screenshots: [],
+      video: null,
+      presentation: null,
+    },
+  },
+  {
+    id: 'tickly',
+    title: 'Tickly',
+    subtitle: 'Task Management Application',
+    description: 'A modern, full-stack task management application built with Angular and PHP. Features comprehensive task organization, reminders, user authentication, and an administrative dashboard with analytics.',
+    icon: ClipboardList,
+    color: 'from-blue-500 to-indigo-500',
+    tech: ['Angular', 'PHP', 'TypeScript', 'MySQL', 'Tailwind CSS', 'Flowbite', 'Chart.js'],
+    features: [
+      'User authentication & session management',
+      'Task CRUD with categories and priorities',
+      'Reminder system with email notifications',
+      'Admin dashboard with user statistics',
+      'Activity logs and system metrics',
+      'Responsive design with Tailwind CSS',
+      'RESTful API architecture',
+      'Password reset via OTP',
+      'Task status tracking and deadlines',
+    ],
+    links: {
+      github: 'https://github.com/tickly-miu/tickly'
+    },
+    ctas: [
+      { label: 'View Source Code', icon: Github, href: 'https://github.com/tickly-miu/tickly' },
+    ],
+    isHighlighted: false,
+    media: {
+      screenshots: [],
+      video: null,
+      presentation: null,
+    },
+  },
+  {
+    id: 'credit-card-fraud-detection',
+    title: 'Credit Card Fraud Detection',
+    subtitle: 'Machine Learning Project',
+    description: 'A comprehensive machine learning project implementing and comparing 6 different algorithms (Logistic Regression, Random Forest, XGBoost, SVM, Decision Tree, KNN) for detecting fraudulent credit card transactions. Evaluated on two distinct datasets with comprehensive preprocessing and visualization.',
+    icon: Brain,
+    color: 'from-rose-500 to-red-500',
+    tech: ['Python', 'Scikit-learn', 'XGBoost', 'Pandas', 'NumPy', 'Matplotlib', 'Seaborn'],
+    features: [
+      '6 ML models implemented and compared',
+      'Two distinct fraud detection datasets',
+      'Comprehensive preprocessing pipelines',
+      'Class imbalance handling techniques',
+      'Performance metrics (accuracy, precision, recall, F1, ROC-AUC)',
+      'Extensive visualizations and model comparisons',
+      'Feature engineering and data analysis',
+      'Reproducible evaluation pipelines',
+    ],
+    links: {
+      github: 'https://github.com/Ahmedmo-27/credit-card-fraud-detection-using-ML-models'
+    },
+    ctas: [
+      { label: 'View Source Code', icon: Github, href: 'https://github.com/Ahmedmo-27/credit-card-fraud-detection-using-ML-models' },
+    ],
+    isHighlighted: false,
+    media: {
+      screenshots: [],
+      video: null,
+      presentation: null,
+    },
+  },
+  {
+    id: 'whatnow',
+    title: 'WhatNow',
+    subtitle: 'News App (Android)',
+    description: 'A modern Android news application built with Kotlin and Firebase. Features real-time news from multiple categories and regions, user authentication, favorites system, dark/light theme, and multilingual support (English & Arabic).',
+    icon: Newspaper,
+    color: 'from-indigo-500 to-blue-500',
+    tech: ['Kotlin', 'Android', 'Firebase', 'Retrofit', 'MVVM', 'Material Design', 'XML'],
+    features: [
+      'Firebase Authentication (Email/Password & Google Sign-In)',
+      'Multiple news categories and regional support',
+      'Real-time news fetching via GNews API',
+      'Favorites system with Firebase Firestore',
+      'Dark/Light theme with system default support',
+      'Multilingual support (English & Arabic)',
+      'Article sharing and web view',
+      'Material Design 3 UI with smooth animations',
+    ],
+    links: {
+      github: 'https://github.com/DEPI-3-Android/WhatNow'
+    },
+    ctas: [
+      { label: 'View Source Code', icon: Github, href: 'https://github.com/DEPI-3-Android/WhatNow' },
+    ],
+    isHighlighted: false,
+    media: {
+      screenshots: [],
+      video: null,
+      presentation: null,
     },
   },
 ]

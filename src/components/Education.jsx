@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { GraduationCap, Calendar, Award, BookOpen, ExternalLink, BadgeCheck } from 'lucide-react'
+import { GraduationCap, Calendar, Award, BookOpen, ExternalLink, BadgeCheck, ChevronDown } from 'lucide-react'
 import { useInViewOnce } from '../utils/useInViewOnce'
 import './Education.css'
 
@@ -87,11 +87,7 @@ const certifications = [
 ]
 
 const coursework = [
-  'Data Structures & Algorithms',
   'Algorithm Analysis & Design',
-  'Database Management Systems',
-  'Human-Computer Interaction',
-  'Computer Organization & Architecture',
   'Operating Systems',
   'Computer Networks',
   'Web Development',
@@ -101,6 +97,7 @@ const coursework = [
 export default function Education() {
   const { ref, isInView } = useInViewOnce()
   const [expandedCertSkills, setExpandedCertSkills] = useState({})
+  const [showAllCerts, setShowAllCerts] = useState(false)
 
   const toggleCertSkills = (certId) => {
     setExpandedCertSkills((prev) => ({
@@ -108,6 +105,9 @@ export default function Education() {
       [certId]: !prev[certId],
     }))
   }
+
+  const displayedCerts = showAllCerts ? certifications : certifications.slice(0, 4)
+  const hasMoreCerts = certifications.length > 4
 
   return (
     <section 
@@ -136,7 +136,7 @@ export default function Education() {
             </p>
           </div>
 
-          <div className="grid lg:grid-cols-5 gap-8 lg:gap-10 education-layout">
+          <div className="grid lg:grid-cols-5 gap-8 lg:gap-10 education-layout items-start">
             {/* Education Card */}
             <div className={`${isInView ? 'animate-fade-in-up animate-delay-2' : 'opacity-0'} lg:col-span-2`}>
               <div className="glass-card p-6 md:p-8 h-full">
@@ -224,14 +224,14 @@ export default function Education() {
                 </div>
 
                 {/* Primary approach: compact grid of cards (Projects-like, smaller) */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5 md:gap-6 lg:gap-8">
-                  {certifications.map((cert, index) => (
+                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-2 gap-5 md:gap-6 lg:gap-8">
+                  {displayedCerts.map((cert, index) => (
                     <article
                       key={cert.id}
                       ref={(el) => {
                         if (el) el.style.setProperty('--animation-delay', `${index * 0.08 + 0.25}s`)
                       }}
-                      className={`glass-card p-4 sm:p-5 group relative overflow-hidden transition-transform hover:-translate-y-1 focus-visible:-translate-y-1 education-cert-item ${isInView ? 'animate-fade-in-up' : 'opacity-0'}`}
+                      className={`glass-card p-5 sm:p-6 group relative overflow-hidden transition-transform hover:-translate-y-1 focus-visible:-translate-y-1 education-cert-item ${isInView ? 'animate-fade-in-up' : 'opacity-0'}`}
                       tabIndex={0}
                       aria-label={cert.title}
                     >
@@ -249,17 +249,17 @@ export default function Education() {
                           <Award className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                         </div>
 
-                        <div className="flex-1 min-w-0 space-y-1">
+                        <div className="flex-1 min-w-0 space-y-1.5">
                           <div className="flex items-start justify-between gap-2">
-                            <div className="min-w-0">
+                            <div className="min-w-0 flex-1">
                               <p className="text-[13px] sm:text-sm font-semibold text-foreground leading-snug line-clamp-2 flex items-center gap-1.5">
                                 {cert.title}
                               </p>
-                              <p className="text-[11px] sm:text-xs font-medium text-primary-400 truncate">
+                              <p className="text-[11px] sm:text-xs font-medium text-primary-400 truncate mt-0.5">
                                 {cert.issuer}
                               </p>
                             </div>
-                            <span className="text-[10px] text-muted-foreground/70 flex-shrink-0">
+                            <span className="text-[10px] text-muted-foreground/70 flex-shrink-0 whitespace-nowrap">
                               {cert.date}
                             </span>
                           </div>
@@ -272,11 +272,11 @@ export default function Education() {
                           </div>
 
                           {Array.isArray(cert.skills) && cert.skills.length > 0 && (
-                            <div className="flex flex-wrap gap-1 mt-1">
+                            <div className="flex flex-wrap gap-1.5 mt-1.5">
                               {(expandedCertSkills[cert.id] ? cert.skills : cert.skills.slice(0, 3)).map((skill) => (
                                 <span
                                   key={`${cert.id}-${skill}`}
-                                  className="rounded-full bg-surface/80 px-1.5 py-0.5 text-[10px] text-muted border border-border/60"
+                                  className="rounded-full bg-surface/80 px-2 py-0.5 text-[10px] sm:text-[11px] text-muted border border-border/60 whitespace-nowrap"
                                 >
                                   {skill}
                                 </span>
@@ -289,7 +289,7 @@ export default function Education() {
                                     e.stopPropagation()
                                     toggleCertSkills(cert.id)
                                   }}
-                                  className="text-[10px] text-primary-400 hover:text-primary-300 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 rounded-md px-1"
+                                  className="text-[10px] sm:text-[11px] text-primary-400 hover:text-primary-300 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 rounded-md px-1.5 whitespace-nowrap"
                                   aria-expanded={!!expandedCertSkills[cert.id]}
                                   aria-label={
                                     expandedCertSkills[cert.id]
@@ -329,9 +329,30 @@ export default function Education() {
                   ))}
                 </div>
 
-                {/* Alternative approach (if ever needed): switch to a simple stacked list.
-                    Keeping the grid as the primary UX to match the Projects style
-                    while remaining compact and scannable. */}
+                {/* Show More Button */}
+                {hasMoreCerts && (
+                  <div className="flex justify-center mt-6">
+                    <button
+                      type="button"
+                      onClick={() => setShowAllCerts(!showAllCerts)}
+                      className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-surface border border-border text-primary-400 hover:text-primary-300 hover:border-primary-500/40 hover:bg-surface-hover transition-all text-sm font-medium"
+                      aria-expanded={showAllCerts}
+                      aria-label={showAllCerts ? 'Show fewer certifications' : 'Show more certifications'}
+                    >
+                      {showAllCerts ? (
+                        <>
+                          Show Less
+                          <ChevronDown className="w-4 h-4 rotate-180 transition-transform" aria-hidden="true" />
+                        </>
+                      ) : (
+                        <>
+                          Show More
+                          <ChevronDown className="w-4 h-4 transition-transform" aria-hidden="true" />
+                        </>
+                      )}
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           </div>

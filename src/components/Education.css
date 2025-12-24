@@ -69,4 +69,22 @@
   .education-layout {
     align-items: flex-start;
   }
+  
+  /* Give more horizontal space to certificate cards */
+  .education-cert-item {
+    min-width: 0;
+  }
+}
+
+/* Ensure certificate content has enough space on larger screens */
+@media (min-width: 1280px) {
+  .education-cert-item {
+    min-width: 280px;
+  }
+}
+
+@media (min-width: 1536px) {
+  .education-cert-item {
+    min-width: 300px;
+  }
 }

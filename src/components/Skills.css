@@ -5,6 +5,21 @@
   animation-delay: var(--animation-delay, 0.2s);
 }
 
+/* Enhanced hover effects */
+.skills-category-item:hover {
+  border-color: rgba(var(--primary-500-rgb), 0.2);
+}
+
+/* Smooth transitions for skill tags */
+.skills-category-item .tech-tag {
+  transition: all 0.2s ease-in-out;
+}
+
+/* Natural card heights - no forced stretching */
+.skills-category-item {
+  display: block;
+}
+
 
 
 

@@ -73,6 +73,35 @@
   }
 }
 
+/* CSV Preview Mobile Styles */
+@media (max-width: 640px) {
+  /* Improve touch scrolling on mobile */
+  .csv-preview-container {
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+  }
+
+  /* Better scrollbar visibility on mobile */
+  .csv-preview-container::-webkit-scrollbar {
+    height: 8px;
+    width: 8px;
+  }
+
+  .csv-preview-container::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+  }
+
+  .csv-preview-container::-webkit-scrollbar-thumb {
+    background: rgba(14, 165, 233, 0.5);
+    border-radius: 4px;
+  }
+
+  .csv-preview-container::-webkit-scrollbar-thumb:hover {
+    background: rgba(14, 165, 233, 0.7);
+  }
+}
+
 
 
 

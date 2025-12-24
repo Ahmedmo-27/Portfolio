@@ -429,11 +429,11 @@
 
 
   .pc-glare {
-    filter: brightness(0.9) contrast(1.1);
+    filter: brightness(0.85) contrast(1.2);
     background-image: radial-gradient(
       farthest-corner circle at var(--pointer-x) var(--pointer-y),
-      hsl(248, 25%, 80%) 12%,
-      hsla(207, 40%, 30%, 0.8) 90%
+      hsl(248, 25%, 85%) 12%,
+      hsla(207, 40%, 38%, 0.88) 90%
     );
   }
 
@@ -487,11 +487,11 @@
 
 
   .pc-glare {
-    filter: brightness(0.5) contrast(1.0);
+    filter: brightness(0.85) contrast(1.2);
     background-image: radial-gradient(
       farthest-corner circle at var(--pointer-x) var(--pointer-y),
-      hsl(248, 25%, 80%) 12%,
-      hsla(207, 40%, 30%, 0.8) 90%
+      hsl(248, 25%, 85%) 12%,
+      hsla(207, 40%, 38%, 0.88) 90%
     );
   }
 

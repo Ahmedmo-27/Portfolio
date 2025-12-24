@@ -19,6 +19,7 @@ export default function AllProjects() {
   const [mediaShouldLoad, setMediaShouldLoad] = useState({})
   const [mediaLoading, setMediaLoading] = useState({}) // projectId -> boolean
   const [mediaLoaded, setMediaLoaded] = useState({}) // projectId -> Set of loaded indices
+  const [pdfPreviewFailed, setPdfPreviewFailed] = useState({}) // key -> boolean (projectId::itemIndex)
   const [csvPreviewData, setCsvPreviewData] = useState({})
   const [csvPreviewStatus, setCsvPreviewStatus] = useState({})
   const [csvSearch, setCsvSearch] = useState({})
@@ -415,39 +416,71 @@ export default function AllProjects() {
                                             </div>
                                           )}
 
-                                          {item.type === 'pdf' && (
-                                            <div className="w-full h-full bg-surface/70 relative">
-                                              <object
-                                                data={assetUrl(item.src)}
-                                                type="application/pdf"
-                                                className="w-full h-full"
-                                                aria-label={`${project.title} PDF preview`}
-                                                onLoad={() => {
-                                                  setMediaLoaded((prev) => {
-                                                    const newSet = new Set(prev[project.id] || [])
-                                                    newSet.add(itemIndex)
-                                                    return { ...prev, [project.id]: newSet }
-                                                  })
-                                                  setMediaLoading((prev) => ({ ...prev, [project.id]: false }))
-                                                }}
-                                              >
-                                                <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-6">
-                                                  <p className="text-sm text-muted mb-3">
-                                                    PDF preview isn&apos;t supported here.
-                                                  </p>
-                                                  <a
-                                                    href={assetUrl(item.src)}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    className="btn-cta"
-                                                  >
-                                                    <FileText className="w-4 h-4" aria-hidden="true" />
-                                                    Open PDF
-                                                  </a>
-                                                </div>
-                                              </object>
-                                            </div>
-                                          )}
+                                          {item.type === 'pdf' && (() => {
+                                            const pdfKey = `${project.id}::${itemIndex}`
+                                            const hasFailed = pdfPreviewFailed[pdfKey]
+                                            
+                                            return (
+                                              <div className="w-full h-full bg-surface/70 relative">
+                                                <iframe
+                                                  src={hasFailed ? undefined : `${assetUrl(item.src)}#toolbar=1&navpanes=1&scrollbar=1`}
+                                                  className={`w-full h-full border-0 ${hasFailed ? 'hidden' : ''}`}
+                                                  title={`${project.title} PDF preview`}
+                                                  onLoad={(e) => {
+                                                    setMediaLoaded((prev) => {
+                                                      const newSet = new Set(prev[project.id] || [])
+                                                      newSet.add(itemIndex)
+                                                      return { ...prev, [project.id]: newSet }
+                                                    })
+                                                    setMediaLoading((prev) => ({ ...prev, [project.id]: false }))
+                                                    
+                                                    // Check after a delay if PDF actually loaded
+                                                    // Cross-origin restrictions prevent direct access, so we use a timeout
+                                                    setTimeout(() => {
+                                                      try {
+                                                        const iframe = e.currentTarget
+                                                        // Try to access iframe - will throw if cross-origin
+                                                        const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document
+                                                        // If we can't access, it might be cross-origin (which is fine) or failed
+                                                        // We'll let the browser handle it and show fallback only on explicit error
+                                                      } catch (err) {
+                                                        // Cross-origin is expected and fine - PDF should still display
+                                                        // Only show fallback if we get an explicit error event
+                                                      }
+                                                    }, 500)
+                                                  }}
+                                                  onError={() => {
+                                                    setPdfPreviewFailed((prev) => ({ ...prev, [pdfKey]: true }))
+                                                    setMediaLoading((prev) => ({ ...prev, [project.id]: false }))
+                                                  }}
+                                                />
+                                                {/* Fallback shown when PDF preview fails */}
+                                                {hasFailed && (
+                                                  <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-6 bg-surface/95 backdrop-blur-sm">
+                                                    <div className="w-16 h-16 rounded-2xl bg-surface border border-border flex items-center justify-center mb-4">
+                                                      <FileText className="w-8 h-8 text-primary-400" aria-hidden="true" />
+                                                    </div>
+                                                    <p className="text-sm font-semibold text-foreground mb-2">
+                                                      PDF Preview Unavailable
+                                                    </p>
+                                                    <p className="text-xs text-muted mb-4">
+                                                      Your browser doesn&apos;t support PDF preview. Click below to open the PDF file.
+                                                    </p>
+                                                    <a
+                                                      href={assetUrl(item.src)}
+                                                      target="_blank"
+                                                      rel="noopener noreferrer"
+                                                      className="btn-cta"
+                                                      onClick={(e) => e.stopPropagation()}
+                                                    >
+                                                      <FileText className="w-4 h-4" aria-hidden="true" />
+                                                      Open PDF
+                                                    </a>
+                                                  </div>
+                                                )}
+                                              </div>
+                                            )
+                                          })()}
 
                                           {(item.type === 'csv' || item.type === 'file') && (
                                             <div className="w-full h-full bg-surface/70 flex flex-col items-center justify-center text-center p-6">
@@ -535,9 +568,9 @@ export default function AllProjects() {
                                                     )}
 
                                                     {item.type === 'csv' && status === 'loaded' && data && (
-                                                      <div className="mt-4 w-full max-w-5xl">
-                                                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-3">
-                                                          <div className="text-[11px] text-muted">
+                                                      <div className="mt-4 w-full max-w-5xl -mx-2 sm:mx-0">
+                                                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-3 px-2 sm:px-0">
+                                                          <div className="text-[10px] sm:text-[11px] text-muted">
                                                             Showing up to <span className="text-foreground font-semibold">30</span> rows
                                                             and <span className="text-foreground font-semibold">20</span> columns
                                                           </div>
@@ -555,42 +588,51 @@ export default function AllProjects() {
                                                         </div>
 
                                                         <div className="rounded-xl border border-border/60 overflow-hidden bg-black/20">
-                                                          <div className="max-h-56 overflow-auto">
-                                                            <table className="min-w-full text-left text-[11px]">
-                                                              {data.header.length > 0 && (
-                                                                <thead className="sticky top-0 bg-surface/95 backdrop-blur border-b border-border/60">
-                                                                  <tr>
-                                                                    {data.header.map((h, idx) => (
-                                                                      <th
-                                                                        key={idx}
-                                                                        className="px-3 py-2 font-semibold text-foreground whitespace-nowrap"
-                                                                      >
-                                                                        {h || `col_${idx + 1}`}
-                                                                      </th>
-                                                                    ))}
-                                                                  </tr>
-                                                                </thead>
-                                                              )}
-                                                              <tbody>
-                                                                {(filteredRows.length ? filteredRows : data.rows).map((r, ri) => (
-                                                                  <tr
-                                                                    key={ri}
-                                                                    className={ri % 2 === 0 ? 'bg-transparent' : 'bg-black/20'}
-                                                                  >
-                                                                    {(data.header.length ? data.header : r).map((_, ci) => (
-                                                                      <td
-                                                                        key={ci}
-                                                                        className="px-3 py-2 text-muted whitespace-nowrap max-w-[220px] truncate"
-                                                                        title={String(r[ci] ?? '')}
-                                                                      >
-                                                                        {String(r[ci] ?? '')}
-                                                                      </td>
-                                                                    ))}
-                                                                  </tr>
-                                                                ))}
-                                                              </tbody>
-                                                            </table>
+                                                          <div className="csv-preview-container max-h-56 sm:max-h-64 overflow-y-auto overflow-x-auto overscroll-x-contain -webkit-overflow-scrolling-touch">
+                                                            <div className="inline-block min-w-full align-middle">
+                                                              <table className="min-w-full text-left text-[10px] sm:text-[11px]">
+                                                                {data.header.length > 0 && (
+                                                                  <thead className="sticky top-0 bg-surface/95 backdrop-blur border-b border-border/60 z-10">
+                                                                    <tr>
+                                                                      {data.header.map((h, idx) => (
+                                                                        <th
+                                                                          key={idx}
+                                                                          className="px-2 sm:px-3 py-1.5 sm:py-2 font-semibold text-foreground whitespace-nowrap text-[10px] sm:text-[11px]"
+                                                                        >
+                                                                          <span className="block truncate max-w-[120px] sm:max-w-none" title={h || `col_${idx + 1}`}>
+                                                                            {h || `col_${idx + 1}`}
+                                                                          </span>
+                                                                        </th>
+                                                                      ))}
+                                                                    </tr>
+                                                                  </thead>
+                                                                )}
+                                                                <tbody>
+                                                                  {(filteredRows.length ? filteredRows : data.rows).map((r, ri) => (
+                                                                    <tr
+                                                                      key={ri}
+                                                                      className={ri % 2 === 0 ? 'bg-transparent' : 'bg-black/20'}
+                                                                    >
+                                                                      {(data.header.length ? data.header : r).map((_, ci) => (
+                                                                        <td
+                                                                          key={ci}
+                                                                          className="px-2 sm:px-3 py-1.5 sm:py-2 text-muted whitespace-nowrap max-w-[120px] sm:max-w-[220px] truncate"
+                                                                          title={String(r[ci] ?? '')}
+                                                                        >
+                                                                          {String(r[ci] ?? '')}
+                                                                        </td>
+                                                                      ))}
+                                                                    </tr>
+                                                                  ))}
+                                                                </tbody>
+                                                              </table>
+                                                            </div>
                                                           </div>
+                                                        </div>
+                                                        <div className="mt-2 px-2 sm:px-0">
+                                                          <p className="text-[10px] sm:text-[11px] text-muted">
+                                                            💡 Swipe horizontally to view all columns
+                                                          </p>
                                                         </div>
                                                       </div>
                                                     )}

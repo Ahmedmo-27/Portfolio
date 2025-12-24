@@ -11,13 +11,17 @@ const skillCategories = [
     skills: [
       { name: 'Node.js'},
       { name: 'Express'},
+      { name: 'Python'},
+      { name: 'Flask'},
+      { name: 'PHP'},
       { name: 'MongoDB'},
       { name: 'PostgreSQL'},
       { name: 'MySQL'},
-      { name: 'PHP'},
       { name: 'REST APIs'},
       { name: 'JWT Authentication'},
       { name: 'API Design'},
+      { name: 'Pandas'},
+      { name: 'NumPy'},
     ],
   },
   {
@@ -26,6 +30,7 @@ const skillCategories = [
     color: 'from-violet-500 to-purple-500',
     skills: [
       { name: 'React'},
+      { name: 'Angular'},
       { name: 'JavaScript'},
       { name: 'TypeScript'},
       { name: 'Vite'},
@@ -61,8 +66,6 @@ const skillCategories = [
       { name: 'Selenium WebDriver'},
       { name: 'JUnit'},
       { name: 'Mockito'},
-      { name: 'Test Case Design'},
-      { name: 'Bug Reporting'},
     ],
   },
   {
@@ -72,9 +75,9 @@ const skillCategories = [
     skills: [
       { name: 'Git'},
       { name: 'GitHub'},
-      { name: 'Firebase'},
       { name: 'Stripe Integration'},
-      { name: 'Heroku'},
+      { name: 'Chart.js'},
+      { name: 'Matplotlib'},
       { name: 'Figma'},
     ],
   },
@@ -86,6 +89,11 @@ const skillCategories = [
       { name: 'Kotlin'},
       { name: 'Android Development'},
       { name: 'Jetpack Compose'},
+      { name: 'Firebase'},
+      { name: 'Retrofit'},
+      { name: 'MVVM'},
+      { name: 'XML'},
+      { name: 'Material Design'},
     ],
   },
 ]
@@ -123,7 +131,7 @@ export default function Skills() {
 
           {/* Skills Grid */}
           <div 
-            className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6"
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-4 md:gap-6"
             role="list"
             aria-label="Skill categories"
           >
@@ -133,33 +141,39 @@ export default function Skills() {
                 ref={(el) => {
                   if (el) el.style.setProperty('--animation-delay', `${index * 0.1 + 0.2}s`)
                 }}
-                className={`glass-card p-5 md:p-6 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 transition-transform hover:-translate-y-1 focus-visible:-translate-y-1 skills-category-item ${isInView ? 'animate-fade-in-up' : 'opacity-0'}`}
+                className={`glass-card p-5 md:p-6 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 transition-all duration-300 hover:-translate-y-2 hover:shadow-xl focus-visible:-translate-y-2 relative overflow-hidden skills-category-item ${isInView ? 'animate-fade-in-up' : 'opacity-0'}`}
                 role="listitem"
                 tabIndex={0}
                 aria-labelledby={`skill-${category.title.replace(/\s+/g, '-')}`}
               >
+                {/* Gradient background on hover */}
+                <div 
+                  className={`absolute inset-0 bg-gradient-to-br ${category.color} opacity-0 group-hover:opacity-5 transition-opacity duration-300 pointer-events-none`}
+                  aria-hidden="true"
+                />
+                
                 {/* Category Header */}
-                <div className="flex items-center gap-3 md:gap-4 mb-4 md:mb-5">
+                <div className="relative flex items-center gap-3 md:gap-4 mb-4 md:mb-5">
                   <div 
-                    className={`w-10 md:w-12 h-10 md:h-12 rounded-xl bg-gradient-to-br ${category.color} flex items-center justify-center shadow-lg`}
+                    className={`w-10 md:w-12 h-10 md:h-12 rounded-xl bg-gradient-to-br ${category.color} flex items-center justify-center shadow-lg group-hover:scale-110 group-hover:shadow-xl transition-all duration-300`}
                     aria-hidden="true"
                   >
                     <category.icon className="w-5 md:w-6 h-5 md:h-6 text-white" />
                   </div>
                   <h3 
                     id={`skill-${category.title.replace(/\s+/g, '-')}`}
-                    className="text-lg md:text-xl font-display font-semibold text-foreground"
+                    className="text-lg md:text-xl font-display font-semibold text-foreground group-hover:text-primary-400 transition-colors duration-300"
                   >
                     {category.title}
                   </h3>
                 </div>
 
                 {/* Skills Tags */}
-                <div className="flex flex-wrap gap-1.5 md:gap-2" role="list" aria-label={`${category.title} skills`}>
+                <div className="relative flex flex-wrap gap-1.5 md:gap-2 mt-3" role="list" aria-label={`${category.title} skills`}>
                   {category.skills.map((skill) => (
                     <span 
                       key={skill.name} 
-                      className="tech-tag text-xs md:text-sm"
+                      className="tech-tag text-xs md:text-sm transition-all duration-200 hover:scale-105 hover:shadow-md"
                       role="listitem"
                     >
                       {skill.name}
