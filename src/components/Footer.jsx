@@ -37,7 +37,7 @@ export default function Footer() {
               aria-label="Ahmed Mostafa - Back to top"
             >
               <div
-                className="w-9 md:w-10 h-9 md:h-10 rounded-xl flex items-center justify-center transition-all duration-300 bg-surface border border-border/60 group-hover:border-primary-500/40"
+                className="w-9 md:w-10 h-9 md:h-10 rounded-xl flex items-center justify-center transition-[border-color] duration-200 bg-surface border border-border/60 group-hover:border-primary-500/40"
                 aria-hidden="true"
               >
                 <img
@@ -77,7 +77,7 @@ export default function Footer() {
                 href={social.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-9 md:w-10 h-9 md:h-10 rounded-lg bg-surface hover:bg-surface-hover border border-border flex items-center justify-center text-muted hover:text-foreground transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
+                className="w-9 md:w-10 h-9 md:h-10 rounded-lg bg-surface hover:bg-surface-hover border border-border flex items-center justify-center text-muted hover:text-foreground transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
                 aria-label={`Visit my ${social.label} profile`}
                 role="listitem"
               >

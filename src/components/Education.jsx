@@ -335,7 +335,7 @@ export default function Education() {
                     <button
                       type="button"
                       onClick={() => setShowAllCerts(!showAllCerts)}
-                      className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-surface border border-border text-primary-400 hover:text-primary-300 hover:border-primary-500/40 hover:bg-surface-hover transition-all text-sm font-medium"
+                      className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-surface border border-border text-primary-400 hover:text-primary-300 hover:border-primary-500/40 hover:bg-surface-hover transition-colors duration-150 text-sm font-medium"
                       aria-expanded={showAllCerts}
                       aria-label={showAllCerts ? 'Show fewer certifications' : 'Show more certifications'}
                     >

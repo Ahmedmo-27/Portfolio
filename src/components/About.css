@@ -42,24 +42,28 @@
 /* Animation delay utilities for stats */
 .about-stat-item {
   animation-delay: var(--animation-delay, 0.3s);
+  /* CSS containment to prevent layout thrashing */
+  contain: layout style;
 }
 
 /* Animation delay utilities for highlights */
 .about-highlight-item {
   animation-delay: var(--animation-delay, 0.4s);
+  /* CSS containment to prevent layout thrashing */
+  contain: layout style;
 }
 
-/* Enhanced card hover effects */
+/* Enhanced card hover effects - use transform only for GPU acceleration */
 .about-stat-item .glass-card {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.2s ease-out;
 }
 
 .about-highlight-item {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.2s ease-out;
 }
 
 /* Smooth specialization item hover */
 .about-highlight-item .group\/item:hover {
-  transition: transform 0.2s ease-out;
+  transition: transform 0.15s ease-out;
 }
 

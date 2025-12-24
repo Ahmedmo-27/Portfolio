@@ -58,7 +58,7 @@ export const projects = [
       github: 'https://github.com/CyberTopians/Cybertopia'
     },
     ctas: [
-      { label: 'View Source Code', icon: 'Github', href: 'https://github.com/CyberTopians/Cybertopia' }
+      { label: 'View Source Code', icon: Github, href: 'https://github.com/CyberTopians/Cybertopia' }
     ],
     award: 'DIGITOPIA 2025 Semifinalist',
     isHighlighted: true,

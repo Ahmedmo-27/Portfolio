@@ -45,9 +45,14 @@
     <!-- TODO: Generate and add sitemap.xml, then uncomment -->
     <!-- <link rel="sitemap" type="application/xml" href="https://ahmed-mostafa-portfolio-8efdd2d8c482.herokuapp.com/sitemap.xml" /> -->
     
-    <!-- DNS Prefetch for Performance -->
+    <!-- DNS Prefetch & Preconnect for Performance -->
     <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
     <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
+    <link rel="preconnect" href="https://pub-bb511787df1747a0998436437d66865d.r2.dev" crossorigin />
+    <link rel="dns-prefetch" href="https://pub-bb511787df1747a0998436437d66865d.r2.dev" />
+    
+    <!-- Preload LCP image (ProfileCard avatar) for faster initial paint -->
+    <link rel="preload" as="image" href="https://pub-bb511787df1747a0998436437d66865d.r2.dev/Assets/Ahmed%20Mostafa%20-%20Software%20Development%20Head%20Avatar.jpg" fetchpriority="high" />
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
@@ -196,7 +201,9 @@
     <!-- Google Fonts - Preconnect for performance -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Load fonts asynchronously to not block LCP -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&family=Syne:wght@400;500;600;700;800&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet"></noscript>
     
     <!-- Preload critical assets -->
     <!-- Logo is served from /public directory -->

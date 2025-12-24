@@ -61,14 +61,20 @@ export default function Navbar() {
     }
   }, [location.pathname, location.hash, isHomePage])
 
-  // Handle isScrolled state on all pages
+  // Handle isScrolled state on all pages - optimized to avoid unnecessary re-renders
   useEffect(() => {
     let ticking = false
+    let lastScrolledState = false
     
     const handleScroll = () => {
       if (!ticking) {
         window.requestAnimationFrame(() => {
-          setIsScrolled(window.scrollY > 50)
+          const shouldBeScrolled = window.scrollY > 50
+          // Only update state if it actually changed
+          if (shouldBeScrolled !== lastScrolledState) {
+            lastScrolledState = shouldBeScrolled
+            setIsScrolled(shouldBeScrolled)
+          }
           ticking = false
         })
         ticking = true
@@ -81,72 +87,105 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
-  // Scroll-based section detection (only on home page)
+  // Section detection using a SINGLE Intersection Observer for better INP
   useEffect(() => {
     if (!isHomePage) return
     
-    let ticking = false
+    const sections = navLinks.map(link => getSectionId(link.href))
+    let lastUpdate = 0
+    let pendingUpdate = null
+    const UPDATE_THROTTLE = 200 // Increased throttle for better INP
     
-    const handleScroll = () => {
-      if (!ticking) {
-        window.requestAnimationFrame(() => {
-          // Extract section IDs from hrefs (e.g., '/#about' -> 'about')
-          const sections = navLinks.map(link => getSectionId(link.href))
-          const navbar = document.querySelector('header')
-          const navbarHeight = navbar ? navbar.getBoundingClientRect().height : (window.innerWidth >= 768 ? 80 : 70)
-          const probeY = navbarHeight + 24
-          
-          // Find the section that is currently in view
-          // Check sections in reverse order to prioritize the most recent one
-          let currentSection = null
-          const scrollY = window.scrollY
-          
-          for (let i = sections.length - 1; i >= 0; i--) {
-            const sectionId = sections[i]
-            const element = document.getElementById(sectionId)
-            if (element) {
-              const rect = element.getBoundingClientRect()
-              const elementTop = rect.top + scrollY
-              const elementBottom = rect.bottom + scrollY
-              
-              // Section is active if:
-              // 1. The probe point (navbar + offset) is within the section's vertical bounds, OR
-              // 2. We've scrolled past the section's top (accounting for navbar) but haven't reached the next section
-              const sectionStart = elementTop - navbarHeight
-              const sectionEnd = elementBottom
-              
-              if (scrollY >= sectionStart && scrollY < sectionEnd) {
-                currentSection = sectionId
-                break
-              }
-            }
-          }
-          
-          if (currentSection) {
-            setActiveSection(currentSection)
-            // Update URL hash without triggering scroll
-            if (location.hash !== `#${currentSection}`) {
-            window.history.replaceState(null, '', `#${currentSection}`)
-            }
+    // Track which sections are currently intersecting
+    const intersectingSections = new Map()
+    
+    // Single observer for all sections - much better performance
+    const observer = new IntersectionObserver(
+      (entries) => {
+        // Update intersection state for each entry
+        for (const entry of entries) {
+          const sectionId = entry.target.id
+          if (entry.isIntersecting && entry.intersectionRatio >= 0.2) {
+            intersectingSections.set(sectionId, entry.intersectionRatio)
           } else {
-            // If no section is found and we're at the top, clear active section
-            if (window.scrollY < 100) {
-              setActiveSection('')
+            intersectingSections.delete(sectionId)
+          }
+        }
+        
+        // Throttle the actual state update
+        const now = Date.now()
+        if (now - lastUpdate < UPDATE_THROTTLE) {
+          // Schedule a deferred update if not already pending
+          if (!pendingUpdate) {
+            pendingUpdate = setTimeout(() => {
+              pendingUpdate = null
+              updateActiveSection()
+            }, UPDATE_THROTTLE - (now - lastUpdate))
+          }
+          return
+        }
+        
+        updateActiveSection()
+      },
+      {
+        rootMargin: '-80px 0px -50% 0px',
+        threshold: [0.2]
+      }
+    )
+    
+    const updateActiveSection = () => {
+      lastUpdate = Date.now()
+      
+      // Find the section with highest intersection ratio
+      let topSection = null
+      let topRatio = 0
+      for (const [sectionId, ratio] of intersectingSections) {
+        if (ratio > topRatio) {
+          topRatio = ratio
+          topSection = sectionId
+        }
+      }
+      
+      if (topSection) {
+        setActiveSection(prev => {
+          if (prev === topSection) return prev // No change
+          // Defer history update using idle callback or timeout
+          if ('requestIdleCallback' in window) {
+            window.requestIdleCallback(() => {
+              if (location.hash !== `#${topSection}`) {
+                window.history.replaceState(null, '', `#${topSection}`)
+              }
+            }, { timeout: 500 })
+          }
+          return topSection
+        })
+      } else if (window.scrollY < 100) {
+        setActiveSection(prev => {
+          if (prev === '') return prev
+          if ('requestIdleCallback' in window) {
+            window.requestIdleCallback(() => {
               if (location.hash) {
                 window.history.replaceState(null, '', location.pathname)
               }
-            }
+            }, { timeout: 500 })
           }
-          ticking = false
+          return ''
         })
-        ticking = true
       }
     }
-
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    // Initial check
-    handleScroll()
-    return () => window.removeEventListener('scroll', handleScroll)
+    
+    // Observe all sections with the single observer
+    for (const sectionId of sections) {
+      const element = document.getElementById(sectionId)
+      if (element) {
+        observer.observe(element)
+      }
+    }
+    
+    return () => {
+      observer.disconnect()
+      if (pendingUpdate) clearTimeout(pendingUpdate)
+    }
   }, [isHomePage, location.hash, location.pathname])
 
   // Close mobile menu on escape key
@@ -232,7 +271,7 @@ export default function Navbar() {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      className={`fixed top-0 left-0 right-0 z-50 transition-[padding,background-color,backdrop-filter] duration-200 ${
         isScrolled || isMobileMenuOpen ? 'glass py-3' : 'py-5'
       }`}
       role="banner"
@@ -252,7 +291,7 @@ export default function Navbar() {
             aria-label="Ahmed Mostafa - Home"
           >
             <div 
-              className="w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-300 bg-surface border border-border/50 group-hover:border-primary-500/50"
+              className="w-10 h-10 rounded-xl flex items-center justify-center transition-[border-color] duration-200 bg-surface border border-border/50 group-hover:border-primary-500/50"
               aria-hidden="true"
             >
               <img 
@@ -283,7 +322,7 @@ export default function Navbar() {
               >
                 {link.name}
                 <span 
-                  className={`absolute bottom-0 left-1/2 -translate-x-1/2 h-0.5 bg-gradient-to-r from-primary-500 to-accent-cyan transition-all duration-300 ${
+                  className={`absolute bottom-0 left-1/2 -translate-x-1/2 h-0.5 bg-gradient-to-r from-primary-500 to-accent-cyan transition-[width] duration-200 ${
                     activeSection === getSectionId(link.href) ? 'w-full' : 'w-0 group-hover:w-full'
                   }`}
                   aria-hidden="true"

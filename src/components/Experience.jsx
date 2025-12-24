@@ -138,7 +138,7 @@ export default function Experience() {
                   {/* Content Card */}
                   <div className={`md:w-1/2 ${index % 2 === 0 ? 'md:pr-8 lg:pr-12' : 'md:pl-8 lg:pl-12'} pl-10 md:pl-0`}>
                     <div
-                      className="glass-card p-4 sm:p-6 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 transition-transform hover:-translate-y-1 focus-visible:-translate-y-1"
+                      className="glass-card p-4 sm:p-6 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 transition-transform duration-200 hover:-translate-y-1 focus-visible:-translate-y-1"
                       tabIndex={0}
                     >
                       {/* Header */}

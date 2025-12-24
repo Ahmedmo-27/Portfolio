@@ -232,7 +232,7 @@ export default function Contact() {
                       href={social.href}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="w-10 md:w-12 h-10 md:h-12 rounded-xl glass hover:bg-surface-hover flex items-center justify-center text-muted hover:text-foreground transition-all duration-300 hover:-translate-y-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
+                      className="w-10 md:w-12 h-10 md:h-12 rounded-xl glass hover:bg-surface-hover flex items-center justify-center text-muted hover:text-foreground transition-[transform,color] duration-200 hover:-translate-y-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
                       aria-label={`Visit my ${social.label} profile`}
                       role="listitem"
                     >

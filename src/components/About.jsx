@@ -50,7 +50,7 @@ export default function About() {
   return (
     <section 
       id="about" 
-      className="py-12 md:py-50 relative overflow-hidden"
+      className="py-12 md:py-24 relative overflow-hidden"
       aria-labelledby="about-heading"
     >
       {/* Background decorative elements */}
@@ -59,10 +59,10 @@ export default function About() {
       <div className="about-bg-blur-1" aria-hidden="true" />
       <div className="about-bg-blur-2" aria-hidden="true" />
 
-      <div className="relative max-w-7xl 2xl:max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 2xl:px-12">
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div ref={ref}>
           {/* Section Header */}
-          <div className={`text-center mb-12 md:mb-16 2xl:mb-20 ${isInView ? 'animate-fade-in-up' : 'opacity-0'}`}>
+          <div className={`text-center mb-12 md:mb-16 ${isInView ? 'animate-fade-in-up' : 'opacity-0'}`}>
             <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary-500/10 border border-primary-500/20 text-primary-400 text-sm font-medium mb-4">
               <span className="w-1.5 h-1.5 rounded-full bg-primary-400" aria-hidden="true" />
               About Me
@@ -78,7 +78,7 @@ export default function About() {
 
           {/* Stats Row - Enhanced */}
           <div 
-            className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-4 md:gap-6 2xl:gap-8 mb-12 md:mb-16 2xl:mb-20 max-w-7xl mx-auto ${isInView ? 'animate-fade-in-up animate-delay-2' : 'opacity-0'}`}
+            className={`grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-12 md:mb-16 ${isInView ? 'animate-fade-in-up animate-delay-2' : 'opacity-0'}`}
           >
             {stats.map((stat, index) => (
               <div
@@ -86,21 +86,21 @@ export default function About() {
                 ref={(el) => {
                   if (el) el.style.setProperty('--animation-delay', `${index * 0.1 + 0.3}s`)
                 }}
-                className={`relative group transition-all duration-300 hover:-translate-y-2 hover:scale-[1.03] hover:shadow-xl about-stat-item ${isInView ? 'animate-fade-in-up' : 'opacity-0'}`}
+                className={`relative group transition-transform duration-200 hover:-translate-y-1 about-stat-item ${isInView ? 'animate-fade-in-up' : 'opacity-0'}`}
               >
-                <div className="text-center p-6 md:p-7 2xl:p-8 rounded-2xl glass-card h-full relative overflow-hidden group-hover:border-primary-500/30 transition-all duration-300" title={stat.tooltip || ''}>
+                <div className="text-center p-5 md:p-6 rounded-2xl glass-card h-full relative overflow-hidden" title={stat.tooltip || ''}>
                   {/* Subtle gradient on hover */}
                   <div className="absolute inset-0 bg-gradient-to-br from-primary-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" aria-hidden="true" />
                   
-                  <div className={`relative w-12 h-12 2xl:w-14 2xl:h-14 mx-auto mb-4 2xl:mb-5 rounded-xl bg-surface flex items-center justify-center ${stat.color} group-hover:scale-110 group-hover:shadow-lg transition-all duration-300`}>
-                    <stat.icon className="w-6 h-6 2xl:w-7 2xl:h-7" />
+                  <div className={`relative w-10 h-10 md:w-12 md:h-12 mx-auto mb-3 md:mb-4 rounded-xl bg-surface flex items-center justify-center ${stat.color} group-hover:scale-105 transition-transform duration-200`}>
+                    <stat.icon className="w-5 h-5 md:w-6 md:h-6" />
                   </div>
-                  <div className="relative text-3xl md:text-4xl 2xl:text-5xl font-display font-bold gradient-text mb-2 2xl:mb-3 group-hover:scale-105 transition-transform duration-300">
+                  <div className="relative text-2xl md:text-3xl font-display font-bold gradient-text mb-1.5 md:mb-2 group-hover:scale-105 transition-transform duration-300">
                     {stat.value}
                   </div>
-                  <div className="relative text-sm md:text-base 2xl:text-lg text-muted font-medium group-hover:text-foreground/80 transition-colors duration-300">{stat.label}</div>
+                  <div className="relative text-xs md:text-sm text-muted font-medium group-hover:text-foreground/80 transition-colors duration-300">{stat.label}</div>
                   {stat.tooltip && (
-                    <div className="relative mt-2 2xl:mt-3 text-xs 2xl:text-sm text-muted-foreground/70 italic">
+                    <div className="relative mt-1.5 md:mt-2 text-[10px] md:text-xs text-muted-foreground/70 italic">
                       {stat.tooltip}
                     </div>
                   )}
@@ -110,20 +110,20 @@ export default function About() {
           </div>
 
           {/* Main Content - Improved Layout */}
-          <div className="grid lg:grid-cols-2 gap-6 lg:gap-8 xl:gap-12 2xl:gap-16 mb-12 md:mb-16 2xl:mb-20">
+          <div className="grid lg:grid-cols-2 gap-6 lg:gap-8 mb-12 md:mb-16">
             {/* Left Column - Bio & Specializations */}
-            <div className={`space-y-5 md:space-y-6 2xl:space-y-8 ${isInView ? 'animate-fade-in-up animate-delay-3' : 'opacity-0'}`}>
-              <div className="glass-card p-6 md:p-8 2xl:p-10 relative overflow-hidden group">
+            <div className={`space-y-5 md:space-y-6 ${isInView ? 'animate-fade-in-up animate-delay-3' : 'opacity-0'}`}>
+              <div className="glass-card p-5 md:p-6 lg:p-8 relative overflow-hidden group">
                 {/* Subtle background gradient */}
                 <div className="absolute inset-0 bg-gradient-to-br from-primary-500/5 via-transparent to-accent-cyan/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" aria-hidden="true" />
                 
-                <h3 className="relative text-xl md:text-2xl 2xl:text-3xl font-display font-bold text-foreground mb-5 2xl:mb-6 flex items-center gap-3">
-                  <span className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-accent-cyan flex items-center justify-center shadow-lg group-hover:scale-110 group-hover:shadow-xl transition-all duration-300">
-                    <GraduationCap className="w-5 h-5 text-white" />
+                <h3 className="relative text-lg md:text-xl font-display font-bold text-foreground mb-4 md:mb-5 flex items-center gap-3">
+                  <span className="w-9 h-9 md:w-10 md:h-10 rounded-xl bg-gradient-to-br from-primary-500 to-accent-cyan flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform duration-200">
+                    <GraduationCap className="w-4 h-4 md:w-5 md:h-5 text-white" />
                   </span>
                   Background
                 </h3>
-                <div className="relative space-y-4 2xl:space-y-5 text-muted leading-relaxed text-sm md:text-base 2xl:text-lg">
+                <div className="relative space-y-3 md:space-y-4 text-muted leading-relaxed text-sm md:text-base">
                   <p>
                     I'm a <span className="text-foreground font-medium">Junior Software Engineering student</span> at 
                     Misr International University, specializing in <span className="text-primary-400">backend and full-stack development</span>. 
@@ -140,40 +140,40 @@ export default function About() {
               </div>
 
               {/* Tech Specializations */}
-              <div className="glass-card p-6 md:p-8 2xl:p-10 relative overflow-hidden group">
+              <div className="glass-card p-5 md:p-6 lg:p-8 relative overflow-hidden group">
                 {/* Subtle background gradient */}
                 <div className="absolute inset-0 bg-gradient-to-br from-accent-emerald/5 via-transparent to-accent-cyan/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" aria-hidden="true" />
                 
-                <h3 className="relative text-lg md:text-xl 2xl:text-2xl font-display font-bold text-foreground mb-5 2xl:mb-6">
+                <h3 className="relative text-base md:text-lg font-display font-bold text-foreground mb-4 md:mb-5">
                   Specializations
                 </h3>
-                <div className="relative grid sm:grid-cols-2 gap-3 md:gap-4 2xl:gap-5">
-                  <div className="flex items-start gap-3 2xl:gap-4 group/item hover:translate-x-1 transition-transform duration-200">
-                    <div className="w-2.5 h-2.5 2xl:w-3 2xl:h-3 rounded-full bg-accent-emerald mt-1.5 2xl:mt-2 flex-shrink-0 group-hover/item:scale-125 transition-transform duration-200" />
+                <div className="relative grid sm:grid-cols-2 gap-3 md:gap-4">
+                  <div className="flex items-start gap-3 group/item hover:translate-x-1 transition-transform duration-200">
+                    <div className="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full bg-accent-emerald mt-1.5 flex-shrink-0 group-hover/item:scale-125 transition-transform duration-200" />
                     <div>
-                      <span className="text-accent-emerald font-semibold text-sm md:text-base 2xl:text-lg block mb-1 2xl:mb-1.5 group-hover/item:text-accent-emerald/90 transition-colors">Backend Development</span>
-                      <span className="text-muted text-xs md:text-sm 2xl:text-base">Node.js, Express, Python, Flask, PHP, MongoDB, PostgreSQL, MySQL, REST APIs</span>
+                      <span className="text-accent-emerald font-semibold text-sm block mb-1 group-hover/item:text-accent-emerald/90 transition-colors">Backend Development</span>
+                      <span className="text-muted text-xs md:text-sm">Node.js, Express, Python, Flask, PHP, MongoDB, PostgreSQL, MySQL, REST APIs</span>
                     </div>
                   </div>
-                  <div className="flex items-start gap-3 2xl:gap-4 group/item hover:translate-x-1 transition-transform duration-200">
-                    <div className="w-2.5 h-2.5 2xl:w-3 2xl:h-3 rounded-full bg-accent-cyan mt-1.5 2xl:mt-2 flex-shrink-0 group-hover/item:scale-125 transition-transform duration-200" />
+                  <div className="flex items-start gap-3 group/item hover:translate-x-1 transition-transform duration-200">
+                    <div className="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full bg-accent-cyan mt-1.5 flex-shrink-0 group-hover/item:scale-125 transition-transform duration-200" />
                     <div>
-                      <span className="text-accent-cyan font-semibold text-sm md:text-base 2xl:text-lg block mb-1 2xl:mb-1.5 group-hover/item:text-accent-cyan/90 transition-colors">Frontend Development</span>
-                      <span className="text-muted text-xs md:text-sm 2xl:text-base">React, Angular, JavaScript, TypeScript, Tailwind CSS</span>
+                      <span className="text-accent-cyan font-semibold text-sm block mb-1 group-hover/item:text-accent-cyan/90 transition-colors">Frontend Development</span>
+                      <span className="text-muted text-xs md:text-sm">React, Angular, JavaScript, TypeScript, Tailwind CSS</span>
                     </div>
                   </div>
-                  <div className="flex items-start gap-3 2xl:gap-4 group/item hover:translate-x-1 transition-transform duration-200">
-                    <div className="w-2.5 h-2.5 2xl:w-3 2xl:h-3 rounded-full bg-accent-violet mt-1.5 2xl:mt-2 flex-shrink-0 group-hover/item:scale-125 transition-transform duration-200" />
+                  <div className="flex items-start gap-3 group/item hover:translate-x-1 transition-transform duration-200">
+                    <div className="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full bg-accent-violet mt-1.5 flex-shrink-0 group-hover/item:scale-125 transition-transform duration-200" />
                     <div>
-                      <span className="text-accent-violet font-semibold text-sm md:text-base 2xl:text-lg block mb-1 2xl:mb-1.5 group-hover/item:text-accent-violet/90 transition-colors">DevOps & Automation</span>
-                      <span className="text-muted text-xs md:text-sm 2xl:text-base">CI/CD, Docker, GitHub Actions, Bash, Cloudflare R2</span>
+                      <span className="text-accent-violet font-semibold text-sm block mb-1 group-hover/item:text-accent-violet/90 transition-colors">DevOps & Automation</span>
+                      <span className="text-muted text-xs md:text-sm">CI/CD, Docker, GitHub Actions, Bash, Cloudflare R2</span>
                     </div>
                   </div>
-                  <div className="flex items-start gap-3 2xl:gap-4 group/item hover:translate-x-1 transition-transform duration-200">
-                    <div className="w-2.5 h-2.5 2xl:w-3 2xl:h-3 rounded-full bg-accent-amber mt-1.5 2xl:mt-2 flex-shrink-0 group-hover/item:scale-125 transition-transform duration-200" />
+                  <div className="flex items-start gap-3 group/item hover:translate-x-1 transition-transform duration-200">
+                    <div className="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full bg-accent-amber mt-1.5 flex-shrink-0 group-hover/item:scale-125 transition-transform duration-200" />
                     <div>
-                      <span className="text-accent-amber font-semibold text-sm md:text-base 2xl:text-lg block mb-1 2xl:mb-1.5 group-hover/item:text-accent-amber/90 transition-colors">Testing & QA</span>
-                      <span className="text-muted text-xs md:text-sm 2xl:text-base">Postman, API Testing, Selenium, JUnit, Mockito</span>
+                      <span className="text-accent-amber font-semibold text-sm block mb-1 group-hover/item:text-accent-amber/90 transition-colors">Testing & QA</span>
+                      <span className="text-muted text-xs md:text-sm">Postman, API Testing, Selenium, JUnit, Mockito</span>
                     </div>
                   </div>
                 </div>
@@ -182,17 +182,17 @@ export default function About() {
 
             {/* Right Column - Highlights Grid */}
             <div 
-              className={`space-y-5 md:space-y-6 2xl:space-y-8 ${isInView ? 'animate-fade-in-up animate-delay-3' : 'opacity-0'}`}
+              className={`space-y-5 md:space-y-6 ${isInView ? 'animate-fade-in-up animate-delay-3' : 'opacity-0'}`}
             >
-              <div className="glass-card p-6 md:p-8 2xl:p-10 relative overflow-hidden group">
+              <div className="glass-card p-5 md:p-6 lg:p-8 relative overflow-hidden group">
                 {/* Subtle background gradient */}
                 <div className="absolute inset-0 bg-gradient-to-br from-violet-500/5 via-transparent to-cyan-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" aria-hidden="true" />
                 
-                <h3 className="relative text-lg md:text-xl 2xl:text-2xl font-display font-bold text-foreground mb-5 2xl:mb-6">
+                <h3 className="relative text-base md:text-lg font-display font-bold text-foreground mb-4 md:mb-5">
                   Key Highlights
                 </h3>
                 <div 
-                  className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4 2xl:gap-5"
+                  className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4"
                   role="list"
                   aria-label="Key highlights"
                 >
@@ -202,7 +202,7 @@ export default function About() {
                       ref={(el) => {
                         if (el) el.style.setProperty('--animation-delay', `${index * 0.08 + 0.4}s`)
                       }}
-                      className={`glass-card p-4 md:p-5 2xl:p-6 group cursor-default relative overflow-hidden transition-all duration-300 hover:-translate-y-2 hover:scale-[1.03] hover:shadow-lg h-full about-highlight-item ${isInView ? 'animate-fade-in-up' : 'opacity-0'}`}
+                      className={`glass-card p-4 group cursor-default relative overflow-hidden transition-transform duration-200 hover:-translate-y-1 h-full about-highlight-item ${isInView ? 'animate-fade-in-up' : 'opacity-0'}`}
                       role="listitem"
                       tabIndex={0}
                     >
@@ -214,22 +214,22 @@ export default function About() {
                       
                       {/* Border glow on hover */}
                       <div 
-                        className="absolute inset-0 rounded-xl border-2 border-transparent group-hover:border-primary-500/20 transition-all duration-300"
+                        className="absolute inset-0 rounded-xl border-2 border-transparent group-hover:border-primary-500/20 transition-[border-color] duration-200"
                         aria-hidden="true"
                       />
                       
-                      <div className="flex items-start gap-4 2xl:gap-5">
+                      <div className="flex items-start gap-3">
                         <div 
-                          className={`relative w-12 h-12 2xl:w-14 2xl:h-14 rounded-xl bg-gradient-to-br ${item.color} flex items-center justify-center flex-shrink-0 shadow-lg group-hover:scale-110 transition-transform duration-300`}
+                          className={`relative w-10 h-10 md:w-11 md:h-11 rounded-xl bg-gradient-to-br ${item.color} flex items-center justify-center flex-shrink-0 shadow-lg group-hover:scale-110 transition-transform duration-300`}
                           aria-hidden="true"
                         >
-                          <item.icon className="w-6 h-6 2xl:w-7 2xl:h-7 text-white" />
+                          <item.icon className="w-5 h-5 md:w-6 md:h-6 text-white" />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <h3 className="relative text-foreground font-semibold mb-1.5 2xl:mb-2 text-sm md:text-base 2xl:text-lg">
+                          <h3 className="relative text-foreground font-semibold mb-1 text-sm">
                             {item.title}
                           </h3>
-                          <p className="relative text-xs md:text-sm 2xl:text-base text-muted leading-relaxed">
+                          <p className="relative text-xs md:text-sm text-muted leading-relaxed">
                             {item.description}
                           </p>
                         </div>
@@ -240,7 +240,7 @@ export default function About() {
 
                 {/* Featured Highlight - Production Systems (Horizontal) */}
                 <div 
-                  className={`mt-5 md:mt-6 2xl:mt-8 glass-card p-4 md:p-5 2xl:p-6 group cursor-default relative overflow-hidden transition-all duration-300 hover:-translate-y-2 hover:scale-[1.03] hover:shadow-lg about-highlight-item ${isInView ? 'animate-fade-in-up animate-delay-4' : 'opacity-0'}`}
+                  className={`mt-4 md:mt-5 glass-card p-4 group cursor-default relative overflow-hidden transition-transform duration-200 hover:-translate-y-1 about-highlight-item ${isInView ? 'animate-fade-in-up animate-delay-4' : 'opacity-0'}`}
                   tabIndex={0}
                 >
                   {/* Gradient background on hover */}
@@ -251,22 +251,22 @@ export default function About() {
                   
                   {/* Border glow on hover */}
                   <div 
-                    className="absolute inset-0 rounded-xl border-2 border-transparent group-hover:border-primary-500/20 transition-all duration-300"
+                    className="absolute inset-0 rounded-xl border-2 border-transparent group-hover:border-primary-500/20 transition-[border-color] duration-200"
                     aria-hidden="true"
                   />
                   
-                  <div className="relative flex items-start gap-4 2xl:gap-5">
+                  <div className="relative flex items-start gap-3">
                     <div 
-                      className={`relative w-12 h-12 2xl:w-14 2xl:h-14 rounded-xl bg-gradient-to-br ${featuredHighlight.color} flex items-center justify-center flex-shrink-0 shadow-lg group-hover:scale-110 transition-transform duration-300`}
+                      className={`relative w-10 h-10 md:w-11 md:h-11 rounded-xl bg-gradient-to-br ${featuredHighlight.color} flex items-center justify-center flex-shrink-0 shadow-lg group-hover:scale-110 transition-transform duration-300`}
                       aria-hidden="true"
                     >
-                      <featuredHighlight.icon className="w-6 h-6 2xl:w-7 2xl:h-7 text-white" />
+                      <featuredHighlight.icon className="w-5 h-5 md:w-6 md:h-6 text-white" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h3 className="relative text-foreground font-semibold mb-1.5 2xl:mb-2 text-sm md:text-base 2xl:text-lg">
+                      <h3 className="relative text-foreground font-semibold mb-1 text-sm">
                         {featuredHighlight.title}
                       </h3>
-                      <p className="relative text-xs md:text-sm 2xl:text-base text-muted leading-relaxed">
+                      <p className="relative text-xs md:text-sm text-muted leading-relaxed">
                         {featuredHighlight.description}
                       </p>
                     </div>

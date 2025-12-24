@@ -80,20 +80,28 @@
     overflow-x: hidden;
   }
 
-  /* Dark mode background */
-  .dark body {
+  /* Dark mode background - using pseudo-element for fixed bg to avoid scroll repaint */
+  .dark body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -1;
     background-image: 
       radial-gradient(ellipse 80% 50% at 50% -20%, rgba(14, 165, 233, 0.15), transparent),
       radial-gradient(ellipse 60% 40% at 100% 100%, rgba(6, 182, 212, 0.08), transparent);
-    background-attachment: fixed;
+    pointer-events: none;
   }
 
-  /* Light mode background */
-  .light body {
+  /* Light mode background - using pseudo-element for fixed bg to avoid scroll repaint */
+  .light body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -1;
     background-image: 
       radial-gradient(ellipse 80% 50% at 50% -20%, rgba(14, 165, 233, 0.08), transparent),
       radial-gradient(ellipse 60% 40% at 100% 100%, rgba(6, 182, 212, 0.05), transparent);
-    background-attachment: fixed;
+    pointer-events: none;
   }
 
   ::selection {
@@ -201,25 +209,43 @@
   
   .glass {
     background: var(--color-card);
-    backdrop-filter: blur(20px);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     border: 1px solid var(--color-border);
   }
   
   .glass-card {
     background: var(--color-card);
-    backdrop-filter: blur(20px);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     border: 1px solid var(--color-border);
     border-radius: 1rem;
-    transition: all 0.3s;
+    /* Only transition border-color - box-shadow is expensive */
+    transition: border-color 0.2s ease-out;
+    /* Hint to browser this will change */
+    will-change: border-color;
+  }
+  
+  /* Reduce blur on mobile for better performance */
+  @media (max-width: 768px) {
+    .glass {
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+    }
+    
+    .glass-card {
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+    }
   }
 
   .glass-card:hover {
     border-color: rgba(14, 165, 233, 0.3);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    /* Use lighter shadow or remove for better INP */
   }
 
   .light .glass-card:hover {
-    box-shadow: 0 8px 32px rgba(14, 165, 233, 0.1);
+    border-color: rgba(14, 165, 233, 0.4);
   }
 
   /* Section divider */
@@ -249,7 +275,7 @@
     color: white;
     font-weight: 600;
     border-radius: 0.75rem;
-    transition: all 0.3s;
+    transition: transform 0.2s ease-out, opacity 0.2s ease-out;
     border: none;
     cursor: pointer;
   }
@@ -259,11 +285,11 @@
   }
   
   .btn-primary:focus-visible {
-    box-shadow: 0 0 0 2px var(--color-background), 0 0 0 4px rgba(14, 165, 233, 1);
+    outline: 2px solid rgba(14, 165, 233, 1);
+    outline-offset: 2px;
   }
 
   .btn-primary:hover:not(:disabled) {
-    box-shadow: 0 10px 15px -3px rgba(14, 165, 233, 0.25), 0 4px 6px -2px rgba(14, 165, 233, 0.25);
     transform: translateY(-0.125rem);
   }
 
@@ -285,7 +311,7 @@
     padding: 0.75rem 1.5rem;
     font-weight: 600;
     border-radius: 0.75rem;
-    transition: all 0.3s;
+    transition: transform 0.2s ease-out, background-color 0.2s ease-out, border-color 0.2s ease-out;
     background: var(--color-surface);
     border: 1px solid var(--color-border);
     color: var(--color-foreground);
@@ -297,7 +323,8 @@
   }
   
   .btn-secondary:focus-visible {
-    box-shadow: 0 0 0 2px var(--color-background), 0 0 0 4px rgba(14, 165, 233, 0.5);
+    outline: 2px solid rgba(14, 165, 233, 0.7);
+    outline-offset: 2px;
   }
 
   .btn-secondary:hover:not(:disabled) {
@@ -320,7 +347,7 @@
     font-size: 0.875rem;
     font-weight: 500;
     border-radius: 0.5rem;
-    transition: all 0.2s;
+    transition: transform 0.15s ease-out, color 0.15s ease-out, border-color 0.15s ease-out;
     background: var(--color-surface);
     border: 1px solid var(--color-border);
     color: var(--color-muted);
@@ -332,7 +359,8 @@
   }
   
   .btn-cta:focus-visible {
-    box-shadow: 0 0 0 2px rgba(14, 165, 233, 1);
+    outline: 2px solid rgba(14, 165, 233, 1);
+    outline-offset: 1px;
   }
 
   .btn-cta:hover {
@@ -368,7 +396,7 @@
     border-radius: 0.5rem;
     font-size: 0.875rem;
     font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-    transition: all 0.2s;
+    transition: transform 0.15s ease-out, color 0.15s ease-out, border-color 0.15s ease-out;
     background: var(--color-surface);
     border: 1px solid var(--color-border);
     color: var(--color-muted);
@@ -380,13 +408,14 @@
   }
   
   .tech-tag:focus-visible {
-    box-shadow: 0 0 0 2px rgba(14, 165, 233, 1);
+    outline: 2px solid rgba(14, 165, 233, 1);
+    outline-offset: 1px;
   }
 
   .tech-tag:hover {
     border-color: rgba(14, 165, 233, 0.4);
     color: #0ea5e9;
-    transform: translateY(-0.125rem);
+    transform: translateY(-0.0625rem);
   }
 
   /* Achievement highlight card */
@@ -409,7 +438,7 @@
     padding: 2rem;
     border-radius: 0.75rem;
     border: 2px dashed var(--color-border);
-    transition: all 0.3s;
+    transition: border-color 0.2s ease-out, background-color 0.2s ease-out;
     background: var(--color-surface);
     border-color: var(--color-border);
   }
@@ -459,31 +488,35 @@
     transform: translateY(0);
   }
 
-  /* Interactive card */
+  /* Interactive card - optimized for INP */
   .interactive-card {
     cursor: pointer;
     background: var(--color-card);
-    backdrop-filter: blur(20px);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     border: 1px solid var(--color-border);
     border-radius: 1rem;
-    transition: all 0.3s;
+    /* Specific transitions instead of 'all' for better performance */
+    transition: border-color 0.2s ease-out, transform 0.2s ease-out;
+    will-change: border-color, transform;
   }
 
   .interactive-card:focus-visible {
-    box-shadow: 0 0 0 2px var(--color-background), 0 0 0 4px rgba(14, 165, 233, 1);
+    outline: 2px solid rgba(14, 165, 233, 1);
+    outline-offset: 2px;
   }
 
-  /* Tech-themed decorative elements */
+  /* Tech-themed decorative elements - optimized with transform instead of background-position */
   .circuit-board {
     position: absolute;
-    inset: 0;
+    inset: -50px; /* Extend beyond bounds to allow seamless transform animation */
     opacity: 0.03;
     background-image: 
       linear-gradient(90deg, rgba(14, 165, 233, 0.1) 1px, transparent 1px),
       linear-gradient(rgba(14, 165, 233, 0.1) 1px, transparent 1px),
       radial-gradient(circle at 2px 2px, rgba(14, 165, 233, 0.2) 1px, transparent 0);
     background-size: 50px 50px, 50px 50px, 10px 10px;
-    background-position: 0 0, 0 0, 0 0;
+    will-change: transform;
     animation: circuit-move 20s linear infinite;
   }
 
@@ -495,12 +528,13 @@
       radial-gradient(circle at 2px 2px, rgba(14, 165, 233, 0.1) 1px, transparent 0);
   }
 
+  /* GPU-composited animation using transform instead of background-position */
   @keyframes circuit-move {
     0% {
-      background-position: 0 0, 0 0, 0 0;
+      transform: translate3d(0, 0, 0);
     }
     100% {
-      background-position: 50px 50px, 50px 50px, 10px 10px;
+      transform: translate3d(50px, 50px, 0);
     }
   }
 
@@ -592,8 +626,9 @@
     mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
     -webkit-mask-composite: xor;
     mask-composite: exclude;
-    opacity: 0.5;
+    box-shadow: 0 0 10px rgba(14, 165, 233, 0.5), 0 0 20px rgba(14, 165, 233, 0.3);
     animation: pulse-glow 2s ease-in-out infinite;
+    will-change: opacity;
   }
 
   .binary-rain {
@@ -654,18 +689,28 @@
     }
   }
 
+  /* Shimmer animation using transform for GPU compositing */
   @keyframes shimmer {
     0% {
-      background-position: -200% 0;
+      transform: translateX(-100%);
     }
     100% {
-      background-position: 200% 0;
+      transform: translateX(100%);
     }
   }
 
   .animate-shimmer {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .animate-shimmer::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
     animation: shimmer 2s ease-in-out infinite;
-    background-size: 200% 100%;
+    will-change: transform;
   }
 
   /* Tech-themed animations */
@@ -731,16 +776,13 @@
     }
   }
 
+  /* Pulse glow using opacity for GPU compositing instead of box-shadow animation */
   @keyframes pulse-glow {
     0%, 100% {
-      box-shadow: 0 0 5px rgba(14, 165, 233, 0.5),
-                  0 0 10px rgba(14, 165, 233, 0.3),
-                  0 0 15px rgba(14, 165, 233, 0.2);
+      opacity: 0.6;
     }
     50% {
-      box-shadow: 0 0 10px rgba(14, 165, 233, 0.8),
-                  0 0 20px rgba(14, 165, 233, 0.5),
-                  0 0 30px rgba(14, 165, 233, 0.3);
+      opacity: 1;
     }
   }
 
@@ -938,4 +980,41 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* Reduced motion preferences - disable heavy animations */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  
+  .circuit-board {
+    animation: none;
+  }
+  
+  .animate-shimmer::after {
+    animation: none;
+  }
+  
+  .neon-border::before {
+    animation: none;
+    opacity: 0.7;
+  }
+  
+  .animate-pulse-glow {
+    animation: none;
+  }
+}
+
+/* Content visibility for below-fold sections - improves LCP by deferring rendering */
+#about,
+#projects,
+#skills,
+#contact {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 800px;
 }

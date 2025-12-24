@@ -3,6 +3,8 @@
 /* Animation delay utilities for experience items */
 .experience-item {
   animation-delay: var(--animation-delay, 0.2s);
+  /* CSS containment to prevent layout thrashing */
+  contain: layout style;
 }
 
 

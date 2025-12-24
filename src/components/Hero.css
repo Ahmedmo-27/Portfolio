@@ -1,5 +1,31 @@
 /* Hero Component Styles */
 
+/* CSS containment to prevent layout thrashing during keyboard scroll */
+#hero,
+section[class*="hero"] {
+  contain: layout style;
+}
+
+/* Scroll indicator animations - CSS only, no JS */
+.hero-scroll-indicator {
+  opacity: 0;
+  animation: heroFadeIn 1s ease-out 1.5s forwards;
+}
+
+.hero-scroll-bounce {
+  animation: heroBounce 2s ease-in-out infinite;
+}
+
+@keyframes heroFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes heroBounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(10px); }
+}
+
 .hero-grid-pattern {
   background-image: linear-gradient(var(--color-muted) 1px, transparent 1px),
                      linear-gradient(90deg, var(--color-muted) 1px, transparent 1px);

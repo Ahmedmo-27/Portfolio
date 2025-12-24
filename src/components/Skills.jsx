@@ -141,7 +141,7 @@ export default function Skills() {
                 ref={(el) => {
                   if (el) el.style.setProperty('--animation-delay', `${index * 0.1 + 0.2}s`)
                 }}
-                className={`glass-card p-5 md:p-6 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 transition-all duration-300 hover:-translate-y-2 hover:shadow-xl focus-visible:-translate-y-2 relative overflow-hidden skills-category-item ${isInView ? 'animate-fade-in-up' : 'opacity-0'}`}
+                className={`glass-card p-5 md:p-6 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 transition-transform duration-200 hover:-translate-y-1 focus-visible:-translate-y-1 relative overflow-hidden skills-category-item ${isInView ? 'animate-fade-in-up' : 'opacity-0'}`}
                 role="listitem"
                 tabIndex={0}
                 aria-labelledby={`skill-${category.title.replace(/\s+/g, '-')}`}
@@ -155,7 +155,7 @@ export default function Skills() {
                 {/* Category Header */}
                 <div className="relative flex items-center gap-3 md:gap-4 mb-4 md:mb-5">
                   <div 
-                    className={`w-10 md:w-12 h-10 md:h-12 rounded-xl bg-gradient-to-br ${category.color} flex items-center justify-center shadow-lg group-hover:scale-110 group-hover:shadow-xl transition-all duration-300`}
+                    className={`w-10 md:w-12 h-10 md:h-12 rounded-xl bg-gradient-to-br ${category.color} flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform duration-200`}
                     aria-hidden="true"
                   >
                     <category.icon className="w-5 md:w-6 h-5 md:h-6 text-white" />
@@ -173,7 +173,7 @@ export default function Skills() {
                   {category.skills.map((skill) => (
                     <span 
                       key={skill.name} 
-                      className="tech-tag text-xs md:text-sm transition-all duration-200 hover:scale-105 hover:shadow-md"
+                      className="tech-tag text-xs md:text-sm transition-transform duration-150 hover:scale-105"
                       role="listitem"
                     >
                       {skill.name}

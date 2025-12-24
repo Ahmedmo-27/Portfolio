@@ -1,5 +1,4 @@
 import React from 'react'
-import { motion } from 'framer-motion'
 import { Download, Mail, ExternalLink, Github, Linkedin, Code2 } from 'lucide-react'
 import ProfileCard from './ProfileCard'
 import { assetUrl } from '../utils/assetUrl'
@@ -107,26 +106,17 @@ const Hero = () => {
           </div>
         </div>
 
-        {/* Scroll Indicator with tech theme */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.5, duration: 1 }}
-          className="absolute bottom-4 md:bottom-8 left-1/2 -translate-x-1/2 translate-y-11 md:translate-y-0"
-        >
-          <motion.div
-            animate={{ y: [0, 10, 0] }}
-            transition={{ duration: 2, repeat: Infinity }}
-            className="flex flex-col items-center gap-2 text-muted"
-          >
+        {/* Scroll Indicator with tech theme - CSS animated */}
+        <div className="absolute bottom-4 md:bottom-8 left-1/2 -translate-x-1/2 translate-y-11 md:translate-y-0 hero-scroll-indicator">
+          <div className="hero-scroll-bounce flex flex-col items-center gap-2 text-muted">
             <div className="flex items-center gap-2 font-mono text-xs">
               <span className="text-primary-400">scroll</span>
               <span className="text-border">(</span>
               <span className="text-accent-cyan">↓</span>
               <span className="text-border">)</span>
             </div>
-          </motion.div>
-        </motion.div>
+          </div>
+        </div>
       </div>
     </section>
   )

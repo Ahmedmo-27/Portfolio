@@ -3,16 +3,18 @@
 /* Animation delay utilities for skill category items */
 .skills-category-item {
   animation-delay: var(--animation-delay, 0.2s);
+  /* CSS containment to prevent layout thrashing */
+  contain: layout style;
 }
 
-/* Enhanced hover effects */
+/* Enhanced hover effects - use specific property instead of border-color which may trigger layout */
 .skills-category-item:hover {
   border-color: rgba(var(--primary-500-rgb), 0.2);
 }
 
-/* Smooth transitions for skill tags */
+/* Smooth transitions for skill tags - specific transform only */
 .skills-category-item .tech-tag {
-  transition: all 0.2s ease-in-out;
+  transition: transform 0.15s ease-out;
 }
 
 /* Natural card heights - no forced stretching */

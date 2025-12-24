@@ -44,6 +44,23 @@ const ProfileCardComponent = ({
 
   const [isInView, setIsInView] = useState(priority);
   const [shouldLoad, setShouldLoad] = useState(priority);
+  const [tiltReady, setTiltReady] = useState(false);
+
+  // Defer tilt engine initialization to after LCP
+  useEffect(() => {
+    if (!shouldLoad) return;
+    // Wait for idle callback or fallback to setTimeout to not block LCP
+    const id = 'requestIdleCallback' in window
+      ? window.requestIdleCallback(() => setTiltReady(true), { timeout: 2000 })
+      : setTimeout(() => setTiltReady(true), 100);
+    return () => {
+      if ('requestIdleCallback' in window) {
+        window.cancelIdleCallback(id);
+      } else {
+        clearTimeout(id);
+      }
+    };
+  }, [shouldLoad]);
 
   // Intersection Observer for lazy loading
   useEffect(() => {
@@ -89,7 +106,7 @@ const ProfileCardComponent = ({
   }, [enableTilt, enableMobileTilt, isTouchDevice]);
 
   const tiltEngine = useMemo(() => {
-    if (!shouldEnableTilt) return null;
+    if (!shouldEnableTilt || !tiltReady) return null;
 
     let rafId = null;
     let running = false;
@@ -121,38 +138,48 @@ const ProfileCardComponent = ({
       return { width: cachedWidth, height: cachedHeight };
     };
 
-    const setVarsFromXY = (x, y) => {
-      const wrap = wrapRef.current;
-      if (!wrap) return;
+      // Cache last values to avoid redundant style updates
+      let lastPercentX = -1;
+      let lastPercentY = -1;
+      
+      const setVarsFromXY = (x, y) => {
+        const wrap = wrapRef.current;
+        if (!wrap) return;
 
-      const { width, height } = getDimensions();
-      const invWidth = 100 / width;
-      const invHeight = 100 / height;
+        const { width, height } = getDimensions();
+        const invWidth = 100 / width;
+        const invHeight = 100 / height;
 
-      const percentX = clamp(invWidth * x);
-      const percentY = clamp(invHeight * y);
+        const percentX = clamp(invWidth * x);
+        const percentY = clamp(invHeight * y);
+        
+        // Skip update if values haven't changed significantly (reduces style recalcs)
+        if (Math.abs(percentX - lastPercentX) < 1 && Math.abs(percentY - lastPercentY) < 1) {
+          return;
+        }
+        lastPercentX = percentX;
+        lastPercentY = percentY;
 
-      const centerX = percentX - 50;
-      const centerY = percentY - 50;
+        const centerX = percentX - 50;
+        const centerY = percentY - 50;
 
-      // Pre-calculate common values
-      const percentXDiv100 = percentX * 0.01;
-      const percentYDiv100 = percentY * 0.01;
-      const centerDist = Math.hypot(centerY, centerX);
-      const pointerFromCenter = clamp(centerDist * 0.02, 0, 1);
+        // Pre-calculate common values
+        const percentXDiv100 = percentX * 0.01;
+        const percentYDiv100 = percentY * 0.01;
+        const centerDist = Math.hypot(centerY, centerX);
+        const pointerFromCenter = clamp(centerDist * 0.02, 0, 1);
 
-      // IMPORTANT: do not overwrite style.cssText here; the wrapper also stores other CSS variables
-      // like --icon / --grain / --inner-gradient. Overwriting cssText would clear them.
-      wrap.style.setProperty('--pointer-x', `${percentX}%`);
-      wrap.style.setProperty('--pointer-y', `${percentY}%`);
-      wrap.style.setProperty('--background-x', `${adjust(percentX, 0, 100, 35, 65)}%`);
-      wrap.style.setProperty('--background-y', `${adjust(percentY, 0, 100, 35, 65)}%`);
-      wrap.style.setProperty('--pointer-from-center', `${pointerFromCenter}`);
-      wrap.style.setProperty('--pointer-from-top', `${percentYDiv100}`);
-      wrap.style.setProperty('--pointer-from-left', `${percentXDiv100}`);
-      wrap.style.setProperty('--rotate-x', `${round(-centerX * 0.2)}deg`);
-      wrap.style.setProperty('--rotate-y', `${round(centerY * 0.25)}deg`);
-    };
+        // Set CSS variables (already optimized with individual setProperty calls)
+        wrap.style.setProperty('--pointer-x', `${percentX}%`);
+        wrap.style.setProperty('--pointer-y', `${percentY}%`);
+        wrap.style.setProperty('--background-x', `${adjust(percentX, 0, 100, 35, 65)}%`);
+        wrap.style.setProperty('--background-y', `${adjust(percentY, 0, 100, 35, 65)}%`);
+        wrap.style.setProperty('--pointer-from-center', `${pointerFromCenter}`);
+        wrap.style.setProperty('--pointer-from-top', `${percentYDiv100}`);
+        wrap.style.setProperty('--pointer-from-left', `${percentXDiv100}`);
+        wrap.style.setProperty('--rotate-x', `${round(-centerX * 0.2)}deg`);
+        wrap.style.setProperty('--rotate-y', `${round(centerY * 0.25)}deg`);
+      };
 
     const step = (ts) => {
       if (!running) return;
@@ -236,7 +263,7 @@ const ProfileCardComponent = ({
         lastTs = 0;
       }
     };
-  }, [shouldEnableTilt]);
+  }, [shouldEnableTilt, tiltReady]);
 
   // Cache rect to avoid repeated getBoundingClientRect calls
   const rectCacheRef = useRef({ left: 0, top: 0, width: 0, height: 0 });
@@ -462,8 +489,11 @@ const ProfileCardComponent = ({
                     className="avatar"
                     src={avatarUrl}
                     alt={`${name || 'Ahmed Mostafa'} avatar`}
+                    width={400}
+                    height={500}
                     loading={priority ? 'eager' : 'lazy'}
-                    decoding="async"
+                    decoding={priority ? 'sync' : 'async'}
+                    fetchPriority={priority ? 'high' : 'auto'}
                     onError={e => {
                       const t = e.target;
                       console.error('Failed to load avatar image:', avatarUrl);
