@@ -1,4 +1,3 @@
-import { motion } from 'framer-motion'
 import { Heart, Github, Linkedin, Mail, ArrowUp } from 'lucide-react'
 import { assetUrl } from '../utils/assetUrl'
 
@@ -97,16 +96,14 @@ export default function Footer() {
             </p>
             
             {/* Scroll to Top */}
-            <motion.button
+            <button
               onClick={scrollToTop}
-              whileHover={{ y: -3 }}
-              whileTap={{ scale: 0.95 }}
-              className="flex items-center gap-2 text-muted hover:text-foreground text-xs md:text-sm transition-colors focus-visible:outline-none focus-visible:text-primary-400"
+              className="flex items-center gap-2 text-muted hover:text-foreground text-xs md:text-sm transition-[color,transform] duration-150 hover:-translate-y-0.5 active:scale-95 focus-visible:outline-none focus-visible:text-primary-400"
               aria-label="Scroll back to top of page"
             >
               Back to top
               <ArrowUp className="w-3.5 md:w-4 h-3.5 md:h-4" aria-hidden="true" />
-            </motion.button>
+            </button>
           </div>
         </div>
       </div>

@@ -5,19 +5,20 @@ body.navbar-menu-open {
   overflow: hidden;
 }
 
-/* Lightweight mobile menu animation */
+/* Lightweight mobile menu animation using composited properties only */
 @keyframes mobile-menu-open {
   from {
     opacity: 0;
-    max-height: 0;
+    transform: translateY(-10px) scaleY(0.95);
   }
   to {
     opacity: 1;
-    max-height: 500px;
+    transform: translateY(0) scaleY(1);
   }
 }
 
 .animate-mobile-menu-open {
-  animation: mobile-menu-open 0.2s ease-out forwards;
+  animation: mobile-menu-open 0.15s ease-out forwards;
+  transform-origin: top center;
 }
 

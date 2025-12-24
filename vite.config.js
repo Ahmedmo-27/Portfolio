@@ -33,8 +33,30 @@ export default defineConfig({
       '@': '/src',
     },
   },
-  optimizeDeps: {
-    include: ['framer-motion'],
+  build: {
+    // Enable minification
+    minify: 'terser',
+    terserOptions: {
+      compress: {
+        drop_console: true,
+        drop_debugger: true,
+      },
+    },
+    // Code splitting for better caching
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+          'vendor-icons': ['lucide-react'],
+        },
+      },
+    },
+    // Target modern browsers for smaller bundles
+    target: 'es2020',
+    // Generate source maps for debugging (disable in production if needed)
+    sourcemap: false,
+    // CSS code splitting
+    cssCodeSplit: true,
   },
   server: {
     proxy: {

@@ -1,4 +1,3 @@
-import { motion } from 'framer-motion'
 import './SkeletonLoader.css'
 
 export default function SkeletonLoader({ className = '', variant = 'image' }) {
@@ -7,10 +6,8 @@ export default function SkeletonLoader({ className = '', variant = 'image' }) {
   // Section variant renders a more complex skeleton
   if (variant === 'section') {
     return (
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        className={`space-y-8 ${className}`}
+      <div
+        className={`space-y-8 animate-fade-in ${className}`}
         role="status"
         aria-label="Loading section..."
       >
@@ -41,7 +38,7 @@ export default function SkeletonLoader({ className = '', variant = 'image' }) {
           })}
         </div>
         <span className="sr-only">Loading section...</span>
-      </motion.div>
+      </div>
     )
   }
   
@@ -53,15 +50,13 @@ export default function SkeletonLoader({ className = '', variant = 'image' }) {
   }
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      className={`${baseClasses} ${variants[variant]} ${className} skeleton-shimmer`}
+    <div
+      className={`${baseClasses} ${variants[variant]} ${className} skeleton-shimmer animate-fade-in`}
       role="status"
       aria-label="Loading..."
     >
       <span className="sr-only">Loading...</span>
-    </motion.div>
+    </div>
   )
 }
 
