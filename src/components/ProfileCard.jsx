@@ -31,24 +31,18 @@ const ProfileCardComponent = ({
   enableMobileTilt = true,
   mobileTiltSensitivity = 1,
   name = 'Ahmed Mostafa',
-  title = 'Junior Software Engineer',
-  priority = false,
-  rootMargin = '50px'
+  title = 'Junior Software Engineer'
 }) => {
   const wrapRef = useRef(null);
   const shellRef = useRef(null);
-  const containerRef = useRef(null);
 
   const enterTimerRef = useRef(null);
   const leaveRafRef = useRef(null);
 
-  const [isInView, setIsInView] = useState(priority);
-  const [shouldLoad, setShouldLoad] = useState(priority);
   const [tiltReady, setTiltReady] = useState(false);
 
   // Defer tilt engine initialization to after LCP
   useEffect(() => {
-    if (!shouldLoad) return;
     // Wait for idle callback or fallback to setTimeout to not block LCP
     const id = 'requestIdleCallback' in window
       ? window.requestIdleCallback(() => setTiltReady(true), { timeout: 2000 })
@@ -60,38 +54,7 @@ const ProfileCardComponent = ({
         clearTimeout(id);
       }
     };
-  }, [shouldLoad]);
-
-  // Intersection Observer for lazy loading
-  useEffect(() => {
-    if (priority || shouldLoad) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsInView(true);
-          // Small delay to ensure DOM is ready
-          requestAnimationFrame(() => {
-            setShouldLoad(true);
-          });
-          observer.disconnect();
-        }
-      },
-      {
-        rootMargin,
-        threshold: 0.01,
-      }
-    );
-
-    const currentRef = containerRef.current;
-    if (currentRef) {
-      observer.observe(currentRef);
-    }
-
-    return () => {
-      observer.disconnect();
-    };
-  }, [priority, shouldLoad, rootMargin]);
+  }, []);
 
   // Detect if device is touch-capable
   const isTouchDevice = useMemo(() => {
@@ -372,7 +335,7 @@ const ProfileCardComponent = ({
   );
 
   useEffect(() => {
-    if (!shouldEnableTilt || !tiltEngine || !shouldLoad) return;
+    if (!shouldEnableTilt || !tiltEngine) return;
 
     const shell = shellRef.current;
     if (!shell) return;
@@ -458,101 +421,94 @@ const ProfileCardComponent = ({
   const cardWrapperRef = useRef(null);
   
   useEffect(() => {
-    if (cardWrapperRef.current && shouldLoad) {
+    if (cardWrapperRef.current) {
       cardWrapperRef.current.style.setProperty('--icon', iconUrl ? `url(${iconUrl})` : 'none');
       cardWrapperRef.current.style.setProperty('--grain', grainUrl ? `url(${grainUrl})` : 'none');
       cardWrapperRef.current.style.setProperty('--inner-gradient', innerGradient ?? DEFAULT_INNER_GRADIENT);
       cardWrapperRef.current.style.setProperty('--behind-glow-color', behindGlowColor ?? 'rgba(125, 190, 255, 0.67)');
       cardWrapperRef.current.style.setProperty('--behind-glow-size', behindGlowSize ?? '50%');
     }
-  }, [iconUrl, grainUrl, innerGradient, behindGlowColor, behindGlowSize, shouldLoad]);
+  }, [iconUrl, grainUrl, innerGradient, behindGlowColor, behindGlowSize]);
 
   return (
     <div 
       ref={(node) => {
-        containerRef.current = node;
         wrapRef.current = node;
         cardWrapperRef.current = node;
       }}
-      className={`pc-card-wrapper ${isTouchDevice ? 'pc-touch-device' : ''} ${!shouldLoad ? 'pc-card-loading' : ''} ${className}`.trim()}
+      className={`pc-card-wrapper ${isTouchDevice ? 'pc-touch-device' : ''} ${className}`.trim()}
     >
-      {shouldLoad ? (
-        <>
-          {behindGlowEnabled && <div className="pc-behind" />}
-          <div ref={shellRef} className="pc-card-shell">
-            <section className="pc-card">
-              <div className="pc-inside">
-                <div className="pc-shine" />
-                <div className="pc-glare" />
-                <div className="pc-content pc-avatar-content">
-                  {(() => {
-                    const webpUrl = getWebPUrl(avatarUrl);
-                    const isAlreadyWebP = /\.webp$/i.test(avatarUrl);
-                    
-                    // If already WebP, use simple img tag
-                    if (isAlreadyWebP) {
-                      return (
-                        <img
-                          className="avatar"
-                          src={avatarUrl}
-                          alt={`${name || 'Ahmed Mostafa'} avatar`}
-                          width={483}
-                          height={644}
-                          loading={priority ? 'eager' : 'lazy'}
-                          decoding={priority ? 'sync' : 'async'}
-                          fetchPriority={priority ? 'high' : 'auto'}
-                          sizes="(max-width: 480px) 280px, (max-width: 768px) 320px, 483px"
-                          onError={e => {
-                            const t = e.target;
-                            console.error('Failed to load avatar image:', avatarUrl);
-                            t.classList.add('avatar-error');
-                          }}
-                        />
-                      );
-                    }
-                    
-                    // Otherwise use picture element with WebP fallback
-                    return (
-                      <picture>
-                        {/* WebP source for modern browsers */}
-                        <source
-                          srcSet={webpUrl}
-                          type="image/webp"
-                        />
-                        {/* Fallback to original format */}
-                        <img
-                          className="avatar"
-                          src={avatarUrl}
-                          alt={`${name || 'Ahmed Mostafa'} avatar`}
-                          width={483}
-                          height={644}
-                          loading={priority ? 'eager' : 'lazy'}
-                          decoding={priority ? 'sync' : 'async'}
-                          fetchPriority={priority ? 'high' : 'auto'}
-                          sizes="(max-width: 480px) 280px, (max-width: 768px) 320px, 483px"
-                          onError={e => {
-                            const t = e.target;
-                            console.error('Failed to load avatar image:', avatarUrl);
-                            t.classList.add('avatar-error');
-                          }}
-                        />
-                      </picture>
-                    );
-                  })()}
-                </div>
-                <div className="pc-content">
-                  <div className="pc-details">
-                    <h3>{name}</h3>
-                    <p>{title}</p>
-                  </div>
-                </div>
+      {behindGlowEnabled && <div className="pc-behind" />}
+      <div ref={shellRef} className="pc-card-shell">
+        <section className="pc-card">
+          <div className="pc-inside">
+            <div className="pc-shine" />
+            <div className="pc-glare" />
+            <div className="pc-content pc-avatar-content">
+              {(() => {
+                const webpUrl = getWebPUrl(avatarUrl);
+                const isAlreadyWebP = /\.webp$/i.test(avatarUrl);
+                
+                // If already WebP, use simple img tag
+                if (isAlreadyWebP) {
+                  return (
+                    <img
+                      className="avatar"
+                      src={avatarUrl}
+                      alt={`${name || 'Ahmed Mostafa'} avatar`}
+                      width={483}
+                      height={644}
+                      loading="eager"
+                      decoding="sync"
+                      fetchPriority="high"
+                      sizes="(max-width: 480px) 280px, (max-width: 768px) 320px, 483px"
+                      onError={e => {
+                        const t = e.target;
+                        console.error('Failed to load avatar image:', avatarUrl);
+                        t.classList.add('avatar-error');
+                      }}
+                    />
+                  );
+                }
+                
+                // Otherwise use picture element with WebP fallback
+                return (
+                  <picture>
+                    {/* WebP source for modern browsers */}
+                    <source
+                      srcSet={webpUrl}
+                      type="image/webp"
+                    />
+                    {/* Fallback to original format */}
+                    <img
+                      className="avatar"
+                      src={avatarUrl}
+                      alt={`${name || 'Ahmed Mostafa'} avatar`}
+                      width={483}
+                      height={644}
+                      loading="eager"
+                      decoding="sync"
+                      fetchPriority="high"
+                      sizes="(max-width: 480px) 280px, (max-width: 768px) 320px, 483px"
+                      onError={e => {
+                        const t = e.target;
+                        console.error('Failed to load avatar image:', avatarUrl);
+                        t.classList.add('avatar-error');
+                      }}
+                    />
+                  </picture>
+                );
+              })()}
+            </div>
+            <div className="pc-content">
+              <div className="pc-details">
+                <h3>{name}</h3>
+                <p>{title}</p>
               </div>
-            </section>
+            </div>
           </div>
-        </>
-      ) : (
-        <div className="pc-card-skeleton" aria-hidden="true" />
-      )}
+        </section>
+      </div>
     </div>
   );
 };
