@@ -149,7 +149,7 @@ export default function Volunteering() {
                             {exp.role}
                           </p>
                         </div>
-                        <span className="inline-flex items-center gap-1.5 text-muted-foreground/60 text-sm flex-shrink-0">
+                        <span className="inline-flex items-center gap-1.5 text-muted text-sm flex-shrink-0">
                           <Calendar className="w-4 h-4" aria-hidden="true" />
                           {exp.period}
                         </span>

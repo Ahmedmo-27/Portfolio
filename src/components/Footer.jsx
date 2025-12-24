@@ -89,7 +89,7 @@ export default function Footer() {
         {/* Divider */}
         <div className="mt-6 md:mt-8 pt-6 md:pt-8 border-t border-border">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-            <p className="text-muted-foreground/60 text-xs md:text-sm flex items-center gap-1">
+            <p className="text-muted text-xs md:text-sm flex items-center gap-1">
               © {new Date().getFullYear()} Ahmed Mostafa. Built with{' '}
               <Heart className="w-3.5 md:w-4 h-3.5 md:h-4 text-red-500 inline" aria-label="love" /> 
               and React.

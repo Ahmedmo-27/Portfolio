@@ -206,7 +206,7 @@ export default function Contact() {
                       <item.icon className="w-4 md:w-5 h-4 md:h-5 text-primary-400" />
                     </div>
                     <div>
-                      <p className="text-muted-foreground/60 text-xs md:text-sm">{item.label}</p>
+                      <p className="text-muted text-xs md:text-sm">{item.label}</p>
                       {item.href ? (
                         <a 
                           href={item.href}
@@ -224,7 +224,7 @@ export default function Contact() {
 
               {/* Social Links */}
               <div>
-                <p className="text-muted-foreground/60 text-xs md:text-sm mb-3 md:mb-4">Find me on</p>
+                <p className="text-muted text-xs md:text-sm mb-3 md:mb-4">Find me on</p>
                 <div className="flex gap-3" role="list" aria-label="Social media links">
                   {socialLinks.map((social) => (
                     <a
@@ -275,7 +275,7 @@ export default function Contact() {
                       onChange={handleChange}
                       required
                       aria-required="true"
-                      className="w-full px-3 md:px-4 py-2.5 md:py-3 rounded-xl bg-surface border border-border text-foreground placeholder-muted/50 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 transition-colors text-sm md:text-base"
+                      className="w-full px-3 md:px-4 py-2.5 md:py-3 rounded-xl bg-surface border border-border text-foreground placeholder-muted focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 transition-colors text-sm md:text-base"
                       placeholder="Your name"
                     />
                   </div>
@@ -291,7 +291,7 @@ export default function Contact() {
                       onChange={handleChange}
                       required
                       aria-required="true"
-                      className="w-full px-3 md:px-4 py-2.5 md:py-3 rounded-xl bg-surface border border-border text-foreground placeholder-muted/50 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 transition-colors text-sm md:text-base"
+                      className="w-full px-3 md:px-4 py-2.5 md:py-3 rounded-xl bg-surface border border-border text-foreground placeholder-muted focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 transition-colors text-sm md:text-base"
                       placeholder="your@email.com"
                     />
                   </div>
@@ -324,7 +324,7 @@ export default function Contact() {
                     onChange={handleChange}
                     required
                     aria-required="true"
-                    className="w-full px-3 md:px-4 py-2.5 md:py-3 rounded-xl bg-surface border border-border text-foreground placeholder-muted/50 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 transition-colors text-sm md:text-base"
+                    className="w-full px-3 md:px-4 py-2.5 md:py-3 rounded-xl bg-surface border border-border text-foreground placeholder-muted focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 transition-colors text-sm md:text-base"
                     placeholder="What's this about?"
                   />
                 </div>
@@ -341,7 +341,7 @@ export default function Contact() {
                     required
                     aria-required="true"
                     rows={5}
-                    className="w-full px-3 md:px-4 py-2.5 md:py-3 rounded-xl bg-surface border border-border text-foreground placeholder-muted/50 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 transition-colors resize-none text-sm md:text-base"
+                    className="w-full px-3 md:px-4 py-2.5 md:py-3 rounded-xl bg-surface border border-border text-foreground placeholder-muted focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 transition-colors resize-none text-sm md:text-base"
                     placeholder="Tell me about your project or opportunity..."
                   />
                 </div>
@@ -389,7 +389,7 @@ export default function Contact() {
                   </p>
                 )}
 
-                <p className="text-center text-muted-foreground/60 text-xs md:text-sm">
+                <p className="text-center text-muted text-xs md:text-sm">
                   Or email me directly at{' '}
                   <a 
                     href="mailto:ahmedmostafa.swe1@gmail.com" 

@@ -268,13 +268,13 @@ export default function Achievements() {
                 {achievement.projectLink ? (
                   <a 
                     href={achievement.projectLink}
-                    className="inline-flex items-center gap-1 text-muted-foreground/60 text-sm mb-3 hover:text-primary-400 transition-colors"
+                    className="inline-flex items-center gap-1 text-muted text-sm mb-3 hover:text-primary-400 transition-colors"
                   >
                     Project: {achievement.project}
                     <ExternalLink className="w-3 h-3" aria-hidden="true" />
                   </a>
                 ) : (
-                  <p className="text-muted-foreground/60 text-sm mb-3">
+                  <p className="text-muted text-sm mb-3">
                     Project: {achievement.project}
                   </p>
                 )}
