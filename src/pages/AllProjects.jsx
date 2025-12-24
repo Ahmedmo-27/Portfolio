@@ -56,42 +56,8 @@ export default function AllProjects() {
       <div className="fixed top-20 left-4 sm:left-6 z-10">
         <button
           onClick={() => {
-            navigate('/')
-            // Wait for navigation and DOM update, then scroll to projects section
-            requestAnimationFrame(() => {
-              requestAnimationFrame(() => {
-                const projectsSection = document.getElementById('projects')
-                if (projectsSection) {
-                  const navbar = document.querySelector('header')
-                  const navbarHeight = navbar ? navbar.getBoundingClientRect().height : (window.innerWidth >= 768 ? 80 : 70)
-                  const offset = navbarHeight + 16
-                  const elementRect = projectsSection.getBoundingClientRect()
-                  const elementTop = elementRect.top + window.scrollY
-                  const targetScrollY = elementTop - offset
-                  window.scrollTo({
-                    top: Math.max(0, targetScrollY),
-                    behavior: 'smooth'
-                  })
-                } else {
-                  // If element not found immediately, try again after a short delay
-                  setTimeout(() => {
-                    const projectsSection = document.getElementById('projects')
-                    if (projectsSection) {
-                      const navbar = document.querySelector('header')
-                      const navbarHeight = navbar ? navbar.getBoundingClientRect().height : (window.innerWidth >= 768 ? 80 : 70)
-                      const offset = navbarHeight + 16
-                      const elementRect = projectsSection.getBoundingClientRect()
-                      const elementTop = elementRect.top + window.scrollY
-                      const targetScrollY = elementTop - offset
-                      window.scrollTo({
-                        top: Math.max(0, targetScrollY),
-                        behavior: 'smooth'
-                      })
-                    }
-                  }, 300)
-                }
-              })
-            })
+            // Navigate to home with projects hash - Navbar will handle highlighting and scrolling
+            navigate('/#projects')
           }}
           className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-surface border border-border text-muted hover:text-foreground hover:border-primary-500/40 hover:bg-surface-hover transition-colors duration-200 shadow-lg backdrop-blur-sm"
         >

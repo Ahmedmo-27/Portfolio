@@ -27,12 +27,16 @@ export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [activeSection, setActiveSection] = useState('')
   
-  // Check if we're on the home page
+  // Check if we're on the home page or projects page (memoized to avoid recalculation)
   const isHomePage = location.pathname === '/'
-
+  const isProjectsPage = location.pathname === '/projects'
+  
   // Update active section from URL hash on mount and route change
   useEffect(() => {
-    if (isHomePage) {
+    if (isProjectsPage) {
+      // When on AllProjects page, highlight Projects link
+      setActiveSection('projects')
+    } else if (isHomePage) {
       const hash = location.hash.slice(1) // Remove the '#' from hash
       if (hash) {
         // Check if the section exists before setting it
@@ -59,7 +63,7 @@ export default function Navbar() {
     } else {
       setActiveSection('')
     }
-  }, [location.pathname, location.hash, isHomePage])
+  }, [location.pathname, location.hash])
 
   // Handle isScrolled state on all pages - optimized to avoid unnecessary re-renders
   useEffect(() => {

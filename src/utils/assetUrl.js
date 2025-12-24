@@ -33,4 +33,31 @@ export function assetUrl(inputPath) {
   return encodeURI(`${base}/${normalized}`)
 }
 
+/**
+ * Convert an image URL to WebP format if possible.
+ * Assumes WebP versions exist with .webp extension.
+ * 
+ * @param {string} imageUrl - Original image URL
+ * @returns {string} WebP version URL or original if conversion not possible
+ */
+export function getWebPUrl(imageUrl) {
+  if (!imageUrl) return imageUrl
+  
+  // Don't convert if already WebP or AVIF
+  if (/\.(webp|avif)$/i.test(imageUrl)) return imageUrl
+  
+  // Don't convert data URLs or external URLs that aren't from our R2
+  if (imageUrl.startsWith('data:') || imageUrl.startsWith('blob:')) return imageUrl
+  
+  // For R2 URLs or local paths, try to convert to WebP
+  const webpUrl = imageUrl.replace(/\.(jpg|jpeg|png)$/i, '.webp')
+  
+  // Only return WebP URL if it's from our R2 or local (not external)
+  if (imageUrl.includes('r2.dev') || !imageUrl.startsWith('http')) {
+    return webpUrl
+  }
+  
+  return imageUrl
+}
+
 

@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useCallback, useMemo, useState } from 'react';
 import './ProfileCard.css';
-import { assetUrl } from '../utils/assetUrl'
+import { assetUrl, getWebPUrl } from '../utils/assetUrl'
 
 // Default gradient adapts to theme via CSS variables
 const DEFAULT_INNER_GRADIENT = 'linear-gradient(145deg, rgba(96, 73, 110, 0.55) 0%, rgba(113, 196, 255, 0.27) 100%)';
@@ -19,9 +19,9 @@ const adjust = (v, fMin, fMax, tMin, tMax) =>
   round(tMin + ((tMax - tMin) * (v - fMin)) / (fMax - fMin));
 
 const ProfileCardComponent = ({
-  avatarUrl = assetUrl('/Assets/Ahmed Mostafa - Software Development Head Avatar.jpg'),
-  iconUrl = assetUrl('/Assets/Geometric AM logo design.png'),
-  grainUrl = assetUrl('/Assets/Grain.jpg'),
+  avatarUrl = assetUrl('/Assets/Ahmed Mostafa.webp'),
+  iconUrl = assetUrl('/Assets/Geometric AM logo design.webp'),
+  grainUrl = assetUrl('/Assets/Grain.webp'),
   innerGradient,
   behindGlowEnabled = true,
   behindGlowColor,
@@ -485,23 +485,60 @@ const ProfileCardComponent = ({
                 <div className="pc-shine" />
                 <div className="pc-glare" />
                 <div className="pc-content pc-avatar-content">
-                  <img
-                    className="avatar"
-                    src={avatarUrl}
-                    alt={`${name || 'Ahmed Mostafa'} avatar`}
-                    width={400}
-                    height={500}
-                    loading={priority ? 'eager' : 'lazy'}
-                    decoding={priority ? 'sync' : 'async'}
-                    fetchPriority={priority ? 'high' : 'auto'}
-                    // CSS object-fit handles responsive sizing
-                    sizes="(max-width: 480px) 280px, (max-width: 768px) 320px, 400px"
-                    onError={e => {
-                      const t = e.target;
-                      console.error('Failed to load avatar image:', avatarUrl);
-                      t.classList.add('avatar-error');
-                    }}
-                  />
+                  {(() => {
+                    const webpUrl = getWebPUrl(avatarUrl);
+                    const isAlreadyWebP = /\.webp$/i.test(avatarUrl);
+                    
+                    // If already WebP, use simple img tag
+                    if (isAlreadyWebP) {
+                      return (
+                        <img
+                          className="avatar"
+                          src={avatarUrl}
+                          alt={`${name || 'Ahmed Mostafa'} avatar`}
+                          width={483}
+                          height={644}
+                          loading={priority ? 'eager' : 'lazy'}
+                          decoding={priority ? 'sync' : 'async'}
+                          fetchPriority={priority ? 'high' : 'auto'}
+                          sizes="(max-width: 480px) 280px, (max-width: 768px) 320px, 483px"
+                          onError={e => {
+                            const t = e.target;
+                            console.error('Failed to load avatar image:', avatarUrl);
+                            t.classList.add('avatar-error');
+                          }}
+                        />
+                      );
+                    }
+                    
+                    // Otherwise use picture element with WebP fallback
+                    return (
+                      <picture>
+                        {/* WebP source for modern browsers */}
+                        <source
+                          srcSet={webpUrl}
+                          type="image/webp"
+                        />
+                        {/* Fallback to original format */}
+                        <img
+                          className="avatar"
+                          src={avatarUrl}
+                          alt={`${name || 'Ahmed Mostafa'} avatar`}
+                          width={483}
+                          height={644}
+                          loading={priority ? 'eager' : 'lazy'}
+                          decoding={priority ? 'sync' : 'async'}
+                          fetchPriority={priority ? 'high' : 'auto'}
+                          sizes="(max-width: 480px) 280px, (max-width: 768px) 320px, 483px"
+                          onError={e => {
+                            const t = e.target;
+                            console.error('Failed to load avatar image:', avatarUrl);
+                            t.classList.add('avatar-error');
+                          }}
+                        />
+                      </picture>
+                    );
+                  })()}
                 </div>
                 <div className="pc-content">
                   <div className="pc-details">
