@@ -49,6 +49,10 @@ export default defineConfig({
           'vendor-react': ['react', 'react-dom', 'react-router-dom'],
           'vendor-icons': ['lucide-react'],
         },
+        // Use content hash for cache busting
+        entryFileNames: 'assets/[name]-[hash].js',
+        chunkFileNames: 'assets/[name]-[hash].js',
+        assetFileNames: 'assets/[name]-[hash][extname]',
       },
     },
     // Target modern browsers for smaller bundles
@@ -57,6 +61,8 @@ export default defineConfig({
     sourcemap: false,
     // CSS code splitting
     cssCodeSplit: true,
+    // Increase chunk size warning limit
+    chunkSizeWarningLimit: 600,
   },
   server: {
     proxy: {
