@@ -15,7 +15,6 @@ const PORT = Number(process.env.PORT) || 3000;
 // Cache duration constants
 const ONE_YEAR = 31536000; // 1 year in seconds
 const THIRTY_DAYS = 2592000; // 30 days in seconds (Chrome recommendation minimum)
-const ONE_WEEK = 604800;   // 1 week in seconds
 const ONE_DAY = 86400;     // 1 day in seconds
 
 // Enable gzip/brotli compression for all responses

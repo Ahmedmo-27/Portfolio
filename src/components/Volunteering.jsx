@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Users, Trophy, Star, Target, Heart, Rocket, Calendar, ExternalLink, ChevronUp } from 'lucide-react'
+import { Users, Trophy, Star, Heart, Rocket, Calendar, ExternalLink, ChevronUp } from 'lucide-react'
 import ViewMoreButton from './ViewMoreButton'
 import { useInViewOnce } from '../utils/useInViewOnce'
 import './Volunteering.css'

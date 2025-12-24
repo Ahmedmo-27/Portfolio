@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { useInViewOnce } from '../utils/useInViewOnce'
 import { GraduationCap, Globe, Rocket, Code2, Server, FolderGit2, Award, Building2 } from 'lucide-react'
 import CircuitBoard from './CircuitBoard'
@@ -46,6 +47,13 @@ const stats = [
 
 export default function About() {
   const { ref, isInView } = useInViewOnce()
+
+  // Update URL hash when section comes into view
+  useEffect(() => {
+    if (isInView && window.location.hash !== '#about') {
+      window.history.replaceState(null, '', '#about')
+    }
+  }, [isInView])
 
   return (
     <section 

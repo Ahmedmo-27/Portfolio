@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useCallback } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { Menu, X } from 'lucide-react'
 import ThemeToggle from './ThemeToggle'
@@ -31,31 +31,25 @@ export default function Navbar() {
   const isHomePage = useMemo(() => location.pathname === '/', [location.pathname])
   const isProjectsPage = useMemo(() => location.pathname === '/projects', [location.pathname])
   
-  // Update active section from URL hash on mount and route change
-  useEffect(() => {
+  // Helper function to update active section from URL hash
+  const updateActiveSectionFromHash = useCallback(() => {
     if (isProjectsPage) {
       // When on AllProjects page, highlight Projects link
       setActiveSection('projects')
     } else if (isHomePage) {
-      const hash = location.hash.slice(1) // Remove the '#' from hash
+      // Check both React Router's location.hash and window.location.hash
+      // window.location.hash is more reliable for replaceState updates
+      const hashFromRouter = location.hash.slice(1)
+      const hashFromWindow = window.location.hash.slice(1)
+      const hash = hashFromWindow || hashFromRouter
+      
       if (hash) {
         // Check if the section exists before setting it
         const element = document.getElementById(hash)
         if (element) {
           setActiveSection(hash)
-          // Scroll to section after a brief delay to ensure DOM is ready
-          setTimeout(() => {
-            const navbar = document.querySelector('header')
-            const navbarHeight = navbar ? navbar.getBoundingClientRect().height : (window.innerWidth >= 768 ? 80 : 70)
-            const elementRect = element.getBoundingClientRect()
-            const elementTop = elementRect.top + window.scrollY
-            const offset = navbarHeight + 16
-            const targetScrollY = elementTop - offset
-            window.scrollTo({
-              top: Math.max(0, targetScrollY),
-              behavior: 'smooth'
-            })
-          }, 100)
+        } else {
+          setActiveSection('')
         }
       } else {
         setActiveSection('')
@@ -63,7 +57,43 @@ export default function Navbar() {
     } else {
       setActiveSection('')
     }
+  }, [isHomePage, isProjectsPage, location.hash])
+
+  // Update active section from URL hash on mount and route change
+  useEffect(() => {
+    updateActiveSectionFromHash()
   }, [location.pathname, location.hash, isHomePage, isProjectsPage])
+
+  // Poll for hash changes to catch updates from components using replaceState
+  // (replaceState doesn't trigger hashchange events, so we check periodically)
+  useEffect(() => {
+    if (!isHomePage) return
+    
+    let lastHash = window.location.hash
+    const checkHashChange = () => {
+      const currentHash = window.location.hash
+      if (currentHash !== lastHash) {
+        lastHash = currentHash
+        updateActiveSectionFromHash()
+      }
+    }
+    
+    // Check periodically (less frequent to avoid performance issues)
+    const intervalId = setInterval(checkHashChange, 300)
+    
+    // Also listen to hashchange events (for direct hash changes)
+    const handleHashChange = () => {
+      lastHash = window.location.hash
+      updateActiveSectionFromHash()
+    }
+    
+    window.addEventListener('hashchange', handleHashChange)
+    
+    return () => {
+      clearInterval(intervalId)
+      window.removeEventListener('hashchange', handleHashChange)
+    }
+  }, [isHomePage, location.pathname, updateActiveSectionFromHash])
 
   // Handle isScrolled state on all pages - optimized to avoid unnecessary re-renders
   useEffect(() => {
@@ -140,6 +170,10 @@ export default function Navbar() {
     const updateActiveSection = () => {
       lastUpdate = Date.now()
       
+      // Check current hash first - if it matches a valid section, prioritize it
+      const currentHash = window.location.hash.slice(1)
+      const hashSection = currentHash && sections.includes(currentHash) && document.getElementById(currentHash)
+      
       // Find the section with highest intersection ratio
       let topSection = null
       let topRatio = 0
@@ -150,16 +184,33 @@ export default function Navbar() {
         }
       }
       
+      // If current hash matches a valid section and it's intersecting, use it
+      // This ensures components that update the hash are respected
+      if (hashSection && intersectingSections.has(currentHash)) {
+        topSection = currentHash
+      }
+      
       if (topSection) {
         setActiveSection(prev => {
           if (prev === topSection) return prev // No change
-          // Defer history update using idle callback or timeout
-          if ('requestIdleCallback' in window) {
-            window.requestIdleCallback(() => {
-              if (location.hash !== `#${topSection}`) {
-                window.history.replaceState(null, '', `#${topSection}`)
-              }
-            }, { timeout: 500 })
+          // Only update hash if it doesn't match what we're setting
+          // This prevents overriding hash changes from components
+          if (window.location.hash !== `#${topSection}`) {
+            // Defer history update using idle callback or timeout
+            if ('requestIdleCallback' in window) {
+              window.requestIdleCallback(() => {
+                if (window.location.hash !== `#${topSection}`) {
+                  window.history.replaceState(null, '', `#${topSection}`)
+                }
+              }, { timeout: 500 })
+            } else {
+              // Fallback for browsers without requestIdleCallback
+              setTimeout(() => {
+                if (window.location.hash !== `#${topSection}`) {
+                  window.history.replaceState(null, '', `#${topSection}`)
+                }
+              }, 100)
+            }
           }
           return topSection
         })

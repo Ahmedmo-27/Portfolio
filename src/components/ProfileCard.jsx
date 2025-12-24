@@ -388,7 +388,7 @@ const ProfileCardComponent = ({
     shell.addEventListener('pointerleave', pointerLeaveHandler, { passive: true });
 
     const handleClick = () => {
-      if (!enableMobileTilt || location.protocol !== 'https:') return;
+      if (!enableMobileTilt || window.location.protocol !== 'https:') return;
       const anyMotion = window.DeviceMotionEvent;
       if (anyMotion && typeof anyMotion.requestPermission === 'function') {
         anyMotion

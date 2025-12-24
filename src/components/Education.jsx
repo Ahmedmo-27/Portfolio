@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { GraduationCap, Calendar, Award, BookOpen, ExternalLink, BadgeCheck, ChevronDown } from 'lucide-react'
 import { useInViewOnce } from '../utils/useInViewOnce'
 import './Education.css'
@@ -96,6 +96,14 @@ const coursework = [
 
 export default function Education() {
   const { ref, isInView } = useInViewOnce()
+
+  // Update URL hash when section comes into view
+  useEffect(() => {
+    if (isInView && window.location.hash !== '#education') {
+      window.history.replaceState(null, '', '#education')
+    }
+  }, [isInView])
+
   const [expandedCertSkills, setExpandedCertSkills] = useState({})
   const [showAllCerts, setShowAllCerts] = useState(false)
 

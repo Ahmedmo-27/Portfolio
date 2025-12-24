@@ -1,5 +1,5 @@
-import { useState, useMemo } from 'react'
-import { Building2, Award, Code, Globe, Shield, Gem, Calendar, MapPin, Cpu, ChevronUp, ChevronRight, FileText, ExternalLink } from 'lucide-react'
+import { useState, useMemo, useEffect } from 'react'
+import { Building2, Award, Code, Globe, Calendar, MapPin, Cpu, ChevronUp, ChevronRight, FileText, ExternalLink } from 'lucide-react'
 import ViewMoreButton from './ViewMoreButton'
 import { assetUrl } from '../utils/assetUrl'
 import { useInViewOnce } from '../utils/useInViewOnce'
@@ -77,6 +77,13 @@ const experiences = [
 export default function Experience() {
   const { ref, isInView } = useInViewOnce()
   const [showAll, setShowAll] = useState(false)
+
+  // Update URL hash when section comes into view
+  useEffect(() => {
+    if (isInView && window.location.hash !== '#experience') {
+      window.history.replaceState(null, '', '#experience')
+    }
+  }, [isInView])
 
   const toArray = (v) => (Array.isArray(v) ? v : v ? [v] : [])
   const initialDisplayCount = 4

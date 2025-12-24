@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Mail, MapPin, Send, Github, Linkedin, CheckCircle, AlertCircle, Loader2 } from 'lucide-react'
 import { useInViewOnce } from '../utils/useInViewOnce'
 
@@ -32,6 +32,14 @@ const socialLinks = [
 
 export default function Contact() {
   const { ref, isInView } = useInViewOnce()
+
+  // Update URL hash when section comes into view
+  useEffect(() => {
+    if (isInView && window.location.hash !== '#contact') {
+      window.history.replaceState(null, '', '#contact')
+    }
+  }, [isInView])
+
   const [formData, setFormData] = useState({
     name: '',
     email: '',

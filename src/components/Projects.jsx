@@ -14,6 +14,13 @@ const displayedProjects = projects.slice(0, initialDisplayCount)
 export default function Projects() {
   const { ref, isInView } = useInViewOnce()
   const [activeProject, setActiveProject] = useState(null)
+
+  // Update URL hash when section comes into view
+  useEffect(() => {
+    if (isInView && window.location.hash !== '#projects') {
+      window.history.replaceState(null, '', '#projects')
+    }
+  }, [isInView])
   const [mediaShouldLoad, setMediaShouldLoad] = useState({}) // projectId -> boolean
   const projectItemElsRef = useRef({}) // projectId -> HTMLElement
   const mediaObserverRef = useRef(null)

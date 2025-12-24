@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { useInViewOnce } from '../utils/useInViewOnce'
 import { Cloud, Database, Layout, Smartphone, TestTube, Wrench } from 'lucide-react'
 import CircuitBoard from './CircuitBoard'
@@ -100,6 +101,13 @@ const skillCategories = [
 
 export default function Skills() {
   const { ref, isInView } = useInViewOnce()
+
+  // Update URL hash when section comes into view
+  useEffect(() => {
+    if (isInView && window.location.hash !== '#skills') {
+      window.history.replaceState(null, '', '#skills')
+    }
+  }, [isInView])
 
   return (
     <section 

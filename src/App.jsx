@@ -1,4 +1,4 @@
-import { useEffect, useState, lazy, Suspense, useDeferredValue } from 'react'
+import { useEffect, useState, lazy, Suspense } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { ThemeProvider } from './context/ThemeContext'
 import Navbar from './components/Navbar'
