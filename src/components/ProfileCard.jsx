@@ -494,6 +494,8 @@ const ProfileCardComponent = ({
                     loading={priority ? 'eager' : 'lazy'}
                     decoding={priority ? 'sync' : 'async'}
                     fetchPriority={priority ? 'high' : 'auto'}
+                    // CSS object-fit handles responsive sizing
+                    sizes="(max-width: 480px) 280px, (max-width: 768px) 320px, 400px"
                     onError={e => {
                       const t = e.target;
                       console.error('Failed to load avatar image:', avatarUrl);
