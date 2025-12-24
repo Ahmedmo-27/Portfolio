@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { Menu, X } from 'lucide-react'
 import ThemeToggle from './ThemeToggle'
@@ -28,8 +28,8 @@ export default function Navbar() {
   const [activeSection, setActiveSection] = useState('')
   
   // Check if we're on the home page or projects page (memoized to avoid recalculation)
-  const isHomePage = location.pathname === '/'
-  const isProjectsPage = location.pathname === '/projects'
+  const isHomePage = useMemo(() => location.pathname === '/', [location.pathname])
+  const isProjectsPage = useMemo(() => location.pathname === '/projects', [location.pathname])
   
   // Update active section from URL hash on mount and route change
   useEffect(() => {
@@ -63,7 +63,7 @@ export default function Navbar() {
     } else {
       setActiveSection('')
     }
-  }, [location.pathname, location.hash])
+  }, [location.pathname, location.hash, isHomePage, isProjectsPage])
 
   // Handle isScrolled state on all pages - optimized to avoid unnecessary re-renders
   useEffect(() => {
