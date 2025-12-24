@@ -1,4 +1,4 @@
-import { useEffect, useState, lazy, Suspense } from 'react'
+import { useEffect, useState, lazy, Suspense, useDeferredValue } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { ThemeProvider } from './context/ThemeContext'
 import Navbar from './components/Navbar'
@@ -80,9 +80,22 @@ function HomePage() {
 
 function AppContent() {
   const [isLoaded, setIsLoaded] = useState(false)
+  const [shouldLoadFooter, setShouldLoadFooter] = useState(false)
 
   useEffect(() => {
-    setIsLoaded(true)
+    // Defer opacity transition to avoid blocking initial render
+    requestAnimationFrame(() => {
+      setIsLoaded(true)
+    })
+    
+    // Defer footer loading until after initial render
+    if ('requestIdleCallback' in window) {
+      window.requestIdleCallback(() => {
+        setShouldLoadFooter(true)
+      }, { timeout: 2000 })
+    } else {
+      setTimeout(() => setShouldLoadFooter(true), 2000)
+    }
   }, [])
 
   return (
@@ -108,9 +121,11 @@ function AppContent() {
           </Routes>
         </main>
         
-        <Suspense fallback={null}>
-          <Footer />
-        </Suspense>
+        {shouldLoadFooter && (
+          <Suspense fallback={null}>
+            <Footer />
+          </Suspense>
+        )}
       </div>
     </BrowserRouter>
   )

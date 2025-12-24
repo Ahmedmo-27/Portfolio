@@ -238,6 +238,16 @@
       -webkit-backdrop-filter: blur(6px);
     }
   }
+  
+  /* Disable backdrop-filter on low-end devices for better performance */
+  @media (max-width: 768px) and (prefers-reduced-motion: reduce) {
+    .glass,
+    .glass-card {
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+      background: var(--color-card);
+    }
+  }
 
   .glass-card:hover {
     border-color: rgba(14, 165, 233, 0.3);
@@ -536,6 +546,15 @@
     100% {
       transform: translate3d(50px, 50px, 0);
     }
+  }
+  
+  /* Optimize circuit board animation - only run when visible */
+  .circuit-board {
+    animation-play-state: paused;
+  }
+  
+  .circuit-board:is(:hover, :focus-within, .is-visible) {
+    animation-play-state: running;
   }
 
   .tech-grid {
@@ -1017,4 +1036,32 @@
 #contact {
   content-visibility: auto;
   contain-intrinsic-size: auto 800px;
+}
+
+/* Optimize rendering performance with CSS containment */
+section {
+  contain: layout style paint;
+}
+
+/* Reduce layout thrashing for animated elements */
+.interactive-card,
+.glass-card {
+  contain: layout style paint;
+  will-change: transform, border-color;
+}
+
+/* Optimize animations to use GPU compositing */
+.circuit-board,
+.animate-shimmer::after,
+.neon-border::before {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/* Reduce repaints for scroll-based animations */
+@media (prefers-reduced-motion: no-preference) {
+  .circuit-board {
+    transform: translate3d(0, 0, 0);
+  }
 }

@@ -40,14 +40,38 @@ export default defineConfig({
       compress: {
         drop_console: true,
         drop_debugger: true,
+        pure_funcs: ['console.log', 'console.info', 'console.debug'],
+        passes: 2, // Multiple passes for better compression
+      },
+      format: {
+        comments: false, // Remove all comments
       },
     },
-    // Code splitting for better caching
+    // Code splitting for better caching and smaller initial bundle
     rollupOptions: {
       output: {
-        manualChunks: {
-          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
-          'vendor-icons': ['lucide-react'],
+        manualChunks: (id) => {
+          // Split node_modules into smaller chunks
+          if (id.includes('node_modules')) {
+            if (id.includes('react') || id.includes('react-dom')) {
+              return 'vendor-react'
+            }
+            if (id.includes('react-router')) {
+              return 'vendor-router'
+            }
+            if (id.includes('lucide-react')) {
+              return 'vendor-icons'
+            }
+            // Other vendor libraries
+            return 'vendor-other'
+          }
+          // Split large components into their own chunks
+          if (id.includes('/components/ProfileCard')) {
+            return 'component-profile'
+          }
+          if (id.includes('/components/Navbar')) {
+            return 'component-navbar'
+          }
         },
         // Use content hash for cache busting
         entryFileNames: 'assets/[name]-[hash].js',
@@ -62,7 +86,11 @@ export default defineConfig({
     // CSS code splitting
     cssCodeSplit: true,
     // Increase chunk size warning limit
-    chunkSizeWarningLimit: 600,
+    chunkSizeWarningLimit: 1000,
+    // Reduce main thread work by optimizing module resolution
+    modulePreload: {
+      polyfill: false, // Disable polyfill for modern browsers
+    },
   },
   server: {
     proxy: {

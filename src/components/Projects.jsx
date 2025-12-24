@@ -20,14 +20,40 @@ export default function Projects() {
 
   // Lazy load heavy media when the project card approaches viewport
   useEffect(() => {
+    let pendingUpdates = new Set()
+    let rafId = null
+    
+    const processUpdates = () => {
+      if (pendingUpdates.size > 0) {
+        setMediaShouldLoad((prev) => {
+          const updates = {}
+          let hasChanges = false
+          for (const projectId of pendingUpdates) {
+            if (!prev[projectId]) {
+              updates[projectId] = true
+              hasChanges = true
+            }
+          }
+          return hasChanges ? { ...prev, ...updates } : prev
+        })
+        pendingUpdates.clear()
+      }
+      rafId = null
+    }
+    
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
           if (!entry.isIntersecting) continue
           const projectId = entry.target?.dataset?.projectId
           if (!projectId) continue
-          setMediaShouldLoad((prev) => (prev[projectId] ? prev : { ...prev, [projectId]: true }))
+          pendingUpdates.add(projectId)
           observer.unobserve(entry.target)
+        }
+        
+        // Batch updates using requestAnimationFrame for better performance
+        if (pendingUpdates.size > 0 && !rafId) {
+          rafId = requestAnimationFrame(processUpdates)
         }
       },
       { threshold: 0.1, rootMargin: '200px' }
@@ -41,6 +67,7 @@ export default function Projects() {
     return () => {
       observer.disconnect()
       mediaObserverRef.current = null
+      if (rafId) cancelAnimationFrame(rafId)
     }
   }, [])
 

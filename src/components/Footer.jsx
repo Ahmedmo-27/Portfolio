@@ -40,7 +40,7 @@ export default function Footer() {
                 aria-hidden="true"
               >
                 <img
-                  src={assetUrl('/Assets/Geometric AM logo design.png')}
+                  src={assetUrl('/Assets/Geometric AM logo design.webp')}
                   alt=""
                   width={28}
                   height={28}
