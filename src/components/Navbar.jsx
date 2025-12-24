@@ -61,6 +61,26 @@ export default function Navbar() {
     }
   }, [location.pathname, location.hash, isHomePage])
 
+  // Handle isScrolled state on all pages
+  useEffect(() => {
+    let ticking = false
+    
+    const handleScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          setIsScrolled(window.scrollY > 50)
+          ticking = false
+        })
+        ticking = true
+      }
+    }
+
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    // Initial check
+    handleScroll()
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
   // Scroll-based section detection (only on home page)
   useEffect(() => {
     if (!isHomePage) return
@@ -70,9 +90,6 @@ export default function Navbar() {
     const handleScroll = () => {
       if (!ticking) {
         window.requestAnimationFrame(() => {
-          setIsScrolled(window.scrollY > 50)
-
-          // Update active section based on scroll position
           // Extract section IDs from hrefs (e.g., '/#about' -> 'about')
           const sections = navLinks.map(link => getSectionId(link.href))
           const navbar = document.querySelector('header')

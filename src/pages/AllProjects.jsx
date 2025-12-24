@@ -16,6 +16,7 @@ export default function AllProjects() {
   const [activeProject, setActiveProject] = useState(null)
   const [activeMediaIndex, setActiveMediaIndex] = useState({})
   const [portraitVideos, setPortraitVideos] = useState({})
+  const [portraitImages, setPortraitImages] = useState({}) // key -> boolean (projectId::itemIndex)
   const [mediaShouldLoad, setMediaShouldLoad] = useState({})
   const [mediaLoading, setMediaLoading] = useState({}) // projectId -> boolean
   const [mediaLoaded, setMediaLoaded] = useState({}) // projectId -> Set of loaded indices
@@ -346,26 +347,48 @@ export default function AllProjects() {
                                           key={`${item.type}-${itemIndex}`}
                                           className={`media-carousel-item ${isActive ? 'active' : ''} ${isItemLoading ? 'loading' : ''}`}
                                         >
-                                          {item.type === 'image' && (
-                                            <img
-                                              src={assetUrl(item.src)}
-                                              alt={`${project.title} - ${itemIndex + 1}`}
-                                              className="w-full h-full object-cover"
-                                              loading="lazy"
-                                              decoding="async"
-                                              onLoad={() => {
-                                                setMediaLoaded((prev) => {
-                                                  const newSet = new Set(prev[project.id] || [])
-                                                  newSet.add(itemIndex)
-                                                  return { ...prev, [project.id]: newSet }
-                                                })
-                                                setMediaLoading((prev) => ({ ...prev, [project.id]: false }))
-                                              }}
-                                              onError={() => {
-                                                setMediaLoading((prev) => ({ ...prev, [project.id]: false }))
-                                              }}
-                                            />
-                                          )}
+                                          {item.type === 'image' && (() => {
+                                            const imageKey = `${project.id}::${itemIndex}`
+                                            const isPortrait = portraitImages[imageKey]
+                                            return (
+                                              <div
+                                                className={`w-full h-full ${
+                                                  isPortrait
+                                                    ? 'bg-black/90 flex items-center justify-center'
+                                                    : ''
+                                                }`}
+                                              >
+                                                <img
+                                                  src={assetUrl(item.src)}
+                                                  alt={`${project.title} - ${itemIndex + 1}`}
+                                                  className={
+                                                    isPortrait
+                                                      ? 'h-full w-auto max-w-full object-contain'
+                                                      : 'w-full h-full object-cover'
+                                                  }
+                                                  loading="lazy"
+                                                  decoding="async"
+                                                  onLoad={(e) => {
+                                                    const img = e.currentTarget
+                                                    const isImgPortrait = img.naturalHeight > img.naturalWidth
+                                                    setPortraitImages((prev) => {
+                                                      if (prev[imageKey] === isImgPortrait) return prev
+                                                      return { ...prev, [imageKey]: isImgPortrait }
+                                                    })
+                                                    setMediaLoaded((prev) => {
+                                                      const newSet = new Set(prev[project.id] || [])
+                                                      newSet.add(itemIndex)
+                                                      return { ...prev, [project.id]: newSet }
+                                                    })
+                                                    setMediaLoading((prev) => ({ ...prev, [project.id]: false }))
+                                                  }}
+                                                  onError={() => {
+                                                    setMediaLoading((prev) => ({ ...prev, [project.id]: false }))
+                                                  }}
+                                                />
+                                              </div>
+                                            )
+                                          })()}
 
                                           {item.type === 'video' && (
                                             <div

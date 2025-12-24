@@ -63,7 +63,9 @@ export const projects = [
     award: 'DIGITOPIA 2025 Semifinalist',
     isHighlighted: true,
     media: {
-      screenshots: [],
+      screenshots: [
+        assetUrl('/Projects/CyberTopia.png'),
+      ],
       video: null,
       presentation: [
         assetUrl('/Projects/Cowrie_Json_Sessions.csv'),
@@ -256,7 +258,13 @@ export const projects = [
     ],
     isHighlighted: false,
     media: {
-      screenshots: [],
+      screenshots: [
+        'https://pub-bb511787df1747a0998436437d66865d.r2.dev/Projects/Credit%20Card%20Fraud%20Detection.png',
+        'https://pub-bb511787df1747a0998436437d66865d.r2.dev/Projects/Average%20F1-Score%20per%20Model.png',
+        'https://pub-bb511787df1747a0998436437d66865d.r2.dev/Projects/Dataset1_Preprocessing.png',
+        'https://pub-bb511787df1747a0998436437d66865d.r2.dev/Projects/daily_fraud_count.png',
+        'https://pub-bb511787df1747a0998436437d66865d.r2.dev/Projects/figure5_objectives.png',
+      ],
       video: null,
       presentation: null,
     },
@@ -287,8 +295,8 @@ export const projects = [
     ],
     isHighlighted: false,
     media: {
-      screenshots: [],
-      video: null,
+      screenshots: ['https://pub-bb511787df1747a0998436437d66865d.r2.dev/Projects/WhatNow%20Thumbnail.png'],
+      video: 'https://pub-bb511787df1747a0998436437d66865d.r2.dev/Projects/WhatNow%20Demo%20Video.mp4',
       presentation: null,
     },
   },

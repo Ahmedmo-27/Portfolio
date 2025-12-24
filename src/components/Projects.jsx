@@ -16,6 +16,7 @@ export default function Projects() {
   const [activeProject, setActiveProject] = useState(null)
   const [activeMediaIndex, setActiveMediaIndex] = useState({})
   const [portraitVideos, setPortraitVideos] = useState({})
+  const [portraitImages, setPortraitImages] = useState({}) // key -> boolean (projectId::itemIndex)
   const [mediaShouldLoad, setMediaShouldLoad] = useState({}) // projectId -> boolean
   const [mediaLoading, setMediaLoading] = useState({}) // projectId -> boolean
   const [mediaLoaded, setMediaLoaded] = useState({}) // projectId -> Set of loaded indices
@@ -293,26 +294,48 @@ export default function Projects() {
                                       key={`${item.type}-${itemIndex}`}
                                       className={`media-carousel-item ${isActive ? 'active' : ''} ${isItemLoading ? 'loading' : ''}`}
                                     >
-                                      {item.type === 'image' && (
-                                        <img
-                                          src={assetUrl(item.src)}
-                                          alt={`${project.title} - ${itemIndex + 1}`}
-                                          className="w-full h-full object-cover"
-                                          loading="lazy"
-                                          decoding="async"
-                                          onLoad={() => {
-                                            setMediaLoaded((prev) => {
-                                              const newSet = new Set(prev[project.id] || [])
-                                              newSet.add(itemIndex)
-                                              return { ...prev, [project.id]: newSet }
-                                            })
-                                            setMediaLoading((prev) => ({ ...prev, [project.id]: false }))
-                                          }}
-                                          onError={() => {
-                                            setMediaLoading((prev) => ({ ...prev, [project.id]: false }))
-                                          }}
-                                        />
-                                      )}
+                                      {item.type === 'image' && (() => {
+                                        const imageKey = `${project.id}::${itemIndex}`
+                                        const isPortrait = portraitImages[imageKey]
+                                        return (
+                                          <div
+                                            className={`w-full h-full ${
+                                              isPortrait
+                                                ? 'bg-black/90 flex items-center justify-center'
+                                                : ''
+                                            }`}
+                                          >
+                                            <img
+                                              src={assetUrl(item.src)}
+                                              alt={`${project.title} - ${itemIndex + 1}`}
+                                              className={
+                                                isPortrait
+                                                  ? 'h-full w-auto max-w-full object-contain'
+                                                  : 'w-full h-full object-cover'
+                                              }
+                                              loading="lazy"
+                                              decoding="async"
+                                              onLoad={(e) => {
+                                                const img = e.currentTarget
+                                                const isImgPortrait = img.naturalHeight > img.naturalWidth
+                                                setPortraitImages((prev) => {
+                                                  if (prev[imageKey] === isImgPortrait) return prev
+                                                  return { ...prev, [imageKey]: isImgPortrait }
+                                                })
+                                                setMediaLoaded((prev) => {
+                                                  const newSet = new Set(prev[project.id] || [])
+                                                  newSet.add(itemIndex)
+                                                  return { ...prev, [project.id]: newSet }
+                                                })
+                                                setMediaLoading((prev) => ({ ...prev, [project.id]: false }))
+                                              }}
+                                              onError={() => {
+                                                setMediaLoading((prev) => ({ ...prev, [project.id]: false }))
+                                              }}
+                                            />
+                                          </div>
+                                        )
+                                      })()}
 
                                       {item.type === 'video' && (
                                         <div
@@ -430,7 +453,7 @@ export default function Projects() {
                                       })()}
 
                                       {(item.type === 'csv' || item.type === 'file') && (
-                                        <div className="w-full h-full bg-surface/70 flex flex-col items-center justify-center text-center p-6">
+                                        <div className="w-full h-full bg-surface/70 flex flex-col items-center justify-center text-center p-3 sm:p-4 md:p-6 overflow-y-auto">
                                           {(() => {
                                             const csvKey = `${project.id}::${String(item.src)}`
                                             const status = csvPreviewStatus[csvKey]
@@ -451,30 +474,30 @@ export default function Projects() {
 
                                             return (
                                               <>
-                                                <div className="w-16 h-16 rounded-2xl bg-surface border border-border flex items-center justify-center mb-4">
-                                                  <FileText className="w-7 h-7 text-primary-400" aria-hidden="true" />
+                                                <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-xl sm:rounded-2xl bg-surface border border-border flex items-center justify-center mb-3 sm:mb-4 flex-shrink-0">
+                                                  <FileText className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 text-primary-400" aria-hidden="true" />
                                                 </div>
-                                                <p className="text-sm font-semibold text-foreground mb-1">
+                                                <p className="text-xs sm:text-sm font-semibold text-foreground mb-1">
                                                   {item.type === 'csv' ? 'Data file (CSV)' : 'Document'}
                                                 </p>
-                                                <p className="text-xs text-muted mb-4 break-all">
+                                                <p className="text-[10px] sm:text-xs text-muted mb-3 sm:mb-4 break-all px-2">
                                                   {String(item.src).split('/').pop()}
                                                 </p>
-                                                <div className="flex flex-wrap gap-2 justify-center">
+                                                <div className="flex flex-wrap gap-1.5 sm:gap-2 justify-center w-full px-2">
                                                   <a
                                                     href={assetUrl(item.src)}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
-                                                    className="btn-cta"
+                                                    className="btn-cta text-xs sm:text-sm px-3 sm:px-4 py-1.5 sm:py-2"
                                                   >
-                                                    <FileText className="w-4 h-4" aria-hidden="true" />
+                                                    <FileText className="w-3.5 h-3.5 sm:w-4 sm:h-4" aria-hidden="true" />
                                                     {item.type === 'csv' ? 'Open CSV' : 'Open file'}
                                                   </a>
 
                                                   {item.type === 'csv' && (
                                                     <button
                                                       type="button"
-                                                      className="btn-cta"
+                                                      className="btn-cta text-xs sm:text-sm px-3 sm:px-4 py-1.5 sm:py-2"
                                                       onClick={async (e) => {
                                                         e.stopPropagation()
                                                         if (csvPreviewStatus[csvKey] === 'loading') return
@@ -501,26 +524,26 @@ export default function Projects() {
                                                         }
                                                       }}
                                                     >
-                                                      <FileText className="w-4 h-4" aria-hidden="true" />
+                                                      <FileText className="w-3.5 h-3.5 sm:w-4 sm:h-4" aria-hidden="true" />
                                                       {status === 'loaded' ? 'Hide preview' : 'Preview'}
                                                     </button>
                                                   )}
                                                 </div>
 
                                                 {item.type === 'csv' && status === 'loading' && (
-                                                  <p className="mt-4 text-xs text-muted">Loading preview…</p>
+                                                  <p className="mt-3 sm:mt-4 text-[10px] sm:text-xs text-muted">Loading preview…</p>
                                                 )}
 
                                                 {item.type === 'csv' && status === 'error' && (
-                                                  <p className="mt-4 text-xs text-muted">
+                                                  <p className="mt-3 sm:mt-4 text-[10px] sm:text-xs text-muted px-2">
                                                     Preview unavailable (likely CORS). Open the CSV instead.
                                                   </p>
                                                 )}
 
                                                 {item.type === 'csv' && status === 'loaded' && data && (
-                                                  <div className="mt-4 w-full max-w-5xl -mx-2 sm:mx-0">
-                                                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-3 px-2 sm:px-0">
-                                                      <div className="text-[10px] sm:text-[11px] text-muted">
+                                                  <div className="mt-3 sm:mt-4 w-full max-w-5xl -mx-1 sm:-mx-2 md:mx-0">
+                                                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-2 sm:mb-3 px-1 sm:px-2 md:px-0">
+                                                      <div className="text-[9px] sm:text-[10px] md:text-[11px] text-muted">
                                                         Showing up to <span className="text-foreground font-semibold">30</span> rows
                                                         and <span className="text-foreground font-semibold">20</span> columns
                                                       </div>
@@ -533,23 +556,23 @@ export default function Projects() {
                                                           }))
                                                         }
                                                         placeholder="Search rows…"
-                                                        className="w-full sm:w-64 rounded-lg bg-surface border border-border px-3 py-2 text-xs text-foreground placeholder:text-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
+                                                        className="w-full sm:w-64 rounded-lg bg-surface border border-border px-2 sm:px-3 py-1.5 sm:py-2 text-[10px] sm:text-xs text-foreground placeholder:text-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
                                                       />
                                                     </div>
 
-                                                    <div className="rounded-xl border border-border/60 overflow-hidden bg-black/20">
-                                                      <div className="csv-preview-container max-h-56 sm:max-h-64 overflow-y-auto overflow-x-auto overscroll-x-contain -webkit-overflow-scrolling-touch">
+                                                    <div className="rounded-lg sm:rounded-xl border border-border/60 overflow-hidden bg-black/20">
+                                                      <div className="csv-preview-container max-h-48 sm:max-h-56 md:max-h-64 overflow-y-auto overflow-x-auto overscroll-x-contain -webkit-overflow-scrolling-touch">
                                                         <div className="inline-block min-w-full align-middle">
-                                                          <table className="min-w-full text-left text-[10px] sm:text-[11px]">
+                                                          <table className="min-w-full text-left text-[9px] sm:text-[10px] md:text-[11px]">
                                                             {data.header.length > 0 && (
                                                               <thead className="sticky top-0 bg-surface/95 backdrop-blur border-b border-border/60 z-10">
                                                                 <tr>
                                                                   {data.header.map((h, idx) => (
                                                                     <th
                                                                       key={idx}
-                                                                      className="px-2 sm:px-3 py-1.5 sm:py-2 font-semibold text-foreground whitespace-nowrap text-[10px] sm:text-[11px]"
+                                                                      className="px-1.5 sm:px-2 md:px-3 py-1 sm:py-1.5 md:py-2 font-semibold text-foreground whitespace-nowrap text-[9px] sm:text-[10px] md:text-[11px]"
                                                                     >
-                                                                      <span className="block truncate max-w-[120px] sm:max-w-none" title={h || `col_${idx + 1}`}>
+                                                                      <span className="block truncate max-w-[80px] sm:max-w-[120px] md:max-w-none" title={h || `col_${idx + 1}`}>
                                                                         {h || `col_${idx + 1}`}
                                                                       </span>
                                                                     </th>
@@ -566,7 +589,7 @@ export default function Projects() {
                                                                   {(data.header.length ? data.header : r).map((_, ci) => (
                                                                     <td
                                                                       key={ci}
-                                                                      className="px-2 sm:px-3 py-1.5 sm:py-2 text-muted whitespace-nowrap max-w-[120px] sm:max-w-[220px] truncate"
+                                                                      className="px-1.5 sm:px-2 md:px-3 py-1 sm:py-1.5 md:py-2 text-muted whitespace-nowrap max-w-[80px] sm:max-w-[120px] md:max-w-[220px] truncate"
                                                                       title={String(r[ci] ?? '')}
                                                                     >
                                                                       {String(r[ci] ?? '')}
@@ -579,8 +602,8 @@ export default function Projects() {
                                                         </div>
                                                       </div>
                                                     </div>
-                                                    <div className="mt-2 px-2 sm:px-0">
-                                                      <p className="text-[10px] sm:text-[11px] text-muted">
+                                                    <div className="mt-1.5 sm:mt-2 px-1 sm:px-2 md:px-0">
+                                                      <p className="text-[9px] sm:text-[10px] md:text-[11px] text-muted">
                                                         💡 Swipe horizontally to view all columns
                                                       </p>
                                                     </div>
