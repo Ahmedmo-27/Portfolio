@@ -297,7 +297,12 @@ export default function Navbar() {
               <img 
                 src={assetUrl('/Assets/Geometric AM logo design.png')}
                 alt="AM Logo" 
+                width={32}
+                height={32}
                 className="w-8 h-8 object-contain"
+                loading="eager"
+                decoding="async"
+                fetchPriority="high"
               />
             </div>
             <span className="text-xl font-display font-bold text-foreground group-hover:text-primary-400 transition-colors">

@@ -14,6 +14,7 @@ const PORT = Number(process.env.PORT) || 3000;
 
 // Cache duration constants
 const ONE_YEAR = 31536000; // 1 year in seconds
+const THIRTY_DAYS = 2592000; // 30 days in seconds (Chrome recommendation minimum)
 const ONE_WEEK = 604800;   // 1 week in seconds
 const ONE_DAY = 86400;     // 1 day in seconds
 
@@ -71,17 +72,30 @@ if (existsSync(distDir)) {
           return;
         }
         
-        // Images - cache for 1 week
-        if (/\.(jpg|jpeg|png|gif|webp|svg|ico)$/i.test(path)) {
-          res.setHeader('Cache-Control', `public, max-age=${ONE_WEEK}`);
+        // Images - cache for 30 days (Chrome recommendation: minimum 30 days for cacheable resources)
+        // Note: If images are versioned/hashed, add 'immutable' directive
+        if (/\.(jpg|jpeg|png|gif|webp|avif|svg|ico)$/i.test(path)) {
+          res.setHeader('Cache-Control', `public, max-age=${THIRTY_DAYS}`);
           return;
         }
         
-        // PDFs and documents - cache for 1 week
+        // Fonts - cache for 1 year (immutable assets)
+        if (/\.(woff2?|ttf|eot|otf)$/i.test(path)) {
+          res.setHeader('Cache-Control', `public, max-age=${ONE_YEAR}, immutable`);
+          return;
+        }
+        
+        // PDFs and documents - cache for 30 days
         if (path.endsWith('.pdf')) {
           res.setHeader('Content-Type', 'application/pdf');
           res.setHeader('Content-Disposition', 'inline');
-          res.setHeader('Cache-Control', `public, max-age=${ONE_WEEK}`);
+          res.setHeader('Cache-Control', `public, max-age=${THIRTY_DAYS}`);
+          return;
+        }
+        
+        // Video files - cache for 30 days
+        if (/\.(mp4|webm|ogg|mov|avi)$/i.test(path)) {
+          res.setHeader('Cache-Control', `public, max-age=${THIRTY_DAYS}`);
           return;
         }
         

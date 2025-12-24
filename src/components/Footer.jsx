@@ -42,7 +42,11 @@ export default function Footer() {
                 <img
                   src={assetUrl('/Assets/Geometric AM logo design.png')}
                   alt=""
+                  width={28}
+                  height={28}
                   className="w-6 md:w-7 h-6 md:h-7 object-contain opacity-90 dark:opacity-100 dark:drop-shadow-[0_0_12px_rgba(56,189,248,0.25)]"
+                  loading="lazy"
+                  decoding="async"
                 />
               </div>
               <span className="text-lg md:text-xl font-display font-bold text-foreground group-hover:text-primary-400 transition-colors">

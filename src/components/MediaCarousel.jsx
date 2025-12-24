@@ -177,8 +177,16 @@ function MediaCarousel({ project, shouldLoad = false }) {
                     className={portraitImages[itemIndex] ? 'h-full w-auto max-w-full object-contain' : 'w-full h-full object-cover'}
                     loading="lazy"
                     decoding="async"
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 90vw, 80vw"
+                    width={1920}
+                    height={1080}
                     onLoad={(e) => {
                       const img = e.currentTarget
+                      // Update width/height with actual dimensions once loaded
+                      if (img.naturalWidth && img.naturalHeight) {
+                        img.width = img.naturalWidth
+                        img.height = img.naturalHeight
+                      }
                       const isPortrait = img.naturalHeight > img.naturalWidth
                       if (isPortrait) {
                         // Defer portrait detection to not block interaction
