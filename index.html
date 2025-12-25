@@ -41,7 +41,8 @@
     <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
     
     <!-- Preload LCP image (ProfileCard avatar) to reduce resource load delay -->
-    <link rel="preload" href="/Ahmed%20Mostafa.webp" as="image" type="image/webp" fetchpriority="high" />
+    <!-- This makes the image discoverable in the initial HTML document -->
+    <link rel="preload" href="/Ahmed Mostafa.webp" as="image" type="image/webp" fetchpriority="high" />
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
@@ -196,6 +197,20 @@
     
   </head>
   <body>
+    <!-- LCP image: Hidden image tag for immediate discovery by browser -->
+    <!-- This ensures the image request is discoverable in the initial HTML document -->
+    <!-- Browser will cache this, so React's image won't cause duplicate load -->
+    <img 
+      src="/Ahmed Mostafa.webp" 
+      alt="" 
+      width="483" 
+      height="644"
+      fetchpriority="high"
+      loading="eager"
+      decoding="sync"
+      style="position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; visibility: hidden;"
+      aria-hidden="true"
+    />
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>    
   </body>
