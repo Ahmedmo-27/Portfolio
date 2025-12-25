@@ -40,6 +40,9 @@
     <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
     <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
     
+    <!-- Preload LCP image (ProfileCard avatar) to reduce resource load delay -->
+    <link rel="preload" href="/Ahmed Mostafa.webp" as="image" type="image/webp" fetchpriority="high" />
+    
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://ahmed-mostafa-portfolio-8efdd2d8c482.herokuapp.com" />
@@ -191,11 +194,6 @@
     <link rel="preload" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&family=Syne:wght@400;500;600;700;800&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
     <noscript><link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet"></noscript>
     
-    <!-- Preload critical assets -->
-    <!-- Logo is served from /public directory -->
-    <!-- Preload LCP image (ProfileCard avatar) for faster LCP -->
-    <!-- Note: This will be resolved by assetUrl() at runtime, but preload helps browser discover it early -->
-    <link rel="preload" as="image" href="/Assets/Ahmed Mostafa.webp" fetchpriority="high" />
   </head>
   <body>
     <div id="root"></div>

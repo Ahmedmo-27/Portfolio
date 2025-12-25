@@ -19,9 +19,9 @@ const adjust = (v, fMin, fMax, tMin, tMax) =>
   round(tMin + ((tMax - tMin) * (v - fMin)) / (fMax - fMin));
 
 const ProfileCardComponent = ({
-  avatarUrl = assetUrl('/Assets/Ahmed Mostafa.webp'),
+  avatarUrl = '/Ahmed Mostafa.webp',
   iconUrl = assetUrl('/Assets/Geometric AM logo design.webp'),
-  grainUrl = assetUrl('/Assets/Grain.webp'),
+  grainUrl = '/Grain.webp',
   innerGradient,
   behindGlowEnabled = true,
   behindGlowColor,
@@ -449,12 +449,19 @@ const ProfileCardComponent = ({
                 const webpUrl = getWebPUrl(avatarUrl);
                 const isAlreadyWebP = /\.webp$/i.test(avatarUrl);
                 
-                // If already WebP, use simple img tag
+                // Optimize for LCP: Use responsive srcset for better resource loading
+                // Calculate responsive sizes based on viewport
+                const srcSet = isAlreadyWebP 
+                  ? `${avatarUrl} 483w`
+                  : `${webpUrl} 483w, ${avatarUrl} 483w`;
+                
+                // If already WebP, use simple img tag with srcset for optimization
                 if (isAlreadyWebP) {
                   return (
                     <img
                       className="avatar"
                       src={avatarUrl}
+                      srcSet={srcSet}
                       alt={`${name || 'Ahmed Mostafa'} avatar`}
                       width={483}
                       height={644}
@@ -462,6 +469,12 @@ const ProfileCardComponent = ({
                       decoding="sync"
                       fetchPriority="high"
                       sizes="(max-width: 480px) 280px, (max-width: 768px) 320px, 483px"
+                      onLoad={() => {
+                        // Mark image as loaded for LCP measurement
+                        if (window.performance && window.performance.mark) {
+                          window.performance.mark('lcp-image-loaded');
+                        }
+                      }}
                       onError={e => {
                         const t = e.target;
                         console.error('Failed to load avatar image:', avatarUrl);
@@ -471,18 +484,20 @@ const ProfileCardComponent = ({
                   );
                 }
                 
-                // Otherwise use picture element with WebP fallback
+                // Otherwise use picture element with WebP fallback and srcset
                 return (
                   <picture>
-                    {/* WebP source for modern browsers */}
+                    {/* WebP source for modern browsers with srcset */}
                     <source
-                      srcSet={webpUrl}
+                      srcSet={`${webpUrl} 483w`}
                       type="image/webp"
+                      sizes="(max-width: 480px) 280px, (max-width: 768px) 320px, 483px"
                     />
                     {/* Fallback to original format */}
                     <img
                       className="avatar"
                       src={avatarUrl}
+                      srcSet={`${avatarUrl} 483w`}
                       alt={`${name || 'Ahmed Mostafa'} avatar`}
                       width={483}
                       height={644}
@@ -490,6 +505,12 @@ const ProfileCardComponent = ({
                       decoding="sync"
                       fetchPriority="high"
                       sizes="(max-width: 480px) 280px, (max-width: 768px) 320px, 483px"
+                      onLoad={() => {
+                        // Mark image as loaded for LCP measurement
+                        if (window.performance && window.performance.mark) {
+                          window.performance.mark('lcp-image-loaded');
+                        }
+                      }}
                       onError={e => {
                         const t = e.target;
                         console.error('Failed to load avatar image:', avatarUrl);

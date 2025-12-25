@@ -41,10 +41,14 @@
   touch-action: none;
   margin-left: auto;
   margin-right: auto;
-  /* Prevent layout shift by reserving space */
+  /* Prevent layout shift by reserving space - critical for LCP */
   min-height: 400px;
   aspect-ratio: 0.718;
   width: 100%;
+  /* Optimize rendering - ensure GPU acceleration */
+  contain: layout style;
+  /* Reduce paint complexity for faster initial render */
+  content-visibility: auto;
 }
 
 /* Loading skeleton state */
@@ -61,6 +65,11 @@
   border: 1px solid var(--color-border);
   position: relative;
   overflow: hidden;
+  /* Optimize skeleton rendering - prevent layout shift */
+  contain: layout style paint;
+  /* Ensure dimensions are set to prevent CLS */
+  min-height: 400px;
+  width: 100%;
 }
 
 .pc-card-skeleton::after {
@@ -190,9 +199,11 @@
   overflow: hidden;
   border: 1px solid var(--color-border);
   will-change: transform;
-  /* Prevent layout shift by ensuring dimensions are set */
+  /* Prevent layout shift by ensuring dimensions are set - critical for LCP */
   width: 100%;
   min-height: 400px;
+  /* Optimize rendering - reduce paint complexity */
+  contain: layout style paint;
 }
 
 /* Optimize for touch devices */
@@ -242,7 +253,10 @@
   position: absolute;
   background-image: var(--inner-gradient);
   background-color: var(--pc-card-bg);
-  transform: none;
+  /* Optimize rendering - reduce paint complexity */
+  contain: layout style paint;
+  /* Ensure GPU acceleration */
+  transform: translateZ(0);
 }
 
 .pc-inside::after {
@@ -294,6 +308,10 @@
   overflow: visible;
   transform: translateZ(2);
   backface-visibility: hidden;
+  /* Optimize LCP element rendering - critical path */
+  contain: layout style paint;
+  /* Ensure GPU layer for fast rendering */
+  will-change: transform;
 }
 
 .light .pc-avatar-content {
@@ -312,14 +330,19 @@
   transform: translateX(calc(-50% + (var(--pointer-from-left) - 0.5) * 6px)) translateZ(0)
     scaleY(calc(1 + (var(--pointer-from-top) - 0.5) * 0.02)) scaleX(calc(1 + (var(--pointer-from-left) - 0.5) * 0.01));
   bottom: -1px;
-  /* GPU acceleration hint for LCP element */
+  /* GPU acceleration hint for LCP element - critical for fast rendering */
   will-change: transform;
-  contain: layout style;
+  contain: layout style paint;
   backface-visibility: hidden;
   transition: transform 120ms ease-out, opacity 0.3s ease;
-  /* Prevent layout shift - ensure image has dimensions */
+  /* Prevent layout shift - ensure image has dimensions - critical for LCP */
   min-height: 0;
   object-fit: contain;
+  /* Optimize image rendering - reduce paint complexity */
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+  /* Ensure image loads and renders immediately */
+  content-visibility: auto;
 }
 
 .pc-avatar-content .avatar.avatar-error {
