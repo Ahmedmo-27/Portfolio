@@ -17,6 +17,22 @@ const ONE_YEAR = 31536000; // 1 year in seconds
 const THIRTY_DAYS = 2592000; // 30 days in seconds (Chrome recommendation minimum)
 const ONE_DAY = 86400;     // 1 day in seconds
 
+// HTTP/2 optimization: Add headers that work well with HTTP/2 multiplexing
+app.use((req, res, next) => {
+  // Add HTTP/2 friendly security headers
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'DENY');
+  res.setHeader('X-XSS-Protection', '1; mode=block');
+  
+  // Enable HSTS for HTTPS (helps with HTTP/2 negotiation)
+  // HTTP/2 requires HTTPS, so this ensures browsers use secure connections
+  if (req.secure || req.headers['x-forwarded-proto'] === 'https') {
+    res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+  }
+  
+  next();
+});
+
 // Enable gzip/brotli compression for all responses
 app.use(compression({
   level: 6, // Balanced compression level

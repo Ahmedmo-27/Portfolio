@@ -2,6 +2,15 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <!-- Set initial theme before React loads to prevent flash -->
+    <script>
+      (function() {
+        const stored = localStorage.getItem('portfolio-theme');
+        const theme = stored || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.classList.add(theme);
+        document.documentElement.classList.remove(theme === 'dark' ? 'light' : 'dark');
+      })();
+    </script>
     <link rel="icon" type="image/webp" href="/Geometric%20AM%20logo%20design.webp" />
     <link rel="apple-touch-icon" href="/Geometric%20AM%20logo%20design.webp" />
     <link rel="manifest" href="/manifest.json" />
