@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useCallback, useMemo, useState } from 'react';
 import './ProfileCard.css';
 import { assetUrl, getWebPUrl } from '../utils/assetUrl'
+import SkeletonLoader from './SkeletonLoader'
 
 // Default gradient adapts to theme via CSS variables
 const DEFAULT_INNER_GRADIENT = 'linear-gradient(145deg, rgba(96, 73, 110, 0.55) 0%, rgba(113, 196, 255, 0.27) 100%)';
@@ -40,6 +41,31 @@ const ProfileCardComponent = ({
   const leaveRafRef = useRef(null);
 
   const [tiltReady, setTiltReady] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
+  const imageRef = useRef(null);
+
+  // Check if image is already loaded (cached) when component mounts
+  useEffect(() => {
+    const checkImageLoaded = () => {
+      if (imageRef.current && imageRef.current.complete && imageRef.current.naturalHeight !== 0) {
+        setImageLoaded(true);
+      }
+    };
+
+    // Check immediately
+    checkImageLoaded();
+
+    // Also check after a short delay in case image loads very quickly
+    const timeoutId = setTimeout(() => {
+      checkImageLoaded();
+      // If still not loaded after timeout, set loaded anyway to prevent infinite loading
+      if (!imageLoaded) {
+        setImageLoaded(true);
+      }
+    }, 1000);
+
+    return () => clearTimeout(timeoutId);
+  }, [imageLoaded]);
 
   // Defer tilt engine initialization to after LCP
   useEffect(() => {
@@ -480,7 +506,14 @@ const ProfileCardComponent = ({
           <div className="pc-inside">
             <div className="pc-shine" />
             <div className="pc-glare" />
-            <div className="pc-content pc-avatar-content">
+            <div className="pc-content pc-avatar-content relative">
+              {/* Skeleton loader overlay - shown when image is not loaded */}
+              {!imageLoaded && (
+                <div className="absolute inset-0 flex items-center justify-center z-10">
+                  <SkeletonLoader variant="card" className="w-full max-w-xs sm:max-w-sm h-[500px] md:h-[600px] rounded-3xl" />
+                </div>
+              )}
+              {/* Image element - always rendered so it can load */}
               {(() => {
                 const webpUrl = getWebPUrl(avatarUrl);
                 const isAlreadyWebP = /\.webp$/i.test(avatarUrl);
@@ -495,6 +528,7 @@ const ProfileCardComponent = ({
                 if (isAlreadyWebP) {
                   return (
                     <img
+                      ref={imageRef}
                       className="avatar"
                       src={avatarUrl}
                       srcSet={srcSet}
@@ -505,7 +539,9 @@ const ProfileCardComponent = ({
                       decoding="sync"
                       fetchPriority="high"
                       sizes="(max-width: 480px) 280px, (max-width: 768px) 320px, 483px"
-                      onLoad={() => {
+                      style={{ opacity: imageLoaded ? 1 : 0, transition: 'opacity 0.3s ease-in' }}
+                      onLoad={(e) => {
+                        setImageLoaded(true);
                         // Mark image as loaded for LCP measurement
                         if (window.performance && window.performance.mark) {
                           window.performance.mark('lcp-image-loaded');
@@ -515,6 +551,8 @@ const ProfileCardComponent = ({
                         const t = e.target;
                         console.error('Failed to load avatar image:', avatarUrl);
                         t.classList.add('avatar-error');
+                        // Still set loaded to hide skeleton even on error
+                        setImageLoaded(true);
                       }}
                     />
                   );
@@ -531,6 +569,7 @@ const ProfileCardComponent = ({
                     />
                     {/* Fallback to original format */}
                     <img
+                      ref={imageRef}
                       className="avatar"
                       src={avatarUrl}
                       srcSet={`${avatarUrl} 483w`}
@@ -541,7 +580,9 @@ const ProfileCardComponent = ({
                       decoding="sync"
                       fetchPriority="high"
                       sizes="(max-width: 480px) 280px, (max-width: 768px) 320px, 483px"
-                      onLoad={() => {
+                      style={{ opacity: imageLoaded ? 1 : 0, transition: 'opacity 0.3s ease-in' }}
+                      onLoad={(e) => {
+                        setImageLoaded(true);
                         // Mark image as loaded for LCP measurement
                         if (window.performance && window.performance.mark) {
                           window.performance.mark('lcp-image-loaded');
@@ -551,6 +592,8 @@ const ProfileCardComponent = ({
                         const t = e.target;
                         console.error('Failed to load avatar image:', avatarUrl);
                         t.classList.add('avatar-error');
+                        // Still set loaded to hide skeleton even on error
+                        setImageLoaded(true);
                       }}
                     />
                   </picture>

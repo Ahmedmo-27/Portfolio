@@ -1,11 +1,87 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { Download, Mail, ExternalLink, Github, Linkedin, Code2 } from 'lucide-react'
 import ProfileCard from './ProfileCard'
 import { assetUrl } from '../utils/assetUrl'
+import SkeletonLoader from './SkeletonLoader'
 import './Hero.css'
 
 const Hero = () => {
-  // Removed unnecessary scroll listener - no handler was provided
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    // Check if critical resources are loaded
+    const checkResources = () => {
+      // Check if fonts are loaded
+      if ('fonts' in document && document.fonts.ready) {
+        document.fonts.ready.then(() => {
+          // Small delay to ensure smooth transition
+          setTimeout(() => setIsLoading(false), 100)
+        })
+      } else {
+        // Fallback: hide skeleton after a short delay
+        setTimeout(() => setIsLoading(false), 300)
+      }
+    }
+
+    checkResources()
+  }, [])
+
+  if (isLoading) {
+    return (
+      <section id="hero" className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20 pb-12 md:pb-25">
+        {/* Background Elements */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="tech-grid" />
+          <div className="absolute inset-0 hero-grid-pattern" />
+        </div>
+
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+          <div className="grid lg:grid-cols-2 gap-8 md:gap-12 lg:gap-16 items-center">
+            {/* Left Content Skeleton */}
+            <div className="text-center lg:text-left order-2 lg:order-1 space-y-6">
+              {/* Status Badge Skeleton */}
+              <div className="flex justify-center lg:justify-start">
+                <SkeletonLoader variant="text" className="h-8 w-40 rounded-full" />
+              </div>
+
+              {/* Name Skeleton */}
+              <div className="space-y-3">
+                <SkeletonLoader variant="text" className="h-12 sm:h-14 md:h-16 lg:h-20 xl:h-24 w-full max-w-md mx-auto lg:mx-0 rounded-lg" />
+              </div>
+
+              {/* Title Skeleton */}
+              <div className="space-y-2">
+                <SkeletonLoader variant="text" className="h-6 sm:h-7 md:h-8 lg:h-9 w-full max-w-sm mx-auto lg:mx-0 rounded-md" />
+                <SkeletonLoader variant="text" className="h-5 sm:h-6 md:h-7 lg:h-8 w-full max-w-xs mx-auto lg:mx-0 rounded-md" />
+              </div>
+
+              {/* CTA Buttons Skeleton */}
+              <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2 md:gap-3">
+                <SkeletonLoader variant="text" className="h-10 md:h-12 w-32 rounded-lg" />
+                <SkeletonLoader variant="text" className="h-10 md:h-12 w-28 rounded-lg" />
+                <SkeletonLoader variant="text" className="h-10 md:h-12 w-32 rounded-lg" />
+              </div>
+
+              {/* Social Links Skeleton */}
+              <div className="flex items-center justify-center lg:justify-start gap-2 md:gap-3">
+                {[1, 2, 3].map((i) => (
+                  <SkeletonLoader key={i} variant="avatar" className="w-10 h-10 md:w-12 md:h-12 rounded-xl" />
+                ))}
+              </div>
+            </div>
+
+            {/* Right Content - Profile Card Skeleton */}
+          <div className="order-1 lg:order-2 flex justify-center lg:justify-end mb-6 md:mb-0 translate-x-4">
+              <SkeletonLoader 
+                variant="card" 
+                className="w-full max-w-xs sm:max-w-sm h-[500px] sm:h-[500px] md:h-[500px] rounded-3xl"
+              />
+          </div>
+          </div>
+        </div>
+      </section>
+    )
+  }
 
   return (
     <section id="hero" className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20 pb-12 md:pb-25">
@@ -40,7 +116,7 @@ const Hero = () => {
 
             {/* Title with typing effect */}
             <div className="mb-4 md:mb-6">
-              <div className="text-base sm:text-lg md:text-xl lg:text-2xl text-muted font-light tracking-wide font-mono">
+              <div className="text-lg sm:text-xl md:text-2xl lg:text-3xl text-muted font-light tracking-wide font-mono">
                 <span className="text-primary-400">&lt;</span>
                 <span className="text-primary-400">
                   Junior Software Engineer

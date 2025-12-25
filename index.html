@@ -209,13 +209,42 @@
     }
     </script>
     
-    <!-- Google Fonts - Preconnect for performance -->
+    <!-- Google Fonts - Preconnect for performance (early connection) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <!-- Load fonts with display=swap to prevent layout shifts -->
-    <!-- display=swap ensures text is visible immediately with fallback font, then swaps when custom font loads -->
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&family=Syne:wght@400;500;600;700;800&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet"></noscript>
+    <!-- Load fonts synchronously in head to minimize flash -->
+    <!-- font-display: swap shows fallback immediately, then swaps when custom font loads -->
+    <!-- Loading synchronously ensures fonts start loading as early as possible -->
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Optimize font loading to reduce visible flash -->
+    <script>
+      (function() {
+        // Use fonts.ready API for fastest font load detection
+        if ('fonts' in document && document.fonts.ready) {
+          document.fonts.ready.then(function() {
+            document.documentElement.classList.add('fonts-loaded');
+          });
+        } else if ('fonts' in document) {
+          // Fallback: load critical fonts explicitly
+          Promise.all([
+            document.fonts.load('700 1em "Syne"'),
+            document.fonts.load('400 1em "Outfit"')
+          ]).then(function() {
+            document.documentElement.classList.add('fonts-loaded');
+          }).catch(function() {
+            // Ensure class is added even if fonts fail
+            setTimeout(function() {
+              document.documentElement.classList.add('fonts-loaded');
+            }, 200);
+          });
+        } else {
+          // Fallback for older browsers
+          setTimeout(function() {
+            document.documentElement.classList.add('fonts-loaded');
+          }, 500);
+        }
+      })();
+    </script>
     
   </head>
   <body>

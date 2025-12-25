@@ -82,6 +82,23 @@
     font-size-adjust: 0.50;
   }
 
+  /* Optimize font rendering to reduce visible flash */
+  /* Match fallback font metrics closely to minimize swap visibility */
+  .font-display {
+    /* Ensure consistent rendering */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    /* Match Syne font metrics to system font to reduce flash */
+    font-size-adjust: 0.52;
+  }
+
+  /* When fonts are loaded, ensure smooth rendering */
+  html.fonts-loaded .font-display {
+    /* Fonts are loaded, rendering should be smooth */
+    font-feature-settings: "kern" 1;
+  }
+
   /* Dark mode background - using pseudo-element for fixed bg to avoid scroll repaint */
   .dark body::before {
     content: '';

@@ -32,9 +32,18 @@ section[class*="hero"] {
   /* Reserve space for text to prevent shifts when font loads */
   line-height: 1.2;
   /* Prevent layout shift during font swap */
-  contain: layout;
+  contain: layout style paint;
   /* Reserve space for largest text size - responsive */
   min-height: 4rem;
+  /* Prevent any transform/position changes during font load */
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  /* Ensure stable positioning - prevent reflow during font swap */
+  will-change: auto;
+  /* Prevent layout shifts by ensuring stable dimensions */
+  display: block;
+  /* Prevent any vertical movement during font load */
+  position: relative;
 }
 
 @media (min-width: 640px) {
@@ -59,6 +68,21 @@ section[class*="hero"] {
   #hero h1 {
     min-height: 8rem;
   }
+}
+
+/* Prevent bounce during font load - lock height and prevent reflow */
+#hero h1 {
+  /* Lock height to prevent resize during font swap */
+  height: auto;
+  /* Ensure no transform animations that could cause bounce */
+  transform: translateZ(0) translateY(0);
+  /* Prevent any margin/padding changes */
+  margin: 0;
+  padding: 0;
+  /* Ensure stable rendering */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
 /* Prevent layout shifts in text elements */
