@@ -27,6 +27,33 @@ export default defineConfig({
         })
       },
     },
+    {
+      name: 'defer-css',
+      transformIndexHtml(html) {
+        // Defer CSS loading to prevent render blocking
+        // Use media="print" trick: load CSS as print stylesheet, then switch to all media onload
+        // This prevents CSS from blocking the initial render and improves LCP
+        return html.replace(
+          /<link([^>]*?)\s+rel\s*=\s*["']stylesheet["']([^>]*?)>/gi,
+          (match, before, after) => {
+            // Skip if already has onload handler or is a font stylesheet (already async)
+            if (match.includes('onload') || match.includes('fonts.googleapis.com') || match.includes('fonts.gstatic.com')) {
+              return match
+            }
+            // Skip if it's a preload link (different purpose)
+            if (match.match(/rel\s*=\s*["']preload["']/i)) {
+              return match
+            }
+            // Reconstruct the link tag with defer attributes
+            // Remove any existing media attribute to avoid conflicts
+            const attrs = `${before}${after}`.replace(/\s+media\s*=\s*["'][^"']*["']/gi, '').trim()
+            const modified = `<link ${attrs} rel="stylesheet" media="print" onload="this.media='all';this.onload=null">`
+            // Add noscript fallback for browsers without JS
+            return `${modified}<noscript>${match}</noscript>`
+          }
+        )
+      },
+    },
   ],
   resolve: {
     alias: {
