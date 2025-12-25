@@ -515,23 +515,11 @@ const ProfileCardComponent = ({
               )}
               {/* Image element - always rendered so it can load */}
               {(() => {
-                const webpUrl = getWebPUrl(avatarUrl);
-                const isAlreadyWebP = /\.webp$/i.test(avatarUrl);
-                
-                // Optimize for LCP: Use responsive srcset for better resource loading
-                // Calculate responsive sizes based on viewport
-                const srcSet = isAlreadyWebP 
-                  ? `${avatarUrl} 483w`
-                  : `${webpUrl} 483w, ${avatarUrl} 483w`;
-                
-                // If already WebP, use simple img tag with srcset for optimization
-                if (isAlreadyWebP) {
                   return (
                     <img
                       ref={imageRef}
                       className="avatar"
                       src={avatarUrl}
-                      srcSet={srcSet}
                       alt={`${name || 'Ahmed Mostafa'} avatar`}
                       width={483}
                       height={644}
@@ -555,54 +543,12 @@ const ProfileCardComponent = ({
                         setImageLoaded(true);
                       }}
                     />
-                  );
-                }
-                
-                // Otherwise use picture element with WebP fallback and srcset
-                return (
-                  <picture>
-                    {/* WebP source for modern browsers with srcset */}
-                    <source
-                      srcSet={`${webpUrl} 483w`}
-                      type="image/webp"
-                      sizes="(max-width: 480px) 280px, (max-width: 768px) 320px, 483px"
-                    />
-                    {/* Fallback to original format */}
-                    <img
-                      ref={imageRef}
-                      className="avatar"
-                      src={avatarUrl}
-                      srcSet={`${avatarUrl} 483w`}
-                      alt={`${name || 'Ahmed Mostafa'} avatar`}
-                      width={483}
-                      height={644}
-                      loading="eager"
-                      decoding="sync"
-                      fetchPriority="high"
-                      sizes="(max-width: 480px) 280px, (max-width: 768px) 320px, 483px"
-                      style={{ opacity: imageLoaded ? 1 : 0, transition: 'opacity 0.3s ease-in' }}
-                      onLoad={(e) => {
-                        setImageLoaded(true);
-                        // Mark image as loaded for LCP measurement
-                        if (window.performance && window.performance.mark) {
-                          window.performance.mark('lcp-image-loaded');
-                        }
-                      }}
-                      onError={e => {
-                        const t = e.target;
-                        console.error('Failed to load avatar image:', avatarUrl);
-                        t.classList.add('avatar-error');
-                        // Still set loaded to hide skeleton even on error
-                        setImageLoaded(true);
-                      }}
-                    />
-                  </picture>
-                );
+                  );                
               })()}
             </div>
             <div className="pc-content">
               <div className="pc-details">
-                <h3>{name}</h3>
+                <h2>{name}</h2>
                 <p>{title}</p>
               </div>
             </div>

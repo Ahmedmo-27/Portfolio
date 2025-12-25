@@ -439,7 +439,7 @@ export default function Navbar() {
           </a>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-1" role="menubar">
+          <div className="hidden md:flex items-center gap-1" aria-label="Primary">
             {navLinks.map((link) => (
               <a
                 key={link.name}
@@ -450,7 +450,6 @@ export default function Navbar() {
                     ? 'text-primary-400' 
                     : 'text-muted hover:text-foreground'
                 }`}
-                role="menuitem"
                 aria-current={activeSection === getSectionId(link.href) ? 'page' : undefined}
               >
                 {link.name}
@@ -497,12 +496,11 @@ export default function Navbar() {
           <div
             id="mobile-menu"
             className="md:hidden overflow-hidden animate-mobile-menu-open"
-            role="menu"
           >
-              <div className="py-4 space-y-1">
-                {navLinks.map((link) => (
+            <ul className="py-4 space-y-1" aria-label="Mobile">
+              {navLinks.map((link) => (
+                <li key={link.name}>
                   <a
-                    key={link.name}
                     href={link.href}
                     onClick={(e) => handleNavClick(e, link.href)}
                     className={`block px-4 py-3 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 ${
@@ -510,20 +508,22 @@ export default function Navbar() {
                         ? 'text-primary-400 bg-primary-500/10'
                         : 'text-muted hover:text-foreground hover:bg-surface'
                     }`}
-                    role="menuitem"
+                    aria-current={activeSection === getSectionId(link.href) ? 'page' : undefined}
                   >
                     {link.name}
                   </a>
-                ))}
+                </li>
+              ))}
+              <li>
                 <a
                   href="#contact"
                   onClick={(e) => handleNavClick(e, '#contact')}
                   className="block mt-4 btn-primary text-center"
-                  role="menuitem"
                 >
                   Let's Connect
                 </a>
-              </div>
+              </li>
+            </ul>
           </div>
         )}
       </nav>

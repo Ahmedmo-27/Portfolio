@@ -121,7 +121,7 @@ const Hero = () => {
                 <span className="text-primary-400">
                   Junior Software Engineer
                 </span>
-                <span className="text-primary-400"> /&gt;</span>
+                <span className="text-primary-400">/&gt;</span>
               </div>
               <p className="text-sm sm:text-base md:text-lg lg:text-xl text-muted font-light tracking-wide mt-2">
                 <Code2 className="inline w-4 h-4 md:w-5 md:h-5 mr-1.5 md:mr-2 text-primary-400" />
@@ -155,22 +155,25 @@ const Hero = () => {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="p-2.5 md:p-3 rounded-xl glass hover:bg-surface-hover text-muted"
+                aria-label="GitHub profile"
               >
-                <Github className="w-4 h-4 md:w-5 md:h-5" />
+                <Github className="w-4 h-4 md:w-5 md:h-5" aria-hidden="true" />
               </a>
               <a
                 href="https://linkedin.com/in/ahmedmostafa-swe"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="p-2.5 md:p-3 rounded-xl glass hover:bg-surface-hover text-muted"
+                aria-label="LinkedIn profile"
               >
-                <Linkedin className="w-4 h-4 md:w-5 md:h-5" />
+                <Linkedin className="w-4 h-4 md:w-5 md:h-5" aria-hidden="true" />
               </a>
               <a
                 href="mailto:ahmedmostafa.swe1@gmail.com"
                 className="p-2.5 md:p-3 rounded-xl glass hover:bg-surface-hover text-muted"
+                aria-label="Email Ahmed Mostafa"
               >
-                <Mail className="w-4 h-4 md:w-5 md:h-5" />
+                <Mail className="w-4 h-4 md:w-5 md:h-5" aria-hidden="true" />
               </a>
             </div>
           </div>
