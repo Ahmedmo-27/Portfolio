@@ -259,11 +259,11 @@ export const projects = [
     isHighlighted: false,
     media: {
       screenshots: [
-        'https://pub-bb511787df1747a0998436437d66865d.r2.dev/Projects/Credit%20Card%20Fraud%20Detection.png',
-        'https://pub-bb511787df1747a0998436437d66865d.r2.dev/Projects/Average%20F1-Score%20per%20Model.png',
-        'https://pub-bb511787df1747a0998436437d66865d.r2.dev/Projects/Dataset1_Preprocessing.png',
-        'https://pub-bb511787df1747a0998436437d66865d.r2.dev/Projects/daily_fraud_count.png',
-        'https://pub-bb511787df1747a0998436437d66865d.r2.dev/Projects/figure5_objectives.png',
+        assetUrl('/Projects/Credit%20Card%20Fraud%20Detection.png'),
+        assetUrl('/Projects/Average%20F1-Score%20per%20Model.png'),
+        assetUrl('/Projects/Dataset1_Preprocessing.png'),
+        assetUrl('/Projects/daily_fraud_count.png'),
+        assetUrl('/Projects/figure5_objectives.png'),
       ],
       video: null,
       presentation: null,
@@ -295,8 +295,8 @@ export const projects = [
     ],
     isHighlighted: false,
     media: {
-      screenshots: ['https://pub-bb511787df1747a0998436437d66865d.r2.dev/Projects/WhatNow%20Thumbnail.png'],
-      video: 'https://pub-bb511787df1747a0998436437d66865d.r2.dev/Projects/WhatNow%20Demo%20Video.mp4',
+      screenshots: ['assertUrl(/Projects/WhatNow%20Thumbnail.png'],
+      video: assetUrl('/Projects/WhatNow%20Demo%20Video.mp4'),
       presentation: null,
     },
   },
