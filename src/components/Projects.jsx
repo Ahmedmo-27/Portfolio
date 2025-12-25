@@ -26,7 +26,11 @@ export default function Projects() {
   const mediaObserverRef = useRef(null)
 
   // Lazy load heavy media when the project card approaches viewport
+  // Only start observing after the section is in view to avoid unnecessary work
   useEffect(() => {
+    // Don't set up observer until section is in view
+    if (!isInView) return
+
     let pendingUpdates = new Set()
     let rafId = null
     
@@ -67,8 +71,27 @@ export default function Projects() {
     )
 
     mediaObserverRef.current = observer
-    for (const el of Object.values(projectItemElsRef.current)) {
-      if (el) observer.observe(el)
+    
+    // Observe all existing project elements
+    const elements = Object.values(projectItemElsRef.current)
+    for (const el of elements) {
+      if (el) {
+        observer.observe(el)
+        // Check if element is already in viewport (for immediate load)
+        const rect = el.getBoundingClientRect()
+        const isVisible = rect.top < window.innerHeight + 200 && rect.bottom > -200
+        if (isVisible) {
+          const projectId = el.dataset?.projectId
+          if (projectId) {
+            pendingUpdates.add(projectId)
+          }
+        }
+      }
+    }
+
+    // Process any immediately visible elements
+    if (pendingUpdates.size > 0) {
+      rafId = requestAnimationFrame(processUpdates)
     }
 
     return () => {
@@ -76,7 +99,7 @@ export default function Projects() {
       mediaObserverRef.current = null
       if (rafId) cancelAnimationFrame(rafId)
     }
-  }, [])
+  }, [isInView])
 
   return (
     <section 
@@ -145,7 +168,7 @@ export default function Projects() {
                       <div className="aspect-video rounded-xl bg-surface overflow-hidden relative">
                         <MediaCarousel 
                           project={project} 
-                          shouldLoad={index === 0 || mediaShouldLoad[project.id]} 
+                          shouldLoad={mediaShouldLoad[project.id] || false} 
                         />
                       </div>
 
