@@ -1,5 +1,11 @@
 import { useState, useEffect } from 'react'
-import { GraduationCap, Calendar, Award, BookOpen, ExternalLink, BadgeCheck, ChevronDown } from 'lucide-react'
+import GraduationCap from 'lucide-react/dist/esm/icons/graduation-cap'
+import Calendar from 'lucide-react/dist/esm/icons/calendar'
+import Award from 'lucide-react/dist/esm/icons/award'
+import BookOpen from 'lucide-react/dist/esm/icons/book-open'
+import ExternalLink from 'lucide-react/dist/esm/icons/external-link'
+import BadgeCheck from 'lucide-react/dist/esm/icons/badge-check'
+import ChevronDown from 'lucide-react/dist/esm/icons/chevron-down'
 import { useInViewOnce } from '../utils/useInViewOnce'
 import './Education.css'
 

@@ -1,6 +1,11 @@
 import { useEffect } from 'react'
 import { useInViewOnce } from '../utils/useInViewOnce'
-import { Cloud, Database, Layout, Smartphone, TestTube, Wrench } from 'lucide-react'
+import Cloud from 'lucide-react/dist/esm/icons/cloud'
+import Database from 'lucide-react/dist/esm/icons/database'
+import Layout from 'lucide-react/dist/esm/icons/layout'
+import Smartphone from 'lucide-react/dist/esm/icons/smartphone'
+import TestTube from 'lucide-react/dist/esm/icons/test-tube'
+import Wrench from 'lucide-react/dist/esm/icons/wrench'
 import CircuitBoard from './CircuitBoard'
 import './Skills.css'
 

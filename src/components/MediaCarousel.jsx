@@ -1,5 +1,5 @@
-import { useState, useCallback, memo, useRef, startTransition, useEffect } from 'react'
-import { FileText } from 'lucide-react'
+import { useState, useCallback, memo, useRef, startTransition, useEffect, useMemo } from 'react'
+import FileText from 'lucide-react/dist/esm/icons/file-text'
 import { assetUrl } from '../utils/assetUrl'
 
 // File extension helper
@@ -82,7 +82,7 @@ function MediaCarousel({ project, shouldLoad = false }) {
   const loadedIndicesRef = useRef(loadedIndices)
   loadedIndicesRef.current = loadedIndices
 
-  const galleryItems = getGalleryItems(project)
+  const galleryItems = useMemo(() => getGalleryItems(project), [project])
   const total = galleryItems.length
   const safeIndex = total > 0 ? Math.min(Math.max(0, currentIndex), total - 1) : 0
 
@@ -99,6 +99,7 @@ function MediaCarousel({ project, shouldLoad = false }) {
     imagesToPreload.forEach(src => {
       const img = new Image()
       img.src = src
+      img.fetchPriority = 'low'
     })
   }, [shouldLoad, total, galleryItems])
 

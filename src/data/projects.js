@@ -1,4 +1,16 @@
-import { Gem, Shield, Smartphone, Globe, Terminal, ExternalLink, Github, Download, FileText, Mic, ClipboardList, Brain, Newspaper } from 'lucide-react'
+import Gem from 'lucide-react/dist/esm/icons/gem'
+import Shield from 'lucide-react/dist/esm/icons/shield'
+import Smartphone from 'lucide-react/dist/esm/icons/smartphone'
+import Globe from 'lucide-react/dist/esm/icons/globe'
+import Terminal from 'lucide-react/dist/esm/icons/terminal'
+import ExternalLink from 'lucide-react/dist/esm/icons/external-link'
+import Github from 'lucide-react/dist/esm/icons/github'
+import Download from 'lucide-react/dist/esm/icons/download'
+import FileText from 'lucide-react/dist/esm/icons/file-text'
+import Mic from 'lucide-react/dist/esm/icons/mic'
+import ClipboardList from 'lucide-react/dist/esm/icons/clipboard-list'
+import Brain from 'lucide-react/dist/esm/icons/brain'
+import Newspaper from 'lucide-react/dist/esm/icons/newspaper'
 import { assetUrl } from '../utils/assetUrl'
 
 export const projects = [

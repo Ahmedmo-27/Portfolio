@@ -1,4 +1,8 @@
-import { Heart, Github, Linkedin, Mail, ArrowUp } from 'lucide-react'
+import Heart from 'lucide-react/dist/esm/icons/heart'
+import Github from 'lucide-react/dist/esm/icons/github'
+import Linkedin from 'lucide-react/dist/esm/icons/linkedin'
+import Mail from 'lucide-react/dist/esm/icons/mail'
+import ArrowUp from 'lucide-react/dist/esm/icons/arrow-up'
 import { assetUrl } from '../utils/assetUrl'
 
 const navLinks = [

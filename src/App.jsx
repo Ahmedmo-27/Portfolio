@@ -4,9 +4,8 @@ import { ThemeProvider } from './context/ThemeContext'
 import Navbar from './components/Navbar'
 import Hero from './components/Hero'
 import SkeletonLoader from './components/SkeletonLoader'
-
-// Lazy load TechDivider - not critical for LCP, used multiple times
-const TechDivider = lazy(() => import('./components/TechDivider'))
+import LazySection from './components/LazySection'
+import TechDivider from './components/TechDivider'
 
 // Lazy load components for better performance
 const About = lazy(() => import('./components/About'))
@@ -36,62 +35,54 @@ function HomePage() {
     <>
       <Hero />
       
-      {/* Section dividers with tech theme - lazy loaded */}
-      <Suspense fallback={null}>
-        <TechDivider />
-      </Suspense>
-      <Suspense fallback={<SectionLoader />}>
+      {/* Section dividers with tech theme */}
+      <TechDivider />
+      
+      <LazySection fallback={<SectionLoader />}>
         <About />
-      </Suspense>
+      </LazySection>
       
-      <Suspense fallback={null}>
-        <TechDivider />
-      </Suspense>
-      <Suspense fallback={<SectionLoader />}>
+      <TechDivider />
+      
+      <LazySection fallback={<SectionLoader />}>
         <Achievements />
-      </Suspense>
+      </LazySection>
       
-      <Suspense fallback={null}>
-        <TechDivider />
-      </Suspense>
-      <Suspense fallback={<SectionLoader />}>
+      <TechDivider />
+      
+      <LazySection fallback={<SectionLoader />}>
         <Experience />
-      </Suspense>
+      </LazySection>
       
-      <Suspense fallback={null}>
-        <TechDivider />
-      </Suspense>
-      <Suspense fallback={<SectionLoader />}>
+      <TechDivider />
+      
+      <LazySection fallback={<SectionLoader />}>
         <Projects />
-      </Suspense>
+      </LazySection>
       
-      <Suspense fallback={null}>
-        <TechDivider />
-      </Suspense>
-      <Suspense fallback={<SectionLoader />}>
+      <TechDivider />
+      
+      <LazySection fallback={<SectionLoader />}>
         <Skills />
-      </Suspense>
+      </LazySection>
       
-      <Suspense fallback={null}>
-        <TechDivider />
-      </Suspense>
-      <Suspense fallback={<SectionLoader />}>
+      <TechDivider />
+      
+      <LazySection fallback={<SectionLoader />}>
         <Education />
-      </Suspense>
+      </LazySection>
       
-      <Suspense fallback={null}>
-        <TechDivider />
-      </Suspense>
-      <Suspense fallback={<SectionLoader />}>
+      <TechDivider />
+      
+      <LazySection fallback={<SectionLoader />}>
         <Volunteering />
-      </Suspense>
+      </LazySection>
       
-      <Suspense fallback={null}>
-        <TechDivider />
-      </Suspense>
-      <Suspense fallback={<SectionLoader />}>
+      <TechDivider />
+      
+      <LazySection fallback={<SectionLoader />}>
         <Contact />
-      </Suspense>
+      </LazySection>
     </>
   )
 }

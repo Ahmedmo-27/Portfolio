@@ -1,5 +1,12 @@
 import { useState, useEffect } from 'react'
-import { Mail, MapPin, Send, Github, Linkedin, CheckCircle, AlertCircle, Loader2 } from 'lucide-react'
+import Mail from 'lucide-react/dist/esm/icons/mail'
+import MapPin from 'lucide-react/dist/esm/icons/map-pin'
+import Send from 'lucide-react/dist/esm/icons/send'
+import Github from 'lucide-react/dist/esm/icons/github'
+import Linkedin from 'lucide-react/dist/esm/icons/linkedin'
+import CheckCircle from 'lucide-react/dist/esm/icons/check-circle'
+import AlertCircle from 'lucide-react/dist/esm/icons/alert-circle'
+import Loader2 from 'lucide-react/dist/esm/icons/loader-2'
 import { useInViewOnce } from '../utils/useInViewOnce'
 
 const contactInfo = [

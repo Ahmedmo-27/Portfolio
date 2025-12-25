@@ -1,5 +1,6 @@
 import { useRef, useState, useEffect } from 'react'
-import { Github, ChevronRight } from 'lucide-react'
+import Github from 'lucide-react/dist/esm/icons/github'
+import ChevronRight from 'lucide-react/dist/esm/icons/chevron-right'
 import CircuitBoard from './CircuitBoard'
 import ViewMoreButton from './ViewMoreButton'
 import MediaCarousel from './MediaCarousel'

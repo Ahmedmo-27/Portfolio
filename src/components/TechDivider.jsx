@@ -1,5 +1,7 @@
 import React, { useMemo, useRef, useEffect, useState } from 'react'
-import { Code2, Terminal, Cpu } from 'lucide-react'
+import Code2 from 'lucide-react/dist/esm/icons/code-2'
+import Terminal from 'lucide-react/dist/esm/icons/terminal'
+import Cpu from 'lucide-react/dist/esm/icons/cpu'
 
 const techIcons = [Code2, Terminal, Cpu]
 

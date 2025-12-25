@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo, useCallback } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { Menu, X } from 'lucide-react'
+import Menu from 'lucide-react/dist/esm/icons/menu'
+import X from 'lucide-react/dist/esm/icons/x'
 import ThemeToggle from './ThemeToggle'
 import { assetUrl } from '../utils/assetUrl'
 import './Navbar.css'
