@@ -4,7 +4,9 @@ import { ThemeProvider } from './context/ThemeContext'
 import Navbar from './components/Navbar'
 import Hero from './components/Hero'
 import SkeletonLoader from './components/SkeletonLoader'
-import TechDivider from './components/TechDivider'
+
+// Lazy load TechDivider - not critical for LCP, used multiple times
+const TechDivider = lazy(() => import('./components/TechDivider'))
 
 // Lazy load components for better performance
 const About = lazy(() => import('./components/About'))
@@ -34,43 +36,59 @@ function HomePage() {
     <>
       <Hero />
       
-      {/* Section dividers with tech theme */}
-      <TechDivider />
+      {/* Section dividers with tech theme - lazy loaded */}
+      <Suspense fallback={null}>
+        <TechDivider />
+      </Suspense>
       <Suspense fallback={<SectionLoader />}>
         <About />
       </Suspense>
       
-      <TechDivider />
+      <Suspense fallback={null}>
+        <TechDivider />
+      </Suspense>
       <Suspense fallback={<SectionLoader />}>
         <Achievements />
       </Suspense>
       
-      <TechDivider />
+      <Suspense fallback={null}>
+        <TechDivider />
+      </Suspense>
       <Suspense fallback={<SectionLoader />}>
         <Experience />
       </Suspense>
       
-      <TechDivider />
+      <Suspense fallback={null}>
+        <TechDivider />
+      </Suspense>
       <Suspense fallback={<SectionLoader />}>
         <Projects />
       </Suspense>
       
-      <TechDivider />
+      <Suspense fallback={null}>
+        <TechDivider />
+      </Suspense>
       <Suspense fallback={<SectionLoader />}>
         <Skills />
       </Suspense>
       
-      <TechDivider />
+      <Suspense fallback={null}>
+        <TechDivider />
+      </Suspense>
       <Suspense fallback={<SectionLoader />}>
         <Education />
       </Suspense>
       
-      <TechDivider />
+      <Suspense fallback={null}>
+        <TechDivider />
+      </Suspense>
       <Suspense fallback={<SectionLoader />}>
         <Volunteering />
       </Suspense>
       
-      <TechDivider />
+      <Suspense fallback={null}>
+        <TechDivider />
+      </Suspense>
       <Suspense fallback={<SectionLoader />}>
         <Contact />
       </Suspense>

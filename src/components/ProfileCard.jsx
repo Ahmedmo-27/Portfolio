@@ -104,6 +104,8 @@ const ProfileCardComponent = ({
       // Cache last values to avoid redundant style updates
       let lastPercentX = -1;
       let lastPercentY = -1;
+      let pendingStyleUpdate = null;
+      let styleRafId = null;
       
       const setVarsFromXY = (x, y) => {
         const wrap = wrapRef.current;
@@ -123,25 +125,40 @@ const ProfileCardComponent = ({
         lastPercentX = percentX;
         lastPercentY = percentY;
 
-        const centerX = percentX - 50;
-        const centerY = percentY - 50;
+        // Store pending update
+        pendingStyleUpdate = { percentX, percentY };
 
-        // Pre-calculate common values
-        const percentXDiv100 = percentX * 0.01;
-        const percentYDiv100 = percentY * 0.01;
-        const centerDist = Math.hypot(centerY, centerX);
-        const pointerFromCenter = clamp(centerDist * 0.02, 0, 1);
+        // Batch style updates using requestAnimationFrame to reduce layout work
+        if (!styleRafId) {
+          styleRafId = requestAnimationFrame(() => {
+            styleRafId = null;
+            if (!pendingStyleUpdate || !wrapRef.current) return;
+            
+            const { percentX, percentY } = pendingStyleUpdate;
+            pendingStyleUpdate = null;
+            
+            const wrap = wrapRef.current;
+            const centerX = percentX - 50;
+            const centerY = percentY - 50;
 
-        // Set CSS variables (already optimized with individual setProperty calls)
-        wrap.style.setProperty('--pointer-x', `${percentX}%`);
-        wrap.style.setProperty('--pointer-y', `${percentY}%`);
-        wrap.style.setProperty('--background-x', `${adjust(percentX, 0, 100, 35, 65)}%`);
-        wrap.style.setProperty('--background-y', `${adjust(percentY, 0, 100, 35, 65)}%`);
-        wrap.style.setProperty('--pointer-from-center', `${pointerFromCenter}`);
-        wrap.style.setProperty('--pointer-from-top', `${percentYDiv100}`);
-        wrap.style.setProperty('--pointer-from-left', `${percentXDiv100}`);
-        wrap.style.setProperty('--rotate-x', `${round(-centerX * 0.2)}deg`);
-        wrap.style.setProperty('--rotate-y', `${round(centerY * 0.25)}deg`);
+            // Pre-calculate common values
+            const percentXDiv100 = percentX * 0.01;
+            const percentYDiv100 = percentY * 0.01;
+            const centerDist = Math.hypot(centerY, centerX);
+            const pointerFromCenter = clamp(centerDist * 0.02, 0, 1);
+
+            // Batch CSS variable updates (CSS vars don't cause reflows, but batching reduces function call overhead)
+            wrap.style.setProperty('--pointer-x', `${percentX}%`);
+            wrap.style.setProperty('--pointer-y', `${percentY}%`);
+            wrap.style.setProperty('--background-x', `${adjust(percentX, 0, 100, 35, 65)}%`);
+            wrap.style.setProperty('--background-y', `${adjust(percentY, 0, 100, 35, 65)}%`);
+            wrap.style.setProperty('--pointer-from-center', `${pointerFromCenter}`);
+            wrap.style.setProperty('--pointer-from-top', `${percentYDiv100}`);
+            wrap.style.setProperty('--pointer-from-left', `${percentXDiv100}`);
+            wrap.style.setProperty('--rotate-x', `${round(-centerX * 0.2)}deg`);
+            wrap.style.setProperty('--rotate-y', `${round(centerY * 0.25)}deg`);
+          });
+        }
       };
 
     const step = (ts) => {
@@ -224,6 +241,9 @@ const ProfileCardComponent = ({
         rafId = null;
         running = false;
         lastTs = 0;
+        if (styleRafId) cancelAnimationFrame(styleRafId);
+        styleRafId = null;
+        pendingStyleUpdate = null;
       }
     };
   }, [shouldEnableTilt, tiltReady]);

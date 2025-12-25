@@ -46,7 +46,8 @@
   aspect-ratio: 0.718;
   width: 100%;
   /* Optimize rendering - ensure GPU acceleration */
-  contain: layout style;
+  contain: layout style paint;
+  will-change: transform;
   /* Reduce paint complexity for faster initial render */
   content-visibility: auto;
 }
@@ -239,6 +240,9 @@
 .pc-card-shell {
   position: relative;
   z-index: 1;
+  /* Optimize for transform animations - use GPU */
+  will-change: transform;
+  transform: translateZ(0); /* Force GPU acceleration */
 }
 
 .pc-card * {

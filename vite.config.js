@@ -42,6 +42,8 @@ export default defineConfig({
         drop_debugger: true,
         pure_funcs: ['console.log', 'console.info', 'console.debug'],
         passes: 2, // Multiple passes for better compression
+        unused: true, // Remove unused code
+        dead_code: true, // Remove dead code
       },
       format: {
         comments: false, // Remove all comments
@@ -53,12 +55,15 @@ export default defineConfig({
         manualChunks: (id) => {
           // Split node_modules into smaller chunks
           if (id.includes('node_modules')) {
-            if (id.includes('react') || id.includes('react-dom')) {
+            // React core - keep together for better tree-shaking
+            if (id.includes('react/') || id.includes('react-dom/')) {
               return 'vendor-react'
             }
+            // React Router - separate chunk
             if (id.includes('react-router')) {
               return 'vendor-router'
             }
+            // Lucide icons - separate chunk for lazy loading
             if (id.includes('lucide-react')) {
               return 'vendor-icons'
             }
@@ -72,11 +77,19 @@ export default defineConfig({
           if (id.includes('/components/Navbar')) {
             return 'component-navbar'
           }
+          if (id.includes('/components/TechDivider')) {
+            return 'component-divider'
+          }
         },
         // Use content hash for cache busting
         entryFileNames: 'assets/[name]-[hash].js',
         chunkFileNames: 'assets/[name]-[hash].js',
         assetFileNames: 'assets/[name]-[hash][extname]',
+      },
+      treeshake: {
+        moduleSideEffects: false, // Better tree-shaking
+        preset: 'recommended',
+        propertyReadSideEffects: false,
       },
     },
     // Target modern browsers for smaller bundles
@@ -85,8 +98,8 @@ export default defineConfig({
     sourcemap: false,
     // CSS code splitting
     cssCodeSplit: true,
-    // Increase chunk size warning limit
-    chunkSizeWarningLimit: 1000,
+    // Optimize chunk size warning limit
+    chunkSizeWarningLimit: 600,
     // Reduce main thread work by optimizing module resolution
     modulePreload: {
       polyfill: false, // Disable polyfill for modern browsers
