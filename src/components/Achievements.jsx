@@ -3,6 +3,7 @@ import { Trophy, Medal, Star, ExternalLink, FileText, Download } from 'lucide-re
 import { assetUrl } from '../utils/assetUrl'
 import { useNavigate } from 'react-router-dom'
 import './Achievements.css'
+import { useEffect } from 'react'
 
 const achievements = [
   {
@@ -53,6 +54,11 @@ const achievements = [
 
 export default function Achievements() {
   const { ref, isInView } = useInViewOnce()
+  useEffect(() => {
+    if (isInView && window.location.hash !== '#about') {
+      window.history.replaceState(null, '', '#about')
+    }
+  }, [isInView])
   const navigate = useNavigate()
   
   const handleExperienceClick = (e) => {

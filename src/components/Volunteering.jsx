@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Users, Trophy, Star, Heart, Rocket, Calendar, ExternalLink, ChevronUp } from 'lucide-react'
 import ViewMoreButton from './ViewMoreButton'
 import { useInViewOnce } from '../utils/useInViewOnce'
@@ -72,6 +72,12 @@ export default function Volunteering() {
   const [showAll, setShowAll] = useState(false)
   const initialDisplayCount = 2
   const displayedExperiences = showAll ? volunteeringExperiences : volunteeringExperiences.slice(0, initialDisplayCount)
+
+  useEffect(() => {
+    if (isInView && window.location.hash !== '#education') {
+      window.history.replaceState(null, '', '#education')
+    }
+  }, [isInView])
 
   return (
     <section 

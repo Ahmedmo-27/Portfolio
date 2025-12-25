@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
 
 /**
- * Observe an element and flip `isInView` to true the first time it enters the viewport.
- * Useful for one-time entrance animations.
+ * Observe an element and track `isInView` state continuously.
+ * `isInView` is true when the element is in the viewport, false when it's not.
+ * Useful for animations that should trigger when entering and reverse when leaving.
  */
 export function useInViewOnce(options = {}) {
   const { threshold = 0.1, rootMargin = '-100px', initialInView = false } = options
@@ -11,8 +12,6 @@ export function useInViewOnce(options = {}) {
   const [isInView, setIsInView] = useState(initialInView)
 
   useEffect(() => {
-    if (isInView) return
-
     const el = ref.current
     if (!el) return
 
@@ -24,17 +23,14 @@ export function useInViewOnce(options = {}) {
 
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsInView(true)
-          observer.disconnect()
-        }
+        setIsInView(entry.isIntersecting)
       },
       { threshold, rootMargin }
     )
 
     observer.observe(el)
     return () => observer.disconnect()
-  }, [isInView, rootMargin, threshold])
+  }, [rootMargin, threshold])
 
   return { ref, isInView }
 }

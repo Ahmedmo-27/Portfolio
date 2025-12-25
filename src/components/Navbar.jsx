@@ -130,17 +130,23 @@ export default function Navbar() {
     let pendingUpdate = null
     const UPDATE_THROTTLE = 200 // Increased throttle for better INP
     
-    // Track which sections are currently intersecting
+    // Track which sections are currently intersecting with their bounding rects
     const intersectingSections = new Map()
+    let isHeroInView = false
     
-    // Single observer for all sections - much better performance
+    // Observer for navigation sections - detects which section is prominently in view
     const observer = new IntersectionObserver(
       (entries) => {
         // Update intersection state for each entry
         for (const entry of entries) {
           const sectionId = entry.target.id
-          if (entry.isIntersecting && entry.intersectionRatio >= 0.2) {
-            intersectingSections.set(sectionId, entry.intersectionRatio)
+          if (entry.isIntersecting) {
+            // Store intersection ratio and bounding rect for better detection
+            intersectingSections.set(sectionId, {
+              ratio: entry.intersectionRatio,
+              boundingRect: entry.boundingClientRect,
+              rootBounds: entry.rootBounds
+            })
           } else {
             intersectingSections.delete(sectionId)
           }
@@ -162,24 +168,76 @@ export default function Navbar() {
         updateActiveSection()
       },
       {
-        rootMargin: '-80px 0px -50% 0px',
-        threshold: [0.2]
+        // Use a tighter rootMargin to detect sections that are actually in the viewport
+        // Top margin accounts for navbar, bottom margin ensures section is prominently visible
+        rootMargin: '-100px 0px -60% 0px',
+        threshold: [0.1, 0.2, 0.3, 0.4, 0.5]
+      }
+    )
+    
+    // Separate observer for Hero section - to clear highlights when Hero is visible
+    const heroObserver = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          isHeroInView = entry.isIntersecting && entry.intersectionRatio > 0.5
+        }
+        updateActiveSection()
+      },
+      {
+        rootMargin: '-100px 0px 0px 0px',
+        threshold: [0.5]
       }
     )
     
     const updateActiveSection = () => {
       lastUpdate = Date.now()
       
+      // If Hero is prominently in view, clear active section
+      if (isHeroInView) {
+        setActiveSection(prev => {
+          if (prev === '') return prev
+          if ('requestIdleCallback' in window) {
+            window.requestIdleCallback(() => {
+              if (location.hash) {
+                window.history.replaceState(null, '', location.pathname)
+              }
+            }, { timeout: 500 })
+          }
+          return ''
+        })
+        return
+      }
+      
       // Check current hash first - if it matches a valid section, prioritize it
       const currentHash = window.location.hash.slice(1)
       const hashSection = currentHash && sections.includes(currentHash) && document.getElementById(currentHash)
       
-      // Find the section with highest intersection ratio
+      // Find the section that is most prominently in view
+      // Prioritize sections that are:
+      // 1. Higher intersection ratio
+      // 2. Closer to the top of the viewport (after navbar offset)
       let topSection = null
-      let topRatio = 0
-      for (const [sectionId, ratio] of intersectingSections) {
-        if (ratio > topRatio) {
-          topRatio = ratio
+      let topScore = 0
+      const navbarHeight = 100 // Approximate navbar height with padding
+      
+      for (const [sectionId, data] of intersectingSections) {
+        if (!sections.includes(sectionId)) continue // Skip non-nav sections
+        
+        const { ratio, boundingRect } = data
+        // Calculate how much of the section is visible above the fold
+        // Sections closer to the top (after navbar) get higher priority
+        const topOffset = Math.max(0, boundingRect.top - navbarHeight)
+        const visibilityScore = ratio * (1 - Math.min(topOffset / window.innerHeight, 0.5))
+        
+        // Prefer sections that are more centered in viewport
+        const centerDistance = Math.abs(boundingRect.top + boundingRect.height / 2 - window.innerHeight / 2)
+        const centerScore = 1 - Math.min(centerDistance / window.innerHeight, 1)
+        
+        // Combined score: intersection ratio + visibility + center position
+        const score = ratio * 0.5 + visibilityScore * 0.3 + centerScore * 0.2
+        
+        if (score > topScore) {
+          topScore = score
           topSection = sectionId
         }
       }
@@ -215,6 +273,7 @@ export default function Navbar() {
           return topSection
         })
       } else if (window.scrollY < 100) {
+        // Clear active section when near top of page
         setActiveSection(prev => {
           if (prev === '') return prev
           if ('requestIdleCallback' in window) {
@@ -229,7 +288,13 @@ export default function Navbar() {
       }
     }
     
-    // Observe all sections with the single observer
+    // Observe Hero section
+    const heroElement = document.getElementById('hero')
+    if (heroElement) {
+      heroObserver.observe(heroElement)
+    }
+    
+    // Observe all navigation sections with the single observer
     for (const sectionId of sections) {
       const element = document.getElementById(sectionId)
       if (element) {
@@ -239,6 +304,7 @@ export default function Navbar() {
     
     return () => {
       observer.disconnect()
+      heroObserver.disconnect()
       if (pendingUpdate) clearTimeout(pendingUpdate)
     }
   }, [isHomePage, location.hash, location.pathname])

@@ -1,10 +1,15 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Download, Mail, ExternalLink, Github, Linkedin, Code2 } from 'lucide-react'
 import ProfileCard from './ProfileCard'
 import { assetUrl } from '../utils/assetUrl'
 import './Hero.css'
 
 const Hero = () => {
+  useEffect(() => {
+    window.addEventListener('scroll', { passive: true })
+    return () => window.removeEventListener('scroll')
+  }, [])
+
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20 pb-12 md:pb-25">
       {/* Background Elements */}
