@@ -2,5 +2,6 @@
 
 .circuit-board svg {
   mix-blend-mode: screen;
+  transform: translateZ(0); /* Promotes to a new compositor layer for hardware acceleration */
 }
 

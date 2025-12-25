@@ -29,9 +29,11 @@
     "autoprefixer": "^10.4.22",
     "concurrently": "^9.2.1",
     "postcss": "^8.5.6",
+    "rollup-plugin-visualizer": "^6.0.5",
     "tailwindcss": "^3.4.17",
     "terser": "^5.44.1",
-    "vite": "^7.2.4"
+    "vite": "^7.2.4",
+    "vite-plugin-purgecss": "^0.2.13"
   },
   "engines": {
     "node": ">=18.0.0",

@@ -1,9 +1,15 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import { visualizer } from 'rollup-plugin-visualizer';
 
 export default defineConfig({
   plugins: [
     react(),
+    visualizer({
+      open: true,
+      filename: 'dist/stats.html', 
+    }),
+
     {
       name: 'pdf-inline',
       configureServer(server) {
@@ -79,42 +85,31 @@ export default defineConfig({
     // Code splitting for better caching and smaller initial bundle
     rollupOptions: {
       output: {
-        manualChunks: (id) => {
-          // Split node_modules into smaller chunks for better parallel loading
-          if (id.includes('node_modules')) {
-            // React core - critical, keep together
-            if (id.includes('react/') || id.includes('react-dom/')) {
-              return 'vendor-react'
-            }
-            // React Router - separate chunk (can be loaded in parallel)
-            if (id.includes('react-router')) {
-              return 'vendor-router'
-            }
-            // Lucide icons - separate chunk for lazy loading (not critical)
-            if (id.includes('lucide-react')) {
-              return 'vendor-icons'
-            }
-            // Other vendor libraries
-            return 'vendor-other'
-          }
-          // Keep critical components (Hero, Navbar, ProfileCard) in main bundle
-          // to reduce critical path latency - they're needed for LCP
-          // Only split non-critical components
-          if (id.includes('/components/TechDivider')) {
-            return 'component-divider'
-          }
-          // Other large components can be split, but keep LCP-critical ones together
-        },
         // Use content hash for cache busting
         entryFileNames: 'assets/[name]-[hash].js',
         chunkFileNames: 'assets/[name]-[hash].js',
         assetFileNames: 'assets/[name]-[hash][extname]',
+        manualChunks: (id) => {
+          if (id.includes('node_modules')) {
+            if (id.includes('react-dom')) {
+              return 'vendor-react-dom';
+            }
+            if (id.includes('lucide-react')) {
+              return 'vendor-icons';
+            }
+            if (id.includes('react')) {
+              return 'vendor-react';
+            }
+            return 'vendor-other';
+          }
+        },
       },
       treeshake: {
         moduleSideEffects: false, // Better tree-shaking
         preset: 'recommended',
         propertyReadSideEffects: false,
       },
+
     },
     // Target modern browsers for smaller bundles
     target: 'es2020',

@@ -31,6 +31,16 @@ function SectionLoader() {
 }
 
 function HomePage() {
+  const [showDeferredSections, setShowDeferredSections] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowDeferredSections(true);
+    }, 100); // Small delay to ensure critical content renders first
+
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <>
       <Hero />
@@ -42,49 +52,53 @@ function HomePage() {
         <About />
       </LazySection>
       
-      <TechDivider />
-      
-      <LazySection fallback={<SectionLoader />}>
-        <Achievements />
-      </LazySection>
-      
-      <TechDivider />
-      
-      <LazySection fallback={<SectionLoader />}>
-        <Experience />
-      </LazySection>
-      
-      <TechDivider />
-      
-      <LazySection fallback={<SectionLoader />}>
-        <Projects />
-      </LazySection>
-      
-      <TechDivider />
-      
-      <LazySection fallback={<SectionLoader />}>
-        <Skills />
-      </LazySection>
-      
-      <TechDivider />
-      
-      <LazySection fallback={<SectionLoader />}>
-        <Education />
-      </LazySection>
-      
-      <TechDivider />
-      
-      <LazySection fallback={<SectionLoader />}>
-        <Volunteering />
-      </LazySection>
-      
-      <TechDivider />
-      
-      <LazySection fallback={<SectionLoader />}>
-        <Contact />
-      </LazySection>
+      {showDeferredSections && (
+        <>
+          <TechDivider />
+          
+          <LazySection fallback={<SectionLoader />}>
+            <Achievements />
+          </LazySection>
+          
+          <TechDivider />
+          
+          <LazySection fallback={<SectionLoader />}>
+            <Experience />
+          </LazySection>
+          
+          <TechDivider />
+          
+          <LazySection fallback={<SectionLoader />}>
+            <Projects />
+          </LazySection>
+          
+          <TechDivider />
+          
+          <LazySection fallback={<SectionLoader />}>
+            <Skills />
+          </LazySection>
+          
+          <TechDivider />
+          
+          <LazySection fallback={<SectionLoader />}>
+            <Education />
+          </LazySection>
+          
+          <TechDivider />
+          
+          <LazySection fallback={<SectionLoader />}>
+            <Volunteering />
+          </LazySection>
+          
+          <TechDivider />
+          
+          <LazySection fallback={<SectionLoader />}>
+            <Contact />
+          </LazySection>
+        </>
+      )}
     </>
-  )
+  );
 }
 
 function AppContent() {

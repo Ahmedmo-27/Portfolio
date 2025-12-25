@@ -215,7 +215,8 @@
     <!-- Load fonts synchronously in head to minimize flash -->
     <!-- font-display: swap shows fallback immediately, then swaps when custom font loads -->
     <!-- Loading synchronously ensures fonts start loading as early as possible -->
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&family=Syne:wght@400;500;600;700;800&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&family=Syne:wght@400;500;600;700;800&display=swap"></noscript>
     <!-- Optimize font loading to reduce visible flash -->
     <script>
       (function() {
@@ -246,11 +247,16 @@
       })();
     </script>
     
+    <!-- LCP Image Preload: Hint to the browser to fetch the LCP image immediately -->
+    <link 
+      rel="preload" 
+      href="/Ahmed%20Mostafa.webp" 
+      as="image" 
+      type="image/webp" 
+      fetchpriority="high"
+    >
   </head>
   <body>
-    <!-- LCP image: Hidden image tag for immediate discovery by browser -->
-    <!-- This ensures the image request is discoverable in the initial HTML document -->
-    <!-- Browser will cache this, so React's image won't cause duplicate load -->
     <img 
       src="/Ahmed Mostafa.webp" 
       alt="" 
