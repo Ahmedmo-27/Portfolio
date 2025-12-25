@@ -193,6 +193,9 @@
     
     <!-- Preload critical assets -->
     <!-- Logo is served from /public directory -->
+    <!-- Preload LCP image (ProfileCard avatar) for faster LCP -->
+    <!-- Note: This will be resolved by assetUrl() at runtime, but preload helps browser discover it early -->
+    <link rel="preload" as="image" href="/Assets/Ahmed Mostafa.webp" fetchpriority="high" />
   </head>
   <body>
     <div id="root"></div>

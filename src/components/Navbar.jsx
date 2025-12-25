@@ -359,24 +359,31 @@ export default function Navbar() {
       if (!targetElement) return
       
       const scrollToTarget = () => {
-        // Get the actual navbar height dynamically
-        const navbar = document.querySelector('header')
-        const navbarHeight = navbar ? navbar.getBoundingClientRect().height : (window.innerWidth >= 768 ? 80 : 70)
+        // Batch DOM queries to avoid forced reflows
+        // Use requestAnimationFrame to batch all layout reads together
+        requestAnimationFrame(() => {
+          // Batch all DOM reads together to minimize reflows
+          const navbar = document.querySelector('header')
+          const navbarRect = navbar ? navbar.getBoundingClientRect() : null
+          const elementRect = targetElement.getBoundingClientRect()
+          
+          // Calculate values from batched reads
+          const navbarHeight = navbarRect ? navbarRect.height : (window.innerWidth >= 768 ? 80 : 70)
+          const elementTop = elementRect.top + window.scrollY
+          const offset = navbarHeight + 16
+          const targetScrollY = elementTop - offset
 
-        // Calculate the target scroll position
-        const elementRect = targetElement.getBoundingClientRect()
-        const elementTop = elementRect.top + window.scrollY
-        // Account for navbar height plus a small gap so headings don't sit under the navbar
-        const offset = navbarHeight + 16
-        const targetScrollY = elementTop - offset
-
-        window.scrollTo({
-          top: Math.max(0, targetScrollY),
-          behavior: 'smooth'
+          // Batch write operations in next frame
+          requestAnimationFrame(() => {
+            window.scrollTo({
+              top: Math.max(0, targetScrollY),
+              behavior: 'smooth'
+            })
+            
+            // Update URL hash
+            window.history.replaceState(null, '', `#${targetId}`)
+          })
         })
-        
-        // Update URL hash
-        window.history.replaceState(null, '', `#${targetId}`)
       }
 
       // On mobile, wait for menu to close before scrolling (mobile browsers can ignore scrollTo while overflow is hidden)

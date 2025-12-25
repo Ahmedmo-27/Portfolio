@@ -41,6 +41,10 @@
   touch-action: none;
   margin-left: auto;
   margin-right: auto;
+  /* Prevent layout shift by reserving space */
+  min-height: 400px;
+  aspect-ratio: 0.718;
+  width: 100%;
 }
 
 /* Loading skeleton state */
@@ -186,6 +190,9 @@
   overflow: hidden;
   border: 1px solid var(--color-border);
   will-change: transform;
+  /* Prevent layout shift by ensuring dimensions are set */
+  width: 100%;
+  min-height: 400px;
 }
 
 /* Optimize for touch devices */
@@ -309,8 +316,10 @@
   will-change: transform;
   contain: layout style;
   backface-visibility: hidden;
-  will-change: transform;
   transition: transform 120ms ease-out, opacity 0.3s ease;
+  /* Prevent layout shift - ensure image has dimensions */
+  min-height: 0;
+  object-fit: contain;
 }
 
 .pc-avatar-content .avatar.avatar-error {
