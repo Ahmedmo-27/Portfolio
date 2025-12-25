@@ -107,15 +107,17 @@ const Hero = () => {
           </div>
         </div>
 
-        {/* Scroll Indicator with tech theme - CSS animated */}
-        <div className="absolute bottom-4 md:bottom-8 left-1/2 -translate-x-1/2 translate-y-11 md:translate-y-0 hero-scroll-indicator">
-          <div className="hero-scroll-bounce flex flex-col items-center gap-2 text-muted">
-            <div className="flex items-center gap-2 font-mono text-xs">
-              <span className="text-primary-400">scroll</span>
-              <span className="text-border">(</span>
-              <span className="text-accent-cyan">↓</span>
-              <span className="text-border">)</span>
-            </div>
+      </div>
+
+      {/* Scroll Indicator with tech theme - CSS animated */}
+      {/* Moved outside container to position relative to hero section */}
+      <div className="absolute bottom-4 md:bottom-8 left-1/2 -translate-x-1/2 hero-scroll-indicator z-20">
+        <div className="hero-scroll-bounce flex flex-col items-center gap-2 text-muted">
+          <div className="flex items-center gap-2 font-mono text-xs">
+            <span className="text-primary-400">scroll</span>
+            <span className="text-border">(</span>
+            <span className="text-accent-cyan">↓</span>
+            <span className="text-border">)</span>
           </div>
         </div>
       </div>

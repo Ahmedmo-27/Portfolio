@@ -65,42 +65,52 @@ export default function Achievements() {
     e.preventDefault()
     navigate('/#experience')
     // Smooth scroll to experience section after navigation
-    setTimeout(() => {
-      const experienceSection = document.getElementById('experience')
-      if (experienceSection) {
-        const navbar = document.querySelector('header')
-        const navbarHeight = navbar ? navbar.getBoundingClientRect().height : 80
-        const elementRect = experienceSection.getBoundingClientRect()
-        const elementTop = elementRect.top + window.scrollY
-        const offset = navbarHeight + 16
-        const targetScrollY = elementTop - offset
-        window.scrollTo({
-          top: Math.max(0, targetScrollY),
-          behavior: 'smooth'
-        })
-      }
-    }, 100)
+    // Use requestAnimationFrame to batch layout reads and avoid forced reflow
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        const experienceSection = document.getElementById('experience')
+        if (experienceSection) {
+          // Batch all layout reads together
+          const navbar = document.querySelector('header')
+          const navbarRect = navbar ? navbar.getBoundingClientRect() : null
+          const elementRect = experienceSection.getBoundingClientRect()
+          const navbarHeight = navbarRect ? navbarRect.height : 80
+          const elementTop = elementRect.top + window.scrollY
+          const offset = navbarHeight + 16
+          const targetScrollY = elementTop - offset
+          window.scrollTo({
+            top: Math.max(0, targetScrollY),
+            behavior: 'smooth'
+          })
+        }
+      })
+    })
   }
 
   const handleProjectsClick = (e) => {
     e.preventDefault()
     navigate('/#projects')
     // Smooth scroll to projects section after navigation
-    setTimeout(() => {
-      const projectsSection = document.getElementById('projects')
-      if (projectsSection) {
-        const navbar = document.querySelector('header')
-        const navbarHeight = navbar ? navbar.getBoundingClientRect().height : 80
-        const elementRect = projectsSection.getBoundingClientRect()
-        const elementTop = elementRect.top + window.scrollY
-        const offset = navbarHeight + 16
-        const targetScrollY = elementTop - offset
-        window.scrollTo({
-          top: Math.max(0, targetScrollY),
-          behavior: 'smooth'
-        })
-      }
-    }, 100)
+    // Use requestAnimationFrame to batch layout reads and avoid forced reflow
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        const projectsSection = document.getElementById('projects')
+        if (projectsSection) {
+          // Batch all layout reads together
+          const navbar = document.querySelector('header')
+          const navbarRect = navbar ? navbar.getBoundingClientRect() : null
+          const elementRect = projectsSection.getBoundingClientRect()
+          const navbarHeight = navbarRect ? navbarRect.height : 80
+          const elementTop = elementRect.top + window.scrollY
+          const offset = navbarHeight + 16
+          const targetScrollY = elementTop - offset
+          window.scrollTo({
+            top: Math.max(0, targetScrollY),
+            behavior: 'smooth'
+          })
+        }
+      })
+    })
   }
 
   return (

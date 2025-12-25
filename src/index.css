@@ -78,6 +78,8 @@
     background-color: var(--color-background);
     color: var(--color-foreground);
     overflow-x: hidden;
+    /* Match Outfit font metrics to prevent layout shifts when font loads */
+    font-size-adjust: 0.50;
   }
 
   /* Dark mode background - using pseudo-element for fixed bg to avoid scroll repaint */

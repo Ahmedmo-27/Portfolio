@@ -10,25 +10,55 @@ section[class*="hero"] {
 /* Target the container div that's causing CLS - matches: div.relative.z-10.max-w-7xl.mx-auto.px-4.sm:px-6.lg:px-8 */
 #hero > div.relative.z-10 {
   /* Reserve space to prevent layout shifts */
-  min-height: 1px;
+  min-height: 400px;
   /* Ensure stable dimensions during font swap */
   contain: layout style;
-  /* Prevent layout shifts by ensuring container maintains dimensions */
+  /* Prevent reflow when fonts load */
   will-change: auto;
 }
 
 /* Additional selector for the exact class combination causing CLS */
 #hero div[class*="relative"][class*="z-10"][class*="max-w-7xl"] {
   contain: layout style;
+  /* Reserve minimum height to prevent shifts */
+  min-height: 400px;
 }
 
-/* Prevent font-related layout shifts */
+/* Prevent font-related layout shifts using font-size-adjust */
+/* This ensures fallback fonts match custom font metrics */
 #hero h1 {
+  /* Match font metrics to prevent layout shift */
+  font-size-adjust: 0.52; /* Syne font metric - matches fallback */
   /* Reserve space for text to prevent shifts when font loads */
-  min-height: 1.2em;
   line-height: 1.2;
   /* Prevent layout shift during font swap */
   contain: layout;
+  /* Reserve space for largest text size - responsive */
+  min-height: 4rem;
+}
+
+@media (min-width: 640px) {
+  #hero h1 {
+    min-height: 5rem;
+  }
+}
+
+@media (min-width: 768px) {
+  #hero h1 {
+    min-height: 6rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  #hero h1 {
+    min-height: 7rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  #hero h1 {
+    min-height: 8rem;
+  }
 }
 
 /* Prevent layout shifts in text elements */
@@ -36,18 +66,39 @@ section[class*="hero"] {
 #hero div.text-base,
 #hero div.text-sm {
   /* Reserve minimum height to prevent shifts */
-  min-height: 1em;
+  min-height: 1.5em;
+  /* Match font metrics for Outfit */
+  font-size-adjust: 0.50; /* Outfit font metric */
   contain: layout;
+}
+
+/* Prevent shifts in monospace text */
+#hero .font-mono {
+  /* Match JetBrains Mono metrics */
+  font-size-adjust: 0.48; /* Monospace font metric */
+  min-height: 1.5em;
+}
+
+/* Prevent shifts in all text containers */
+#hero > div.relative.z-10 > div {
+  /* Reserve space for grid content */
+  min-height: 300px;
 }
 
 /* Scroll indicator animations - CSS only, no JS */
 .hero-scroll-indicator {
   opacity: 0;
   animation: heroFadeIn 1s ease-out 1.5s forwards;
+  /* Ensure it's visible and positioned correctly */
+  pointer-events: none;
+  /* Prevent layout shifts */
+  will-change: opacity, transform;
 }
 
 .hero-scroll-bounce {
   animation: heroBounce 2s ease-in-out infinite;
+  /* Ensure text is visible */
+  white-space: nowrap;
 }
 
 @keyframes heroFadeIn {

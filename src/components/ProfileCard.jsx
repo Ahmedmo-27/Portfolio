@@ -253,7 +253,10 @@ const ProfileCardComponent = ({
   const rectCacheValidRef = useRef(false);
 
   const getOffsets = (evt, el) => {
+    // Use cached rect to avoid forced reflow
+    // Only read getBoundingClientRect when cache is invalid
     if (!rectCacheValidRef.current) {
+      // Batch read: get all rect properties at once
       const rect = el.getBoundingClientRect();
       rectCacheRef.current = {
         left: rect.left,
@@ -264,6 +267,7 @@ const ProfileCardComponent = ({
       rectCacheValidRef.current = true;
     }
     const cached = rectCacheRef.current;
+    // Use cached values - no layout read
     return { 
       x: evt.clientX - cached.left, 
       y: evt.clientY - cached.top 
@@ -325,20 +329,27 @@ const ProfileCardComponent = ({
       const { beta, gamma } = event;
       if (beta == null || gamma == null) return;
 
-      // Use cached dimensions if available
+      // Use cached dimensions if available - avoid forced reflow
       const dimensions = tiltEngine.getDimensions ? tiltEngine.getDimensions() : null;
       if (!dimensions || dimensions.width === 0 || dimensions.height === 0) {
-        const shell = shellRef.current;
-        if (!shell) return;
-        const centerX = shell.clientWidth * 0.5;
-        const centerY = shell.clientHeight * 0.5;
-        const x = clamp(centerX + gamma * mobileTiltSensitivity, 0, shell.clientWidth);
-        const y = clamp(
-          centerY + (beta - ANIMATION_CONFIG.DEVICE_BETA_OFFSET) * mobileTiltSensitivity,
-          0,
-          shell.clientHeight
-        );
-        tiltEngine.setTarget(x, y);
+        // Defer dimension reads to next frame to avoid forced reflow
+        requestAnimationFrame(() => {
+          const shell = shellRef.current;
+          if (!shell) return;
+          // Batch all reads together
+          const width = shell.clientWidth;
+          const height = shell.clientHeight;
+          const centerX = width * 0.5;
+          const centerY = height * 0.5;
+          const x = clamp(centerX + gamma * mobileTiltSensitivity, 0, width);
+          const y = clamp(
+            centerY + (beta - ANIMATION_CONFIG.DEVICE_BETA_OFFSET) * mobileTiltSensitivity,
+            0,
+            height
+          );
+          tiltEngine.setTarget(x, y);
+        });
+        return;
       } else {
         const centerX = dimensions.width * 0.5;
         const centerY = dimensions.height * 0.5;
@@ -393,17 +404,22 @@ const ProfileCardComponent = ({
       tiltEngine.invalidateDimensions();
     }
     
-    // Adjust initial offsets for mobile devices
-    const isMobile = window.innerWidth <= 768;
-    const xOffset = isMobile ? ANIMATION_CONFIG.INITIAL_X_OFFSET * 0.5 : ANIMATION_CONFIG.INITIAL_X_OFFSET;
-    const yOffset = isMobile ? ANIMATION_CONFIG.INITIAL_Y_OFFSET * 0.5 : ANIMATION_CONFIG.INITIAL_Y_OFFSET;
-    
-    const shellWidth = shell.clientWidth || 0;
-    const initialX = shellWidth - xOffset;
-    const initialY = yOffset;
-    tiltEngine.setImmediate(initialX, initialY);
-    tiltEngine.toCenter();
-    tiltEngine.beginInitial(ANIMATION_CONFIG.INITIAL_DURATION);
+    // Defer initial dimension reads to avoid forced reflow
+    // Batch all layout reads in requestAnimationFrame
+    requestAnimationFrame(() => {
+      // Adjust initial offsets for mobile devices
+      const isMobile = window.innerWidth <= 768;
+      const xOffset = isMobile ? ANIMATION_CONFIG.INITIAL_X_OFFSET * 0.5 : ANIMATION_CONFIG.INITIAL_X_OFFSET;
+      const yOffset = isMobile ? ANIMATION_CONFIG.INITIAL_Y_OFFSET * 0.5 : ANIMATION_CONFIG.INITIAL_Y_OFFSET;
+      
+      // Batch read: get dimensions once
+      const shellWidth = shell.clientWidth || 0;
+      const initialX = shellWidth - xOffset;
+      const initialY = yOffset;
+      tiltEngine.setImmediate(initialX, initialY);
+      tiltEngine.toCenter();
+      tiltEngine.beginInitial(ANIMATION_CONFIG.INITIAL_DURATION);
+    });
 
     // Handle resize to invalidate cache
     const handleResize = () => {
