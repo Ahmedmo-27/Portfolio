@@ -19,7 +19,12 @@ const getGalleryItems = (project) => {
       if (src) items.push({ type: 'image', src })
     }
   }
-  if (project.media?.video) {
+  // Allow video to be a string or an array of strings
+  if (Array.isArray(project.media?.video)) {
+    for (const src of project.media.video) {
+      if (src) items.push({ type: 'video', src })
+    }
+  } else if (project.media?.video) {
     items.push({ type: 'video', src: project.media.video })
   }
   if (Array.isArray(project.media?.presentation)) {

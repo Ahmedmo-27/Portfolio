@@ -7,8 +7,8 @@ import { projects } from '../data/projects'
 import { useInViewOnce } from '../utils/useInViewOnce'
 import './Projects.css'
 
-// Keep only first 2 projects for the home page
-const initialDisplayCount = 2
+// Keep only first 3 projects for the home page
+const initialDisplayCount = 3
 const displayedProjects = projects.slice(0, initialDisplayCount)
 
 export default function Projects() {
