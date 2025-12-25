@@ -97,15 +97,9 @@ function HomePage() {
 }
 
 function AppContent() {
-  const [isLoaded, setIsLoaded] = useState(false)
   const [shouldLoadFooter, setShouldLoadFooter] = useState(false)
 
   useEffect(() => {
-    // Defer opacity transition to avoid blocking initial render
-    requestAnimationFrame(() => {
-      setIsLoaded(true)
-    })
-    
     // Defer footer loading until after initial render
     if ('requestIdleCallback' in window) {
       window.requestIdleCallback(() => {
@@ -118,7 +112,7 @@ function AppContent() {
 
   return (
     <BrowserRouter>
-      <div className={`min-h-screen transition-opacity duration-700 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
+      <div className="min-h-screen">
         <a 
           href="#main-content" 
           className="skip-link"

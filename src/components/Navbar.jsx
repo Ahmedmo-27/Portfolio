@@ -430,7 +430,7 @@ export default function Navbar() {
                 className="w-8 h-8 object-contain"
                 loading="eager"
                 decoding="async"
-                fetchPriority="high"
+                fetchPriority="low"
               />
             </div>
             <span className="text-xl font-display font-bold text-foreground group-hover:text-primary-400 transition-colors">

@@ -42,8 +42,19 @@
     <link rel="preconnect" href="https://portfolio.ahmed2303479.workers.dev" crossorigin />
     
     <!-- Preload LCP image (ProfileCard avatar) to reduce resource load delay -->
-    <!-- This makes the image discoverable in the initial HTML document -->
+    <!-- Multiple strategies to ensure earliest possible image discovery and loading -->
     <link rel="preload" href="/Ahmed Mostafa.webp" as="image" type="image/webp" fetchpriority="high" />
+    
+    <!-- Inline script to start fetching image immediately, before React hydration -->
+    <!-- This reduces resource load delay by starting the request as early as possible -->
+    <script>
+      (function() {
+        const img = new Image();
+        img.src = '/Ahmed Mostafa.webp';
+        img.fetchPriority = 'high';
+        img.decoding = 'sync';
+      })();
+    </script>
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
