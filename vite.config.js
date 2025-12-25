@@ -80,33 +80,30 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: (id) => {
-          // Split node_modules into smaller chunks
+          // Split node_modules into smaller chunks for better parallel loading
           if (id.includes('node_modules')) {
-            // React core - keep together for better tree-shaking
+            // React core - critical, keep together
             if (id.includes('react/') || id.includes('react-dom/')) {
               return 'vendor-react'
             }
-            // React Router - separate chunk
+            // React Router - separate chunk (can be loaded in parallel)
             if (id.includes('react-router')) {
               return 'vendor-router'
             }
-            // Lucide icons - separate chunk for lazy loading
+            // Lucide icons - separate chunk for lazy loading (not critical)
             if (id.includes('lucide-react')) {
               return 'vendor-icons'
             }
             // Other vendor libraries
             return 'vendor-other'
           }
-          // Split large components into their own chunks
-          if (id.includes('/components/ProfileCard')) {
-            return 'component-profile'
-          }
-          if (id.includes('/components/Navbar')) {
-            return 'component-navbar'
-          }
+          // Keep critical components (Hero, Navbar, ProfileCard) in main bundle
+          // to reduce critical path latency - they're needed for LCP
+          // Only split non-critical components
           if (id.includes('/components/TechDivider')) {
             return 'component-divider'
           }
+          // Other large components can be split, but keep LCP-critical ones together
         },
         // Use content hash for cache busting
         entryFileNames: 'assets/[name]-[hash].js',

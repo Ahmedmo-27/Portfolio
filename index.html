@@ -225,6 +225,7 @@
       aria-hidden="true"
     />
     <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>    
+    <!-- Load main script asynchronously to prevent blocking -->
+    <script type="module" src="/src/main.jsx" async></script>    
   </body>
 </html>
