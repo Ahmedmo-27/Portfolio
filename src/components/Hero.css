@@ -6,6 +6,40 @@ section[class*="hero"] {
   contain: layout style;
 }
 
+/* Prevent layout shifts in Hero container when fonts load */
+/* Target the container div that's causing CLS - matches: div.relative.z-10.max-w-7xl.mx-auto.px-4.sm:px-6.lg:px-8 */
+#hero > div.relative.z-10 {
+  /* Reserve space to prevent layout shifts */
+  min-height: 1px;
+  /* Ensure stable dimensions during font swap */
+  contain: layout style;
+  /* Prevent layout shifts by ensuring container maintains dimensions */
+  will-change: auto;
+}
+
+/* Additional selector for the exact class combination causing CLS */
+#hero div[class*="relative"][class*="z-10"][class*="max-w-7xl"] {
+  contain: layout style;
+}
+
+/* Prevent font-related layout shifts */
+#hero h1 {
+  /* Reserve space for text to prevent shifts when font loads */
+  min-height: 1.2em;
+  line-height: 1.2;
+  /* Prevent layout shift during font swap */
+  contain: layout;
+}
+
+/* Prevent layout shifts in text elements */
+#hero p,
+#hero div.text-base,
+#hero div.text-sm {
+  /* Reserve minimum height to prevent shifts */
+  min-height: 1em;
+  contain: layout;
+}
+
 /* Scroll indicator animations - CSS only, no JS */
 .hero-scroll-indicator {
   opacity: 0;
