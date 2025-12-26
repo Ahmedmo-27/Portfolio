@@ -22,6 +22,7 @@ export default function Projects() {
       window.history.replaceState(null, '', '#projects')
     }
   }, [isInView])
+  
   const [mediaShouldLoad, setMediaShouldLoad] = useState({}) // projectId -> boolean
   const projectItemElsRef = useRef({}) // projectId -> HTMLElement
   const mediaObserverRef = useRef(null)
@@ -116,7 +117,7 @@ export default function Projects() {
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div ref={ref}>
           {/* Section Header */}
-          <div className={`text-center mb-16 ${isInView ? 'animate-fade-in-up' : 'opacity-0'}`}>
+          <div className='text-center mb-16'>
             <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-accent-violet/10 border border-accent-violet/20 text-accent-violet text-sm font-medium mb-4">
               <span className="w-1.5 h-1.5 rounded-full bg-accent-violet" aria-hidden="true" />
               Projects
@@ -145,7 +146,7 @@ export default function Projects() {
                     delete projectItemElsRef.current[project.id]
                   }
                 }}
-                className={`${project.isHighlighted ? 'relative' : ''} projects-item ${isInView ? 'animate-fade-in-up' : 'opacity-0'}`}
+                className={`${project.isHighlighted ? 'relative' : ''} projects-item animate-fade-in-up`}
                 role="listitem"
                 aria-labelledby={`project-title-${project.id}`}
               >
@@ -274,7 +275,7 @@ export default function Projects() {
 
           {/* View More Button */}
           <div
-            className={`mt-12 text-center flex flex-col items-center gap-4 ${isInView ? 'animate-fade-in-up animate-delay-4' : 'opacity-0'}`}
+            className='mt-12 text-center flex flex-col items-center gap-4'
           >
             {projects.length > initialDisplayCount && (
               <ViewMoreButton

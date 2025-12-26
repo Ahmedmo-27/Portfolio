@@ -7,7 +7,6 @@ import ExternalLink from 'lucide-react/dist/esm/icons/external-link'
 import BadgeCheck from 'lucide-react/dist/esm/icons/badge-check'
 import ChevronDown from 'lucide-react/dist/esm/icons/chevron-down'
 import { useInViewOnce } from '../utils/useInViewOnce'
-import './Education.css'
 
 const education = {
   university: 'Misr International University (MIU)',
@@ -136,7 +135,7 @@ export default function Education() {
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div ref={ref}>
           {/* Section Header */}
-          <div className={`text-center mb-12 md:mb-16 ${isInView ? 'animate-fade-in-up' : 'opacity-0'}`}>
+          <div className='text-center mb-12 md:mb-16'>
             <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-accent-violet/10 border border-accent-violet/20 text-accent-violet text-sm font-medium mb-4">
               <span className="w-1.5 h-1.5 rounded-full bg-accent-violet" aria-hidden="true" />
               Education & Certifications
@@ -152,7 +151,7 @@ export default function Education() {
 
           <div className="grid lg:grid-cols-5 gap-8 lg:gap-10 education-layout items-start">
             {/* Education Card */}
-            <div className={`${isInView ? 'animate-fade-in-up animate-delay-2' : 'opacity-0'} lg:col-span-2`}>
+            <div className= 'lg:col-span-2'>
               <div className="glass-card p-6 md:p-8 h-full">
                 {/* University Header */}
                 <div className="flex items-start gap-4 mb-6">
@@ -225,7 +224,7 @@ export default function Education() {
               </div>
             </div>
             {/* Certifications */}
-            <div className={`${isInView ? 'animate-fade-in-up animate-delay-2' : 'opacity-0'} lg:col-span-3`}>
+            <div className={`lg:col-span-3`}>
               <div className="space-y-5 md:space-y-6">
                 <div className="flex items-center justify-between gap-2 mb-2">
                   <h3 className="text-lg font-display font-bold text-foreground flex items-center gap-2">
@@ -245,7 +244,7 @@ export default function Education() {
                       ref={(el) => {
                         if (el) el.style.setProperty('--animation-delay', `${index * 0.08 + 0.25}s`)
                       }}
-                      className={`glass-card p-5 sm:p-6 group relative overflow-hidden transition-transform hover:-translate-y-1 focus-visible:-translate-y-1 education-cert-item ${isInView ? 'animate-fade-in-up' : 'opacity-0'}`}
+                      className='glass-card p-5 sm:p-6 group relative overflow-hidden transition-transform hover:-translate-y-1 focus-visible:-translate-y-1 education-cert-item'
                       tabIndex={0}
                       aria-label={cert.title}
                     >

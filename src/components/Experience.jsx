@@ -2,18 +2,13 @@ import { useState, useMemo, useEffect } from 'react'
 import Building2 from 'lucide-react/dist/esm/icons/building-2'
 import Award from 'lucide-react/dist/esm/icons/award'
 import Code from 'lucide-react/dist/esm/icons/code'
-import Globe from 'lucide-react/dist/esm/icons/globe'
 import Calendar from 'lucide-react/dist/esm/icons/calendar'
 import MapPin from 'lucide-react/dist/esm/icons/map-pin'
 import Cpu from 'lucide-react/dist/esm/icons/cpu'
-import ChevronUp from 'lucide-react/dist/esm/icons/chevron-up'
-import ChevronRight from 'lucide-react/dist/esm/icons/chevron-right'
 import FileText from 'lucide-react/dist/esm/icons/file-text'
 import ExternalLink from 'lucide-react/dist/esm/icons/external-link'
-import ViewMoreButton from './ViewMoreButton'
 import { assetUrl } from '../utils/assetUrl'
 import { useInViewOnce } from '../utils/useInViewOnce'
-import './Experience.css'
 
 const experiences = [
   {
@@ -110,7 +105,7 @@ export default function Experience() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div ref={ref}>
           {/* Section Header */}
-          <div className={`text-center mb-12 md:mb-16 ${isInView ? 'animate-fade-in-left' : 'opacity-0'}`}>
+          <div className= 'text-center mb-12 md:mb-16'>
             <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-accent-emerald/10 border border-accent-emerald/20 text-accent-emerald text-sm font-medium mb-4">
               <span className="w-1.5 h-1.5 rounded-full bg-accent-emerald" aria-hidden="true" />
               Experience
@@ -126,27 +121,26 @@ export default function Experience() {
 
           {/* Timeline */}
           <div className="relative" role="list" aria-label="Work experience timeline">
-            {/* Timeline Line */}
-            <div 
-              className="absolute left-4 md:left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-primary-500 via-accent-cyan to-accent-emerald transform md:-translate-x-1/2" 
-              aria-hidden="true" 
-            />
+                  <div 
+                    className="absolute left-4 md:left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-primary-500 via-accent-cyan to-accent-emerald transform md:-translate-x-1/2" 
+                    aria-hidden="true" 
+                  />
 
-            {/* Experience Items */}
-            <div className="space-y-8 md:space-y-12">
-              {displayedExperiences.map((exp, index) => (
-                <article
-                  key={exp.company}
-                  ref={(el) => {
-                    if (el) el.style.setProperty('--animation-delay', `${index * 0.15 + 0.2}s`)
-                  }}
-                  className={`relative flex flex-col md:flex-row gap-6 md:gap-8 ${
-                    index % 2 === 0 ? 'md:flex-row-reverse' : ''
-                  } experience-item ${isInView ? 'animate-fade-in-left' : 'opacity-0'}`}
-                  role="listitem"
-                  aria-labelledby={`exp-title-${index}`}
-                >
-                  {/* Timeline Dot */}
+                  {/* Experience Items */}
+                  <div className="space-y-8 md:space-y-12">
+                    {displayedExperiences.map((exp, index) => (
+                    <article
+                      key={exp.company}
+                      ref={(el) => {
+                      if (el) el.style.setProperty('--animation-delay', `${index * 0.15 + 0.2}s`)
+                      }}
+                      className={`relative flex flex-col md:flex-row gap-6 md:gap-8 ${
+                      index % 2 === 0 ? 'md:flex-row-reverse' : ''
+                      } experience-item animate-fade-in-left`}
+                      role="listitem"
+                      aria-labelledby={`exp-title-${index}`}
+                    >
+                      {/* Timeline Dot */}
                   <div 
                     className="absolute left-4 md:left-1/2 w-3 md:w-4 h-3 md:h-4 rounded-full bg-card border-2 border-primary-500 transform -translate-x-1/2 z-10" 
                     aria-hidden="true" 
@@ -254,20 +248,6 @@ export default function Experience() {
                 </article>
               ))}
             </div>
-          </div>
-
-          {/* View More Button */}
-          <div
-            className={`mt-12 text-center ${isInView ? 'animate-fade-in-left animate-delay-4' : 'opacity-0'}`}
-          >
-            {experiences.length > initialDisplayCount && (
-              <ViewMoreButton
-                onClick={() => setShowAll(!showAll)}
-                text={showAll ? 'Show Less' : 'View More Experience'}
-                variant="outline"
-                icon={showAll ? ChevronUp : ChevronRight}
-              />
-            )}
           </div>
         </div>
       </div>

@@ -9,7 +9,6 @@ import FolderGit2 from 'lucide-react/dist/esm/icons/folder-git-2'
 import Award from 'lucide-react/dist/esm/icons/award'
 import Building2 from 'lucide-react/dist/esm/icons/building-2'
 import CircuitBoard from './CircuitBoard'
-import './About.css'
 
 const highlights = [
   {
@@ -77,7 +76,7 @@ export default function About() {
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div ref={ref}>
           {/* Section Header */}
-          <div className={`text-center mb-12 md:mb-16 ${isInView ? 'animate-fade-in-up' : 'opacity-0'}`}>
+          <div className='text-center mb-12 md:mb-16'>
             <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary-500/10 border border-primary-500/20 text-primary-400 text-sm font-medium mb-4">
               <span className="w-1.5 h-1.5 rounded-full bg-primary-400" aria-hidden="true" />
               About Me
@@ -93,7 +92,7 @@ export default function About() {
 
           {/* Stats Row - Enhanced */}
           <div 
-            className={`grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-12 md:mb-16 ${isInView ? 'animate-fade-in-up animate-delay-2' : 'opacity-0'}`}
+            className='grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-12 md:mb-16'
           >
             {stats.map((stat, index) => (
               <div
@@ -101,7 +100,7 @@ export default function About() {
                 ref={(el) => {
                   if (el) el.style.setProperty('--animation-delay', `${index * 0.1 + 0.3}s`)
                 }}
-                className={`relative group transition-transform duration-200 hover:-translate-y-1 about-stat-item ${isInView ? 'animate-fade-in-up' : 'opacity-0'}`}
+                className='relative group transition-transform duration-200 hover:-translate-y-1 about-stat-item'
               >
                 <div className="text-center p-5 md:p-6 rounded-2xl glass-card h-full relative overflow-hidden" title={stat.tooltip || ''}>
                   {/* Subtle gradient on hover */}
@@ -127,7 +126,7 @@ export default function About() {
           {/* Main Content - Improved Layout */}
           <div className="grid lg:grid-cols-2 gap-6 lg:gap-8 mb-12 md:mb-16">
             {/* Left Column - Bio & Specializations */}
-            <div className={`space-y-5 md:space-y-6 ${isInView ? 'animate-fade-in-up animate-delay-3' : 'opacity-0'}`}>
+            <div className='space-y-5 md:space-y-6'>
               <div className="glass-card p-5 md:p-6 lg:p-8 relative overflow-hidden group">
                 {/* Subtle background gradient */}
                 <div className="absolute inset-0 bg-gradient-to-br from-primary-500/5 via-transparent to-accent-cyan/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" aria-hidden="true" />
@@ -197,7 +196,7 @@ export default function About() {
 
             {/* Right Column - Highlights Grid */}
             <div 
-              className={`space-y-5 md:space-y-6 ${isInView ? 'animate-fade-in-up animate-delay-3' : 'opacity-0'}`}
+              className='space-y-5 md:space-y-6'
             >
               <div className="glass-card p-5 md:p-6 lg:p-8 relative overflow-hidden group">
                 {/* Subtle background gradient */}
@@ -217,7 +216,7 @@ export default function About() {
                       ref={(el) => {
                         if (el) el.style.setProperty('--animation-delay', `${index * 0.08 + 0.4}s`)
                       }}
-                      className={`glass-card p-4 group cursor-default relative overflow-hidden transition-transform duration-200 hover:-translate-y-1 h-full about-highlight-item ${isInView ? 'animate-fade-in-up' : 'opacity-0'}`}
+                      className='glass-card p-4 group cursor-default relative overflow-hidden transition-transform duration-200 hover:-translate-y-1 h-full about-highlight-item'
                       role="listitem"
                       tabIndex={0}
                     >
@@ -255,7 +254,7 @@ export default function About() {
 
                 {/* Featured Highlight - Production Systems (Horizontal) */}
                 <div 
-                  className={`mt-4 md:mt-5 glass-card p-4 group cursor-default relative overflow-hidden transition-transform duration-200 hover:-translate-y-1 about-highlight-item ${isInView ? 'animate-fade-in-up animate-delay-4' : 'opacity-0'}`}
+                  className='mt-4 md:mt-5 glass-card p-4 group cursor-default relative overflow-hidden transition-transform duration-200 hover:-translate-y-1 about-highlight-item'
                   tabIndex={0}
                 >
                   {/* Gradient background on hover */}

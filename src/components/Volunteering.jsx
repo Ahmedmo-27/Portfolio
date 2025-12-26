@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
 import Users from 'lucide-react/dist/esm/icons/users'
-import Trophy from 'lucide-react/dist/esm/icons/trophy'
 import Star from 'lucide-react/dist/esm/icons/star'
 import Heart from 'lucide-react/dist/esm/icons/heart'
 import Rocket from 'lucide-react/dist/esm/icons/rocket'
@@ -9,7 +8,6 @@ import ExternalLink from 'lucide-react/dist/esm/icons/external-link'
 import ChevronUp from 'lucide-react/dist/esm/icons/chevron-up'
 import ViewMoreButton from './ViewMoreButton'
 import { useInViewOnce } from '../utils/useInViewOnce'
-import './Volunteering.css'
 
 // Real volunteering & leadership roles
 const volunteeringExperiences = [
@@ -72,8 +70,6 @@ const volunteeringExperiences = [
   },
 ]
 
-
-
 export default function Volunteering() {
   const { ref, isInView } = useInViewOnce()
   const [showAll, setShowAll] = useState(false)
@@ -98,7 +94,7 @@ export default function Volunteering() {
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div ref={ref}>
           {/* Section Header */}
-          <div className={`text-center mb-12 md:mb-16 ${isInView ? 'animate-fade-in-up' : 'opacity-0'}`}>
+          <div className='text-center mb-12 md:mb-16'>
             <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-accent-emerald/10 border border-accent-emerald/20 text-accent-emerald text-sm font-medium mb-4">
               <span className="w-1.5 h-1.5 rounded-full bg-accent-emerald" aria-hidden="true" />
               Volunteering Experiences
@@ -121,7 +117,7 @@ export default function Volunteering() {
                 ref={(el) => {
                   if (el) el.style.setProperty('--animation-delay', `${index * 0.15 + 0.2}s`)
                 }}
-                className={`${exp.isHighlighted ? 'relative' : ''} volunteering-experience-item ${isInView ? 'animate-fade-in-up' : 'opacity-0'}`}
+                className={`${exp.isHighlighted ? 'relative' : ''} volunteering-experience-item`}
                 role="article"
                 aria-labelledby={`vol-title-${index}`}
               >
@@ -206,7 +202,7 @@ export default function Volunteering() {
 
           {/* View More Button */}
           <div
-            className={`mt-12 text-center flex flex-col items-center gap-4 ${isInView ? 'animate-fade-in-up animate-delay-4' : 'opacity-0'}`}
+            className='mt-12 text-center flex flex-col items-center gap-4'
           >
             {volunteeringExperiences.length > initialDisplayCount && (
               <ViewMoreButton

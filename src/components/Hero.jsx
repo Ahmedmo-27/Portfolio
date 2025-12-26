@@ -8,28 +8,32 @@ import Code2 from 'lucide-react/dist/esm/icons/code-2'
 import ProfileCard from './ProfileCard'
 import { assetUrl } from '../utils/assetUrl'
 import SkeletonLoader from './SkeletonLoader'
-import './Hero.css'
 
 const Hero = () => {
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    // Check if critical resources are loaded
-    const checkResources = () => {
-      // Check if fonts are loaded
-      if ('fonts' in document && document.fonts.ready) {
-        document.fonts.ready.then(() => {
-          // Small delay to ensure smooth transition
-          setTimeout(() => setIsLoading(false), 100)
-        })
+    const handleLoad = () => {
+      // Use requestIdleCallback to defer the state update until the browser is idle
+      if ('requestIdleCallback' in window) {
+        requestIdleCallback(() => {
+          setIsLoading(false);
+        }, { timeout: 500 });
       } else {
-        // Fallback: hide skeleton after a short delay
-        setTimeout(() => setIsLoading(false), 300)
+        // Fallback for browsers that don't support requestIdleCallback
+        setTimeout(() => setIsLoading(false), 500);
       }
-    }
+    };
 
-    checkResources()
-  }, [])
+    // Check if the document is already loaded
+    if (document.readyState === 'complete') {
+      handleLoad();
+    } else {
+      window.addEventListener('load', handleLoad);
+      // Cleanup the event listener
+      return () => window.removeEventListener('load', handleLoad);
+    }
+  }, []);
 
   if (isLoading) {
     return (

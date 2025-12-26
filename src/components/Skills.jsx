@@ -128,7 +128,7 @@ export default function Skills() {
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div ref={ref}>
           {/* Section Header */}
-          <div className={`text-center mb-12 md:mb-16 ${isInView ? 'animate-fade-in-up' : 'opacity-0'}`}>
+          <div className='text-center mb-12 md:mb-16'>
             <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-accent-cyan/10 border border-accent-cyan/20 text-accent-cyan text-sm font-medium mb-4">
               <span className="w-1.5 h-1.5 rounded-full bg-accent-cyan" aria-hidden="true" />
               Technical Skills
@@ -154,7 +154,7 @@ export default function Skills() {
                 ref={(el) => {
                   if (el) el.style.setProperty('--animation-delay', `${index * 0.1 + 0.2}s`)
                 }}
-                className={`glass-card p-5 md:p-6 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 transition-transform duration-200 hover:-translate-y-1 focus-visible:-translate-y-1 relative overflow-hidden skills-category-item ${isInView ? 'animate-fade-in-up' : 'opacity-0'}`}
+                className='glass-card p-5 md:p-6 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 transition-transform duration-200 hover:-translate-y-1 focus-visible:-translate-y-1 relative overflow-hidden skills-category-item'
                 role="listitem"
                 tabIndex={0}
                 aria-labelledby={`skill-${category.title.replace(/\s+/g, '-')}`}

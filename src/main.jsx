@@ -3,6 +3,11 @@ import ReactDOM from 'react-dom/client'
 import App from './App'
 import './index.css'
 
+// Disable console.error in production
+if (import.meta.env.PROD) {
+  console.error = () => {};
+}
+
 // Only use StrictMode in development to avoid double-rendering overhead in production
 const AppWrapper = import.meta.env.DEV ? (
   <React.StrictMode>

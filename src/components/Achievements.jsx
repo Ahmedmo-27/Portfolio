@@ -7,7 +7,6 @@ import FileText from 'lucide-react/dist/esm/icons/file-text'
 import Download from 'lucide-react/dist/esm/icons/download'
 import { assetUrl } from '../utils/assetUrl'
 import { useNavigate } from 'react-router-dom'
-import './Achievements.css'
 import { useEffect } from 'react'
 
 const achievements = [
@@ -59,11 +58,14 @@ const achievements = [
 
 export default function Achievements() {
   const { ref, isInView } = useInViewOnce()
+
   useEffect(() => {
     if (isInView && window.location.hash !== '#about') {
       window.history.replaceState(null, '', '#about')
     }
-  }, [isInView])
+    }, [isInView])
+  
+  
   const navigate = useNavigate()
   
   const handleExperienceClick = (e) => {
@@ -127,7 +129,7 @@ export default function Achievements() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div ref={ref}>
           {/* Section Header */}
-          <div className={`text-center mb-16 ${isInView ? 'animate-fade-in-scale' : 'opacity-0'}`}>
+          <div className='text-center mb-16'>
             <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-accent-amber/10 border border-accent-amber/20 text-accent-amber text-sm font-medium mb-4">
               <span className="w-1.5 h-1.5 rounded-full bg-accent-amber" aria-hidden="true" />
               Achievements
@@ -142,7 +144,7 @@ export default function Achievements() {
           </div>
 
           {/* Highlighted Achievements - Featured Cards */}
-          <div className={`mb-8 ${isInView ? 'animate-fade-in-scale animate-delay-2' : 'opacity-0'}`}>
+          <div className='mb-8'>
             <div className="grid md:grid-cols-2 gap-6">
               {achievements.filter(a => a.isHighlighted).map((achievement, index) => (
                 <article
@@ -150,7 +152,7 @@ export default function Achievements() {
                   ref={(el) => {
                     if (el) el.style.setProperty('--animation-delay', `${index * 0.15 + 0.2}s`)
                   }}
-                  className={`relative overflow-hidden rounded-2xl p-6 sm:p-8 border-2 ${achievement.borderColor} ${achievement.bgColor} group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 transition-transform hover:-translate-y-2 hover:scale-[1.02] focus-visible:-translate-y-2 focus-visible:scale-[1.02] achievements-featured-item ${isInView ? 'animate-fade-in-scale' : 'opacity-0'}`}
+                  className={`relative overflow-hidden rounded-2xl p-6 sm:p-8 border-2 ${achievement.borderColor} ${achievement.bgColor} group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 transition-transform hover:-translate-y-2 hover:scale-[1.02] focus-visible:-translate-y-2 focus-visible:scale-[1.02] achievements-featured-item`}
                   tabIndex={0}
                   aria-labelledby={`achievement-${achievement.title.replace(/\s+/g, '-')}`}
                 >
@@ -263,7 +265,7 @@ export default function Achievements() {
               ref={(el) => {
                 if (el) el.style.setProperty('--animation-delay', `${index * 0.1 + 0.3}s`)
               }}
-              className={`relative glass-card p-6 group overflow-hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 transition-transform hover:-translate-y-1 hover:scale-[1.01] focus-visible:-translate-y-1 focus-visible:scale-[1.01] achievements-other-item ${isInView ? 'animate-fade-in-scale' : 'opacity-0'}`}
+              className={`relative glass-card p-6 group overflow-hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 transition-transform hover:-translate-y-1 hover:scale-[1.01] focus-visible:-translate-y-1 focus-visible:scale-[1.01] achievements-other-item`}
               tabIndex={0}
               aria-labelledby={`achievement-other-${achievement.title.replace(/\s+/g, '-')}`}
             >

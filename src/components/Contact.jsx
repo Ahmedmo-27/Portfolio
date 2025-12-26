@@ -183,7 +183,7 @@ export default function Contact() {
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div ref={ref}>
           {/* Section Header */}
-          <div className={`text-center mb-12 md:mb-16 ${isInView ? 'animate-fade-in-up' : 'opacity-0'}`}>
+          <div className='text-center mb-12 md:mb-16'>
             <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary-500/10 border border-primary-500/20 text-primary-400 text-sm font-medium mb-4">
               <span className="w-1.5 h-1.5 rounded-full bg-primary-400" aria-hidden="true" />
               Contact
@@ -199,7 +199,7 @@ export default function Contact() {
 
           <div className="grid lg:grid-cols-2 gap-8 lg:gap-12">
             {/* Contact Info */}
-            <div className={`space-y-6 md:space-y-8 ${isInView ? 'animate-fade-in-up animate-delay-2' : 'opacity-0'}`}>
+            <div className= 'space-y-6 md:space-y-8'>
               <div>
                 <h3 className="text-xl md:text-2xl font-display font-bold text-foreground mb-4 md:mb-6">
                   Get in Touch
@@ -271,7 +271,7 @@ export default function Contact() {
             </div>
 
             {/* Contact Form */}
-            <div className={isInView ? 'animate-fade-in-up animate-delay-2' : 'opacity-0'}>
+            <div className="">
               <form 
                 onSubmit={handleSubmit} 
                 className="glass-card p-5 sm:p-6 md:p-8 space-y-4 md:space-y-6"

@@ -3,7 +3,7 @@ import SkeletonLoader from './SkeletonLoader'
 
 // LazySection component that only renders its children when they are near the viewport
 // This significantly reduces initial bundle size and TBT (Total Blocking Time)
-export default function LazySection({ children, fallback, threshold = 0.1, rootMargin = '200px' }) {
+export default function LazySection({ children, fallback, threshold = 0.1, rootMargin = '200px', id }) {
   const [isVisible, setIsVisible] = useState(false)
   const ref = useRef(null)
 
@@ -48,7 +48,7 @@ export default function LazySection({ children, fallback, threshold = 0.1, rootM
   )
 
   return (
-    <div ref={ref} className="min-h-[100px]">
+    <div ref={ref} id={id} className="min-h-[100px]">
       {isVisible ? (
         <Suspense fallback={loadingFallback}>
           {children}
