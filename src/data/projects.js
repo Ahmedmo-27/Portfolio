@@ -32,11 +32,11 @@ export const projects = [
     ],
     links: {
       demo: 'https://vaultique.live',
-      github: 'https://github.com/ahmedmo-27/Vaultique',
+      github: 'https://github.com/Ahmedmo-27/Vaultique-MIU',
     },
     ctas: [
       { label: 'View Website', icon: ExternalLink, href: 'https://vaultique.live' },
-      { label: 'View Source Code', icon: Github, href: 'https://github.com/ahmedmo-27/Vaultique' },
+      { label: 'View Source Code', icon: Github, href: 'https://github.com/Ahmedmo-27/Vaultique-MIU' },
     ],
     award: 'Best Web Project of MIU 2025',
     isHighlighted: true,
