@@ -8,6 +8,7 @@
 @layer base {
   /* Dark Theme (default) */
   :root {
+    /* Custom theme variables */
     --color-background: #020617;
     --color-foreground: #f1f5f9;
     --color-card: rgba(15, 23, 42, 0.8);
@@ -16,6 +17,8 @@
     --color-surface-hover: rgba(51, 65, 85, 0.5);
     --color-border: rgba(51, 65, 85, 0.5);
     --color-muted: #94a3b8;
+    
+    /* shadcn/ui variables (light theme defaults) */
     --background: 0 0% 100%;
     --foreground: 0 0% 3.9%;
     --card: 0 0% 100%;
@@ -45,6 +48,7 @@
 
   /* Light Theme */
   .light {
+    /* Custom theme variables */
     --color-background: #F9FAFB;
     --color-foreground: #0f172a;
     --color-card: rgba(255, 255, 255, 0.9);
@@ -53,6 +57,34 @@
     --color-surface-hover: rgba(226, 232, 240, 0.8);
     --color-border: rgba(203, 213, 225, 0.6);
     --color-muted: #64748b;
+  }
+
+  /* Dark Theme shadcn/ui overrides */
+  .dark {
+    --background: 0 0% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 0 0% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 0 0% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 0 0% 98%;
+    --primary-foreground: 0 0% 9%;
+    --secondary: 0 0% 14.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 0 0% 14.9%;
+    --muted-foreground: 0 0% 63.9%;
+    --accent: 0 0% 14.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 14.9%;
+    --input: 0 0% 14.9%;
+    --ring: 0 0% 83.1%;
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
   }
 
   * {
@@ -170,32 +202,6 @@
     white-space: nowrap;
     border-width: 0;
   }
-  .dark {
-    --background: 0 0% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 0 0% 3.9%;
-    --card-foreground: 0 0% 98%;
-    --popover: 0 0% 3.9%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 0 0% 98%;
-    --primary-foreground: 0 0% 9%;
-    --secondary: 0 0% 14.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 0 0% 14.9%;
-    --muted-foreground: 0 0% 63.9%;
-    --accent: 0 0% 14.9%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 14.9%;
-    --input: 0 0% 14.9%;
-    --ring: 0 0% 83.1%;
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
-  }
 }
 
 @layer components {
@@ -241,8 +247,10 @@
     border-radius: 1rem;
     /* Only transition border-color - box-shadow is expensive */
     transition: border-color 0.2s ease-out;
+    /* Optimize rendering with CSS containment */
+    contain: layout style paint;
     /* Hint to browser this will change */
-    will-change: border-color;
+    will-change: border-color, transform;
   }
   
   /* Reduce blur on mobile for better performance */
@@ -1063,8 +1071,7 @@ section {
 }
 
 /* Reduce layout thrashing for animated elements */
-.interactive-card,
-.glass-card {
+.interactive-card {
   contain: layout style paint;
   will-change: transform, border-color;
 }

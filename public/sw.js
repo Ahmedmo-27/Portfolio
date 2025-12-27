@@ -1,133 +1,190 @@
-// Service Worker for Ahmed Mostafa Portfolio
-// Provides offline support and caching for better performance
+// Service Worker for Ahmed Mostafa Portfolio - v2 (Robust & Modern)
+// Provides offline support, caching, and handles network failures gracefully.
 
-const CACHE_NAME = 'portfolio-cache-v1';
-const STATIC_CACHE = 'portfolio-static-v1';
-const DYNAMIC_CACHE = 'portfolio-dynamic-v1';
+const STATIC_CACHE_NAME = 'portfolio-static-v2';
+const DYNAMIC_CACHE_NAME = 'portfolio-dynamic-v2';
+const ALL_CACHES = [STATIC_CACHE_NAME, DYNAMIC_CACHE_NAME];
 
 // Assets to cache on install (critical for app shell)
 const PRECACHE_ASSETS = [
   '/',
   '/index.html',
+  '/manifest.json',
+  '/favicon.svg'
+  // Add any other critical, non-hashed assets here.
 ];
 
-// Install event - precache critical assets
+// --------------------
+// INSTALL
+// --------------------
 self.addEventListener('install', (event) => {
+  console.log('[SW] Install');
   event.waitUntil(
-    caches.open(STATIC_CACHE).then((cache) => {
-      return cache.addAll(PRECACHE_ASSETS);
-    })
+    caches.open(STATIC_CACHE_NAME)
+      .then((cache) => {
+        console.log('[SW] Pre-caching App Shell...');
+        return cache.addAll(PRECACHE_ASSETS);
+      })
+      .then(() => self.skipWaiting())
   );
-  // Activate immediately
-  self.skipWaiting();
 });
 
-// Activate event - clean up old caches
+// --------------------
+// ACTIVATE
+// --------------------
 self.addEventListener('activate', (event) => {
+  console.log('[SW] Activate');
   event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames
-          .filter((name) => name !== STATIC_CACHE && name !== DYNAMIC_CACHE)
-          .map((name) => caches.delete(name))
-      );
-    })
+    Promise.all([
+      caches.keys().then((cacheNames) =>
+        Promise.all(
+          cacheNames
+            .filter((name) => !ALL_CACHES.includes(name))
+            .map((name) => {
+              console.log(`[SW] Deleting old cache: ${name}`);
+              return caches.delete(name);
+            })
+        )
+      ),
+      self.clients.claim()
+    ])
   );
-  // Take control of all pages immediately
-  self.clients.claim();
 });
 
-// Fetch event - serve from cache, fallback to network
+// --------------------
+// FETCH
+// --------------------
 self.addEventListener('fetch', (event) => {
   const { request } = event;
   const url = new URL(request.url);
 
-  // Skip non-GET requests
-  if (request.method !== 'GET') return;
-
-  // Skip API requests
-  if (url.pathname.startsWith('/api')) return;
-
-  // Skip cross-origin requests (except R2 CDN)
-  if (url.origin !== self.location.origin && 
-      !url.origin.includes('r2.dev')) {
+  // Ignore non-GET requests and API calls
+  if (request.method !== 'GET' || url.pathname.startsWith('/api')) {
     return;
   }
 
-  // For hashed assets (JS/CSS with hash) - Cache First strategy
-  if (/\/assets\/.*\.[a-f0-9]+\.(js|css)$/i.test(url.pathname)) {
-    event.respondWith(
-      caches.match(request).then((cached) => {
-        if (cached) return cached;
-        
-        return fetch(request).then((response) => {
-          if (response.ok) {
-            const responseClone = response.clone();
-            caches.open(STATIC_CACHE).then((cache) => {
-              cache.put(request, responseClone);
-            });
-          }
-          return response;
-        });
-      })
-    );
+  // Ignore browser extensions
+  if (url.protocol.startsWith('chrome-extension:')) {
     return;
   }
 
-  // For images - Cache First with network fallback
-  if (/\.(jpg|jpeg|png|gif|webp|svg|ico)$/i.test(url.pathname) ||
-      url.origin.includes('r2.dev')) {
-    event.respondWith(
-      caches.match(request).then((cached) => {
-        const fetchPromise = fetch(request).then((response) => {
-          if (response.ok) {
-            const responseClone = response.clone();
-            caches.open(DYNAMIC_CACHE).then((cache) => {
-              cache.put(request, responseClone);
-            });
-          }
-          return response;
-        }).catch(() => cached);
-
-        return cached || fetchPromise;
-      })
-    );
+  // Network First for navigation requests
+  if (request.mode === 'navigate') {
+    event.respondWith(networkFirst(request, '/index.html'));
     return;
   }
 
-  // For HTML/navigation - Network First with cache fallback
-  if (request.mode === 'navigate' || url.pathname.endsWith('.html')) {
-    event.respondWith(
-      fetch(request)
-        .then((response) => {
-          if (response.ok) {
-            const responseClone = response.clone();
-            caches.open(DYNAMIC_CACHE).then((cache) => {
-              cache.put(request, responseClone);
-            });
-          }
-          return response;
-        })
-        .catch(() => caches.match(request) || caches.match('/'))
-    );
+  // Cache First for static assets
+  if (isStaticAsset(url)) {
+    event.respondWith(cacheFirst(request));
     return;
   }
 
-  // Default - Stale While Revalidate
-  event.respondWith(
-    caches.match(request).then((cached) => {
-      const fetchPromise = fetch(request).then((response) => {
-        if (response.ok) {
-          const responseClone = response.clone();
-          caches.open(DYNAMIC_CACHE).then((cache) => {
-            cache.put(request, responseClone);
-          });
-        }
-        return response;
-      });
-
-      return cached || fetchPromise;
-    })
-  );
+  // Stale-While-Revalidate for everything else
+  event.respondWith(staleWhileRevalidate(request));
 });
 
+// --------------------
+// CACHING STRATEGIES
+// --------------------
+
+async function cacheFirst(request) {
+  const cachedResponse = await caches.match(request);
+  if (cachedResponse) {
+    return cachedResponse;
+  }
+
+  try {
+    const fetchRequest =
+      request.url.startsWith(self.location.origin)
+        ? request
+        : new Request(request.url, { mode: 'no-cors' });
+
+    const networkResponse = await fetch(fetchRequest);
+
+    if (
+      networkResponse.type === 'opaque' ||
+      (networkResponse.ok && networkResponse.status !== 404)
+    ) {
+      const cache = await caches.open(DYNAMIC_CACHE_NAME);
+      cache.put(request, networkResponse.clone());
+    }
+
+    return networkResponse;
+  } catch (error) {
+    console.error(`[SW] Cache First failed for ${request.url}`, error);
+    return new Response('Network error', {
+      status: 408,
+      headers: { 'Content-Type': 'text/plain' }
+    });
+  }
+}
+
+async function networkFirst(request, fallbackUrl) {
+  try {
+    const networkResponse = await fetch(request);
+
+    if (networkResponse.ok) {
+      const cache = await caches.open(DYNAMIC_CACHE_NAME);
+      cache.put(request, networkResponse.clone());
+    }
+
+    return networkResponse;
+  } catch (error) {
+    console.log(`[SW] Network failed for ${request.url}, using cache`);
+
+    const cachedResponse = await caches.match(request);
+    if (cachedResponse) {
+      return cachedResponse;
+    }
+
+    if (fallbackUrl) {
+      const fallback = await caches.match(fallbackUrl);
+      if (fallback) return fallback;
+    }
+
+    return new Response('You are offline', {
+      status: 408,
+      headers: { 'Content-Type': 'text/plain' }
+    });
+  }
+}
+
+async function staleWhileRevalidate(request) {
+  const cache = await caches.open(DYNAMIC_CACHE_NAME);
+  const cachedResponse = await caches.match(request);
+
+  const fetchPromise = fetch(request)
+    .then((networkResponse) => {
+      if (networkResponse.ok) {
+        cache.put(request, networkResponse.clone());
+      }
+      return networkResponse;
+    })
+    .catch((error) => {
+      console.error(`[SW] SWR fetch failed for ${request.url}`, error);
+      return null;
+    });
+
+  return cachedResponse || fetchPromise || new Response('Offline', { status: 503 });
+}
+
+// --------------------
+// HELPERS
+// --------------------
+
+function isStaticAsset(url) {
+  const patterns = [
+    /\.(jpg|jpeg|png|gif|webp|svg|ico)$/i,
+    /\/assets\/.*\.[a-f0-9]+\.(js|css)$/i,
+    /^https:\/\/fonts\.googleapis\.com/,
+    /^https:\/\/fonts\.gstatic\.com/,
+    (u) => u.origin.includes('r2.dev')
+  ];
+
+  return patterns.some((pattern) =>
+    typeof pattern === 'function'
+      ? pattern(url)
+      : pattern.test(url.pathname)
+  );
+}
