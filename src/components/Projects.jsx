@@ -6,6 +6,7 @@ import ViewMoreButton from './ViewMoreButton'
 import MediaCarousel from './MediaCarousel'
 import { projects } from '../data/projects'
 import { useInViewOnce } from '../utils/useInViewOnce'
+import { trackProjectView } from '../utils/analytics'
 import './Projects.css'
 
 // Keep only first 3 projects for the home page
@@ -252,6 +253,13 @@ export default function Projects() {
                       <div className="flex flex-wrap gap-2 mt-auto pt-4 border-t border-border">
                         {project.ctas.map((cta) => {
                           const Icon = cta.icon
+                          // Determine link type from label
+                          const linkType = cta.label.toLowerCase().includes('website') || cta.label.toLowerCase().includes('demo') 
+                            ? 'demo' 
+                            : cta.label.toLowerCase().includes('source') || cta.label.toLowerCase().includes('github')
+                            ? 'github'
+                            : 'other'
+                          
                           return (
                             <a
                               key={cta.label}
@@ -259,6 +267,7 @@ export default function Projects() {
                               target={cta.href.startsWith('http') ? '_blank' : undefined}
                               rel={cta.href.startsWith('http') ? 'noopener noreferrer' : undefined}
                               className="btn-cta"
+                              onClick={() => trackProjectView(project.title, linkType, cta.href)}
                             >
                               <Icon className="w-4 h-4" aria-hidden="true" />
                               {cta.label}

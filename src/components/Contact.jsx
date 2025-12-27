@@ -8,6 +8,7 @@ import CheckCircle from 'lucide-react/dist/esm/icons/check-circle'
 import AlertCircle from 'lucide-react/dist/esm/icons/alert-circle'
 import Loader2 from 'lucide-react/dist/esm/icons/loader-2'
 import { useInViewOnce } from '../utils/useInViewOnce'
+import { trackContactFormSubmission, trackSocialClick } from '../utils/analytics'
 
 const contactInfo = [
   {
@@ -138,6 +139,14 @@ export default function Contact() {
 
       setStatus('success')
       setStatusMessage('Message sent successfully. I\'ll get back to you soon.')
+      
+      // Track successful form submission in Google Analytics
+      trackContactFormSubmission({
+        name,
+        email,
+        subject
+      })
+      
       setFormData({ name: '', email: '', subject: '', message: '' })
       setHoneypot('')
       setTimeout(() => setStatus('idle'), 3000)
@@ -250,6 +259,7 @@ export default function Contact() {
                       className="w-10 md:w-12 h-10 md:h-12 rounded-xl glass hover:bg-surface-hover flex items-center justify-center text-muted hover:text-foreground transition-[transform,color] duration-200 hover:-translate-y-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
                       aria-label={`Visit my ${social.label} profile`}
                       role="listitem"
+                      onClick={() => trackSocialClick(social.label.toLowerCase(), 'contact')}
                     >
                       <social.icon className="w-4 md:w-5 h-4 md:h-5" aria-hidden="true" />
                     </a>

@@ -3,11 +3,22 @@ import { useNavigate } from 'react-router-dom'
 import ArrowLeft from 'lucide-react/dist/esm/icons/arrow-left'
 import Github from 'lucide-react/dist/esm/icons/github'
 import ChevronRight from 'lucide-react/dist/esm/icons/chevron-right'
+import Filter from 'lucide-react/dist/esm/icons/filter'
 import CircuitBoard from '../components/CircuitBoard'
 import ViewMoreButton from '../components/ViewMoreButton'
 import MediaCarousel from '../components/MediaCarousel'
 import { projects } from '../data/projects'
+import { trackProjectView } from '../utils/analytics'
 import '../components/Projects.css'
+
+const FILTER_CATEGORIES = [
+  { id: 'all', label: 'All Projects' },
+  { id: 'Full-Stack', label: 'Full-Stack' },
+  { id: 'Backend', label: 'Backend' },
+  { id: 'Android', label: 'Android' },
+  { id: 'DevOps', label: 'DevOps' },
+  { id: 'Security', label: 'Security' },
+]
 
 export default function AllProjects() {
   const navigate = useNavigate()
@@ -15,9 +26,15 @@ export default function AllProjects() {
   // This prevents redundancy and ensures content loads immediately on mobile
   const [activeProject, setActiveProject] = useState(null)
   const [mediaShouldLoad, setMediaShouldLoad] = useState({})
+  const [activeFilter, setActiveFilter] = useState('all')
 
   const projectItemElsRef = useRef({})
   const mediaObserverRef = useRef(null)
+
+  // Filter projects based on active filter
+  const filteredProjects = activeFilter === 'all' 
+    ? projects 
+    : projects.filter(project => project.category === activeFilter)
 
   // Scroll to top when component mounts
   useEffect(() => {
@@ -119,9 +136,53 @@ export default function AllProjects() {
               </p>
             </div>
 
+            {/* Filter Buttons */}
+            <div className="flex flex-wrap items-center justify-center gap-3 mb-12">
+              <div className="inline-flex items-center gap-2 text-muted text-sm">
+                <Filter className="w-4 h-4" aria-hidden="true" />
+                <span className="font-medium">Filter:</span>
+              </div>
+              {FILTER_CATEGORIES.map((category) => (
+                <button
+                  key={category.id}
+                  onClick={() => setActiveFilter(category.id)}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                    activeFilter === category.id
+                      ? 'bg-primary-500 text-white shadow-lg shadow-primary-500/30'
+                      : 'bg-surface border border-border text-muted hover:text-foreground hover:border-primary-500/40 hover:bg-surface-hover'
+                  }`}
+                  aria-pressed={activeFilter === category.id}
+                >
+                  {category.label}
+                  {activeFilter === category.id && (
+                    <span className="ml-2 inline-flex items-center justify-center w-5 h-5 rounded-full bg-white/20 text-xs">
+                      {category.id === 'all' ? projects.length : projects.filter(p => p.category === category.id).length}
+                    </span>
+                  )}
+                </button>
+              ))}
+            </div>
+
+            {/* Projects Count */}
+            <div className="text-center mb-8">
+              <p className="text-muted text-sm">
+                Showing <span className="text-primary-400 font-semibold">{filteredProjects.length}</span> {filteredProjects.length === 1 ? 'project' : 'projects'}
+              </p>
+            </div>
+
             {/* Projects Grid */}
-            <div className="space-y-8" role="list" aria-label="Project list">
-              {projects.map((project, index) => (
+            <div 
+              key={activeFilter}
+              className="space-y-8 animate-fade-in-up" 
+              role="list" 
+              aria-label="Project list"
+            >
+              {filteredProjects.length === 0 ? (
+                <div className="text-center py-16">
+                  <p className="text-muted text-lg">No projects found in this category.</p>
+                </div>
+              ) : (
+                filteredProjects.map((project, index) => (
                 <article
                   key={project.id}
                   data-project-id={project.id}
@@ -233,6 +294,13 @@ export default function AllProjects() {
                         <div className="flex flex-wrap gap-2 mt-auto pt-4 border-t border-border">
                           {project.ctas.map((cta) => {
                             const Icon = cta.icon
+                            // Determine link type from label
+                            const linkType = cta.label.toLowerCase().includes('website') || cta.label.toLowerCase().includes('demo') 
+                              ? 'demo' 
+                              : cta.label.toLowerCase().includes('source') || cta.label.toLowerCase().includes('github')
+                              ? 'github'
+                              : 'other'
+                            
                             return (
                               <a
                                 key={cta.label}
@@ -240,6 +308,7 @@ export default function AllProjects() {
                                 target={cta.href.startsWith('http') ? '_blank' : undefined}
                                 rel={cta.href.startsWith('http') ? 'noopener noreferrer' : undefined}
                                 className="btn-cta"
+                                onClick={() => trackProjectView(project.title, linkType, cta.href)}
                               >
                                 <Icon className="w-4 h-4" aria-hidden="true" />
                                 {cta.label}
@@ -251,7 +320,8 @@ export default function AllProjects() {
                     </div>
                   </div>
                 </article>
-              ))}
+              ))
+              )}
             </div>
 
             {/* Footer CTA */}

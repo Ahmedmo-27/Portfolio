@@ -8,6 +8,7 @@ import Code2 from 'lucide-react/dist/esm/icons/code-2'
 import ProfileCard from './ProfileCard'
 import { assetUrl } from '../utils/assetUrl'
 import SkeletonLoader from './SkeletonLoader'
+import { trackCVDownload, trackSocialClick } from '../utils/analytics'
 
 const Hero = () => {
   const [isLoading, setIsLoading] = useState(true)
@@ -143,7 +144,13 @@ const Hero = () => {
 
             {/* CTA Buttons */}
             <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2 md:gap-3 mb-6 md:mb-8">
-              <a href={assetUrl("Ahmed Mostafa's CV.pdf")} download className="btn-primary text-sm md:text-base px-4 py-2 md:px-6 md:py-3" target="_blank">
+              <a 
+                href={assetUrl("Ahmed Mostafa's CV.pdf")} 
+                download 
+                className="btn-primary text-sm md:text-base px-4 py-2 md:px-6 md:py-3" 
+                target="_blank"
+                onClick={trackCVDownload}
+              >
                 <Download className="w-4 h-4 md:w-5 md:h-5" />
                 Download CV
               </a>
@@ -165,6 +172,7 @@ const Hero = () => {
                 rel="noopener noreferrer"
                 className="p-2.5 md:p-3 rounded-xl glass hover:bg-surface-hover text-muted"
                 aria-label="GitHub profile"
+                onClick={() => trackSocialClick('github', 'hero')}
               >
                 <Github className="w-4 h-4 md:w-5 md:h-5" aria-hidden="true" />
               </a>
@@ -174,6 +182,7 @@ const Hero = () => {
                 rel="noopener noreferrer"
                 className="p-2.5 md:p-3 rounded-xl glass hover:bg-surface-hover text-muted"
                 aria-label="LinkedIn profile"
+                onClick={() => trackSocialClick('linkedin', 'hero')}
               >
                 <Linkedin className="w-4 h-4 md:w-5 md:h-5" aria-hidden="true" />
               </a>
@@ -181,6 +190,7 @@ const Hero = () => {
                 href="mailto:ahmedmostafa.swe1@gmail.com"
                 className="p-2.5 md:p-3 rounded-xl glass hover:bg-surface-hover text-muted"
                 aria-label="Email Ahmed Mostafa"
+                onClick={() => trackSocialClick('email', 'hero')}
               >
                 <Mail className="w-4 h-4 md:w-5 md:h-5" aria-hidden="true" />
               </a>
