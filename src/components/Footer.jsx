@@ -32,9 +32,9 @@ export default function Footer() {
       <div className="absolute inset-0 bg-gradient-to-t from-surface/50 to-transparent" aria-hidden="true" />
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
-        <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-8 items-center">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-[auto_1fr_auto] gap-8 items-center">
           {/* Logo & Description */}
-          <div className="space-y-3 md:space-y-4 sm:col-span-2 md:col-span-1">
+          <div className="space-y-3 md:space-y-4 sm:col-span-2 lg:col-span-1">
             <a 
               href="#" 
               className="flex items-center gap-2 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 rounded-lg w-fit"
@@ -65,7 +65,7 @@ export default function Footer() {
           </div>
 
           {/* Navigation */}
-          <nav className="flex flex-wrap justify-start md:justify-center gap-4 md:gap-6" aria-label="Footer navigation">
+          <nav className="flex flex-wrap justify-start lg:justify-center gap-4 md:gap-4 lg:gap-4" aria-label="Footer navigation">
             {navLinks.map((link) => (
               <a
                 key={link.name}

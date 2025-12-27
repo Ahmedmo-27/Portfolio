@@ -7,14 +7,12 @@ import CircuitBoard from '../components/CircuitBoard'
 import ViewMoreButton from '../components/ViewMoreButton'
 import MediaCarousel from '../components/MediaCarousel'
 import { projects } from '../data/projects'
-import { useInViewOnce } from '../utils/useInViewOnce'
 import '../components/Projects.css'
 
 export default function AllProjects() {
   const navigate = useNavigate()
   // Use initialInView: true since this is a full page that starts at the top
   // This prevents redundancy and ensures content loads immediately on mobile
-  const { ref, isInView } = useInViewOnce({ initialInView: true, rootMargin: '0px' })
   const [activeProject, setActiveProject] = useState(null)
   const [mediaShouldLoad, setMediaShouldLoad] = useState({})
 
@@ -105,9 +103,9 @@ export default function AllProjects() {
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-surface/30 to-transparent" aria-hidden="true" />
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div ref={ref}>
+          <div>
             {/* Header */}
-            <div className={`text-center mb-16 mt-8 md:mt-0 ${isInView ? 'animate-fade-in-up' : 'opacity-0'}`}>
+            <div className='text-center mb-16 mt-8 md:mt-0'>
               <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-accent-violet/10 border border-accent-violet/20 text-accent-violet text-sm font-medium mb-0 mt-12 md:mt-16">
                 <span className="w-1.5 h-1.5 rounded-full bg-accent-violet" aria-hidden="true" />
                 All Projects
@@ -136,7 +134,7 @@ export default function AllProjects() {
                       delete projectItemElsRef.current[project.id]
                     }
                   }}
-                  className={`${project.isHighlighted ? 'relative' : ''} projects-item ${isInView ? 'animate-fade-in-up' : 'opacity-0'}`}
+                  className={`${project.isHighlighted ? 'relative' : ''} projects-item `}
                   role="listitem"
                   aria-labelledby={`project-title-${project.id}`}
                 >
@@ -165,7 +163,7 @@ export default function AllProjects() {
 
                         {project.award && (
                           <div className="absolute top-2 sm:top-3 right-2 sm:right-3 z-10">
-                            <span className="inline-flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full bg-accent-amber/20 border border-accent-amber/30 text-accent-amber text-[10px] sm:text-xs font-semibold backdrop-blur-sm">
+                            <span className="inline-flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full bg-accent-amber/90 border border-accent-amber text-dark-900 text-[10px] sm:text-xs font-semibold backdrop-blur-sm shadow-lg">
                               🏆 <span className="hidden sm:inline">{project.award}</span>
                               <span className="sm:hidden">Award</span>
                             </span>
@@ -257,7 +255,7 @@ export default function AllProjects() {
             </div>
 
             {/* Footer CTA */}
-            <div className={`mt-12 text-center flex flex-col items-center gap-4 ${isInView ? 'animate-fade-in-up animate-delay-4' : 'opacity-0'}`}>
+            <div className='mt-12 text-center flex flex-col items-center gap-4'>
               <ViewMoreButton
                 href="https://github.com/ahmedmo-27"
                 text="View All Projects on GitHub"

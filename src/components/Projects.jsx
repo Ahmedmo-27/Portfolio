@@ -177,7 +177,7 @@ export default function Projects() {
                       {/* Award Badge */}
                       {project.award && (
                         <div className="absolute top-2 sm:top-3 right-2 sm:right-3 z-10">
-                          <span className="inline-flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full bg-accent-amber/20 border border-accent-amber/30 text-accent-amber text-[10px] sm:text-xs font-semibold backdrop-blur-sm">
+                          <span className="inline-flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full bg-accent-amber/90 border border-accent-amber text-dark-900 text-[10px] sm:text-xs font-semibold backdrop-blur-sm shadow-lg">
                             🏆 <span className="hidden sm:inline">{project.award}</span>
                             <span className="sm:hidden">Award</span>
                           </span>

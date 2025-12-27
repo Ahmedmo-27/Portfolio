@@ -42,7 +42,7 @@ const experiences = [
       'Contributed to Firebase integration, testing, documentation',
       'Awarded Achiever Level Certificate',
     ],
-    tags: ['Kotlin', 'Jetpack Compose', 'Room', 'Retrofit', 'Firebase'],
+    tags: ['Kotlin', 'Jetpack Compose', 'Room', 'Retrofit', 'Firebase', 'XML'],
     // documents: [{ label: 'Completion Certificate', href: '/certificates/depi-certificate.pdf' }],
   },
   {
@@ -155,15 +155,15 @@ export default function Experience() {
                       {/* Header */}
                       <div className="flex items-start gap-3 md:gap-4 mb-3 md:mb-4">
                         <div 
-                          className={`w-10 md:w-12 h-10 md:h-12 rounded-xl bg-gradient-to-br ${exp.color} flex items-center justify-center flex-shrink-0 shadow-lg`}
+                          className={`w-12 md:w-14 h-12 md:h-14 rounded-xl bg-gradient-to-br ${exp.color} flex items-center justify-center flex-shrink-0 shadow-lg`}
                           aria-hidden="true"
                         >
-                          <exp.icon className="w-5 md:w-6 h-5 md:h-6 text-white" />
+                          <exp.icon className="w-6 md:w-7 h-6 md:h-7 text-white" />
                         </div>
                         <div className="flex-1 min-w-0">
                           <h3 
                             id={`exp-title-${index}`}
-                            className="text-base sm:text-lg md:text-xl font-display font-semibold text-foreground mb-1 leading-tight"
+                            className="text-base sm:text-lg md:text-xl font-display font-semibold text-foreground mb-1 leading-tight break-words"
                           >
                             {exp.company}
                           </h3>

@@ -156,13 +156,13 @@ export default function Education() {
                 {/* University Header */}
                 <div className="flex items-start gap-4 mb-6">
                   <div 
-                    className="w-14 h-14 rounded-2xl bg-gradient-to-br from-accent-violet to-purple-500 flex items-center justify-center flex-shrink-0 shadow-lg"
+                    className="w-12 md:w-14 h-12 md:h-14 rounded-2xl bg-gradient-to-br from-accent-violet to-purple-500 flex items-center justify-center flex-shrink-0 shadow-lg"
                     aria-hidden="true"
                   >
-                    <GraduationCap className="w-7 h-7 text-white" />
+                    <GraduationCap className="w-6 md:w-7 h-6 md:h-7 text-white" />
                   </div>
-                  <div>
-                    <h3 className="text-xl md:text-2xl font-display font-bold text-foreground mb-1">
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-xl md:text-2xl font-display font-bold text-foreground mb-1 break-words leading-tight">
                       {education.university}
                     </h3>
                     <p className="text-primary-400 font-medium text-sm md:text-base">

@@ -271,8 +271,8 @@ export const projects = [
     isHighlighted: false,
     media: {
       screenshots: [
-        assetUrl('/Projects/Credit%20Card%20Fraud%20Detection.png'),
-        assetUrl('/Projects/Average%20F1-Score%20per%20Model.png'),
+        assetUrl('/Projects/Credit Card Fraud Detection.png'),
+        assetUrl('/Projects/Average F1-Score per Model.png'),
         assetUrl('/Projects/Dataset1_Preprocessing.png'),
         assetUrl('/Projects/daily_fraud_count.png'),
         assetUrl('/Projects/figure5_objectives.png'),
