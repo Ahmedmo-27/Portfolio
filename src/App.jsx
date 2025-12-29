@@ -7,17 +7,31 @@ import SkeletonLoader from './components/SkeletonLoader'
 import LazySection from './components/LazySection'
 import TechDivider from './components/TechDivider'
 
-// Lazy load components for better performance
-const About = lazy(() => import('./components/About'))
-const Skills = lazy(() => import('./components/Skills'))
-const Experience = lazy(() => import('./components/Experience'))
-const Projects = lazy(() => import('./components/Projects'))
-const Education = lazy(() => import('./components/Education'))
-const Volunteering = lazy(() => import('./components/Volunteering'))
-const Achievements = lazy(() => import('./components/Achievements'))
-const Contact = lazy(() => import('./components/Contact'))
-const Footer = lazy(() => import('./components/Footer'))
-const AllProjects = lazy(() => import('./pages/AllProjects'))
+// Lazy load components with webpack magic comments for better chunk names
+const About = lazy(() => import(/* webpackChunkName: "about" */ './components/About'))
+const Skills = lazy(() => import(/* webpackChunkName: "skills" */ './components/Skills'))
+const Experience = lazy(() => import(/* webpackChunkName: "experience" */ './components/Experience'))
+const Projects = lazy(() => import(/* webpackChunkName: "projects" */ './components/Projects'))
+const Education = lazy(() => import(/* webpackChunkName: "education" */ './components/Education'))
+const Volunteering = lazy(() => import(/* webpackChunkName: "volunteering" */ './components/Volunteering'))
+const Achievements = lazy(() => import(/* webpackChunkName: "achievements" */ './components/Achievements'))
+const Contact = lazy(() => import(/* webpackChunkName: "contact" */ './components/Contact'))
+const Footer = lazy(() => import(/* webpackChunkName: "footer" */ './components/Footer'))
+const AllProjects = lazy(() => import(/* webpackChunkName: "all-projects" */ './pages/AllProjects'))
+
+// Prefetch components on idle to reduce load time when they become visible
+// This runs after initial render without blocking main thread
+if (typeof window !== 'undefined') {
+  window.addEventListener('load', () => {
+    if ('requestIdleCallback' in window) {
+      window.requestIdleCallback(() => {
+        // Prefetch above-the-fold and likely-to-be-viewed sections
+        import(/* webpackPrefetch: true */ './components/About')
+        import(/* webpackPrefetch: true */ './components/Achievements')
+      }, { timeout: 2000 })
+    }
+  }, { once: true })
+}
 
 // Loading fallback component for sections
 function SectionLoader() {

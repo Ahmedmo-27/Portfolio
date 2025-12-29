@@ -61,19 +61,44 @@ export default defineConfig({
     },
   },
   build: {
-    // Enable minification
+    // Enable minification with optimized settings
     minify: 'terser',
     terserOptions: {
       compress: {
         drop_console: true,
         drop_debugger: true,
-        pure_funcs: ['console.log', 'console.info', 'console.debug'],
-        passes: 2, // Multiple passes for better compression
-        unused: true, // Remove unused code
-        dead_code: true, // Remove dead code
+        pure_funcs: ['console.log', 'console.info', 'console.debug', 'console.warn'],
+        passes: 3, // More passes for better compression (reduces parse time)
+        unused: true,
+        dead_code: true,
+        // Advanced compression
+        collapse_vars: true,
+        reduce_vars: true,
+        reduce_funcs: true,
+        // Remove unreachable code
+        conditionals: true,
+        evaluate: true,
+        booleans: true,
+        loops: true,
+        // Inline small functions
+        inline: 2,
+        // Remove duplicate code
+        join_vars: true,
+        // Simplify sequences
+        sequences: true,
       },
       format: {
-        comments: false, // Remove all comments
+        comments: false,
+        // Use shortest possible syntax
+        ecma: 2020,
+      },
+      // Enable top-level minification
+      toplevel: true,
+      // Mangle property names for additional size reduction
+      mangle: {
+        properties: {
+          regex: /^_/,
+        },
       },
     },
     // Code splitting for better caching and smaller initial bundle
@@ -84,17 +109,43 @@ export default defineConfig({
         chunkFileNames: 'assets/[name]-[hash].js',
         assetFileNames: 'assets/[name]-[hash][extname]',
         manualChunks: (id) => {
+          // Granular vendor splitting for better caching and smaller chunks
           if (id.includes('node_modules')) {
-            if (id.includes('react-dom')) {
-              return 'vendor-react-dom';
+            // React core (smallest possible chunks)
+            if (id.includes('react/') && !id.includes('react-dom')) {
+              return 'react-core';
             }
+            if (id.includes('react-dom/')) {
+              return 'react-dom';
+            }
+            
+            // Router (separate chunk)
+            if (id.includes('react-router')) {
+              return 'react-router';
+            }
+            
+            // Lucide icons (can be lazy loaded)
             if (id.includes('lucide-react')) {
-              return 'vendor-icons';
+              return 'icons';
             }
-            if (id.includes('react')) {
-              return 'vendor-react';
+            
+            // Scheduler (React internal)
+            if (id.includes('scheduler')) {
+              return 'scheduler';
             }
-            return 'vendor-other';
+            
+            // Group remaining small vendor libraries
+            return 'vendor';
+          }
+          
+          // Split out components by route/section for better lazy loading
+          if (id.includes('src/components/')) {
+            // Keep navbar and critical components in main bundle
+            if (id.includes('Navbar') || id.includes('Hero') || id.includes('ThemeContext')) {
+              return undefined; // Include in main bundle
+            }
+            // Lazy-loaded components get their own chunks
+            return 'components';
           }
         },
       },
@@ -112,11 +163,15 @@ export default defineConfig({
     // CSS code splitting
     cssCodeSplit: true,
     // Optimize chunk size warning limit
-    chunkSizeWarningLimit: 600,
+    chunkSizeWarningLimit: 500,
     // Reduce main thread work by optimizing module resolution
     modulePreload: {
       polyfill: false, // Disable polyfill for modern browsers
     },
+    // Improve build performance
+    reportCompressedSize: false, // Skip gzip size reporting to speed up build
+    // Set smaller chunk size for better loading performance
+    assetsInlineLimit: 4096, // Inline assets < 4kb
   },
   server: {
     proxy: {
