@@ -3,7 +3,7 @@ User-agent: *
 Allow: /
 
 # Sitemap location
-Sitemap: https://ahmed-mostafa-portfolio-8efdd2d8c482.herokuapp.com/sitemap.xml
+Sitemap: https://ahmedmostafa-swe.tech/sitemap.xml
 
 # Disallow admin or API routes if any
 Disallow: /api/

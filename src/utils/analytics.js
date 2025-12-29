@@ -1,16 +1,22 @@
 /**
- * Google Analytics Event Tracking Utility
+ * Analytics Utility (Cloudflare Web Analytics Compatible)
  * 
- * This module provides helper functions to track important user actions
- * in Google Analytics using the gtag.js library.
+ * Cloudflare Web Analytics automatically tracks page views without any code.
+ * This file is kept for potential future custom event tracking or can be removed.
+ * 
+ * Note: Cloudflare Analytics is cookie-free and privacy-first by default.
+ * No user consent required, no third-party cookies, fully GDPR compliant.
  */
 
 /**
- * Check if gtag is available (Google Analytics loaded)
- * @returns {boolean} Whether gtag is available
+ * Log event to console for debugging
+ * Since Cloudflare Analytics handles page views automatically,
+ * we just log custom events for debugging purposes
  */
-const isGtagAvailable = () => {
-  return typeof window !== 'undefined' && typeof window.gtag === 'function'
+const logEvent = (eventName, eventData = {}) => {
+  if (process.env.NODE_ENV === 'development') {
+    console.log(`📊 Event: ${eventName}`, eventData)
+  }
 }
 
 /**
@@ -18,102 +24,52 @@ const isGtagAvailable = () => {
  * Tracks when users click the "Download CV" button
  */
 export const trackCVDownload = () => {
-  if (!isGtagAvailable()) {
-    console.warn('Google Analytics (gtag) is not available')
-    return
-  }
-  
-  window.gtag('event', 'cv_download', {
-    event_category: 'engagement',
-    event_label: 'CV Download Button',
-    value: 1
-  })
-  
-  console.log('GA Event: CV Download tracked')
+  logEvent('CV Download', { action: 'download', type: 'cv' })
 }
 
 /**
  * Track successful contact form submission
  * @param {Object} formData - The submitted form data
- * @param {string} formData.name - User's name
- * @param {string} formData.email - User's email
  * @param {string} formData.subject - Message subject
  */
 export const trackContactFormSubmission = (formData = {}) => {
-  if (!isGtagAvailable()) {
-    console.warn('Google Analytics (gtag) is not available')
-    return
-  }
-  
-  window.gtag('event', 'contact_form_submit', {
-    event_category: 'engagement',
-    event_label: 'Contact Form Submission',
-    subject: formData.subject || 'Unknown',
-    value: 5 // Higher value for direct contact
+  logEvent('Contact Form Submit', { 
+    action: 'submit',
+    subject: formData.subject || 'Unknown'
   })
-  
-  console.log('GA Event: Contact Form Submission tracked')
 }
 
 /**
  * Track project demo/link clicks
- * @param {string} projectName - Name of the project (e.g., 'Vaultique', 'Cybertopia')
+ * @param {string} projectName - Name of the project
  * @param {string} linkType - Type of link ('demo', 'github', 'source')
  * @param {string} url - The URL being visited
  */
 export const trackProjectView = (projectName, linkType = 'demo', url = '') => {
-  if (!isGtagAvailable()) {
-    console.warn('Google Analytics (gtag) is not available')
-    return
-  }
-  
-  window.gtag('event', 'project_view', {
-    event_category: 'project_engagement',
-    event_label: `${projectName} - ${linkType}`,
-    project_name: projectName,
-    link_type: linkType,
-    destination_url: url,
-    value: 3
+  logEvent('Project View', { 
+    project: projectName,
+    linkType,
+    url
   })
-  
-  console.log(`GA Event: Project View tracked - ${projectName} (${linkType})`)
 }
 
 /**
  * Track social media link clicks
  * @param {string} platform - Social media platform ('github', 'linkedin', 'email')
- * @param {string} location - Where the link was clicked from ('hero', 'contact', 'footer')
+ * @param {string} location - Where the link was clicked from
  */
 export const trackSocialClick = (platform, location = 'unknown') => {
-  if (!isGtagAvailable()) {
-    console.warn('Google Analytics (gtag) is not available')
-    return
-  }
-  
-  window.gtag('event', 'social_click', {
-    event_category: 'social_engagement',
-    event_label: `${platform} - ${location}`,
-    platform: platform,
-    click_location: location,
-    value: 2
+  logEvent('Social Click', { 
+    platform,
+    location
   })
-  
-  console.log(`GA Event: Social Click tracked - ${platform} from ${location}`)
 }
 
 /**
  * Track custom events
- * Generic function for tracking any custom event
  * @param {string} eventName - Name of the event
  * @param {Object} eventParams - Additional event parameters
  */
 export const trackCustomEvent = (eventName, eventParams = {}) => {
-  if (!isGtagAvailable()) {
-    console.warn('Google Analytics (gtag) is not available')
-    return
-  }
-  
-  window.gtag('event', eventName, eventParams)
-  
-  console.log(`GA Event: Custom event tracked - ${eventName}`, eventParams)
+  logEvent(eventName, eventParams)
 }

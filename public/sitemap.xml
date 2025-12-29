@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <!-- Homepage / About -->
   <url>
-    <loc>https://ahmed-mostafa-portfolio-8efdd2d8c482.herokuapp.com/</loc>
+    <loc>https://ahmedmostafa-swe.tech/</loc>
     <lastmod>2025-12-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
@@ -10,7 +10,7 @@
   
   <!-- Experience Section -->
   <url>
-    <loc>https://ahmed-mostafa-portfolio-8efdd2d8c482.herokuapp.com/#experience</loc>
+    <loc>https://ahmedmostafa-swe.tech/#experience</loc>
     <lastmod>2025-12-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
@@ -18,7 +18,7 @@
   
   <!-- Projects Section -->
   <url>
-    <loc>https://ahmed-mostafa-portfolio-8efdd2d8c482.herokuapp.com/#projects</loc>
+    <loc>https://ahmedmostafa-swe.tech/#projects</loc>
     <lastmod>2025-12-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
@@ -26,7 +26,7 @@
   
   <!-- All Projects Page -->
   <url>
-    <loc>https://ahmed-mostafa-portfolio-8efdd2d8c482.herokuapp.com/projects</loc>
+    <loc>https://ahmedmostafa-swe.tech/projects</loc>
     <lastmod>2025-12-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
@@ -34,7 +34,7 @@
   
   <!-- Skills Section -->
   <url>
-    <loc>https://ahmed-mostafa-portfolio-8efdd2d8c482.herokuapp.com/#skills</loc>
+    <loc>https://ahmedmostafa-swe.tech/#skills</loc>
     <lastmod>2025-12-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -42,7 +42,7 @@
   
   <!-- Education Section -->
   <url>
-    <loc>https://ahmed-mostafa-portfolio-8efdd2d8c482.herokuapp.com/#education</loc>
+    <loc>https://ahmedmostafa-swe.tech/#education</loc>
     <lastmod>2025-12-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -50,7 +50,7 @@
   
   <!-- Contact Section -->
   <url>
-    <loc>https://ahmed-mostafa-portfolio-8efdd2d8c482.herokuapp.com/#contact</loc>
+    <loc>https://ahmedmostafa-swe.tech/#contact</loc>
     <lastmod>2025-12-27</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.6</priority>
