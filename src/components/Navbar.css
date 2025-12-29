@@ -8,7 +8,6 @@ header {
   right: 0;
   z-index: 50;
   width: 100%;
-  background: rgba(15, 23, 42, 0.95); /* fallback for glass */
   transition: padding 0.2s, background-color 0.2s, backdrop-filter 0.2s;
 }
 
