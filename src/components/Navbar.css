@@ -1,23 +1,5 @@
 /* Navbar Component Styles */
 
-/* Sticky/fixed navbar styles */
-header {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 50;
-  width: 100%;
-  transition: padding 0.2s, background-color 0.2s, backdrop-filter 0.2s;
-}
-
-.navbar-sticky {
-  position: sticky;
-  top: 0;
-  z-index: 50;
-}
-
-
 /* Body scroll lock when mobile menu is open */
 body.navbar-menu-open {
   overflow: hidden;

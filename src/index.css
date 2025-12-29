@@ -8,7 +8,6 @@
 @layer base {
   /* Dark Theme (default) */
   :root {
-    /* Custom theme variables */
     --color-background: #020617;
     --color-foreground: #f1f5f9;
     --color-card: rgba(15, 23, 42, 0.8);
@@ -16,9 +15,7 @@
     --color-surface: rgba(30, 41, 59, 0.5);
     --color-surface-hover: rgba(51, 65, 85, 0.5);
     --color-border: rgba(51, 65, 85, 0.5);
-    --color-muted: #cbd5e1;
-    
-    /* shadcn/ui variables (light theme defaults) */
+    --color-muted: #94a3b8;
     --background: 0 0% 100%;
     --foreground: 0 0% 3.9%;
     --card: 0 0% 100%;
@@ -30,7 +27,7 @@
     --secondary: 0 0% 96.1%;
     --secondary-foreground: 0 0% 9%;
     --muted: 0 0% 96.1%;
-    --muted-foreground: 0 0% 35%;
+    --muted-foreground: 0 0% 45.1%;
     --accent: 0 0% 96.1%;
     --accent-foreground: 0 0% 9%;
     --destructive: 0 84.2% 60.2%;
@@ -48,7 +45,6 @@
 
   /* Light Theme */
   .light {
-    /* Custom theme variables */
     --color-background: #F9FAFB;
     --color-foreground: #0f172a;
     --color-card: rgba(255, 255, 255, 0.9);
@@ -56,35 +52,7 @@
     --color-surface: rgba(241, 245, 249, 0.8);
     --color-surface-hover: rgba(226, 232, 240, 0.8);
     --color-border: rgba(203, 213, 225, 0.6);
-    --color-muted: #475569;
-  }
-
-  /* Dark Theme shadcn/ui overrides */
-  .dark {
-    --background: 0 0% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 0 0% 3.9%;
-    --card-foreground: 0 0% 98%;
-    --popover: 0 0% 3.9%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 0 0% 98%;
-    --primary-foreground: 0 0% 9%;
-    --secondary: 0 0% 14.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 0 0% 14.9%;
-    --muted-foreground: 0 0% 75%;
-    --accent: 0 0% 14.9%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 14.9%;
-    --input: 0 0% 14.9%;
-    --ring: 0 0% 83.1%;
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
+    --color-muted: #64748b;
   }
 
   * {
@@ -112,10 +80,6 @@
     overflow-x: hidden;
     /* Match Outfit font metrics to prevent layout shifts when font loads */
     font-size-adjust: 0.50;
-    /* Optimize rendering - reduce layout thrashing */
-    contain: layout style;
-    /* Use GPU acceleration for smooth scrolling */
-    transform: translateZ(0);
   }
 
   /* Optimize font rendering to reduce visible flash */
@@ -142,9 +106,8 @@
     inset: 0;
     z-index: -1;
     background-image: 
-      radial-gradient(ellipse 80% 50% at 50% -20%, rgba(14, 165, 233, 0.2), transparent),
-      radial-gradient(ellipse 60% 40% at 100% 100%, rgba(6, 182, 212, 0.12), transparent),
-      radial-gradient(ellipse 50% 30% at 0% 50%, rgba(16, 185, 129, 0.08), transparent);
+      radial-gradient(ellipse 80% 50% at 50% -20%, rgba(14, 165, 233, 0.15), transparent),
+      radial-gradient(ellipse 60% 40% at 100% 100%, rgba(6, 182, 212, 0.08), transparent);
     pointer-events: none;
   }
 
@@ -155,9 +118,8 @@
     inset: 0;
     z-index: -1;
     background-image: 
-      radial-gradient(ellipse 80% 50% at 50% -20%, rgba(14, 165, 233, 0.1), transparent),
-      radial-gradient(ellipse 60% 40% at 100% 100%, rgba(6, 182, 212, 0.06), transparent),
-      radial-gradient(ellipse 50% 30% at 0% 50%, rgba(16, 185, 129, 0.05), transparent);
+      radial-gradient(ellipse 80% 50% at 50% -20%, rgba(14, 165, 233, 0.08), transparent),
+      radial-gradient(ellipse 60% 40% at 100% 100%, rgba(6, 182, 212, 0.05), transparent);
     pointer-events: none;
   }
 
@@ -208,13 +170,37 @@
     white-space: nowrap;
     border-width: 0;
   }
+  .dark {
+    --background: 0 0% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 0 0% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 0 0% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 0 0% 98%;
+    --primary-foreground: 0 0% 9%;
+    --secondary: 0 0% 14.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 0 0% 14.9%;
+    --muted-foreground: 0 0% 63.9%;
+    --accent: 0 0% 14.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 14.9%;
+    --input: 0 0% 14.9%;
+    --ring: 0 0% 83.1%;
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+  }
 }
 
 @layer components {
   .gradient-text {
-    background: linear-gradient(135deg, #0ea5e9, #06b6d4, #10b981, #3b82f6);
-    background-size: 200% 200%;
-    animation: gradient 8s ease infinite;
+    background: linear-gradient(to right, #38bdf8, #06b6d4, #10b981);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
@@ -255,10 +241,8 @@
     border-radius: 1rem;
     /* Only transition border-color - box-shadow is expensive */
     transition: border-color 0.2s ease-out;
-    /* Optimize rendering with CSS containment */
-    contain: layout style paint;
     /* Hint to browser this will change */
-    will-change: border-color, transform;
+    will-change: border-color;
   }
   
   /* Reduce blur on mobile for better performance */
@@ -285,13 +269,12 @@
   }
 
   .glass-card:hover {
-    border-color: rgba(14, 165, 233, 0.5);
-    box-shadow: 0 8px 32px rgba(14, 165, 233, 0.15);
+    border-color: rgba(14, 165, 233, 0.3);
+    /* Use lighter shadow or remove for better INP */
   }
 
   .light .glass-card:hover {
-    border-color: rgba(14, 165, 233, 0.6);
-    box-shadow: 0 8px 32px rgba(14, 165, 233, 0.2);
+    border-color: rgba(14, 165, 233, 0.4);
   }
 
   /* Section divider */
@@ -317,16 +300,13 @@
     justify-content: center;
     gap: 0.5rem;
     padding: 0.75rem 1.5rem;
-    background: linear-gradient(135deg, #0ea5e9, #06b6d4, #0ea5e9);
-    background-size: 200% 200%;
-    animation: gradient 3s ease infinite;
+    background: linear-gradient(to right, #0ea5e9, #06b6d4);
     color: white;
     font-weight: 600;
     border-radius: 0.75rem;
-    transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+    transition: transform 0.2s ease-out, opacity 0.2s ease-out;
     border: none;
     cursor: pointer;
-    box-shadow: 0 4px 15px rgba(14, 165, 233, 0.3);
   }
   
   .btn-primary:focus {
@@ -340,7 +320,6 @@
 
   .btn-primary:hover:not(:disabled) {
     transform: translateY(-0.125rem);
-    box-shadow: 0 6px 25px rgba(14, 165, 233, 0.5);
   }
 
   .btn-primary:active {
@@ -463,10 +442,9 @@
   }
 
   .tech-tag:hover {
-    border-color: rgba(14, 165, 233, 0.6);
-    color: #06b6d4;
-    background: rgba(14, 165, 233, 0.1);
-    transform: translateY(-0.0625rem) scale(1.05);
+    border-color: rgba(14, 165, 233, 0.4);
+    color: #0ea5e9;
+    transform: translateY(-0.0625rem);
   }
 
   /* Achievement highlight card */
@@ -904,31 +882,21 @@
 .animate-fade-in-up {
   animation: fadeInUp 0.5s ease-out forwards;
   opacity: 0;
-  /* Optimize animation performance */
-  will-change: opacity, transform;
-  /* Use GPU acceleration */
-  transform: translateZ(0);
 }
 
 .animate-fade-in-down {
   animation: fadeInDown 0.5s ease-out forwards;
   opacity: 0;
-  will-change: opacity, transform;
-  transform: translateZ(0);
 }
 
 .animate-fade-in-left {
   animation: fadeInLeft 0.5s ease-out forwards;
   opacity: 0;
-  will-change: opacity, transform;
-  transform: translateZ(0);
 }
 
 .animate-fade-in-scale {
   animation: fadeInScale 0.5s ease-out forwards;
   opacity: 0;
-  will-change: opacity, transform;
-  transform: translateZ(0);
 }
 
 /* Stagger delay utilities */
@@ -1095,7 +1063,8 @@ section {
 }
 
 /* Reduce layout thrashing for animated elements */
-.interactive-card {
+.interactive-card,
+.glass-card {
   contain: layout style paint;
   will-change: transform, border-color;
 }
