@@ -159,9 +159,18 @@ export default defineConfig({
     cssCodeSplit: true,
     // Optimize chunk size warning limit
     chunkSizeWarningLimit: 500,
-    // Reduce main thread work by optimizing module resolution
+    // Enable module preload for faster loading of dependencies
     modulePreload: {
-      polyfill: false, // Disable polyfill for modern browsers
+      polyfill: true, // Enable polyfill to ensure modulepreload works across browsers
+      resolveDependencies: (filename, deps, { hostId, hostType }) => {
+        // Only preload critical chunks
+        return deps.filter(dep => {
+          // Preload React core chunks immediately
+          return dep.includes('react-core') || 
+                 dep.includes('react-dom') || 
+                 dep.includes('scheduler');
+        });
+      },
     },
     // Improve build performance
     reportCompressedSize: false, // Skip gzip size reporting to speed up build
