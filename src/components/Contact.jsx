@@ -175,7 +175,7 @@ export default function Contact() {
   return (
     <section 
       id="contact" 
-      className="py-12 md:py-50 relative overflow-hidden"
+      className="py-16 md:py-28 relative overflow-hidden"
       aria-labelledby="contact-heading"
     >
       {/* Background */}
@@ -184,7 +184,7 @@ export default function Contact() {
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div ref={ref}>
           {/* Section Header */}
-          <div className='text-center mb-12 md:mb-16'>
+          <div className='text-center mb-14 md:mb-20'>
             <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary-500/10 border border-primary-500/20 text-primary-400 text-sm font-medium mb-4">
               <span className="w-1.5 h-1.5 rounded-full bg-primary-400" aria-hidden="true" />
               Contact
@@ -216,7 +216,7 @@ export default function Contact() {
                 {contactInfo.map((item) => (
                   <div key={item.label} className="flex items-center gap-3 md:gap-4" role="listitem">
                     <div 
-                      className="w-10 md:w-12 h-10 md:h-12 rounded-xl bg-surface flex items-center justify-center border border-border"
+                      className="w-10 md:w-12 h-10 md:h-12 rounded-xl bg-gradient-to-br from-primary-500/20 to-accent-cyan/20 flex items-center justify-center border border-primary-500/30"
                       aria-hidden="true"
                     >
                       <item.icon className="w-4 md:w-5 h-4 md:h-5 text-primary-400" />
@@ -248,7 +248,7 @@ export default function Contact() {
                       href={social.href}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="w-10 md:w-12 h-10 md:h-12 rounded-xl glass hover:bg-surface-hover flex items-center justify-center text-muted hover:text-foreground transition-[transform,color] duration-200 hover:-translate-y-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
+                      className="w-10 md:w-12 h-10 md:h-12 rounded-xl glass hover:bg-primary-500/10 hover:border-primary-500/40 flex items-center justify-center text-muted hover:text-primary-400 transition-[transform,color,background-color,border-color] duration-200 hover:-translate-y-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
                       aria-label={`Visit my ${social.label} profile`}
                       role="listitem"
                     >
@@ -291,7 +291,7 @@ export default function Contact() {
                       onChange={handleChange}
                       required
                       aria-required="true"
-                      className="w-full px-3 md:px-4 py-2.5 md:py-3 rounded-xl bg-surface border border-border text-foreground placeholder-muted focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 transition-colors text-sm md:text-base"
+                      className="w-full px-3 md:px-4 py-2.5 md:py-3 rounded-xl bg-surface border border-border text-foreground placeholder-muted focus:outline-none focus:border-primary-400 focus:ring-2 focus:ring-primary-400/30 transition-colors text-sm md:text-base"
                       placeholder="Your name"
                     />
                   </div>
@@ -307,7 +307,7 @@ export default function Contact() {
                       onChange={handleChange}
                       required
                       aria-required="true"
-                      className="w-full px-3 md:px-4 py-2.5 md:py-3 rounded-xl bg-surface border border-border text-foreground placeholder-muted focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 transition-colors text-sm md:text-base"
+                      className="w-full px-3 md:px-4 py-2.5 md:py-3 rounded-xl bg-surface border border-border text-foreground placeholder-muted focus:outline-none focus:border-primary-400 focus:ring-2 focus:ring-primary-400/30 transition-colors text-sm md:text-base"
                       placeholder="your@email.com"
                     />
                   </div>
@@ -340,7 +340,7 @@ export default function Contact() {
                     onChange={handleChange}
                     required
                     aria-required="true"
-                    className="w-full px-3 md:px-4 py-2.5 md:py-3 rounded-xl bg-surface border border-border text-foreground placeholder-muted focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 transition-colors text-sm md:text-base"
+                    className="w-full px-3 md:px-4 py-2.5 md:py-3 rounded-xl bg-surface border border-border text-foreground placeholder-muted focus:outline-none focus:border-primary-400 focus:ring-2 focus:ring-primary-400/30 transition-colors text-sm md:text-base"
                     placeholder="What's this about?"
                   />
                 </div>
@@ -357,7 +357,7 @@ export default function Contact() {
                     required
                     aria-required="true"
                     rows={5}
-                    className="w-full px-3 md:px-4 py-2.5 md:py-3 rounded-xl bg-surface border border-border text-foreground placeholder-muted focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 transition-colors resize-none text-sm md:text-base"
+                    className="w-full px-3 md:px-4 py-2.5 md:py-3 rounded-xl bg-surface border border-border text-foreground placeholder-muted focus:outline-none focus:border-primary-400 focus:ring-2 focus:ring-primary-400/30 transition-colors resize-none text-sm md:text-base"
                     placeholder="Tell me about your project or opportunity..."
                   />
                 </div>

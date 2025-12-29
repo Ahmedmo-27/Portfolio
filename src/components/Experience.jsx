@@ -99,13 +99,13 @@ export default function Experience() {
   return (
     <section 
       id="experience" 
-      className="py-12 md:py-50 relative overflow-hidden"
+      className="py-16 md:py-28 relative overflow-hidden"
       aria-labelledby="experience-heading"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div ref={ref}>
           {/* Section Header */}
-          <div className= 'text-center mb-12 md:mb-16'>
+          <div className= 'text-center mb-14 md:mb-20'>
             <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-accent-emerald/20 border border-accent-emerald/30 text-accent-emerald text-sm font-medium mb-4">
               <span className="w-1.5 h-1.5 rounded-full bg-accent-emerald" aria-hidden="true" />
               Experience

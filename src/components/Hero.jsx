@@ -80,7 +80,7 @@ const Hero = () => {
             </div>
 
             {/* Right Content - Profile Card Skeleton */}
-          <div className="order-1 lg:order-2 flex justify-center lg:justify-end mb-6 md:mb-0 translate-x-4">
+          <div className="order-1 lg:order-2 flex justify-center lg:justify-end mb-6 md:mb-0">
               <SkeletonLoader 
                 variant="card" 
                 className="w-full max-w-xs sm:max-w-sm rounded-3xl"

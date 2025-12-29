@@ -64,7 +64,7 @@ export default function About() {
   return (
     <section 
       id="about" 
-      className="py-12 md:py-24 relative overflow-hidden"
+      className="py-16 md:py-28 relative overflow-hidden"
       aria-labelledby="about-heading"
     >
       {/* Background decorative elements */}
@@ -76,7 +76,7 @@ export default function About() {
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div ref={ref}>
           {/* Section Header */}
-          <div className='text-center mb-12 md:mb-16'>
+          <div className='text-center mb-14 md:mb-20'>
             <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary-500/10 border border-primary-500/20 text-primary-400 text-sm font-medium mb-4 animate-fade-in">
               <span className="w-1.5 h-1.5 rounded-full bg-primary-400 animate-pulse" aria-hidden="true" />
               About Me
@@ -92,7 +92,7 @@ export default function About() {
 
           {/* Stats Row - Enhanced */}
           <div 
-            className='grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5 mb-12 md:mb-16'
+            className='grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-14 md:mb-18'
           >
             {stats.map((stat, index) => (
               <div
@@ -102,7 +102,7 @@ export default function About() {
                 }}
                 className='relative group transition-all duration-300 hover:-translate-y-2 hover:scale-105 about-stat-item'
               >
-                <div className="text-center p-4 md:p-5 rounded-2xl glass-card h-full relative overflow-hidden border-2 border-primary-500/20 group-hover:border-primary-500/40 transition-all duration-300" title={stat.tooltip || ''}>
+                <div className="text-center p-5 md:p-6 rounded-2xl glass-card h-full relative overflow-hidden border-2 border-primary-500/20 group-hover:border-primary-500/60 transition-all duration-300 group-hover:shadow-lg group-hover:shadow-primary-500/20" title={stat.tooltip || ''}>
                   {/* Subtle gradient on hover */}
                   <div className="absolute inset-0 bg-gradient-to-br from-primary-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" aria-hidden="true" />
                   
