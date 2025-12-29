@@ -12,6 +12,13 @@ import './Projects.css'
 const initialDisplayCount = 3
 const displayedProjects = projects.slice(0, initialDisplayCount)
 
+// Utility: Simple markdown bold parser
+function parseBoldMarkdown(text) {
+  if (!text) return '';
+  // Replace **text** with <strong>text</strong>
+  return text.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+}
+
 export default function Projects() {
   const { ref, isInView } = useInViewOnce()
   const [activeProject, setActiveProject] = useState(null)
@@ -188,7 +195,7 @@ export default function Projects() {
                     {/* Content Section */}
                     <div className={`${index === 0 ? 'lg:col-span-2' : ''} p-4 sm:p-6 flex flex-col`}>
                       {/* Header */}
-                      <div className="flex items-start justify-between gap-3 mb-4">
+                      <div className="flex items-start justify-between gap-3 mb-3">
                         <div className="flex items-center gap-3 min-w-0">
                           <div className={`w-10 sm:w-12 h-10 sm:h-12 rounded-xl bg-gradient-to-br ${project.color} flex items-center justify-center flex-shrink-0 shadow-lg`} aria-hidden="true">
                             <project.icon className="w-5 sm:w-6 h-5 sm:h-6 text-white" />
@@ -205,9 +212,27 @@ export default function Projects() {
                       </div>
 
                       {/* Description */}
-                      <p className="text-muted text-sm sm:text-base mb-4">
+                      <p className="text-muted text-sm sm:text-base mb-3">
                         {project.description}
                       </p>
+
+                      {/* Impact & Role - NEW */}
+                      {(project.impact || project.role) && (
+                        <div className="mb-4 space-y-2">
+                          {project.impact && (
+                            <div className="flex items-start gap-2 text-xs sm:text-sm">
+                              <span className="text-accent-emerald font-semibold flex-shrink-0">Impact:</span>
+                              <span className="text-muted" dangerouslySetInnerHTML={{ __html: parseBoldMarkdown(project.impact) }} />
+                            </div>
+                          )}
+                          {project.role && (
+                            <div className="flex items-start gap-2 text-xs sm:text-sm">
+                              <span className="text-accent-cyan font-semibold flex-shrink-0">Role:</span>
+                              <span className="text-muted" dangerouslySetInnerHTML={{ __html: parseBoldMarkdown(project.role) }} />
+                            </div>
+                          )}
+                        </div>
+                      )}
 
                       {/* Features Toggle */}
                       <div className="mb-4">
@@ -221,7 +246,7 @@ export default function Projects() {
                             className={`w-4 h-4 transition-transform ${activeProject === project.id ? 'rotate-90' : ''}`} 
                             aria-hidden="true" 
                           />
-                          Key Features
+                          Technical Details
                         </button>
                         {activeProject === project.id && (
                           <ul
@@ -230,9 +255,9 @@ export default function Projects() {
                             role="list"
                           >
                             {project.features.map((feature, i) => (
-                              <li key={`${project.id}-feature-${i}`} className="flex items-start gap-2 text-muted text-sm">
+                              <li key={`${project.id}-feature-${i}`} className="flex items-start gap-2 text-muted text-xs sm:text-sm">
                                 <span className="w-1.5 h-1.5 rounded-full bg-accent-cyan mt-1.5 flex-shrink-0" aria-hidden="true" />
-                                {feature}
+                                <span dangerouslySetInnerHTML={{ __html: parseBoldMarkdown(feature) }} />
                               </li>
                             ))}
                           </ul>
@@ -240,7 +265,7 @@ export default function Projects() {
                       </div>
 
                       {/* Tech Stack */}
-                      <div className="flex flex-wrap gap-1.5 sm:gap-2 mt-10 mb-3">
+                      <div className="flex flex-wrap gap-1.5 sm:gap-2 mt-auto mb-3">
                         {project.tech.map((tech) => (
                           <span key={tech} className="tech-tag text-xs">
                             {tech}

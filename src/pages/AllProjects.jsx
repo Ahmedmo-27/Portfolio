@@ -1,3 +1,4 @@
+
 import { useRef, useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import ArrowLeft from 'lucide-react/dist/esm/icons/arrow-left'
@@ -9,6 +10,13 @@ import ViewMoreButton from '../components/ViewMoreButton'
 import MediaCarousel from '../components/MediaCarousel'
 import { projects } from '../data/projects'
 import '../components/Projects.css'
+
+// Utility: Simple markdown bold parser (copied from Projects.jsx)
+function parseBoldMarkdown(text) {
+  if (!text) return '';
+  // Replace **text** with <strong>text</strong>
+  return text.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+}
 
 const FILTER_CATEGORIES = [
   { id: 'all', label: 'All Projects' },
@@ -249,10 +257,29 @@ export default function AllProjects() {
                           </div>
                         </div>
 
-                        <p className="text-muted text-sm sm:text-base mb-4">
+                        <p className="text-muted text-sm sm:text-base mb-3">
                           {project.description}
                         </p>
 
+                        {/* Impact & Role - NEW (from Projects.jsx) */}
+                        {(project.impact || project.role) && (
+                          <div className="mb-4 space-y-2">
+                            {project.impact && (
+                              <div className="flex items-start gap-2 text-xs sm:text-sm">
+                                <span className="text-accent-emerald font-semibold flex-shrink-0">Impact:</span>
+                                <span className="text-muted" dangerouslySetInnerHTML={{ __html: parseBoldMarkdown(project.impact) }} />
+                              </div>
+                            )}
+                            {project.role && (
+                              <div className="flex items-start gap-2 text-xs sm:text-sm">
+                                <span className="text-accent-cyan font-semibold flex-shrink-0">Role:</span>
+                                <span className="text-muted" dangerouslySetInnerHTML={{ __html: parseBoldMarkdown(project.role) }} />
+                              </div>
+                            )}
+                          </div>
+                        )}
+
+                        {/* Features Toggle (label and content updated for consistency) */}
                         <div className="mb-4">
                           <button
                             onClick={() => setActiveProject(activeProject === project.id ? null : project.id)}
@@ -264,7 +291,7 @@ export default function AllProjects() {
                               className={`w-4 h-4 transition-transform ${activeProject === project.id ? 'rotate-90' : ''}`} 
                               aria-hidden="true" 
                             />
-                            Key Features
+                            Technical Details
                           </button>
                           {activeProject === project.id && (
                             <ul
@@ -273,16 +300,17 @@ export default function AllProjects() {
                               role="list"
                             >
                               {project.features.map((feature, i) => (
-                                <li key={`${project.id}-feature-${i}`} className="flex items-start gap-2 text-muted text-sm">
+                                <li key={`${project.id}-feature-${i}`} className="flex items-start gap-2 text-muted text-xs sm:text-sm">
                                   <span className="w-1.5 h-1.5 rounded-full bg-accent-cyan mt-1.5 flex-shrink-0" aria-hidden="true" />
-                                  {feature}
+                                  <span dangerouslySetInnerHTML={{ __html: parseBoldMarkdown(feature) }} />
                                 </li>
                               ))}
                             </ul>
                           )}
                         </div>
 
-                        <div className="flex flex-wrap gap-1.5 sm:gap-2 mt-10 mb-3">
+                        {/* Tech Stack */}
+                        <div className="flex flex-wrap gap-1.5 sm:gap-2 mt-auto mb-3">
                           {project.tech.map((tech) => (
                             <span key={tech} className="tech-tag text-xs">
                               {tech}
@@ -290,6 +318,7 @@ export default function AllProjects() {
                           ))}
                         </div>
 
+                        {/* CTA Buttons */}
                         <div className="flex flex-wrap gap-2 mt-auto pt-4 border-t border-border">
                           {project.ctas.map((cta) => {
                             const Icon = cta.icon
