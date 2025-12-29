@@ -6,7 +6,6 @@ import ViewMoreButton from './ViewMoreButton'
 import MediaCarousel from './MediaCarousel'
 import { projects } from '../data/projects'
 import { useInViewOnce } from '../utils/useInViewOnce'
-import { trackProjectView } from '../utils/analytics'
 import './Projects.css'
 
 // Keep only first 3 projects for the home page
@@ -267,7 +266,6 @@ export default function Projects() {
                               target={cta.href.startsWith('http') ? '_blank' : undefined}
                               rel={cta.href.startsWith('http') ? 'noopener noreferrer' : undefined}
                               className="btn-cta"
-                              onClick={() => trackProjectView(project.title, linkType, cta.href)}
                             >
                               <Icon className="w-4 h-4" aria-hidden="true" />
                               {cta.label}

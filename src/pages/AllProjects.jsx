@@ -8,7 +8,6 @@ import CircuitBoard from '../components/CircuitBoard'
 import ViewMoreButton from '../components/ViewMoreButton'
 import MediaCarousel from '../components/MediaCarousel'
 import { projects } from '../data/projects'
-import { trackProjectView } from '../utils/analytics'
 import '../components/Projects.css'
 
 const FILTER_CATEGORIES = [
@@ -308,7 +307,6 @@ export default function AllProjects() {
                                 target={cta.href.startsWith('http') ? '_blank' : undefined}
                                 rel={cta.href.startsWith('http') ? 'noopener noreferrer' : undefined}
                                 className="btn-cta"
-                                onClick={() => trackProjectView(project.title, linkType, cta.href)}
                               >
                                 <Icon className="w-4 h-4" aria-hidden="true" />
                                 {cta.label}

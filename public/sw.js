@@ -1,9 +1,9 @@
-// Service Worker for Ahmed Mostafa Portfolio - v5 (Fixed Font Caching)
+// Service Worker for Ahmed Mostafa Portfolio - v6 (Simplified)
 // Provides offline support, caching, and handles network failures gracefully.
-// v5: Fixed staleWhileRevalidate to return proper Response objects instead of null
+// v6: Removed Cloudflare beacon caching, fonts bypass SW for better performance
 
-const STATIC_CACHE_NAME = 'portfolio-static-v5';
-const DYNAMIC_CACHE_NAME = 'portfolio-dynamic-v5';
+const STATIC_CACHE_NAME = 'portfolio-static-v6';
+const DYNAMIC_CACHE_NAME = 'portfolio-dynamic-v6';
 const ALL_CACHES = [STATIC_CACHE_NAME, DYNAMIC_CACHE_NAME];
 
 // Assets to cache on install (critical for app shell)
@@ -19,11 +19,9 @@ const PRECACHE_ASSETS = [
 // INSTALL
 // --------------------
 self.addEventListener('install', (event) => {
-  console.log('[SW] Install');
   event.waitUntil(
     caches.open(STATIC_CACHE_NAME)
       .then((cache) => {
-        console.log('[SW] Pre-caching App Shell...');
         return cache.addAll(PRECACHE_ASSETS);
       })
       .then(() => self.skipWaiting())
@@ -34,7 +32,6 @@ self.addEventListener('install', (event) => {
 // ACTIVATE
 // --------------------
 self.addEventListener('activate', (event) => {
-  console.log('[SW] Activate');
   event.waitUntil(
     Promise.all([
       caches.keys().then((cacheNames) =>
@@ -42,7 +39,6 @@ self.addEventListener('activate', (event) => {
           cacheNames
             .filter((name) => !ALL_CACHES.includes(name))
             .map((name) => {
-              console.log(`[SW] Deleting old cache: ${name}`);
               return caches.delete(name);
             })
         )
@@ -69,15 +65,17 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Aggressive caching for Cloudflare beacon (30 days instead of 1 day)
-  if (url.hostname === 'static.cloudflareinsights.com' && url.pathname.includes('beacon')) {
-    event.respondWith(cacheFirstLongTerm(request));
+  // Skip external resources - let browser handle them with native caching
+  if (url.hostname === 'fonts.googleapis.com' || 
+      url.hostname === 'fonts.gstatic.com' ||
+      url.hostname.includes('cloudflareinsights.com') ||
+      url.hostname.includes('workers.dev')) {
+    // Let browser handle these naturally without SW interference
     return;
   }
 
   // Network First for navigation requests
   if (request.mode === 'navigate') {
-    event.respondWith(networkFirst(request, '/index.html'));
     return;
   }
 
@@ -192,7 +190,6 @@ async function networkFirst(request, fallbackUrl) {
 
     return networkResponse;
   } catch (error) {
-    console.log(`[SW] Network failed for ${request.url}, using cache`);
 
     const cachedResponse = await caches.match(request);
     if (cachedResponse) {
@@ -249,8 +246,6 @@ function isStaticAsset(url) {
   const patterns = [
     /\.(jpg|jpeg|png|gif|webp|svg|ico)$/i,
     /\/assets\/.*\.[a-f0-9]+\.(js|css)$/i,
-    /^https:\/\/fonts\.googleapis\.com/,
-    /^https:\/\/fonts\.gstatic\.com/,
     (u) => u.origin.includes('r2.dev')
   ];
 

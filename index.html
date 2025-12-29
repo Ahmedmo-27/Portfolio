@@ -11,8 +11,8 @@
         document.documentElement.classList.remove(theme === 'dark' ? 'light' : 'dark');
       })();
     </script>
-    <link rel="icon" type="image/webp" href="/Geometric%20AM%20logo%20design.webp" />
-    <link rel="apple-touch-icon" href="/Geometric%20AM%20logo%20design.webp" />
+    <link rel="icon" type="image/webp" href="/Geometric AM logo design.webp" />
+    <link rel="apple-touch-icon" href="/Geometric AM logo design.webp" />
     <link rel="manifest" href="/manifest.json" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
     
@@ -83,33 +83,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://portfolio.ahmed2303479.workers.dev" crossorigin />
     
-    <!-- DNS prefetch for non-critical origins -->
-    <link rel="dns-prefetch" href="https://static.cloudflareinsights.com" />
-    
-    <!-- Cloudflare Web Analytics - Load after page is fully interactive -->
-    <!-- Delayed significantly to not impact LCP or critical rendering path -->
-    <script>
-      (function() {
-        function loadCloudflare() {
-          var script = document.createElement('script');
-          script.async = true;
-          script.src = 'https://static.cloudflareinsights.com/beacon.min.js';
-          script.setAttribute('data-cf-beacon', '{"token": "d2eb275e84514b12a3939bf951de2b6a"}');
-          script.crossOrigin = 'anonymous';
-          document.body.appendChild(script);
-        }
-        
-        // Load only after page is fully interactive and idle
-        if ('requestIdleCallback' in window) {
-          requestIdleCallback(loadCloudflare, { timeout: 5000 });
-        } else {
-          // Fallback: load after a significant delay to ensure no impact on LCP
-          window.addEventListener('load', function() {
-            setTimeout(loadCloudflare, 3000);
-          });
-        }
-      })();
-    </script>
+    <!-- DNS prefetch for non-critical origins removed - Cloudflare beacon disabled -->
     
     <!-- Preload LCP image (ProfileCard avatar) to reduce resource load delay -->
     <!-- Multiple strategies to ensure earliest possible image discovery and loading -->
@@ -275,8 +249,8 @@
     }
     </script>
     
-    <!-- Google Fonts - Optimized async loading to not block rendering -->
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&family=Syne:wght@400;500;600;700;800&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <!-- Google Fonts - Direct load with display=swap for performance -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&family=Syne:wght@400;500;600;700;800&display=swap" media="print" onload="this.media='all'">
     <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&family=Syne:wght@400;500;600;700;800&display=swap"></noscript>
     <!-- Optimize font loading to reduce visible flash -->
     <script>
