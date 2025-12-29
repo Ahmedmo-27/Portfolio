@@ -128,8 +128,9 @@ export default defineConfig({
               return 'scheduler';
             }
             
-            // Group remaining small vendor libraries
-            return 'vendor';
+            // Any other vendor libraries (if added in future)
+            // Only create vendor chunk if there are actually other dependencies
+            // For now, all dependencies are specifically chunked above
           }
           
           // Split out components by route/section for better lazy loading
