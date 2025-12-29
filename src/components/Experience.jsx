@@ -106,7 +106,7 @@ export default function Experience() {
         <div ref={ref}>
           {/* Section Header */}
           <div className= 'text-center mb-12 md:mb-16'>
-            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-accent-emerald/10 border border-accent-emerald/20 text-accent-emerald text-sm font-medium mb-4">
+            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-accent-emerald/20 border border-accent-emerald/30 text-accent-emerald text-sm font-medium mb-4">
               <span className="w-1.5 h-1.5 rounded-full bg-accent-emerald" aria-hidden="true" />
               Experience
             </span>

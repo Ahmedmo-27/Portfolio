@@ -16,7 +16,7 @@
     --color-surface: rgba(30, 41, 59, 0.5);
     --color-surface-hover: rgba(51, 65, 85, 0.5);
     --color-border: rgba(51, 65, 85, 0.5);
-    --color-muted: #94a3b8;
+    --color-muted: #cbd5e1;
     
     /* shadcn/ui variables (light theme defaults) */
     --background: 0 0% 100%;
@@ -30,7 +30,7 @@
     --secondary: 0 0% 96.1%;
     --secondary-foreground: 0 0% 9%;
     --muted: 0 0% 96.1%;
-    --muted-foreground: 0 0% 45.1%;
+    --muted-foreground: 0 0% 35%;
     --accent: 0 0% 96.1%;
     --accent-foreground: 0 0% 9%;
     --destructive: 0 84.2% 60.2%;
@@ -56,7 +56,7 @@
     --color-surface: rgba(241, 245, 249, 0.8);
     --color-surface-hover: rgba(226, 232, 240, 0.8);
     --color-border: rgba(203, 213, 225, 0.6);
-    --color-muted: #64748b;
+    --color-muted: #475569;
   }
 
   /* Dark Theme shadcn/ui overrides */
@@ -72,7 +72,7 @@
     --secondary: 0 0% 14.9%;
     --secondary-foreground: 0 0% 98%;
     --muted: 0 0% 14.9%;
-    --muted-foreground: 0 0% 63.9%;
+    --muted-foreground: 0 0% 75%;
     --accent: 0 0% 14.9%;
     --accent-foreground: 0 0% 98%;
     --destructive: 0 62.8% 30.6%;

@@ -119,7 +119,7 @@ export default function Projects() {
         <div ref={ref}>
           {/* Section Header */}
           <div className='text-center mb-16'>
-            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-accent-violet/10 border border-accent-violet/20 text-accent-violet text-sm font-medium mb-4">
+            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-accent-violet/20 border border-accent-violet/30 text-accent-violet text-sm font-medium mb-4">
               <span className="w-1.5 h-1.5 rounded-full bg-accent-violet" aria-hidden="true" />
               Projects
             </span>

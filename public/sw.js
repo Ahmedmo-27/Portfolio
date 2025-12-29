@@ -1,8 +1,9 @@
-// Service Worker for Ahmed Mostafa Portfolio - v2 (Robust & Modern)
+// Service Worker for Ahmed Mostafa Portfolio - v3 (Enhanced Caching)
 // Provides offline support, caching, and handles network failures gracefully.
+// v3: Added aggressive caching for Cloudflare beacon (30 days)
 
-const STATIC_CACHE_NAME = 'portfolio-static-v2';
-const DYNAMIC_CACHE_NAME = 'portfolio-dynamic-v2';
+const STATIC_CACHE_NAME = 'portfolio-static-v3';
+const DYNAMIC_CACHE_NAME = 'portfolio-dynamic-v3';
 const ALL_CACHES = [STATIC_CACHE_NAME, DYNAMIC_CACHE_NAME];
 
 // Assets to cache on install (critical for app shell)
@@ -68,6 +69,12 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
+  // Aggressive caching for Cloudflare beacon (30 days instead of 1 day)
+  if (url.hostname === 'static.cloudflareinsights.com' && url.pathname.includes('beacon')) {
+    event.respondWith(cacheFirstLongTerm(request));
+    return;
+  }
+
   // Network First for navigation requests
   if (request.mode === 'navigate') {
     event.respondWith(networkFirst(request, '/index.html'));
@@ -87,6 +94,60 @@ self.addEventListener('fetch', (event) => {
 // --------------------
 // CACHING STRATEGIES
 // --------------------
+
+async function cacheFirstLongTerm(request) {
+  const cachedResponse = await caches.match(request);
+  
+  // If cached and still fresh (check Date header), return cached version
+  if (cachedResponse) {
+    const cachedDate = cachedResponse.headers.get('date');
+    if (cachedDate) {
+      const cacheAge = Date.now() - new Date(cachedDate).getTime();
+      const thirtyDays = 30 * 24 * 60 * 60 * 1000;
+      
+      // Return cached version if less than 30 days old
+      if (cacheAge < thirtyDays) {
+        return cachedResponse;
+      }
+    } else {
+      // No date header, return cached version anyway
+      return cachedResponse;
+    }
+  }
+
+  try {
+    const networkResponse = await fetch(request);
+
+    if (networkResponse.ok) {
+      const cache = await caches.open(STATIC_CACHE_NAME);
+      // Clone and add custom header to track cache time
+      const responseToCache = new Response(networkResponse.clone().body, {
+        status: networkResponse.status,
+        statusText: networkResponse.statusText,
+        headers: new Headers({
+          ...Object.fromEntries(networkResponse.headers.entries()),
+          'X-SW-Cached-Date': new Date().toISOString(),
+          'Cache-Control': 'public, max-age=2592000, immutable' // 30 days
+        })
+      });
+      cache.put(request, responseToCache);
+      return networkResponse;
+    }
+
+    return networkResponse;
+  } catch (error) {
+    // Return cached version even if stale on network error
+    if (cachedResponse) {
+      return cachedResponse;
+    }
+    
+    console.error(`[SW] Cache First Long Term failed for ${request.url}`, error);
+    return new Response('Network error', {
+      status: 408,
+      headers: { 'Content-Type': 'text/plain' }
+    });
+  }
+}
 
 async function cacheFirst(request) {
   const cachedResponse = await caches.match(request);

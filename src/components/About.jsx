@@ -114,7 +114,7 @@ export default function About() {
                   </div>
                   <div className="relative text-xs md:text-sm text-muted font-semibold group-hover:text-foreground/90 transition-colors duration-300">{stat.label}</div>
                   {stat.tooltip && (
-                    <div className="relative mt-2 text-[10px] md:text-xs text-muted-foreground/70 italic leading-relaxed">
+                    <div className="relative mt-2 text-[10px] md:text-xs text-muted-foreground italic leading-relaxed">
                       {stat.tooltip}
                     </div>
                   )}

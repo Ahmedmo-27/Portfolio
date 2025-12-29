@@ -136,7 +136,7 @@ export default function Education() {
         <div ref={ref}>
           {/* Section Header */}
           <div className='text-center mb-12 md:mb-16'>
-            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-accent-violet/10 border border-accent-violet/20 text-accent-violet text-sm font-medium mb-4">
+            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-accent-violet/20 border border-accent-violet/30 text-accent-violet text-sm font-medium mb-4">
               <span className="w-1.5 h-1.5 rounded-full bg-accent-violet" aria-hidden="true" />
               Education & Certifications
             </span>
@@ -231,7 +231,7 @@ export default function Education() {
                     <BadgeCheck className="w-5 h-5 text-accent-emerald" />
                     Licenses & Certifications
                   </h3>
-                  <span className="text-[11px] uppercase tracking-wide text-muted-foreground/70">
+                  <span className="text-[11px] uppercase tracking-wide text-muted-foreground">
                     {certifications.length} credentials
                   </span>
                 </div>
@@ -272,7 +272,7 @@ export default function Education() {
                                 {cert.issuer}
                               </p>
                             </div>
-                            <span className="text-[10px] text-muted-foreground/70 flex-shrink-0 whitespace-nowrap">
+                            <span className="text-[10px] text-muted-foreground flex-shrink-0 whitespace-nowrap">
                               {cert.date}
                             </span>
                           </div>

@@ -130,7 +130,7 @@ export default function Achievements() {
         <div ref={ref}>
           {/* Section Header */}
           <div className='text-center mb-16'>
-            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-accent-amber/10 border border-accent-amber/20 text-accent-amber text-sm font-medium mb-4">
+            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-accent-amber/20 border border-accent-amber/30 text-accent-amber text-sm font-medium mb-4">
               <span className="w-1.5 h-1.5 rounded-full bg-accent-amber" aria-hidden="true" />
               Achievements
             </span>
