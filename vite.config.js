@@ -68,7 +68,7 @@ export default defineConfig({
         drop_console: true,
         drop_debugger: true,
         pure_funcs: ['console.log', 'console.info', 'console.debug', 'console.warn'],
-        passes: 3, // More passes for better compression (reduces parse time)
+        passes: 2, // Balanced compression
         unused: true,
         dead_code: true,
         // Advanced compression
@@ -92,14 +92,8 @@ export default defineConfig({
         // Use shortest possible syntax
         ecma: 2020,
       },
-      // Enable top-level minification
-      toplevel: true,
-      // Mangle property names for additional size reduction
-      mangle: {
-        properties: {
-          regex: /^_/,
-        },
-      },
+      // Mangle only variable names (safe)
+      mangle: true,
     },
     // Code splitting for better caching and smaller initial bundle
     rollupOptions: {
