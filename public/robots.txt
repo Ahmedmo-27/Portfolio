@@ -8,3 +8,6 @@ Sitemap: https://ahmedmostafa-swe.tech/sitemap.xml
 # Disallow admin or API routes if any
 Disallow: /api/
 
+# Crawl delay (optional, helps prevent overwhelming the server)
+Crawl-delay: 1
+

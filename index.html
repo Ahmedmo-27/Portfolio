@@ -81,6 +81,7 @@
     <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
     <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
     <link rel="dns-prefetch" href="https://static.cloudflareinsights.com" />
+    <link rel="preconnect" href="https://static.cloudflareinsights.com" crossorigin />
     
     <link rel="preconnect" href="https://portfolio.ahmed2303479.workers.dev" crossorigin />
     
@@ -93,6 +94,7 @@
           script.defer = true;
           script.src = 'https://static.cloudflareinsights.com/beacon.min.js';
           script.setAttribute('data-cf-beacon', '{"token": "d2eb275e84514b12a3939bf951de2b6a"}');
+          script.crossOrigin = 'anonymous';
           document.head.appendChild(script);
         }
         

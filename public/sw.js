@@ -1,9 +1,9 @@
-// Service Worker for Ahmed Mostafa Portfolio - v3 (Enhanced Caching)
+// Service Worker for Ahmed Mostafa Portfolio - v4 (Enhanced Caching)
 // Provides offline support, caching, and handles network failures gracefully.
-// v3: Added aggressive caching for Cloudflare beacon (30 days)
+// v4: Improved Cloudflare beacon caching with better cache headers and preconnect support
 
-const STATIC_CACHE_NAME = 'portfolio-static-v3';
-const DYNAMIC_CACHE_NAME = 'portfolio-dynamic-v3';
+const STATIC_CACHE_NAME = 'portfolio-static-v4';
+const DYNAMIC_CACHE_NAME = 'portfolio-dynamic-v4';
 const ALL_CACHES = [STATIC_CACHE_NAME, DYNAMIC_CACHE_NAME];
 
 // Assets to cache on install (critical for app shell)
