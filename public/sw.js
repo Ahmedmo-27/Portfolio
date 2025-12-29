@@ -1,9 +1,9 @@
-// Service Worker for Ahmed Mostafa Portfolio - v4 (Enhanced Caching)
+// Service Worker for Ahmed Mostafa Portfolio - v5 (Fixed Font Caching)
 // Provides offline support, caching, and handles network failures gracefully.
-// v4: Improved Cloudflare beacon caching with better cache headers and preconnect support
+// v5: Fixed staleWhileRevalidate to return proper Response objects instead of null
 
-const STATIC_CACHE_NAME = 'portfolio-static-v4';
-const DYNAMIC_CACHE_NAME = 'portfolio-dynamic-v4';
+const STATIC_CACHE_NAME = 'portfolio-static-v5';
+const DYNAMIC_CACHE_NAME = 'portfolio-dynamic-v5';
 const ALL_CACHES = [STATIC_CACHE_NAME, DYNAMIC_CACHE_NAME];
 
 // Assets to cache on install (critical for app shell)
@@ -224,10 +224,21 @@ async function staleWhileRevalidate(request) {
     })
     .catch((error) => {
       console.error(`[SW] SWR fetch failed for ${request.url}`, error);
-      return null;
+      // Return a proper offline response instead of null
+      return new Response('Network error', {
+        status: 408,
+        statusText: 'Request Timeout',
+        headers: { 'Content-Type': 'text/plain' }
+      });
     });
 
-  return cachedResponse || fetchPromise || new Response('Offline', { status: 503 });
+  // If we have cached content, return it immediately
+  if (cachedResponse) {
+    return cachedResponse;
+  }
+
+  // Otherwise wait for the network request
+  return fetchPromise;
 }
 
 // --------------------
