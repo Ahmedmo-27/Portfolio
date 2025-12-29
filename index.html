@@ -85,25 +85,9 @@
     
     <!-- DNS prefetch for non-critical origins removed - Cloudflare beacon disabled -->
     
-    <!-- Preload LCP image (ProfileCard avatar) to reduce resource load delay -->
-    <!-- Multiple strategies to ensure earliest possible image discovery and loading -->
+    <!-- Preload LCP image (ProfileCard avatar) - Critical for performance -->
+    <!-- This ensures the browser discovers and starts downloading the LCP image immediately -->
     <link rel="preload" href="/Ahmed Mostafa.webp" as="image" type="image/webp" fetchpriority="high" imagesrcset="/Ahmed Mostafa.webp 483w" imagesizes="(max-width: 480px) 280px, (max-width: 768px) 320px, 483px" />
-    
-    <!-- Inline script to start fetching image immediately, before React hydration -->
-    <!-- This reduces resource load delay by starting the request as early as possible -->
-    <script>
-      (function() {
-        const img = new Image();
-        img.src = '/Ahmed Mostafa.webp';
-        img.fetchPriority = 'high';
-        img.decoding = 'sync';
-        img.width = 483;
-        img.height = 644;
-        // Store in cache/memory for instant use when React mounts
-        img.style.display = 'none';
-        document.head.appendChild(img);
-      })();
-    </script>
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
@@ -285,6 +269,21 @@
     <script type="module" src="/src/main.jsx"></script>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <!-- Critical LCP image rendered in HTML for immediate discovery -->
+      <!-- This will be replaced by React hydration but ensures instant browser discovery -->
+      <noscript>
+        <img 
+          src="/Ahmed Mostafa.webp" 
+          alt="Ahmed Mostafa - Junior Software Engineer"
+          width="483"
+          height="644"
+          fetchpriority="high"
+          decoding="sync"
+          loading="eager"
+          style="max-width: 100%; height: auto; border-radius: 1.5rem;"
+        />
+      </noscript>
+    </div>
   </body>
 </html>

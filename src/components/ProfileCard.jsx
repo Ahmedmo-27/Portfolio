@@ -70,9 +70,10 @@ const ProfileCardComponent = ({
   // Defer tilt engine initialization to after LCP
   useEffect(() => {
     // Wait for idle callback or fallback to setTimeout to not block LCP
+    // Increased timeout to ensure it doesn't interfere with critical rendering
     const id = 'requestIdleCallback' in window
-      ? window.requestIdleCallback(() => setTiltReady(true), { timeout: 2000 })
-      : setTimeout(() => setTiltReady(true), 100);
+      ? window.requestIdleCallback(() => setTiltReady(true), { timeout: 3000 })
+      : setTimeout(() => setTiltReady(true), 500);
     return () => {
       if ('requestIdleCallback' in window) {
         window.cancelIdleCallback(id);
@@ -430,22 +431,34 @@ const ProfileCardComponent = ({
       tiltEngine.invalidateDimensions();
     }
     
-    // Defer initial dimension reads to avoid forced reflow
-    // Batch all layout reads in requestAnimationFrame
-    requestAnimationFrame(() => {
-      // Adjust initial offsets for mobile devices
-      const isMobile = window.innerWidth <= 768;
-      const xOffset = isMobile ? ANIMATION_CONFIG.INITIAL_X_OFFSET * 0.5 : ANIMATION_CONFIG.INITIAL_X_OFFSET;
-      const yOffset = isMobile ? ANIMATION_CONFIG.INITIAL_Y_OFFSET * 0.5 : ANIMATION_CONFIG.INITIAL_Y_OFFSET;
-      
-      // Batch read: get dimensions once
-      const shellWidth = shell.clientWidth || 0;
-      const initialX = shellWidth - xOffset;
-      const initialY = yOffset;
-      tiltEngine.setImmediate(initialX, initialY);
-      tiltEngine.toCenter();
-      tiltEngine.beginInitial(ANIMATION_CONFIG.INITIAL_DURATION);
-    });
+    // Defer initial dimension reads to avoid forced reflow during critical rendering
+    // Use requestIdleCallback to ensure this happens after LCP
+    const initTilt = () => {
+      requestAnimationFrame(() => {
+        if (!shellRef.current) return;
+        
+        // Adjust initial offsets for mobile devices
+        const isMobile = window.innerWidth <= 768;
+        const xOffset = isMobile ? ANIMATION_CONFIG.INITIAL_X_OFFSET * 0.5 : ANIMATION_CONFIG.INITIAL_X_OFFSET;
+        const yOffset = isMobile ? ANIMATION_CONFIG.INITIAL_Y_OFFSET * 0.5 : ANIMATION_CONFIG.INITIAL_Y_OFFSET;
+        
+        // Batch read: get dimensions once
+        const shell = shellRef.current;
+        const shellWidth = shell.clientWidth || 0;
+        const initialX = shellWidth - xOffset;
+        const initialY = yOffset;
+        tiltEngine.setImmediate(initialX, initialY);
+        tiltEngine.toCenter();
+        tiltEngine.beginInitial(ANIMATION_CONFIG.INITIAL_DURATION);
+      });
+    };
+    
+    // Use requestIdleCallback to defer dimension reads
+    if ('requestIdleCallback' in window) {
+      window.requestIdleCallback(initTilt, { timeout: 1000 });
+    } else {
+      setTimeout(initTilt, 300);
+    }
 
     // Handle resize to invalidate cache
     const handleResize = () => {
