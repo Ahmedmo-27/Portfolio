@@ -45,11 +45,15 @@
   min-height: 400px;
   aspect-ratio: 0.718;
   width: 100%;
-  /* Optimize rendering - ensure GPU acceleration */
+  /* Optimize rendering - ensure GPU acceleration and contain layout */
   contain: layout style paint;
   will-change: transform;
   /* Reduce paint complexity for faster initial render */
   content-visibility: auto;
+  /* Explicitly set dimensions to prevent CLS */
+  height: 80vh;
+  height: 80svh;
+  max-height: 540px;
 }
 
 /* Loading skeleton state */
@@ -191,25 +195,27 @@
   aspect-ratio: 0.718;
   border-radius: var(--card-radius);
   position: relative;
-  /* Removed glow-bg animation - CSS custom property animations are non-composited */
-  /* Use transform-only transition for better performance */
-  transition: transform 0.8s ease, filter 0.2s ease;
+  /* Optimize transitions - use only transform for composited animations */
+  /* Avoid animating filter as it causes non-composited repaints */
+  transition: transform 0.8s ease;
   transform: translateZ(0) rotateX(0deg) rotateY(0deg);
   background: 
     var(--grain),
     var(--pc-card-bg);
   background-size: 200px 200px, 100% 100%;
+  background-position: 50% 50%;
   background-repeat: repeat, no-repeat;
   background-blend-mode: overlay, normal;
   backface-visibility: hidden;
   overflow: hidden;
   border: 1px solid var(--color-border);
+  /* Optimize rendering performance - prevent layout recalc during animations */
+  contain: layout style paint;
+  /* Reserve space for GPU-accelerated transforms */
   will-change: transform;
   /* Prevent layout shift by ensuring dimensions are set - critical for LCP */
   width: 100%;
   min-height: 400px;
-  /* Optimize rendering - reduce paint complexity */
-  contain: layout style paint;
 }
 
 /* Optimize for touch devices */

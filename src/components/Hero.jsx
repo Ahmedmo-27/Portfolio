@@ -84,7 +84,13 @@ const Hero = () => {
           <div className="order-1 lg:order-2 flex justify-center lg:justify-end mb-6 md:mb-0 translate-x-4">
               <SkeletonLoader 
                 variant="card" 
-                className="w-full max-w-xs sm:max-w-sm h-[500px] sm:h-[500px] md:h-[500px] rounded-3xl"
+                className="w-full max-w-xs sm:max-w-sm rounded-3xl"
+                style={{ 
+                  height: '80vh',
+                  maxHeight: '540px',
+                  aspectRatio: '0.718',
+                  minHeight: '400px'
+                }}
               />
           </div>
           </div>

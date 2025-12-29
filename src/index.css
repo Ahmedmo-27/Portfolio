@@ -112,6 +112,10 @@
     overflow-x: hidden;
     /* Match Outfit font metrics to prevent layout shifts when font loads */
     font-size-adjust: 0.50;
+    /* Optimize rendering - reduce layout thrashing */
+    contain: layout style;
+    /* Use GPU acceleration for smooth scrolling */
+    transform: translateZ(0);
   }
 
   /* Optimize font rendering to reduce visible flash */
@@ -890,21 +894,31 @@
 .animate-fade-in-up {
   animation: fadeInUp 0.5s ease-out forwards;
   opacity: 0;
+  /* Optimize animation performance */
+  will-change: opacity, transform;
+  /* Use GPU acceleration */
+  transform: translateZ(0);
 }
 
 .animate-fade-in-down {
   animation: fadeInDown 0.5s ease-out forwards;
   opacity: 0;
+  will-change: opacity, transform;
+  transform: translateZ(0);
 }
 
 .animate-fade-in-left {
   animation: fadeInLeft 0.5s ease-out forwards;
   opacity: 0;
+  will-change: opacity, transform;
+  transform: translateZ(0);
 }
 
 .animate-fade-in-scale {
   animation: fadeInScale 0.5s ease-out forwards;
   opacity: 0;
+  will-change: opacity, transform;
+  transform: translateZ(0);
 }
 
 /* Stagger delay utilities */

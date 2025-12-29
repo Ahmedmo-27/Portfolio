@@ -80,15 +80,34 @@
     <!-- DNS Prefetch & Preconnect for Performance -->
     <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
     <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
-    
-    <!-- Cloudflare Web Analytics - Cookie-free, privacy-first analytics -->
-    <script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "d2eb275e84514b12a3939bf951de2b6a"}'></script>
+    <link rel="dns-prefetch" href="https://static.cloudflareinsights.com" />
     
     <link rel="preconnect" href="https://portfolio.ahmed2303479.workers.dev" crossorigin />
     
+    <!-- Cloudflare Web Analytics - Delayed load to not impact LCP -->
+    <!-- Load after critical resources using requestIdleCallback or delayed script -->
+    <script>
+      (function() {
+        function loadCloudflare() {
+          var script = document.createElement('script');
+          script.defer = true;
+          script.src = 'https://static.cloudflareinsights.com/beacon.min.js';
+          script.setAttribute('data-cf-beacon', '{"token": "d2eb275e84514b12a3939bf951de2b6a"}');
+          document.head.appendChild(script);
+        }
+        
+        // Load after page becomes interactive
+        if ('requestIdleCallback' in window) {
+          requestIdleCallback(loadCloudflare, { timeout: 2000 });
+        } else {
+          setTimeout(loadCloudflare, 2000);
+        }
+      })();
+    </script>
+    
     <!-- Preload LCP image (ProfileCard avatar) to reduce resource load delay -->
     <!-- Multiple strategies to ensure earliest possible image discovery and loading -->
-    <link rel="preload" href="/Ahmed Mostafa.webp" as="image" type="image/webp" fetchpriority="high" />
+    <link rel="preload" href="/Ahmed Mostafa.webp" as="image" type="image/webp" fetchpriority="high" imagesrcset="/Ahmed Mostafa.webp 483w" imagesizes="(max-width: 480px) 280px, (max-width: 768px) 320px, 483px" />
     
     <!-- Inline script to start fetching image immediately, before React hydration -->
     <!-- This reduces resource load delay by starting the request as early as possible -->
@@ -98,6 +117,11 @@
         img.src = '/Ahmed Mostafa.webp';
         img.fetchPriority = 'high';
         img.decoding = 'sync';
+        img.width = 483;
+        img.height = 644;
+        // Store in cache/memory for instant use when React mounts
+        img.style.display = 'none';
+        document.head.appendChild(img);
       })();
     </script>
     
