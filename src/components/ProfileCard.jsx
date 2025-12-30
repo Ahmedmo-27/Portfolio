@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useCallback, useMemo, useState } from 'react';
 import './ProfileCard.css';
-import { assetUrl, getWebPUrl } from '../utils/assetUrl'
 import SkeletonLoader from './SkeletonLoader'
+import batchSetProperty from '../utils/batchStyle'
 
 // Default gradient adapts to theme via CSS variables
 const DEFAULT_INNER_GRADIENT = 'linear-gradient(145deg, rgba(96, 73, 110, 0.55) 0%, rgba(113, 196, 255, 0.27) 100%)';
@@ -21,7 +21,7 @@ const adjust = (v, fMin, fMax, tMin, tMax) =>
 
 const ProfileCardComponent = ({
   avatarUrl = '/Ahmed Mostafa.webp',
-  iconUrl = assetUrl('/Assets/Geometric AM logo design.webp'),
+  iconUrl = '/Geometric AM logo design.webp',
   grainUrl = '/Grain.webp',
   innerGradient,
   behindGlowEnabled = true,
@@ -316,6 +316,10 @@ const ProfileCardComponent = ({
       const shell = shellRef.current;
       if (!shell || !tiltEngine) return;
 
+      // Read layout (cached or getBoundingClientRect) before performing DOM writes
+      // to avoid forcing a synchronous reflow.
+      const { x, y } = getOffsets(event, shell);
+
       shell.classList.add('active');
       shell.classList.add('entering');
       if (enterTimerRef.current) window.clearTimeout(enterTimerRef.current);
@@ -323,7 +327,6 @@ const ProfileCardComponent = ({
         shell.classList.remove('entering');
       }, ANIMATION_CONFIG.ENTER_TRANSITION_MS);
 
-      const { x, y } = getOffsets(event, shell);
       tiltEngine.setTarget(x, y);
     },
     [tiltEngine]
@@ -497,11 +500,11 @@ const ProfileCardComponent = ({
   
   useEffect(() => {
     if (cardWrapperRef.current) {
-      cardWrapperRef.current.style.setProperty('--icon', iconUrl ? `url(${iconUrl})` : 'none');
-      cardWrapperRef.current.style.setProperty('--grain', grainUrl ? `url(${grainUrl})` : 'none');
-      cardWrapperRef.current.style.setProperty('--inner-gradient', innerGradient ?? DEFAULT_INNER_GRADIENT);
-      cardWrapperRef.current.style.setProperty('--behind-glow-color', behindGlowColor ?? 'rgba(125, 190, 255, 0.67)');
-      cardWrapperRef.current.style.setProperty('--behind-glow-size', behindGlowSize ?? '50%');
+      batchSetProperty(cardWrapperRef.current, '--icon', iconUrl ? `url(${iconUrl})` : 'none');
+      batchSetProperty(cardWrapperRef.current, '--grain', grainUrl ? `url(${grainUrl})` : 'none');
+      batchSetProperty(cardWrapperRef.current, '--inner-gradient', innerGradient ?? DEFAULT_INNER_GRADIENT);
+      batchSetProperty(cardWrapperRef.current, '--behind-glow-color', behindGlowColor ?? 'rgba(125, 190, 255, 0.67)');
+      batchSetProperty(cardWrapperRef.current, '--behind-glow-size', behindGlowSize ?? '50%');
     }
   }, [iconUrl, grainUrl, innerGradient, behindGlowColor, behindGlowSize]);
 
@@ -534,12 +537,9 @@ const ProfileCardComponent = ({
                       className="avatar"
                       src={avatarUrl}
                       alt={`${name || 'Ahmed Mostafa'} avatar`}
-                      width={483}
-                      height={644}
                       loading="eager"
                       decoding="sync"
                       fetchPriority="high"
-                      sizes="(max-width: 480px) 280px, (max-width: 768px) 320px, 483px"
                       style={{ opacity: imageLoaded ? 1 : 0, transition: 'opacity 0.3s ease-in' }}
                       onLoad={(e) => {
                         setImageLoaded(true);

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import batchSetProperty from '../utils/batchStyle'
 import Users from 'lucide-react/dist/esm/icons/users'
 import Star from 'lucide-react/dist/esm/icons/star'
 import Heart from 'lucide-react/dist/esm/icons/heart'
@@ -115,7 +116,7 @@ export default function Volunteering() {
               <article
                 key={exp.organization}
                 ref={(el) => {
-                  if (el) el.style.setProperty('--animation-delay', `${index * 0.15 + 0.2}s`)
+                  if (el) batchSetProperty(el, '--animation-delay', `${index * 0.15 + 0.2}s`)
                 }}
                 className={`${exp.isHighlighted ? 'relative' : ''} volunteering-experience-item`}
                 role="article"

@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect } from 'react'
+import batchSetProperty from '../utils/batchStyle'
 import Building2 from 'lucide-react/dist/esm/icons/building-2'
 import Award from 'lucide-react/dist/esm/icons/award'
 import Code from 'lucide-react/dist/esm/icons/code'
@@ -132,7 +133,7 @@ export default function Experience() {
                     <article
                       key={exp.company}
                       ref={(el) => {
-                      if (el) el.style.setProperty('--animation-delay', `${index * 0.15 + 0.2}s`)
+                      if (el) batchSetProperty(el, '--animation-delay', `${index * 0.15 + 0.2}s`)
                       }}
                       className={`relative flex flex-col md:flex-row gap-6 md:gap-8 ${
                       index % 2 === 0 ? 'md:flex-row-reverse' : ''

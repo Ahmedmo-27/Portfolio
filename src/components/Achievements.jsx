@@ -1,4 +1,5 @@
 import { useInViewOnce } from '../utils/useInViewOnce'
+import batchSetProperty from '../utils/batchStyle'
 import Trophy from 'lucide-react/dist/esm/icons/trophy'
 import Medal from 'lucide-react/dist/esm/icons/medal'
 import Star from 'lucide-react/dist/esm/icons/star'
@@ -150,7 +151,7 @@ export default function Achievements() {
                 <article
                   key={achievement.title}
                   ref={(el) => {
-                    if (el) el.style.setProperty('--animation-delay', `${index * 0.15 + 0.2}s`)
+                    if (el) batchSetProperty(el, '--animation-delay', `${index * 0.15 + 0.2}s`)
                   }}
                   className={`relative overflow-hidden rounded-2xl p-6 sm:p-8 border-2 ${achievement.borderColor} ${achievement.bgColor} group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 transition-all duration-300 hover:-translate-y-2 hover:scale-[1.02] hover:shadow-xl hover:shadow-primary-500/10 focus-visible:-translate-y-2 focus-visible:scale-[1.02] achievements-featured-item`}
                   tabIndex={0}
@@ -263,7 +264,7 @@ export default function Achievements() {
             <article
               key={achievement.title}
               ref={(el) => {
-                if (el) el.style.setProperty('--animation-delay', `${index * 0.1 + 0.3}s`)
+                if (el) batchSetProperty(el, '--animation-delay', `${index * 0.1 + 0.3}s`)
               }}
               className={`relative glass-card p-6 group overflow-hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 transition-transform hover:-translate-y-1 hover:scale-[1.01] focus-visible:-translate-y-1 focus-visible:scale-[1.01] achievements-other-item`}
               tabIndex={0}

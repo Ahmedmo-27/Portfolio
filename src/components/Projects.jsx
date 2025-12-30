@@ -1,4 +1,5 @@
 import { useRef, useState, useEffect } from 'react'
+import batchSetProperty from '../utils/batchStyle'
 import Github from 'lucide-react/dist/esm/icons/github'
 import ChevronRight from 'lucide-react/dist/esm/icons/chevron-right'
 import CircuitBoard from './CircuitBoard'
@@ -83,24 +84,35 @@ export default function Projects() {
     
     // Observe all existing project elements
     const elements = Object.values(projectItemElsRef.current)
+    const visibleCandidates = []
     for (const el of elements) {
       if (el) {
         observer.observe(el)
-        // Check if element is already in viewport (for immediate load)
-        const rect = el.getBoundingClientRect()
-        const isVisible = rect.top < window.innerHeight + 200 && rect.bottom > -200
-        if (isVisible) {
-          const projectId = el.dataset?.projectId
-          if (projectId) {
-            pendingUpdates.add(projectId)
-          }
-        }
+        // Defer bounding-client-rect checks to rAF to batch layout reads
+        visibleCandidates.push(el)
       }
     }
 
-    // Process any immediately visible elements
-    if (pendingUpdates.size > 0) {
-      rafId = requestAnimationFrame(processUpdates)
+    // Batch visibility checks in a requestAnimationFrame to avoid synchronous layout
+    if (visibleCandidates.length > 0) {
+      rafId = requestAnimationFrame(() => {
+        for (const el of visibleCandidates) {
+          const rect = el.getBoundingClientRect()
+          const isVisible = rect.top < window.innerHeight + 200 && rect.bottom > -200
+          if (isVisible) {
+            const projectId = el.dataset?.projectId
+            if (projectId) pendingUpdates.add(projectId)
+          }
+        }
+
+        // Process any immediately visible elements
+        if (pendingUpdates.size > 0 && !rafId) {
+          rafId = requestAnimationFrame(processUpdates)
+        } else if (pendingUpdates.size > 0 && rafId == null) {
+          rafId = requestAnimationFrame(processUpdates)
+        }
+        // Note: if processUpdates already has an raf scheduled it will handle clearing rafId
+      })
     }
 
     return () => {
@@ -146,7 +158,7 @@ export default function Projects() {
                 data-project-id={project.id}
                 ref={(el) => {
                   if (el) {
-                    el.style.setProperty('--animation-delay', `${index * 0.15 + 0.2}s`)
+                    batchSetProperty(el, '--animation-delay', `${index * 0.15 + 0.2}s`)
                     projectItemElsRef.current[project.id] = el
                     if (mediaObserverRef.current) mediaObserverRef.current.observe(el)
                   } else {

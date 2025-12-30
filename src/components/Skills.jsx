@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import batchSetProperty from '../utils/batchStyle'
 import { useInViewOnce } from '../utils/useInViewOnce'
 import Cloud from 'lucide-react/dist/esm/icons/cloud'
 import Database from 'lucide-react/dist/esm/icons/database'
@@ -152,7 +153,7 @@ export default function Skills() {
               <article
                 key={category.title}
                 ref={(el) => {
-                  if (el) el.style.setProperty('--animation-delay', `${index * 0.1 + 0.2}s`)
+                  if (el) batchSetProperty(el, '--animation-delay', `${index * 0.1 + 0.2}s`)
                 }}
                 className='glass-card p-5 md:p-6 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 transition-all duration-300 hover:-translate-y-2 hover:shadow-lg hover:shadow-primary-500/10 focus-visible:-translate-y-2 relative overflow-hidden skills-category-item'
                 role="listitem"

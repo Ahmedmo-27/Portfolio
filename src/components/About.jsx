@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import batchSetProperty from '../utils/batchStyle'
 import { useInViewOnce } from '../utils/useInViewOnce'
 import GraduationCap from 'lucide-react/dist/esm/icons/graduation-cap'
 import Globe from 'lucide-react/dist/esm/icons/globe'
@@ -94,11 +95,11 @@ export default function About() {
           <div 
             className='grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-14 md:mb-18'
           >
-            {stats.map((stat, index) => (
+                {stats.map((stat, index) => (
               <div
                 key={stat.label}
                 ref={(el) => {
-                  if (el) el.style.setProperty('--animation-delay', `${index * 0.1 + 0.3}s`)
+                  if (el) batchSetProperty(el, '--animation-delay', `${index * 0.1 + 0.3}s`)
                 }}
                 className='relative group transition-all duration-300 hover:-translate-y-2 hover:scale-105 about-stat-item'
               >
@@ -214,7 +215,7 @@ export default function About() {
                     <div
                       key={item.title}
                       ref={(el) => {
-                        if (el) el.style.setProperty('--animation-delay', `${index * 0.08 + 0.4}s`)
+                        if (el) batchSetProperty(el, '--animation-delay', `${index * 0.08 + 0.4}s`)
                       }}
                       className='glass-card p-4 group/card cursor-default relative overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-xl border-2 border-primary-500/20 hover:border-primary-500/50 about-highlight-item shadow-md'
                       role="listitem"

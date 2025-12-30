@@ -3,7 +3,6 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import Menu from 'lucide-react/dist/esm/icons/menu'
 import X from 'lucide-react/dist/esm/icons/x'
 import ThemeToggle from './ThemeToggle'
-import { assetUrl } from '../utils/assetUrl'
 import './Navbar.css'
 
 const navLinks = [
@@ -424,7 +423,7 @@ export default function Navbar() {
               aria-hidden="true"
             >
               <img 
-                src={assetUrl('/Assets/Geometric AM logo design.webp')}
+                src={'/Geometric AM logo design.webp'}
                 alt="AM Logo" 
                 width={32}
                 height={32}

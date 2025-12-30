@@ -10,7 +10,7 @@
   --background-x: 50%;
   --background-y: 50%;
   /* Set by ProfileCard at runtime (so it can come from R2). Keep empty by default. */
-  --icon: none;
+  --icon: url('/Geometric AM logo design.webp');
   --behind-glow-color: rgba(125, 190, 255, 0.67);
   --behind-glow-size: 25%;
   --inner-gradient: none;
@@ -39,21 +39,13 @@
   transform: translate3d(0, 0, 0.1px);
   position: relative;
   touch-action: none;
-  margin-left: auto;
-  margin-right: auto;
   /* Prevent layout shift by reserving space - critical for LCP */
   min-height: 400px;
-  aspect-ratio: 0.718;
   width: 100%;
-  /* Optimize rendering - ensure GPU acceleration and contain layout */
   contain: layout style paint;
   will-change: transform;
   /* Reduce paint complexity for faster initial render */
   content-visibility: auto;
-  /* Explicitly set dimensions to prevent CLS */
-  height: 80vh;
-  height: 80svh;
-  max-height: 540px;
 }
 
 /* Loading skeleton state */
@@ -320,7 +312,7 @@
 
 .pc-avatar-content {
   mix-blend-mode: luminosity;
-  overflow: visible;
+  overflow: hidden;
   transform: translateZ(2);
   backface-visibility: hidden;
   /* Optimize LCP element rendering - critical path */
@@ -335,29 +327,9 @@
 }
 
 .pc-avatar-content .avatar {
-  display: block;
-  width: 100%;
+  scale: 1.35;
+  width: auto;
   height: auto;
-  scale: 1.2;
-  position: absolute;
-  left: 60%;
-  transform-origin: 50% 100%;
-  transform: translateX(calc(-50% + (var(--pointer-from-left) - 0.5) * 6px)) translateZ(0)
-    scaleY(calc(1 + (var(--pointer-from-top) - 0.5) * 0.02)) scaleX(calc(1 + (var(--pointer-from-left) - 0.5) * 0.01));
-  bottom: -1px;
-  /* GPU acceleration hint for LCP element - critical for fast rendering */
-  will-change: transform;
-  contain: layout style paint;
-  backface-visibility: hidden;
-  transition: transform 120ms ease-out, opacity 0.3s ease;
-  /* Prevent layout shift - ensure image has dimensions - critical for LCP */
-  min-height: 0;
-  object-fit: contain;
-  /* Optimize image rendering - reduce paint complexity */
-  image-rendering: -webkit-optimize-contrast;
-  image-rendering: crisp-edges;
-  /* Ensure image loads and renders immediately */
-  content-visibility: auto;
 }
 
 .pc-avatar-content .avatar.avatar-error {
@@ -471,7 +443,7 @@
   .pc-card-wrapper {
     perspective: 250px;
     margin-top: 10px;
-    margin-bottom: -110px;
+    margin-bottom: -20px;
     margin-left: auto;
     margin-right: auto;
   }

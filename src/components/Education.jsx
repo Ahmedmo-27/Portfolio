@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import batchSetProperty from '../utils/batchStyle'
 import GraduationCap from 'lucide-react/dist/esm/icons/graduation-cap'
 import Calendar from 'lucide-react/dist/esm/icons/calendar'
 import Award from 'lucide-react/dist/esm/icons/award'
@@ -242,7 +243,7 @@ export default function Education() {
                     <article
                       key={cert.id}
                       ref={(el) => {
-                        if (el) el.style.setProperty('--animation-delay', `${index * 0.08 + 0.25}s`)
+                        if (el) batchSetProperty(el, '--animation-delay', `${index * 0.08 + 0.25}s`)
                       }}
                       className='glass-card p-5 sm:p-6 group relative overflow-hidden transition-transform hover:-translate-y-1 focus-visible:-translate-y-1 education-cert-item'
                       tabIndex={0}

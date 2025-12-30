@@ -2,6 +2,7 @@
 import { useRef, useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import ArrowLeft from 'lucide-react/dist/esm/icons/arrow-left'
+import batchSetProperty from '../utils/batchStyle'
 import Github from 'lucide-react/dist/esm/icons/github'
 import ChevronRight from 'lucide-react/dist/esm/icons/chevron-right'
 import Filter from 'lucide-react/dist/esm/icons/filter'
@@ -194,14 +195,14 @@ export default function AllProjects() {
                   key={project.id}
                   data-project-id={project.id}
                   ref={(el) => {
-                    if (el) {
-                      el.style.setProperty('--animation-delay', `${index * 0.15 + 0.2}s`)
-                      projectItemElsRef.current[project.id] = el
-                      if (mediaObserverRef.current) mediaObserverRef.current.observe(el)
-                    } else {
-                      delete projectItemElsRef.current[project.id]
-                    }
-                  }}
+                      if (el) {
+                        batchSetProperty(el, '--animation-delay', `${index * 0.15 + 0.2}s`)
+                        projectItemElsRef.current[project.id] = el
+                        if (mediaObserverRef.current) mediaObserverRef.current.observe(el)
+                      } else {
+                        delete projectItemElsRef.current[project.id]
+                      }
+                    }}
                   className={`${project.isHighlighted ? 'relative' : ''} projects-item `}
                   role="listitem"
                   aria-labelledby={`project-title-${project.id}`}
