@@ -540,7 +540,7 @@ const ProfileCardComponent = ({
                       loading="eager"
                       decoding="sync"
                       fetchPriority="high"
-                      style={{ opacity: imageLoaded ? 1 : 0, transition: 'opacity 0.3s ease-in' }}
+                      style={{ opacity: imageLoaded ? 1 : 0, transition: 'opacity 0.3s ease-in', height: '95%', width: '100%' }}
                       onLoad={(e) => {
                         setImageLoaded(true);
                         // Mark image as loaded for LCP measurement

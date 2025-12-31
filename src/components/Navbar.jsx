@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback } from 'react'
+import { useState, useEffect, useMemo, useCallback, useRef } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import Menu from 'lucide-react/dist/esm/icons/menu'
 import X from 'lucide-react/dist/esm/icons/x'
@@ -26,6 +26,17 @@ export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [activeSection, setActiveSection] = useState('')
+  const [visibleLinks, setVisibleLinks] = useState(['About']) // Initially only About
+  const [linksStartedLoading, setLinksStartedLoading] = useState(false)
+  const visibleLinksRef = useRef(visibleLinks)
+  useEffect(() => {
+    visibleLinksRef.current = visibleLinks
+  }, [visibleLinks])
+
+  // Queue-based stagger refs
+  const revealQueueRef = useRef([])
+  const revealTimerRef = useRef(null)
+  const REVEAL_INTERVAL = 100
   
   // Check if we're on the home page or projects page (memoized to avoid recalculation)
   const isHomePage = useMemo(() => location.pathname === '/', [location.pathname])
@@ -121,193 +132,119 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
-  // Section detection using a SINGLE Intersection Observer for better INP
   useEffect(() => {
     if (!isHomePage) return
-    
+
     const sections = navLinks.map(link => getSectionId(link.href))
-    let lastUpdate = 0
-    let pendingUpdate = null
-    const UPDATE_THROTTLE = 200 // Increased throttle for better INP
-    
-    // Track which sections are currently intersecting with their bounding rects
     const intersectingSections = new Map()
     let isHeroInView = false
-    
-    // Observer for navigation sections - detects which section is prominently in view
+
     const observer = new IntersectionObserver(
       (entries) => {
-        // Update intersection state for each entry
-        for (const entry of entries) {
-          const sectionId = entry.target.id
-          if (entry.isIntersecting) {
-            // Store intersection ratio and bounding rect for better detection
-            intersectingSections.set(sectionId, {
-              ratio: entry.intersectionRatio,
-              boundingRect: entry.boundingClientRect,
-              rootBounds: entry.rootBounds
-            })
-          } else {
-            intersectingSections.delete(sectionId)
+        entries.forEach((entry) => {
+          const id = entry.target.id
+
+          // Track Hero visibility
+          if (id === 'hero') {
+            isHeroInView = entry.isIntersecting && entry.intersectionRatio > 0.5
           }
-        }
-        
-        // Throttle the actual state update
-        const now = Date.now()
-        if (now - lastUpdate < UPDATE_THROTTLE) {
-          // Schedule a deferred update if not already pending
-          if (!pendingUpdate) {
-            pendingUpdate = setTimeout(() => {
-              pendingUpdate = null
-              updateActiveSection()
-            }, UPDATE_THROTTLE - (now - lastUpdate))
-          }
-          return
-        }
-        
-        updateActiveSection()
-      },
-      {
-        // Use a tighter rootMargin to detect sections that are actually in the viewport
-        // Top margin accounts for navbar, bottom margin ensures section is prominently visible
-        rootMargin: '-100px 0px -60% 0px',
-        threshold: [0.1, 0.2, 0.3, 0.4, 0.5]
-      }
-    )
-    
-    // Separate observer for Hero section - to clear highlights when Hero is visible
-    const heroObserver = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          isHeroInView = entry.isIntersecting && entry.intersectionRatio > 0.5
-        }
-        updateActiveSection()
-      },
-      {
-        rootMargin: '-100px 0px 0px 0px',
-        threshold: [0.5]
-      }
-    )
-    
-    const updateActiveSection = () => {
-      lastUpdate = Date.now()
-      
-      // If Hero is prominently in view, clear active section
-      if (isHeroInView) {
-        setActiveSection(prev => {
-          if (prev === '') return prev
-          if ('requestIdleCallback' in window) {
-            window.requestIdleCallback(() => {
-              if (location.hash) {
-                window.history.replaceState(null, '', location.pathname)
+
+          // Track intersecting sections
+          if (sections.includes(id)) {
+            if (entry.isIntersecting) {
+              intersectingSections.set(id, entry.intersectionRatio)
+
+              // Queue reveal if not visible and not already queued
+              const alreadyVisible = visibleLinksRef.current.includes(id)
+              const alreadyQueued = revealQueueRef.current.includes(id)
+              if (!alreadyVisible && !alreadyQueued) {
+                // Mark that links have started loading/revealing
+                setLinksStartedLoading(true)
+                revealQueueRef.current.push(id)
+
+                // Start the reveal interval if not already running
+                if (!revealTimerRef.current) {
+                  revealTimerRef.current = setInterval(() => {
+                    const next = revealQueueRef.current.shift()
+                    if (next) {
+                      setVisibleLinks((prev) => [...prev, next])
+                    }
+                    if (revealQueueRef.current.length === 0) {
+                      clearInterval(revealTimerRef.current)
+                      revealTimerRef.current = null
+                    }
+                  }, REVEAL_INTERVAL)
+                }
               }
-            }, { timeout: 500 })
-          }
-          return ''
-        })
-        return
-      }
-      
-      // Check current hash first - if it matches a valid section, prioritize it
-      const currentHash = window.location.hash.slice(1)
-      const hashSection = currentHash && sections.includes(currentHash) && document.getElementById(currentHash)
-      
-      // Find the section that is most prominently in view
-      // Prioritize sections that are:
-      // 1. Higher intersection ratio
-      // 2. Closer to the top of the viewport (after navbar offset)
-      let topSection = null
-      let topScore = 0
-      const navbarHeight = 100 // Approximate navbar height with padding
-      
-      for (const [sectionId, data] of intersectingSections) {
-        if (!sections.includes(sectionId)) continue // Skip non-nav sections
-        
-        const { ratio, boundingRect } = data
-        // Calculate how much of the section is visible above the fold
-        // Sections closer to the top (after navbar) get higher priority
-        const topOffset = Math.max(0, boundingRect.top - navbarHeight)
-        const visibilityScore = ratio * (1 - Math.min(topOffset / window.innerHeight, 0.5))
-        
-        // Prefer sections that are more centered in viewport
-        const centerDistance = Math.abs(boundingRect.top + boundingRect.height / 2 - window.innerHeight / 2)
-        const centerScore = 1 - Math.min(centerDistance / window.innerHeight, 1)
-        
-        // Combined score: intersection ratio + visibility + center position
-        const score = ratio * 0.5 + visibilityScore * 0.3 + centerScore * 0.2
-        
-        if (score > topScore) {
-          topScore = score
-          topSection = sectionId
-        }
-      }
-      
-      // If current hash matches a valid section and it's intersecting, use it
-      // This ensures components that update the hash are respected
-      if (hashSection && intersectingSections.has(currentHash)) {
-        topSection = currentHash
-      }
-      
-      if (topSection) {
-        setActiveSection(prev => {
-          if (prev === topSection) return prev // No change
-          // Only update hash if it doesn't match what we're setting
-          // This prevents overriding hash changes from components
-          if (window.location.hash !== `#${topSection}`) {
-            // Defer history update using idle callback or timeout
-            if ('requestIdleCallback' in window) {
-              window.requestIdleCallback(() => {
-                if (window.location.hash !== `#${topSection}`) {
-                  window.history.replaceState(null, '', `#${topSection}`)
-                }
-              }, { timeout: 500 })
             } else {
-              // Fallback for browsers without requestIdleCallback
-              setTimeout(() => {
-                if (window.location.hash !== `#${topSection}`) {
-                  window.history.replaceState(null, '', `#${topSection}`)
-                }
-              }, 100)
+              intersectingSections.delete(id)
             }
           }
-          return topSection
         })
-      } else if (window.scrollY < 100) {
-        // Clear active section when near top of page
-        setActiveSection(prev => {
-          if (prev === '') return prev
-          if ('requestIdleCallback' in window) {
-            window.requestIdleCallback(() => {
-              if (location.hash) {
-                window.history.replaceState(null, '', location.pathname)
-              }
-            }, { timeout: 500 })
+
+        // Determine top section for highlighting
+        let topSection = null
+        let topScore = 0
+        const navbarHeight = 100
+
+        intersectingSections.forEach((ratio, id) => {
+          const el = document.getElementById(id)
+          if (!el) return
+          const topOffset = Math.max(0, el.getBoundingClientRect().top - navbarHeight)
+          const score = ratio * (1 - Math.min(topOffset / window.innerHeight, 0.5))
+          if (score > topScore) {
+            topScore = score
+            topSection = id
           }
-          return ''
         })
-      }
-    }
-    
-    // Observe Hero section
-    const heroElement = document.getElementById('hero')
-    if (heroElement) {
-      heroObserver.observe(heroElement)
-    }
-    
-    // Observe all navigation sections with the single observer
-    for (const sectionId of sections) {
-      const element = document.getElementById(sectionId)
-      if (element) {
-        observer.observe(element)
-      }
-    }
-    
+
+        if (isHeroInView) {
+          setActiveSection('')
+          if (location.hash) {
+            window.history.replaceState(null, '', location.pathname)
+          }
+        } else if (topSection) {
+          setActiveSection(topSection)
+          if (window.location.hash !== `#${topSection}`) {
+            window.history.replaceState(null, '', `#${topSection}`)
+          }
+        } else if (window.scrollY < 100) {
+          setActiveSection('')
+          if (location.hash) {
+            window.history.replaceState(null, '', location.pathname)
+          }
+        }
+      },
+      { rootMargin: '-100px 0px -50% 0px', threshold: [0.1, 0.2, 0.3, 0.4, 0.5] }
+    )
+
+    // Observe hero and all sections
+    const heroEl = document.getElementById('hero')
+    if (heroEl) observer.observe(heroEl)
+    sections.forEach((id) => {
+      const el = document.getElementById(id)
+      if (el) observer.observe(el)
+    })
+
     return () => {
       observer.disconnect()
-      heroObserver.disconnect()
-      if (pendingUpdate) clearTimeout(pendingUpdate)
+      if (revealTimerRef.current) {
+        clearInterval(revealTimerRef.current)
+        revealTimerRef.current = null
+      }
+      revealQueueRef.current = []
     }
-  }, [isHomePage, location.hash, location.pathname])
+  }, [isHomePage, location.pathname])
+
+  // If not on the home page, links are already available — show button
+  useEffect(() => {
+    if (!isHomePage) setLinksStartedLoading(true)
+  }, [isHomePage])
+
+  // When visibleLinks grows beyond the initial stub, mark links as started
+  useEffect(() => {
+    if (visibleLinks.length > 1) setLinksStartedLoading(true)
+  }, [visibleLinks])
 
   // Close mobile menu on escape key
   useEffect(() => {
@@ -440,54 +377,50 @@ export default function Navbar() {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-1" aria-label="Primary">
-            {navLinks.map((link) => (
-              <a
-                key={link.name}
-                href={link.href}
-                onClick={(e) => handleNavClick(e, link.href)}
-                className={`px-4 py-2 font-medium transition-colors relative group rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 ${
-                  activeSection === getSectionId(link.href) 
-                    ? 'text-primary-400' 
-                    : 'text-muted hover:text-foreground'
-                }`}
-                aria-current={activeSection === getSectionId(link.href) ? 'page' : undefined}
-              >
-                {link.name}
-                <span 
-                  className={`absolute bottom-0 left-1/2 -translate-x-1/2 h-0.5 bg-gradient-to-r from-primary-500 to-accent-cyan transition-[width] duration-200 ${
-                    activeSection === getSectionId(link.href) ? 'w-full' : 'w-0 group-hover:w-full'
+            {navLinks
+              .filter((link) => visibleLinks.includes(getSectionId(link.href)))
+              .map((link, idx) => (
+                <a
+                  key={link.name}
+                  href={link.href}
+                  onClick={(e) => handleNavClick(e, link.href)}
+                  className={`px-4 py-2 font-medium transition-colors relative group rounded-lg opacity-0 animate-fade-in ${
+                    activeSection === getSectionId(link.href)
+                      ? 'text-primary-400'
+                      : 'text-muted hover:text-foreground'
                   }`}
-                  aria-hidden="true"
-                />
-              </a>
-            ))}
-            
+                  aria-current={activeSection === getSectionId(link.href) ? 'page' : undefined}
+                >
+                  {link.name}
+                  <span
+                    className={`absolute bottom-0 left-1/2 -translate-x-1/2 h-0.5 bg-gradient-to-r from-primary-500 to-accent-cyan transition-[width] duration-200 ${
+                      activeSection === getSectionId(link.href) ? 'w-full' : 'w-0 group-hover:w-full'
+                    }`}
+                    aria-hidden="true"
+                  />
+                </a>
+              ))}
+
             {/* Theme Toggle */}
             <div className="ml-2">
               <ThemeToggle />
             </div>
-
-            <a
-              href="#contact"
-              onClick={(e) => handleNavClick(e, '#contact')}
-              className="ml-2 btn-primary text-sm"
-            >
-              Let's Connect
-            </a>
           </div>
 
           {/* Mobile Menu Button */}
           <div className="flex items-center gap-2 md:hidden">
             <ThemeToggle />
-            <button
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="p-2 text-muted hover:text-foreground transition-colors rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
-              aria-expanded={isMobileMenuOpen}
-              aria-controls="mobile-menu"
-              aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
-            >
-              {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-            </button>
+            {linksStartedLoading && (
+              <button
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                className="p-2 text-muted hover:text-foreground transition-colors rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
+                aria-expanded={isMobileMenuOpen}
+                aria-controls="mobile-menu"
+                aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
+              >
+                {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              </button>
+            )}
           </div>
         </div>
 
@@ -498,31 +431,24 @@ export default function Navbar() {
             className="md:hidden overflow-hidden animate-mobile-menu-open"
           >
             <ul className="py-4 space-y-1" aria-label="Mobile">
-              {navLinks.map((link) => (
-                <li key={link.name}>
-                  <a
-                    href={link.href}
-                    onClick={(e) => handleNavClick(e, link.href)}
-                    className={`block px-4 py-3 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 ${
-                      activeSection === getSectionId(link.href)
-                        ? 'text-primary-400 bg-primary-500/10'
-                        : 'text-muted hover:text-foreground hover:bg-surface'
-                    }`}
-                    aria-current={activeSection === getSectionId(link.href) ? 'page' : undefined}
-                  >
-                    {link.name}
-                  </a>
-                </li>
-              ))}
-              <li>
-                <a
-                  href="#contact"
-                  onClick={(e) => handleNavClick(e, '#contact')}
-                  className="block mt-4 btn-primary text-center"
-                >
-                  Let's Connect
-                </a>
-              </li>
+              {navLinks
+                .filter((link) => visibleLinks.includes(getSectionId(link.href)))
+                .map((link, idx) => (
+                  <li key={link.name} className="transition-opacity opacity-0 animate-fade-in">
+                    <a
+                      href={link.href}
+                      onClick={(e) => handleNavClick(e, link.href)}
+                      className={`block px-4 py-3 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 ${
+                        activeSection === getSectionId(link.href)
+                          ? 'text-primary-400 bg-primary-500/10'
+                          : 'text-muted hover:text-foreground hover:bg-surface'
+                      }`}
+                      aria-current={activeSection === getSectionId(link.href) ? 'page' : undefined}
+                    >
+                      {link.name}
+                    </a>
+                  </li>
+                ))}
             </ul>
           </div>
         )}
