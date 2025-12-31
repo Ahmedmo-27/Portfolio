@@ -183,37 +183,57 @@ export default function Navbar() {
         })
 
         // Determine top section for highlighting
-        let topSection = null
-        let topScore = 0
-        const navbarHeight = 100
+        // Capture values to avoid stale closure issues
+        const heroInView = isHeroInView
+        const intersectingSectionsSnapshot = new Map(intersectingSections)
+        
+        // Batch all getBoundingClientRect calls to avoid forced reflows
+        requestAnimationFrame(() => {
+          let topSection = null
+          let topScore = 0
+          const navbarHeight = 100
 
-        intersectingSections.forEach((ratio, id) => {
-          const el = document.getElementById(id)
-          if (!el) return
-          const topOffset = Math.max(0, el.getBoundingClientRect().top - navbarHeight)
-          const score = ratio * (1 - Math.min(topOffset / window.innerHeight, 0.5))
-          if (score > topScore) {
-            topScore = score
-            topSection = id
+          // Batch all DOM reads together - only if we have intersecting sections
+          if (intersectingSectionsSnapshot.size > 0) {
+            const sectionRects = new Map()
+            intersectingSectionsSnapshot.forEach((ratio, id) => {
+              const el = document.getElementById(id)
+              if (el) {
+                sectionRects.set(id, {
+                  ratio,
+                  rect: el.getBoundingClientRect()
+                })
+              }
+            })
+
+            // Calculate scores using batched rect data
+            sectionRects.forEach(({ ratio, rect }, id) => {
+              const topOffset = Math.max(0, rect.top - navbarHeight)
+              const score = ratio * (1 - Math.min(topOffset / window.innerHeight, 0.5))
+              if (score > topScore) {
+                topScore = score
+                topSection = id
+              }
+            })
+          }
+
+          if (heroInView) {
+            setActiveSection('')
+            if (location.hash) {
+              window.history.replaceState(null, '', location.pathname)
+            }
+          } else if (topSection) {
+            setActiveSection(topSection)
+            if (window.location.hash !== `#${topSection}`) {
+              window.history.replaceState(null, '', `#${topSection}`)
+            }
+          } else if (window.scrollY < 100) {
+            setActiveSection('')
+            if (location.hash) {
+              window.history.replaceState(null, '', location.pathname)
+            }
           }
         })
-
-        if (isHeroInView) {
-          setActiveSection('')
-          if (location.hash) {
-            window.history.replaceState(null, '', location.pathname)
-          }
-        } else if (topSection) {
-          setActiveSection(topSection)
-          if (window.location.hash !== `#${topSection}`) {
-            window.history.replaceState(null, '', `#${topSection}`)
-          }
-        } else if (window.scrollY < 100) {
-          setActiveSection('')
-          if (location.hash) {
-            window.history.replaceState(null, '', location.pathname)
-          }
-        }
       },
       { rootMargin: '-100px 0px -50% 0px', threshold: [0.1, 0.2, 0.3, 0.4, 0.5] }
     )

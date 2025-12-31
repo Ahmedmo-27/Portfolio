@@ -59,13 +59,11 @@ const ProfileCardComponent = ({
     const timeoutId = setTimeout(() => {
       checkImageLoaded();
       // If still not loaded after timeout, set loaded anyway to prevent infinite loading
-      if (!imageLoaded) {
-        setImageLoaded(true);
-      }
+      setImageLoaded(true);
     }, 1000);
 
     return () => clearTimeout(timeoutId);
-  }, [imageLoaded]);
+  }, []); // Empty dependency array - only run on mount
 
   // Defer tilt engine initialization to after LCP
   useEffect(() => {
