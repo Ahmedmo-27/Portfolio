@@ -216,7 +216,7 @@ export default function Projects() {
                             <h3 id={`project-title-${project.id}`} className="text-lg sm:text-xl font-display font-bold text-foreground truncate">
                               {project.title}
                             </h3>
-                            <p className="text-primary-400 text-xs sm:text-sm font-medium truncate">
+                            <p className="text-primary-400 text-xs sm:text-sm font-medium line-clamp-2">
                               {project.subtitle}
                             </p>
                           </div>

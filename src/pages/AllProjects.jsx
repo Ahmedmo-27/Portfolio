@@ -248,10 +248,10 @@ export default function AllProjects() {
                               <project.icon className="w-5 sm:w-6 h-5 sm:h-6 text-white" />
                             </div>
                             <div className="min-w-0">
-                              <h3 id={`project-title-${project.id}`} className="text-lg sm:text-xl font-display font-bold text-foreground truncate">
+                              <h3 id={`project-title-${project.id}`} className="text-lg sm:text-xl font-display font-bold text-foreground line-clamp-2">
                                 {project.title}
                               </h3>
-                              <p className="text-primary-400 text-xs sm:text-sm font-medium truncate">
+                              <p className="text-primary-400 text-xs sm:text-sm font-medium line-clamp-2">
                                 {project.subtitle}
                               </p>
                             </div>

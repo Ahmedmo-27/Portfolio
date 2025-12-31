@@ -133,6 +133,43 @@ function MediaCarousel({ project, shouldLoad = false }) {
     goTo((currentIndex + 1) % total)
   }, [currentIndex, total, goTo])
 
+  // Touch / swipe handling for mobile
+  const touchStartX = useRef(null)
+  const touchStartY = useRef(null)
+
+  const onTouchStart = useCallback((e) => {
+    const t = e.touches ? e.touches[0] : e
+    touchStartX.current = t.clientX
+    touchStartY.current = t.clientY
+  }, [])
+
+  const onTouchMove = useCallback((e) => {
+    if (!touchStartX.current) return
+    const t = e.touches ? e.touches[0] : e
+    const dx = t.clientX - touchStartX.current
+    const dy = t.clientY - touchStartY.current
+    // If horizontal swipe detected, prevent vertical scroll interference
+    if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 8) {
+      e.preventDefault()
+    }
+  }, [])
+
+  const onTouchEnd = useCallback((e) => {
+    if (touchStartX.current == null) return
+    const t = (e.changedTouches && e.changedTouches[0]) ? e.changedTouches[0] : e
+    const dx = t.clientX - touchStartX.current
+    const dy = t.clientY - touchStartY.current
+    const absDx = Math.abs(dx)
+    const absDy = Math.abs(dy)
+    const SWIPE_THRESHOLD = 40
+    if (absDx > SWIPE_THRESHOLD && absDx > absDy) {
+      if (dx < 0) goTo((currentIndex + 1) % total)
+      else goTo((currentIndex - 1 + total) % total)
+    }
+    touchStartX.current = null
+    touchStartY.current = null
+  }, [currentIndex, total, goTo])
+
   if (total === 0) {
     return (
       <div className="absolute inset-0 flex items-center justify-center" aria-hidden="true">
@@ -144,7 +181,12 @@ function MediaCarousel({ project, shouldLoad = false }) {
   }
 
   return (
-    <div className="media-carousel-container">
+    <div
+      className="media-carousel-container"
+      onTouchStart={onTouchStart}
+      onTouchMove={onTouchMove}
+      onTouchEnd={onTouchEnd}
+    >
       {/* Carousel Track */}
       <div 
         className="media-carousel-track"
@@ -238,26 +280,35 @@ function MediaCarousel({ project, shouldLoad = false }) {
               )}
 
               {(item.type === 'csv' || item.type === 'file') && (
-                <div className="w-full h-full bg-surface/70 flex flex-col items-center justify-center text-center p-4">
-                  <div className="w-12 h-12 rounded-xl bg-surface border border-border flex items-center justify-center mb-3">
-                    <FileText className="w-6 h-6 text-primary-400" />
+                <div className="w-full h-full bg-surface/70 flex items-center justify-center text-center">
+                  <div className="csv-preview-inner flex flex-col items-center justify-center">
+                    <div className="csv-preview-icon w-12 h-12 rounded-xl bg-surface border border-border flex items-center justify-center mb-3">
+                      <FileText className="w-6 h-6 text-primary-400" />
+                    </div>
+                    <p className="text-sm font-semibold text-foreground mb-1">
+                      {item.type === 'csv' ? 'Data file (CSV)' : 'Document'}
+                    </p>
+                    <p className="text-xs text-muted mb-3 break-all csv-filename">
+                      {(() => {
+                        const seg = String(item.src).split('/').pop() || ''
+                        try {
+                          return decodeURIComponent(seg)
+                        } catch (e) {
+                          return seg.replace(/%20/g, ' ')
+                        }
+                      })()}
+                    </p>
+                    <a
+                      href={assetUrl(item.src)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn-cta text-xs px-3 py-1.5"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <FileText className="w-3.5 h-3.5" />
+                      Open {item.type === 'csv' ? 'CSV' : 'file'}
+                    </a>
                   </div>
-                  <p className="text-sm font-semibold text-foreground mb-1">
-                    {item.type === 'csv' ? 'Data file (CSV)' : 'Document'}
-                  </p>
-                  <p className="text-xs text-muted mb-3 break-all px-2">
-                    {String(item.src).split('/').pop()}
-                  </p>
-                  <a
-                    href={assetUrl(item.src)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="btn-cta text-xs px-3 py-1.5"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <FileText className="w-3.5 h-3.5" />
-                    Open {item.type === 'csv' ? 'CSV' : 'file'}
-                  </a>
                 </div>
               )}
             </div>
