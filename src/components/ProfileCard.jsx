@@ -251,6 +251,12 @@ const ProfileCardComponent = ({
       invalidateDimensions() {
         dimensionsDirty = true;
       },
+      updateDimensions(width, height) {
+        // update cached dimensions and mark cache clean
+        cachedWidth = width || cachedWidth;
+        cachedHeight = height || cachedHeight;
+        dimensionsDirty = false;
+      },
       getDimensions() {
         return getDimensions();
       },
@@ -272,6 +278,31 @@ const ProfileCardComponent = ({
       }
     };
   }, [shouldEnableTilt, tiltReady]);
+
+  // Use ResizeObserver to keep tiltEngine's cached dimensions up-to-date
+  useEffect(() => {
+    if (!shouldEnableTilt || !tiltEngine) return
+
+    const shell = shellRef.current
+    if (!shell) return
+
+    // Initialize with current size
+    const rect = shell.getBoundingClientRect()
+    if (tiltEngine.updateDimensions) {
+      tiltEngine.updateDimensions(rect.width || shell.clientWidth || 0, rect.height || shell.clientHeight || 0)
+    }
+
+    const ro = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        const w = entry.contentRect.width
+        const h = entry.contentRect.height
+        if (tiltEngine.updateDimensions) tiltEngine.updateDimensions(w, h)
+      }
+    })
+    ro.observe(shell)
+
+    return () => ro.disconnect()
+  }, [shouldEnableTilt, tiltEngine])
 
   // Cache rect to avoid repeated getBoundingClientRect calls
   const rectCacheRef = useRef({ left: 0, top: 0, width: 0, height: 0 });
@@ -364,9 +395,10 @@ const ProfileCardComponent = ({
         requestAnimationFrame(() => {
           const shell = shellRef.current;
           if (!shell) return;
-          // Batch all reads together
-          const width = shell.clientWidth;
-          const height = shell.clientHeight;
+          // Prefer cached dimensions from tiltEngine to avoid forced layout reads
+          const dims = tiltEngine.getDimensions ? tiltEngine.getDimensions() : { width: shell.clientWidth, height: shell.clientHeight };
+          const width = dims.width || shell.clientWidth || 0;
+          const height = dims.height || shell.clientHeight || 0;
           const centerX = width * 0.5;
           const centerY = height * 0.5;
           const x = clamp(centerX + gamma * mobileTiltSensitivity, 0, width);
@@ -445,7 +477,8 @@ const ProfileCardComponent = ({
         
         // Batch read: get dimensions once
         const shell = shellRef.current;
-        const shellWidth = shell.clientWidth || 0;
+        const dims = tiltEngine.getDimensions ? tiltEngine.getDimensions() : { width: shell.clientWidth || 0 };
+        const shellWidth = dims.width || 0;
         const initialX = shellWidth - xOffset;
         const initialY = yOffset;
         tiltEngine.setImmediate(initialX, initialY);

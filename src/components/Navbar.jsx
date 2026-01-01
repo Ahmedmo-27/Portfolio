@@ -37,6 +37,9 @@ export default function Navbar() {
   const revealQueueRef = useRef([])
   const revealTimerRef = useRef(null)
   const REVEAL_INTERVAL = 100
+  // Header (navbar) size cache to avoid repetitive getBoundingClientRect reads
+  const navbarRef = useRef(null)
+  const navbarRectRef = useRef(null)
   
   // Check if we're on the home page or projects page (memoized to avoid recalculation)
   const isHomePage = useMemo(() => location.pathname === '/', [location.pathname])
@@ -191,7 +194,7 @@ export default function Navbar() {
         requestAnimationFrame(() => {
           let topSection = null
           let topScore = 0
-          const navbarHeight = 100
+          const navbarHeight = navbarRectRef.current ? navbarRectRef.current.height : 100
 
           // Batch all DOM reads together - only if we have intersecting sections
           if (intersectingSectionsSnapshot.size > 0) {
@@ -289,6 +292,31 @@ export default function Navbar() {
     }
   }, [isMobileMenuOpen])
 
+  // Cache navbar bounding values using ResizeObserver to avoid repeated layout reads
+  useEffect(() => {
+    const node = navbarRef.current
+    if (!node) return
+
+    const updateRect = () => {
+      // Use getBoundingClientRect once to capture height; ResizeObserver provides sizes but
+      // using rAF around getBoundingClientRect reduces risk of forced synchronous layout here.
+      requestAnimationFrame(() => {
+        const r = node.getBoundingClientRect()
+        navbarRectRef.current = { height: r.height }
+      })
+    }
+
+    // Initial capture
+    updateRect()
+
+    const ro = new ResizeObserver(() => {
+      updateRect()
+    })
+    ro.observe(node)
+
+    return () => ro.disconnect()
+  }, [])
+
   // Smooth scroll handler for navigation links
   const handleNavClick = (e, href) => {
     // Extract hash from href (handles both '#section' and '/#section' formats)
@@ -320,10 +348,9 @@ export default function Navbar() {
         // Use requestAnimationFrame to batch all layout reads together
         requestAnimationFrame(() => {
           // Batch all DOM reads together to minimize reflows
-          const navbar = document.querySelector('header')
-          const navbarRect = navbar ? navbar.getBoundingClientRect() : null
+          const navbarRect = navbarRectRef.current
           const elementRect = targetElement.getBoundingClientRect()
-          
+
           // Calculate values from batched reads
           const navbarHeight = navbarRect ? navbarRect.height : (window.innerWidth >= 768 ? 80 : 70)
           const elementTop = elementRect.top + window.scrollY
@@ -356,6 +383,7 @@ export default function Navbar() {
 
   return (
     <header
+      ref={navbarRef}
       className={`fixed top-0 left-0 right-0 z-50 transition-[padding,background-color,backdrop-filter] duration-200 ${
         isScrolled || isMobileMenuOpen ? 'glass py-3' : 'py-5'
       }`}
