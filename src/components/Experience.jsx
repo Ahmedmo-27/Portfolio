@@ -107,8 +107,8 @@ export default function Experience() {
         <div ref={ref}>
           {/* Section Header */}
           <div className= 'text-center mb-14 md:mb-20'>
-            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-accent-emerald/20 border border-accent-emerald/30 dark:text-foreground text-dark-900 text-sm font-medium mb-4">
-              <span className="w-1.5 h-1.5 rounded-full bg-accent-emerald" aria-hidden="true" />
+            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-accent-emerald/20 border border-accent-emerald/30 text-sm font-medium mb-4" style={{ backgroundColor: 'rgba(16, 185, 129, 0.2)', color: '#065f46' }}>
+              <span className="w-1.5 h-1.5 rounded-full" aria-hidden="true" style={{ backgroundColor: '#065f46' }} />
               Experience
             </span>
             <h2 id="experience-heading" className="section-heading mb-6">
