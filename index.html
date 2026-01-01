@@ -62,36 +62,9 @@
     
     <link rel="canonical" href="https://ahmedmostafa-swe.tech" />
     
-    <!-- JSON-LD Structured Data for Better SEO -->
+    <!-- Compact JSON-LD (essential fields) - smaller to reduce initial parse cost -->
     <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Person",
-      "name": "Ahmed Mostafa",
-      "jobTitle": "Junior Software Engineer",
-      "description": "Junior Software Engineer specializing in backend and full-stack development, with experience in DevOps automation",
-      "url": "https://ahmedmostafa-swe.tech",
-      "email": "ahmedmostafa.swe1@gmail.com",
-      "address": {
-        "@type": "PostalAddress",
-        "addressLocality": "Cairo",
-        "addressRegion": "Cairo",
-        "addressCountry": "Egypt"
-      },
-      "alumniOf": {
-        "@type": "EducationalOrganization",
-        "name": "Misr International University"
-      },
-      "knowsAbout": ["Backend Development", "Full-Stack Development", "DevOps", "Node.js", "React", "Android Development", "CI/CD", "Cloud Infrastructure"],
-      "sameAs": [
-        "https://www.linkedin.com/in/ahmedmostafa-swe",
-        "https://github.com/ahmedmo-27"
-      ],
-      "award": [
-        "Best Web Project MIU 2025",
-        "DIGITOPIA 2025 Semifinalist"
-      ]
-    }
+    {"@context":"https://schema.org","@type":"Person","name":"Ahmed Mostafa","jobTitle":"Junior Software Engineer","url":"https://ahmedmostafa-swe.tech","sameAs":["https://www.linkedin.com/in/ahmedmostafa-swe","https://github.com/ahmedmo-27"]}
     </script>
         
     <!-- DNS Prefetch & Preconnect for Performance (Max 4 origins as recommended) -->
@@ -136,119 +109,28 @@
     <meta name="theme-color" content="#020617" media="(prefers-color-scheme: dark)" />
     <meta name="theme-color" content="#f8fafc" media="(prefers-color-scheme: light)" />
     
-    <!-- Structured Data / JSON-LD Schema.org -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Person",
-      "name": "Ahmed Mostafa",
-      "jobTitle": "Junior Software Engineer",
-      "description": "Junior Software Engineer specializing in backend and full-stack development, with experience in DevOps automation",
-      "url": "https://ahmedmostafa-swe.tech",
-      "image": "/Geometric%20AM%20logo%20design.webp",
-      "email": "ahmedmostafa.swe1@gmail.com",
-      "telephone": "+201229004551",
-      "address": {
-        "@type": "PostalAddress",
-        "addressLocality": "Cairo",
-        "addressRegion": "Cairo",
-        "addressCountry": "Egypt"
-      },
-      "alumniOf": {
-        "@type": "EducationalOrganization",
-        "name": "Misr International University",
-        "alternateName": "MIU"
-      },
-      "sameAs": [
-        "https://github.com/ahmedmo-27",
-        "https://linkedin.com/in/ahmedmostafa-swe"
-      ],
-      "knowsAbout": [
-        "DevOps",
-        "CI/CD",
-        "Azure DevOps",
-        "Docker",
-        "Node.js",
-        "React",
-        "TypeScript",
-        "Kotlin",
-        "Android Development",
-        "Full-Stack Development",
-        "MongoDB",
-        "PostgreSQL"
-      ],
-      "hasOccupation": {
-        "@type": "Occupation",
-        "name": "Junior Software Engineer",
-        "occupationLocation": {
-          "@type": "City",
-          "name": "Cairo"
-        },
-        "skills": [
-          "DevOps",
-          "CI/CD",
-          "Full-Stack Development",
-          "Android Development",
-          "React",
-          "Node.js",
-          "TypeScript",
-          "Kotlin"
-        ]
-      }
-    }
-    </script>
-    
-    <!-- WebSite Schema for Better SEO -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "WebSite",
-      "name": "Ahmed Mostafa Portfolio",
-      "url": "https://ahmedmostafa-swe.tech",
-      "description": "Professional portfolio website of Ahmed Mostafa - Junior Software Engineer specializing in backend and full-stack development",
-      "author": {
-        "@type": "Person",
-        "name": "Ahmed Mostafa"
-      },
-      "inLanguage": "en-US",
-      "potentialAction": {
-        "@type": "SearchAction",
-        "target": "https://ahmedmostafa-swe.tech/?s={search_term_string}",
-        "query-input": "required name=search_term_string"
-      }
-    }
-    </script>
-    
-    <!-- ProfessionalService Schema -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "ProfessionalService",
-      "name": "Ahmed Mostafa - Software Engineering Services",
-      "description": "Junior Software Engineer specializing in backend and full-stack development, with experience in DevOps automation",
-      "url": "https://ahmedmostafa-swe.tech",
-      "provider": {
-        "@type": "Person",
-        "name": "Ahmed Mostafa",
-        "jobTitle": "Software Engineer",
-        "email": "ahmedmostafa.swe1@gmail.com",
-        "sameAs": [
-          "https://github.com/ahmedmo-27",
-          "https://linkedin.com/in/ahmedmostafa-swe"
-        ]
-      },
-      "areaServed": {
-        "@type": "Country",
-        "name": "Egypt"
-      },
-      "serviceType": [
-        "DevOps Engineering",
-        "Full-Stack Development",
-        "Android Development",
-        "CI/CD Pipeline Setup",
-        "Cloud Infrastructure"
-      ]
-    }
+    <!-- Defer non-critical structured data injection to idle time to avoid parse cost -->
+    <script>
+      (function(){
+        function injectNonCriticalJSONLD(){
+          try{
+            var s = document.createElement('script');
+            s.type = 'application/ld+json';
+            s.text = JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "WebSite",
+              "name": "Ahmed Mostafa Portfolio",
+              "url": "https://ahmedmostafa-swe.tech"
+            });
+            document.head.appendChild(s);
+          }catch(e){}
+        }
+        if ('requestIdleCallback' in window) {
+          requestIdleCallback(injectNonCriticalJSONLD, {timeout: 3000});
+        } else {
+          window.addEventListener('load', injectNonCriticalJSONLD, {once:true});
+        }
+      })();
     </script>
     
     <!-- Google Fonts - Direct load with display=swap for performance -->
