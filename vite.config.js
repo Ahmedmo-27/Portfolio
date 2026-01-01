@@ -1,6 +1,10 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
+// Use Preact in production builds to reduce react-dom bundle size.
+// This is a drop-in replacement via preact/compat and significantly reduces bytes transferred.
+const usePreactInProd = process.env.NODE_ENV === 'production'
+
 export default defineConfig({
   plugins: [
     react(),
@@ -58,6 +62,13 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': '/src',
+      // Production-only aliasing to Preact to reduce react-dom size
+      ...(usePreactInProd ? {
+        'react': 'preact/compat',
+        'react-dom': 'preact/compat',
+        'react-dom/test-utils': 'preact/test-utils',
+        'react/jsx-runtime': 'preact/jsx-runtime'
+      } : {}),
     },
   },
   build: {
