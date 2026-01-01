@@ -166,7 +166,7 @@ export default function Education() {
                     <h3 className="text-xl md:text-2xl font-display font-bold text-foreground mb-1 break-words leading-tight">
                       {education.university}
                     </h3>
-                    <p className="text-primary-400 font-medium text-sm md:text-base">
+                    <p className="dark:text-primary-400 text-primary-500 font-medium text-sm md:text-base">
                       {education.degree}
                     </p>
                   </div>
@@ -269,7 +269,7 @@ export default function Education() {
                               <p className="text-[13px] sm:text-sm font-semibold text-foreground leading-snug line-clamp-2 flex items-center gap-1.5">
                                 {cert.title}
                               </p>
-                              <p className="text-[11px] sm:text-xs font-medium text-primary-400 truncate mt-0.5">
+                              <p className="dark:text-primary-400 text-[11px] sm:text-xs font-medium text-primary-500 truncate mt-0.5">
                                 {cert.issuer}
                               </p>
                             </div>
@@ -303,7 +303,7 @@ export default function Education() {
                                     e.stopPropagation()
                                     toggleCertSkills(cert.id)
                                   }}
-                                  className="text-[10px] sm:text-[11px] text-primary-400 hover:text-primary-300 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 rounded-md px-1.5 whitespace-nowrap"
+                                  className="dark:text-primary-400 text-[10px] sm:text-[11px] text-primary-500 hover:text-primary-500 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 rounded-md px-1.5 whitespace-nowrap"
                                   aria-expanded={!!expandedCertSkills[cert.id]}
                                   aria-label={
                                     expandedCertSkills[cert.id]
@@ -326,11 +326,11 @@ export default function Education() {
 
                             const isExternal = credentialLink.startsWith('http')
                             return (
-                              <a
+                                <a
                                 href={credentialLink}
                                 target={isExternal ? '_blank' : undefined}
                                 rel={isExternal ? 'noopener noreferrer' : undefined}
-                                className="inline-flex items-center gap-1 mt-1.5 text-[11px] text-primary-400 hover:text-primary-300 focus-visible:text-primary-300 transition-colors"
+                                className="inline-flex items-center gap-1 mt-1.5 dark:text-primary-400 text-[11px] text-primary-500 hover:text-primary-500 focus-visible:text-primary-500 transition-colors"
                               >
                                 Show credential
                                 <ExternalLink className="w-3 h-3" aria-hidden="true" />
@@ -346,10 +346,10 @@ export default function Education() {
                 {/* Show More Button */}
                 {hasMoreCerts && (
                   <div className="flex justify-center mt-6">
-                    <button
+                      <button
                       type="button"
                       onClick={() => setShowAllCerts(!showAllCerts)}
-                      className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-surface border border-border text-primary-400 hover:text-primary-300 hover:border-primary-500/40 hover:bg-surface-hover transition-colors duration-150 text-sm font-medium"
+                      className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-surface border border-border dark:text-primary-400 text-primary-500 hover:text-primary-500 hover:border-primary-500/40 hover:bg-surface-hover transition-colors duration-150 text-sm font-medium"
                       aria-expanded={showAllCerts}
                       aria-label={showAllCerts ? 'Show fewer certifications' : 'Show more certifications'}
                     >

@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { observe } from './sharedObserver'
 
 /**
  * Observe an element and track `isInView` state continuously.
@@ -21,15 +22,12 @@ export function useInViewOnce(options = {}) {
       return
     }
 
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        setIsInView(entry.isIntersecting)
-      },
-      { threshold, rootMargin }
-    )
+    // Use shared observer in continuous mode (once: false)
+    const cleanup = observe(el, (entry) => {
+      setIsInView(entry.isIntersecting)
+    }, { threshold, rootMargin, once: false })
 
-    observer.observe(el)
-    return () => observer.disconnect()
+    return cleanup
   }, [rootMargin, threshold])
 
   return { ref, isInView }

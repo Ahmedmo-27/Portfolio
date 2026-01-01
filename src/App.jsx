@@ -23,13 +23,10 @@ const AllProjects = lazy(() => import(/* webpackChunkName: "all-projects" */ './
 // This runs after initial render without blocking main thread
 if (typeof window !== 'undefined') {
   window.addEventListener('load', () => {
-    if ('requestIdleCallback' in window) {
-      window.requestIdleCallback(() => {
-        // Prefetch above-the-fold and likely-to-be-viewed sections
-        import(/* webpackPrefetch: true */ './components/About')
-        import(/* webpackPrefetch: true */ './components/Achievements')
-      }, { timeout: 2000 })
-    }
+    setTimeout(() => {
+      import('./components/About')
+      import('./components/Achievements')
+    }, 3000)
   }, { once: true })
 }
 
@@ -125,8 +122,10 @@ function AppContent() {
           Skip to main content
         </a>
         
+      <Suspense fallback={null}>
         <Navbar />
-        
+      </Suspense>
+
         <main id="main-content" role="main">
           <Routes>
             <Route path="/" element={<HomePage />} />

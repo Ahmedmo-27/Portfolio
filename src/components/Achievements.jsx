@@ -131,7 +131,7 @@ export default function Achievements() {
         <div ref={ref}>
           {/* Section Header */}
           <div className='text-center mb-14 md:mb-20'>
-            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-accent-amber/20 border border-accent-amber/30 text-accent-amber text-sm font-medium mb-4">
+            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-accent-amber/20 border border-accent-amber/30 dark:text-foreground text-dark-900 text-sm font-medium mb-4">
               <span className="w-1.5 h-1.5 rounded-full bg-accent-amber" aria-hidden="true" />
               Achievements
             </span>
@@ -180,7 +180,7 @@ export default function Achievements() {
                     >
                       {achievement.title}
                     </h3>
-                    <p className="text-primary-400 font-medium text-sm mb-1">
+                    <p className="dark:text-primary-400 text-primary-500 font-medium text-sm mb-1">
                       {achievement.organization}
                     </p>
                     <p className="text-muted text-sm sm:text-base">
@@ -194,7 +194,7 @@ export default function Achievements() {
                             href={achievement.website}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1.5 text-primary-400 hover:text-primary-300 transition-colors text-sm font-medium"
+                            className="inline-flex items-center gap-1.5 dark:text-primary-400 text-primary-500 hover:text-primary-500 transition-colors text-sm font-medium"
                           >
                             Visit Website
                             <ExternalLink className="w-4 h-4" aria-hidden="true" />
@@ -208,7 +208,7 @@ export default function Achievements() {
                                 <a
                                   href={pdfHref}
                                   download
-                                  className="inline-flex items-center gap-1.5 text-primary-400 hover:text-primary-300 transition-colors text-sm font-medium"
+                                  className="inline-flex items-center gap-1.5 dark:text-primary-400 text-primary-500 hover:text-primary-500 transition-colors text-sm font-medium"
                                 >
                                   <Download className="w-4 h-4" aria-hidden="true" />
                                   Download PDF
@@ -218,7 +218,7 @@ export default function Achievements() {
                             <a
                               href="/#experience"
                               onClick={handleExperienceClick}
-                              className="inline-flex items-center gap-1.5 text-primary-400 hover:text-primary-300 transition-colors text-sm font-medium"
+                              className="inline-flex items-center gap-1.5 text-primary-500 hover:text-primary-500 transition-colors text-sm font-medium"
                             >
                               View Experience
                               <ExternalLink className="w-4 h-4" aria-hidden="true" />
@@ -229,7 +229,7 @@ export default function Achievements() {
                           <a
                             href="/#experience"
                             onClick={handleExperienceClick}
-                            className="inline-flex items-center gap-1.5 text-primary-400 hover:text-primary-300 transition-colors text-sm font-medium"
+                            className="inline-flex items-center gap-1.5 dark:text-primary-400 text-primary-500 hover:text-primary-500 transition-colors text-sm font-medium"
                           >
                             View Experience
                             <ExternalLink className="w-4 h-4" aria-hidden="true" />
@@ -239,7 +239,7 @@ export default function Achievements() {
                           <a
                             href="/#projects"
                             onClick={handleProjectsClick}
-                            className="inline-flex items-center gap-1.5 text-primary-400 hover:text-primary-300 transition-colors text-sm font-medium"
+                            className="inline-flex items-center gap-1.5 text-primary-500 hover:text-primary-500 transition-colors text-sm font-medium"
                           >
                             View Projects
                             <ExternalLink className="w-4 h-4" aria-hidden="true" />
@@ -286,13 +286,13 @@ export default function Achievements() {
                 >
                   {achievement.title}
                 </h3>
-                <p className="text-primary-400 font-medium text-sm mb-1">
+                <p className="text-primary-500 font-medium text-sm mb-1">
                   {achievement.organization}
                 </p>
                 {achievement.projectLink ? (
                   <a 
                     href={achievement.projectLink}
-                    className="inline-flex items-center gap-1 text-muted text-sm mb-3 hover:text-primary-400 transition-colors"
+                    className="inline-flex items-center gap-1 text-muted text-sm mb-3 hover:text-primary-500 transition-colors"
                   >
                     Project: {achievement.project}
                     <ExternalLink className="w-3 h-3" aria-hidden="true" />

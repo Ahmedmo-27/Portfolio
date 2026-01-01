@@ -15,7 +15,8 @@
     --color-surface: rgba(30, 41, 59, 0.5);
     --color-surface-hover: rgba(51, 65, 85, 0.5);
     --color-border: rgba(51, 65, 85, 0.5);
-    --color-muted: #94a3b8;
+    /* Increase contrast for muted text on dark background to meet WCAG for small text */
+    --color-muted: #cbd5e1;
     --background: 0 0% 100%;
     --foreground: 0 0% 3.9%;
     --card: 0 0% 100%;
@@ -52,7 +53,8 @@
     --color-surface: rgba(241, 245, 249, 0.8);
     --color-surface-hover: rgba(226, 232, 240, 0.8);
     --color-border: rgba(203, 213, 225, 0.6);
-    --color-muted: #64748b;
+    /* Darken muted in light theme to improve contrast against light backgrounds */
+    --color-muted: #475569;
   }
 
   * {

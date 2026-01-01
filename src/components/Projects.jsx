@@ -7,6 +7,7 @@ import ViewMoreButton from './ViewMoreButton'
 import MediaCarousel from './MediaCarousel'
 import { projects } from '../data/projects'
 import { useInViewOnce } from '../utils/useInViewOnce'
+import { observe } from '../utils/sharedObserver'
 import './Projects.css'
 
 // Keep only first 3 projects for the home page
@@ -33,7 +34,7 @@ export default function Projects() {
   
   const [mediaShouldLoad, setMediaShouldLoad] = useState({}) // projectId -> boolean
   const projectItemElsRef = useRef({}) // projectId -> HTMLElement
-  const mediaObserverRef = useRef(null)
+  const mediaObserverRef = useRef({})
 
   // Lazy load heavy media when the project card approaches viewport
   // Only start observing after the section is in view to avoid unnecessary work
@@ -62,36 +63,31 @@ export default function Projects() {
       rafId = null
     }
     
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (!entry.isIntersecting) continue
-          const projectId = entry.target?.dataset?.projectId
-          if (!projectId) continue
-          pendingUpdates.add(projectId)
-          observer.unobserve(entry.target)
-        }
-        
-        // Batch updates using requestAnimationFrame for better performance
-        if (pendingUpdates.size > 0 && !rafId) {
-          rafId = requestAnimationFrame(processUpdates)
-        }
-      },
-      { threshold: 0.1, rootMargin: '200px' }
-    )
+    const cleanups = {}
+    const observeCallback = (entry) => {
+      if (!entry.isIntersecting) return
+      const projectId = entry.target?.dataset?.projectId
+      if (!projectId) return
+      pendingUpdates.add(projectId)
+      if (pendingUpdates.size > 0 && !rafId) {
+        rafId = requestAnimationFrame(processUpdates)
+      }
+    }
 
-    mediaObserverRef.current = observer
-    
+    mediaObserverRef.current = {}
+
     // Observe all existing project elements
     const elements = Object.values(projectItemElsRef.current)
     const visibleCandidates = []
     for (const el of elements) {
       if (el) {
-        observer.observe(el)
-        // Defer bounding-client-rect checks to rAF to batch layout reads
+        const cleanup = observe(el, observeCallback, { threshold: 0.1, rootMargin: '200px' })
+        cleanups[el.dataset?.projectId] = cleanup
         visibleCandidates.push(el)
       }
     }
+    mediaObserverRef.current = cleanups
+    mediaObserverRef.current._callback = observeCallback
 
     // Batch visibility checks in a requestAnimationFrame to avoid synchronous layout
     if (visibleCandidates.length > 0) {
@@ -116,8 +112,10 @@ export default function Projects() {
     }
 
     return () => {
-      observer.disconnect()
-      mediaObserverRef.current = null
+      for (const fn of Object.values(mediaObserverRef.current || {})) {
+        try { fn() } catch (e) {}
+      }
+      mediaObserverRef.current = {}
       if (rafId) cancelAnimationFrame(rafId)
     }
   }, [isInView])
@@ -156,13 +154,20 @@ export default function Projects() {
               <article
                 key={project.id}
                 data-project-id={project.id}
-                ref={(el) => {
+                    ref={(el) => {
                   if (el) {
                     batchSetProperty(el, '--animation-delay', `${index * 0.15 + 0.2}s`)
                     projectItemElsRef.current[project.id] = el
-                    if (mediaObserverRef.current) mediaObserverRef.current.observe(el)
+                    if (mediaObserverRef.current && mediaObserverRef.current._callback) {
+                      const cleanup = observe(el, mediaObserverRef.current._callback, { threshold: 0.1, rootMargin: '200px' })
+                      mediaObserverRef.current[project.id] = cleanup
+                    }
                   } else {
                     delete projectItemElsRef.current[project.id]
+                    if (mediaObserverRef.current && mediaObserverRef.current[project.id]) {
+                      try { mediaObserverRef.current[project.id]() } catch (e) {}
+                      delete mediaObserverRef.current[project.id]
+                    }
                   }
                 }}
                 className={`${project.isHighlighted ? 'relative' : ''} projects-item animate-fade-in-up`}

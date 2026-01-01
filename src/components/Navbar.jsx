@@ -4,6 +4,7 @@ import Menu from 'lucide-react/dist/esm/icons/menu'
 import X from 'lucide-react/dist/esm/icons/x'
 import ThemeToggle from './ThemeToggle'
 import './Navbar.css'
+import { observe } from '../utils/sharedObserver'
 
 const navLinks = [
   { name: 'About', href: '/#about' },
@@ -137,120 +138,125 @@ export default function Navbar() {
 
   useEffect(() => {
     if (!isHomePage) return
-
     const sections = navLinks.map(link => getSectionId(link.href))
     const intersectingSections = new Map()
     let isHeroInView = false
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          const id = entry.target.id
+    const cleanupMap = new Map()
+    let rafId = null
 
-          // Track Hero visibility
-          if (id === 'hero') {
-            isHeroInView = entry.isIntersecting && entry.intersectionRatio > 0.5
-          }
-
-          // Track intersecting sections
-          if (sections.includes(id)) {
-            if (entry.isIntersecting) {
-              intersectingSections.set(id, entry.intersectionRatio)
-
-              // Queue reveal if not visible and not already queued
-              const alreadyVisible = visibleLinksRef.current.includes(id)
-              const alreadyQueued = revealQueueRef.current.includes(id)
-              if (!alreadyVisible && !alreadyQueued) {
-                // Mark that links have started loading/revealing
-                setLinksStartedLoading(true)
-                revealQueueRef.current.push(id)
-
-                // Start the reveal interval if not already running
-                if (!revealTimerRef.current) {
-                  revealTimerRef.current = setInterval(() => {
-                    const next = revealQueueRef.current.shift()
-                    if (next) {
-                      setVisibleLinks((prev) => [...prev, next])
-                    }
-                    if (revealQueueRef.current.length === 0) {
-                      clearInterval(revealTimerRef.current)
-                      revealTimerRef.current = null
-                    }
-                  }, REVEAL_INTERVAL)
-                }
-              }
-            } else {
-              intersectingSections.delete(id)
-            }
-          }
-        })
+    const scheduleProcess = () => {
+      if (rafId != null) return
+      rafId = requestAnimationFrame(() => {
+        rafId = null
 
         // Determine top section for highlighting
-        // Capture values to avoid stale closure issues
         const heroInView = isHeroInView
         const intersectingSectionsSnapshot = new Map(intersectingSections)
-        
-        // Batch all getBoundingClientRect calls to avoid forced reflows
-        requestAnimationFrame(() => {
-          let topSection = null
-          let topScore = 0
-          const navbarHeight = navbarRectRef.current ? navbarRectRef.current.height : 100
 
-          // Batch all DOM reads together - only if we have intersecting sections
-          if (intersectingSectionsSnapshot.size > 0) {
-            const sectionRects = new Map()
-            intersectingSectionsSnapshot.forEach((ratio, id) => {
-              const el = document.getElementById(id)
-              if (el) {
-                sectionRects.set(id, {
-                  ratio,
-                  rect: el.getBoundingClientRect()
-                })
-              }
-            })
+        let topSection = null
+        let topScore = 0
+        const navbarHeight = navbarRectRef.current ? navbarRectRef.current.height : 100
 
-            // Calculate scores using batched rect data
-            sectionRects.forEach(({ ratio, rect }, id) => {
-              const topOffset = Math.max(0, rect.top - navbarHeight)
-              const score = ratio * (1 - Math.min(topOffset / window.innerHeight, 0.5))
-              if (score > topScore) {
-                topScore = score
-                topSection = id
-              }
-            })
+        if (intersectingSectionsSnapshot.size > 0) {
+          const sectionRects = new Map()
+          intersectingSectionsSnapshot.forEach((ratio, id) => {
+            const el = document.getElementById(id)
+            if (el) {
+              sectionRects.set(id, {
+                ratio,
+                rect: el.getBoundingClientRect()
+              })
+            }
+          })
+
+          sectionRects.forEach(({ ratio, rect }, id) => {
+            const topOffset = Math.max(0, rect.top - navbarHeight)
+            const score = ratio * (1 - Math.min(topOffset / window.innerHeight, 0.5))
+            if (score > topScore) {
+              topScore = score
+              topSection = id
+            }
+          })
+        }
+
+        if (heroInView) {
+          setActiveSection('')
+          if (location.hash) {
+            window.history.replaceState(null, '', location.pathname)
           }
+        } else if (topSection) {
+          setActiveSection(topSection)
+          if (window.location.hash !== `#${topSection}`) {
+            window.history.replaceState(null, '', `#${topSection}`)
+          }
+        } else if (window.scrollY < 100) {
+          setActiveSection('')
+          if (location.hash) {
+            window.history.replaceState(null, '', location.pathname)
+          }
+        }
+      })
+    }
 
-          if (heroInView) {
-            setActiveSection('')
-            if (location.hash) {
-              window.history.replaceState(null, '', location.pathname)
-            }
-          } else if (topSection) {
-            setActiveSection(topSection)
-            if (window.location.hash !== `#${topSection}`) {
-              window.history.replaceState(null, '', `#${topSection}`)
-            }
-          } else if (window.scrollY < 100) {
-            setActiveSection('')
-            if (location.hash) {
-              window.history.replaceState(null, '', location.pathname)
+    const handleEntry = (entry) => {
+      const id = entry.target.id
+
+      if (id === 'hero') {
+        isHeroInView = entry.isIntersecting && entry.intersectionRatio > 0.5
+      }
+
+      if (sections.includes(id)) {
+        if (entry.isIntersecting) {
+          intersectingSections.set(id, entry.intersectionRatio)
+
+          const alreadyVisible = visibleLinksRef.current.includes(id)
+          const alreadyQueued = revealQueueRef.current.includes(id)
+          if (!alreadyVisible && !alreadyQueued) {
+            setLinksStartedLoading(true)
+            revealQueueRef.current.push(id)
+
+            if (!revealTimerRef.current) {
+              revealTimerRef.current = setInterval(() => {
+                const next = revealQueueRef.current.shift()
+                if (next) {
+                  setVisibleLinks((prev) => [...prev, next])
+                }
+                if (revealQueueRef.current.length === 0) {
+                  clearInterval(revealTimerRef.current)
+                  revealTimerRef.current = null
+                }
+              }, REVEAL_INTERVAL)
             }
           }
-        })
-      },
-      { rootMargin: '-100px 0px -50% 0px', threshold: [0.1, 0.2, 0.3, 0.4, 0.5] }
-    )
+        } else {
+          intersectingSections.delete(id)
+        }
+      }
 
-    // Observe hero and all sections
+      scheduleProcess()
+    }
+
+    // Observe hero and all sections using shared observer (continuous)
     const heroEl = document.getElementById('hero')
-    if (heroEl) observer.observe(heroEl)
+    if (heroEl) {
+      const cleanup = observe(heroEl, handleEntry, { rootMargin: '-100px 0px -50% 0px', threshold: [0.1,0.2,0.3,0.4,0.5], once: false })
+      cleanupMap.set('hero', cleanup)
+    }
+
     sections.forEach((id) => {
       const el = document.getElementById(id)
-      if (el) observer.observe(el)
+      if (el) {
+        const cleanup = observe(el, handleEntry, { rootMargin: '-100px 0px -50% 0px', threshold: [0.1,0.2,0.3,0.4,0.5], once: false })
+        cleanupMap.set(id, cleanup)
+      }
     })
 
     return () => {
-      observer.disconnect()
+      for (const fn of cleanupMap.values()) {
+        try { fn() } catch (e) {}
+      }
+      cleanupMap.clear()
       if (revealTimerRef.current) {
         clearInterval(revealTimerRef.current)
         revealTimerRef.current = null

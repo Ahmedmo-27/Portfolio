@@ -107,7 +107,7 @@ export default function Experience() {
         <div ref={ref}>
           {/* Section Header */}
           <div className= 'text-center mb-14 md:mb-20'>
-            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-accent-emerald/20 border border-accent-emerald/30 text-accent-emerald text-sm font-medium mb-4">
+            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-accent-emerald/20 border border-accent-emerald/30 dark:text-foreground text-dark-900 text-sm font-medium mb-4">
               <span className="w-1.5 h-1.5 rounded-full bg-accent-emerald" aria-hidden="true" />
               Experience
             </span>
@@ -168,7 +168,7 @@ export default function Experience() {
                           >
                             {exp.company}
                           </h3>
-                          <p className="text-primary-400 font-medium text-xs sm:text-sm">
+                          <p className="dark:text-primary-400 text-primary-500 font-medium text-xs sm:text-sm">
                             {exp.role}
                           </p>
                         </div>
@@ -177,7 +177,7 @@ export default function Experience() {
                       {/* Meta */}
                       <div className="flex flex-wrap gap-3 md:gap-4 mb-3 md:mb-4 text-xs sm:text-sm text-muted">
                         <span className="flex items-center gap-1">
-                          <Calendar className="w-3.5 md:w-4 h-3.5 md:h-4 text-primary-400" aria-hidden="true" />
+                          <Calendar className="dark:text-primary-400 text-primary-500 w-3.5 md:w-4 h-3.5 md:h-4" aria-hidden="true" />
                           <time>{exp.period}</time>
                         </span>
                         <span className="flex items-center gap-1">
@@ -229,7 +229,7 @@ export default function Experience() {
                                   href={resolvedHref}
                                   target={isExternal ? '_blank' : undefined}
                                   rel={isExternal ? 'noopener noreferrer' : undefined}
-                                  className="inline-flex items-center gap-1.5 rounded-lg bg-surface border border-border px-2.5 py-1.5 text-[11px] text-primary-400 hover:text-primary-300 hover:border-primary-500/30 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
+                                  className="inline-flex items-center gap-1.5 rounded-lg bg-surface border border-border px-2.5 py-1.5 dark:text-primary-400 text-[11px] text-primary-500 hover:text-primary-500 hover:border-primary-500/30 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
                                 >
                                   <FileText className="w-3.5 h-3.5" aria-hidden="true" />
                                   <span className="truncate max-w-[220px]">{doc.label}</span>

@@ -1,11 +1,9 @@
 
 import { useRef, useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import ArrowLeft from 'lucide-react/dist/esm/icons/arrow-left'
+import { ArrowLeft, Github, ChevronRight, Filter } from '../components/icons'
 import batchSetProperty from '../utils/batchStyle'
-import Github from 'lucide-react/dist/esm/icons/github'
-import ChevronRight from 'lucide-react/dist/esm/icons/chevron-right'
-import Filter from 'lucide-react/dist/esm/icons/filter'
+import { observe } from '../utils/sharedObserver'
 import CircuitBoard from '../components/CircuitBoard'
 import ViewMoreButton from '../components/ViewMoreButton'
 import MediaCarousel from '../components/MediaCarousel'
@@ -37,7 +35,7 @@ export default function AllProjects() {
   const [activeFilter, setActiveFilter] = useState('all')
 
   const projectItemElsRef = useRef({})
-  const mediaObserverRef = useRef(null)
+  const mediaObserverRef = useRef({})
 
   // Filter projects based on active filter
   const filteredProjects = activeFilter === 'all' 
@@ -72,32 +70,35 @@ export default function AllProjects() {
       rafId = null
     }
     
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (!entry.isIntersecting) continue
-          const projectId = entry.target?.dataset?.projectId
-          if (!projectId) continue
-          pendingUpdates.add(projectId)
-          observer.unobserve(entry.target)
-        }
-        
-        // Batch updates using requestAnimationFrame for better performance
-        if (pendingUpdates.size > 0 && !rafId) {
-          rafId = requestAnimationFrame(processUpdates)
-        }
-      },
-      { threshold: 0.1, rootMargin: '200px' }
-    )
-
-    mediaObserverRef.current = observer
-    for (const el of Object.values(projectItemElsRef.current)) {
-      if (el) observer.observe(el)
+    const cleanups = {}
+    const observeCallback = (entry) => {
+      if (!entry.isIntersecting) return
+      const projectId = entry.target?.dataset?.projectId
+      if (!projectId) return
+      pendingUpdates.add(projectId)
+      // shared observer with default once=true will unobserve for us
+      if (pendingUpdates.size > 0 && !rafId) {
+        rafId = requestAnimationFrame(processUpdates)
+      }
     }
 
+    for (const [projectId, el] of Object.entries(projectItemElsRef.current)) {
+      if (el) {
+        const cleanup = observe(el, observeCallback, { threshold: 0.1, rootMargin: '200px' })
+        cleanups[projectId] = cleanup
+      }
+    }
+
+    mediaObserverRef.current = cleanups
+    // expose callback to ref-based observers added later
+    mediaObserverRef.current._callback = observeCallback
+
     return () => {
-      observer.disconnect()
-      mediaObserverRef.current = null
+      // run all cleanup functions
+      for (const fn of Object.values(mediaObserverRef.current || {})) {
+        try { fn() } catch (e) {}
+      }
+      mediaObserverRef.current = {}
       if (rafId) cancelAnimationFrame(rafId)
     }
   }, [])
@@ -198,9 +199,17 @@ export default function AllProjects() {
                       if (el) {
                         batchSetProperty(el, '--animation-delay', `${index * 0.15 + 0.2}s`)
                         projectItemElsRef.current[project.id] = el
-                        if (mediaObserverRef.current) mediaObserverRef.current.observe(el)
+                        // create observer for this element and store cleanup
+                        if (mediaObserverRef.current && mediaObserverRef.current._callback) {
+                          const cleanup = observe(el, mediaObserverRef.current._callback, { threshold: 0.1, rootMargin: '200px' })
+                          mediaObserverRef.current[project.id] = cleanup
+                        }
                       } else {
                         delete projectItemElsRef.current[project.id]
+                        if (mediaObserverRef.current && mediaObserverRef.current[project.id]) {
+                          try { mediaObserverRef.current[project.id]() } catch (e) {}
+                          delete mediaObserverRef.current[project.id]
+                        }
                       }
                     }}
                   className={`${project.isHighlighted ? 'relative' : ''} projects-item `}

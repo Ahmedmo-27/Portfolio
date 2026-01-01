@@ -2,6 +2,7 @@ import React, { useMemo, useRef, useEffect, useState } from 'react'
 import Code2 from 'lucide-react/dist/esm/icons/code-2'
 import Terminal from 'lucide-react/dist/esm/icons/terminal'
 import Cpu from 'lucide-react/dist/esm/icons/cpu'
+import { observe } from '../utils/sharedObserver'
 
 const techIcons = [Code2, Terminal, Cpu]
 
@@ -16,19 +17,13 @@ const TechDivider = ({ variant = 'default' }) => {
   useEffect(() => {
     const el = ref.current
     if (!el) return
-    
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true)
-          observer.disconnect()
-        }
-      },
-      { threshold: 0.1 }
-    )
-    
-    observer.observe(el)
-    return () => observer.disconnect()
+    const cleanup = observe(el, (entry) => {
+      if (entry.isIntersecting) {
+        setIsVisible(true)
+      }
+    }, { threshold: 0.1, once: true })
+
+    return () => cleanup()
   }, [])
   
   return (

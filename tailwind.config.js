@@ -22,21 +22,22 @@ export default {
   				DEFAULT: 'hsl(var(--muted))',
   				foreground: 'hsl(var(--muted-foreground))'
   			},
-  			primary: {
-  				'50': '#f0f9ff',
-  				'100': '#e0f2fe',
-  				'200': '#bae6fd',
-  				'300': '#38bdf8',
-  				'400': '#0284c7',
-  				'500': '#0369a1',
-  				'600': '#075985',
-  				'700': '#0c4a6e',
-  				'800': '#082f49',
-  				'900': '#082f49',
-  				'950': '#082f49',
-  				DEFAULT: 'hsl(var(--primary))',
-  				foreground: 'hsl(var(--primary-foreground))'
-  			},
+			primary: {
+				'50': '#f0f9ff',
+				'100': '#e0f2fe',
+				'200': '#bae6fd',
+				'300': '#38bdf8',
+				// increased contrast blue for better readability on light/dark surfaces
+				'400': '#0ea5e9',
+				'500': '#0369a1',
+				'600': '#075985',
+				'700': '#0c4a6e',
+				'800': '#082f49',
+				'900': '#082f49',
+				'950': '#082f49',
+				DEFAULT: 'hsl(var(--primary))',
+				foreground: 'hsl(var(--primary-foreground))'
+			},
   			dark: {
   				'50': '#f8fafc',
   				'100': '#f1f5f9',

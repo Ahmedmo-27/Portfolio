@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, Suspense } from 'react'
 import SkeletonLoader from './SkeletonLoader'
+import { observe } from '../utils/sharedObserver'
 
 // LazySection component that only renders its children when they are near the viewport
 // This significantly reduces initial bundle size and TBT (Total Blocking Time)
@@ -10,32 +11,12 @@ export default function LazySection({ children, fallback, threshold = 0.1, rootM
   useEffect(() => {
     // If already visible, no need to observe
     if (isVisible) return
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          // Use startTransition or requestAnimationFrame to avoid blocking main thread during scroll
-          if (window.requestIdleCallback) {
-            window.requestIdleCallback(() => setIsVisible(true))
-          } else {
-            requestAnimationFrame(() => setIsVisible(true))
-          }
-          observer.disconnect()
-        }
-      },
-      {
-        threshold,
-        rootMargin // Load content before it comes into view
-      }
-    )
-
+    let cleanup = () => {}
     if (ref.current) {
-      observer.observe(ref.current)
+      cleanup = observe(ref.current, () => setIsVisible(true), { threshold, rootMargin })
     }
 
-    return () => {
-      observer.disconnect()
-    }
+    return cleanup
   }, [isVisible, threshold, rootMargin])
 
   // Default fallback if none provided
