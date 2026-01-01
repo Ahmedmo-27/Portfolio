@@ -149,8 +149,10 @@ function MediaCarousel({ project, shouldLoad = false }) {
     const dx = t.clientX - touchStartX.current
     const dy = t.clientY - touchStartY.current
     // If horizontal swipe detected, prevent vertical scroll interference
+    // Rely on CSS `touch-action: pan-y` to avoid needing preventDefault here.
+    // Keep logic to detect horizontal swipe but do not call preventDefault (allows passive listeners).
     if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 8) {
-      e.preventDefault()
+      // no-op: we intentionally avoid calling preventDefault to allow passive handling
     }
   }, [])
 
