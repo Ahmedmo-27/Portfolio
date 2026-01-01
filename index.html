@@ -13,7 +13,24 @@
     </script>
     <link rel="icon" type="image/webp" href="/Geometric AM logo design.webp" />
     <link rel="apple-touch-icon" href="/Geometric AM logo design.webp" />
-    <link rel="manifest" href="/manifest.json" />
+    <script>
+      (function(){
+        function injectManifest(){
+          try{
+            var l = document.createElement('link');
+            l.rel = 'manifest';
+            l.href = '/manifest.json';
+            document.head.appendChild(l);
+          }catch(e){}
+        }
+        if ('requestIdleCallback' in window) {
+          requestIdleCallback(injectManifest, {timeout: 2000});
+        } else {
+          if (document.readyState === 'complete') injectManifest();
+          else window.addEventListener('load', injectManifest, {once:true});
+        }
+      })();
+    </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
     
     <!-- Primary Meta Tags -->
