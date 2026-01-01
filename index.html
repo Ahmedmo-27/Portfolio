@@ -11,6 +11,22 @@
         document.documentElement.classList.remove(theme === 'dark' ? 'light' : 'dark');
       })();
     </script>
+    <!-- Critical CSS inlined to avoid render-blocking component stylesheet -->
+    <style id="critical-css">/* Critical: ProfileCard / Hero LCP + theme-aware defaults */
+      :root{--pointer-x:50%;--pointer-y:50%;--pointer-from-center:0;--pointer-from-top:0.5;--pointer-from-left:0.5;--card-opacity:0;--rotate-x:0deg;--rotate-y:0deg;--background-x:50%;--background-y:50%;--icon:url('/Geometric AM logo design.webp');--behind-glow-color:rgba(125,190,255,0.67);--behind-glow-size:25%;--inner-gradient:none;--card-radius:30px;--pc-card-bg:rgba(15,23,42,0.95);--pc-card-shadow:rgba(0,0,0,0.8);--pc-gradient-start:#ffffff;--pc-gradient-end:#6f6fbe;--pc-gradient-end-alt:#4a4ac0}
+      .light{--pc-card-bg:rgba(248,250,252,0.29);--pc-card-shadow:rgba(0,0,0,0.15);--pc-gradient-start:#0f172a;--pc-gradient-end:#0ea5e9;--pc-gradient-end-alt:#0284c7;--behind-glow-color:rgba(14,165,233,0.25)}
+
+      .pc-card-wrapper{perspective:500px;transform:translate3d(0,0,0.1px);position:relative;touch-action:none;min-height:400px;width:100%;contain:layout style paint;will-change:transform;content-visibility:auto}
+
+      .pc-card-skeleton{height:80vh;height:80svh;max-height:540px;aspect-ratio:0.718;border-radius:var(--card-radius);background:var(--pc-card-bg);border:1px solid var(--color-border);position:relative;overflow:hidden;contain:layout style paint;min-height:400px;width:100%}
+      .pc-card-skeleton::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.05),transparent);animation:shimmer 1.5s infinite}
+      @keyframes shimmer{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+
+      .pc-card{height:80vh;height:80svh;max-height:540px;display:grid;aspect-ratio:0.718;border-radius:var(--card-radius);position:relative;transition:transform 0.8s ease;transform:translateZ(0) rotateX(0deg) rotateY(0deg);background:var(--grain),var(--pc-card-bg);background-size:200px 200px,100% 100%;background-position:50% 50%;background-repeat:repeat,no-repeat;backface-visibility:hidden;overflow:hidden;border:1px solid var(--color-border);contain:layout style paint;will-change:transform;width:100%;min-height:400px}
+
+      .pc-avatar-content{mix-blend-mode:luminosity;overflow:hidden;transform:translateZ(2);backface-visibility:hidden;contain:layout style paint;will-change:transform}
+      .pc-card-shell{position:relative;z-index:1;will-change:transform;transform:translateZ(0)}
+    </style>
     <link rel="icon" type="image/webp" href="/Geometric AM logo design.webp" />
     <link rel="apple-touch-icon" href="/Geometric AM logo design.webp" />
     <script>
