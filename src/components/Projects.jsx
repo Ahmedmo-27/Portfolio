@@ -92,22 +92,20 @@ export default function Projects() {
     // Batch visibility checks in a requestAnimationFrame to avoid synchronous layout
     if (visibleCandidates.length > 0) {
       rafId = requestAnimationFrame(() => {
+        const winH = window.innerHeight
         for (const el of visibleCandidates) {
           const rect = el.getBoundingClientRect()
-          const isVisible = rect.top < window.innerHeight + 200 && rect.bottom > -200
+          const isVisible = rect.top < winH + 200 && rect.bottom > -200
           if (isVisible) {
             const projectId = el.dataset?.projectId
             if (projectId) pendingUpdates.add(projectId)
           }
         }
 
-        // Process any immediately visible elements
-        if (pendingUpdates.size > 0 && !rafId) {
-          rafId = requestAnimationFrame(processUpdates)
-        } else if (pendingUpdates.size > 0 && rafId == null) {
+        // Schedule processing of collected updates in a single rAF
+        if (pendingUpdates.size > 0) {
           rafId = requestAnimationFrame(processUpdates)
         }
-        // Note: if processUpdates already has an raf scheduled it will handle clearing rafId
       })
     }
 

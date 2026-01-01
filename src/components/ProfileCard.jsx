@@ -286,11 +286,15 @@ const ProfileCardComponent = ({
     const shell = shellRef.current
     if (!shell) return
 
-    // Initialize with current size
-    const rect = shell.getBoundingClientRect()
-    if (tiltEngine.updateDimensions) {
-      tiltEngine.updateDimensions(rect.width || shell.clientWidth || 0, rect.height || shell.clientHeight || 0)
-    }
+    // Initialize with current size — defer to rAF to avoid forcing layout during mount
+    requestAnimationFrame(() => {
+      const s = shellRef.current
+      if (!s) return
+      const rect = s.getBoundingClientRect()
+      if (tiltEngine.updateDimensions) {
+        tiltEngine.updateDimensions(rect.width || s.clientWidth || 0, rect.height || s.clientHeight || 0)
+      }
+    })
 
     const ro = new ResizeObserver((entries) => {
       for (const entry of entries) {
@@ -436,6 +440,15 @@ const ProfileCardComponent = ({
     const pointerLeaveHandler = handlePointerLeave;
     const deviceOrientationHandler = handleDeviceOrientation;
 
+    // Initialize rect cache in a rAF to avoid a forced reflow on first pointer interaction
+    requestAnimationFrame(() => {
+      const s = shellRef.current
+      if (!s) return
+      const r = s.getBoundingClientRect()
+      rectCacheRef.current = { left: r.left, top: r.top, width: r.width, height: r.height }
+      rectCacheValidRef.current = true
+    })
+
     // Use passive listeners for better scroll performance
     shell.addEventListener('pointerenter', pointerEnterHandler, { passive: true });
     shell.addEventListener('pointermove', pointerMoveHandler, { passive: true });
@@ -568,6 +581,8 @@ const ProfileCardComponent = ({
                       className="avatar"
                       src={avatarUrl}
                       alt={`${name || 'Ahmed Mostafa'} avatar`}
+                      width={483}
+                      height={644}
                       loading="eager"
                       decoding="sync"
                       fetchPriority="high"
