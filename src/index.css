@@ -6,6 +6,57 @@
 @tailwind utilities;
 
 @layer base {
+  /* Local, self-hosted fonts (downloaded into `public/fonts/`).
+     These are saved as TTF by the fetch script; using `font-display: optional` to avoid blocking.
+  */
+  @font-face {
+    font-family: 'Syne';
+    font-style: normal;
+    font-weight: 400;
+    font-display: optional;
+    src: url('/fonts/8vIS7w4qzmVxsWxjBZRjr0FKM_04uT6k.ttf') format('truetype');
+  }
+
+  @font-face {
+    font-family: 'Syne';
+    font-style: normal;
+    font-weight: 700;
+    font-display: optional;
+    src: url('/fonts/8vIS7w4qzmVxsWxjBZRjr0FKM_3fvj6k.ttf') format('truetype');
+  }
+
+  @font-face {
+    font-family: 'Outfit';
+    font-style: normal;
+    font-weight: 400;
+    font-display: optional;
+    src: url('/fonts/QGYyz_MVcBeNP4NjuGObqx1XmO1I4TC1C4E.ttf') format('truetype');
+  }
+
+  @font-face {
+    font-family: 'Outfit';
+    font-style: normal;
+    font-weight: 700;
+    font-display: optional;
+    src: url('/fonts/QGYyz_MVcBeNP4NjuGObqx1XmO1I4deyC4E.ttf') format('truetype');
+  }
+
+  @font-face {
+    font-family: 'JetBrains Mono';
+    font-style: normal;
+    font-weight: 400;
+    font-display: optional;
+    src: url('/fonts/tDbY2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKxjPQ.ttf') format('truetype');
+  }
+
+  @font-face {
+    font-family: 'JetBrains Mono';
+    font-style: normal;
+    font-weight: 600;
+    font-display: optional;
+    src: url('/fonts/tDbY2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8FqtjPQ.ttf') format('truetype');
+  }
+
   /* Dark Theme (default) */
   :root {
     --color-background: #020617;

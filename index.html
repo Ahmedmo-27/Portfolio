@@ -86,10 +86,6 @@
     {"@context":"https://schema.org","@type":"Organization","name":"Ahmed Mostafa Portfolio","url":"https://ahmedmostafa-swe.tech","logo":"https://ahmedmostafa-swe.tech/Geometric%20AM%20logo%20design.webp"}
     </script>
         
-    <!-- DNS Prefetch & Preconnect for Performance (Max 4 origins as recommended) -->
-    <!-- Only preconnect to origins that will be used immediately -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     
     <!-- DNS prefetch for non-critical origins removed - Cloudflare beacon disabled -->
     
@@ -152,9 +148,8 @@
       })();
     </script>
     
-    <!-- Google Fonts - Direct load with display=swap for performance -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&family=Syne:wght@400;500;600;700;800&display=swap" media="print" onload="this.media='all'">
-    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&family=Syne:wght@400;500;600;700;800&display=swap"></noscript>
+    <!-- Self-host primary font for LCP and avoid chaining additional font requests -->
+    <link rel="preload" href="/fonts/8vIS7w4qzmVxsWxjBZRjr0FKM_3fvj6k.ttf" as="font" type="font/ttf" crossorigin>
     <!-- Optimize font loading to reduce visible flash -->
     <script>
       (function() {
