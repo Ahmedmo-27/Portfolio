@@ -82,7 +82,7 @@ if (existsSync(distDir)) {
       lastModified: true,
       setHeaders: (res, path) => {
         // Hashed files (contain hash in filename) - long cache
-        if (/\.[a-f0-9]{8,}\.(js|css|woff2?|ttf|eot)$/i.test(path)) {
+        if (/\.[a-f0-9]{8,}\.(js|css|woff2?|ttf|eot|png|jpe?g|gif|webp|avif|svg|ico)$/i.test(path)) {
           res.setHeader('Cache-Control', `public, max-age=${ONE_YEAR}, immutable`);
           return;
         }
