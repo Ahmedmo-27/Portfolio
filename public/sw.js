@@ -1,257 +1,160 @@
-// Service Worker for Ahmed Mostafa Portfolio - v6 (Simplified)
-// Provides offline support, caching, and handles network failures gracefully.
-// v6: Removed Cloudflare beacon caching, fonts bypass SW for better performance
+// Production-ready service worker
+// - Dynamic precache of hashed assets by parsing /index.html at install
+// - Precaches app shell: /, /index.html, /manifest.json, /favicon.svg
+// - NetworkFirst for navigation with offline fallback
+// - CacheFirst for static hashed assets (js/css/images/icons)
+// - Stale-While-Revalidate for other GET requests
 
-const STATIC_CACHE_NAME = 'portfolio-static-v6';
-const DYNAMIC_CACHE_NAME = 'portfolio-dynamic-v6';
-const ALL_CACHES = [STATIC_CACHE_NAME, DYNAMIC_CACHE_NAME];
+const CACHE_VERSION = 'v1';
+const PRECACHE = `app-shell-${CACHE_VERSION}`;
+const RUNTIME = `app-runtime-${CACHE_VERSION}`;
+const PRECACHE_URLS = ['/', '/index.html', '/manifest.json', '/favicon.svg'];
 
-// Assets to cache on install (critical for app shell)
-const PRECACHE_ASSETS = [
-  '/',
-  '/index.html',
-  '/manifest.json',
-  '/favicon.svg'
-  // Add any other critical, non-hashed assets here.
-];
+// Utility to check same-origin
+const isSameOrigin = (url) => new URL(url, self.location).origin === self.location.origin;
 
-// --------------------
-// INSTALL
-// --------------------
+// Install: precache core assets and try to parse index.html to discover hashed assets
 self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(STATIC_CACHE_NAME)
-      .then((cache) => {
-        return cache.addAll(PRECACHE_ASSETS);
-      })
-      .then(() => self.skipWaiting())
-  );
+  event.waitUntil((async () => {
+    const cache = await caches.open(PRECACHE);
+    // Always ensure core shell cached (do not fail install if parsing fails)
+    await cache.addAll(PRECACHE_URLS.map((u) => new Request(u, { cache: 'no-cache' })));
+
+    // Try to fetch index.html and parse for hashed JS/CSS
+    try {
+      const resp = await fetch('/index.html', { cache: 'no-cache' });
+      if (resp && resp.ok) {
+        const text = await resp.text();
+        const assetUrls = new Set();
+
+        // Find <link rel="stylesheet" href="..."> and <script src="...">
+        const cssRegex = /<link[^>]+href=["']([^"']+\.css)["'][^>]*>/g;
+        const jsRegex = /<script[^>]+src=["']([^"']+\.js)["'][^>]*>/g;
+
+        let m;
+        while ((m = cssRegex.exec(text))) {
+          try { assetUrls.add(new URL(m[1], location.origin).pathname); } catch(e){}
+        }
+        while ((m = jsRegex.exec(text))) {
+          try { assetUrls.add(new URL(m[1], location.origin).pathname); } catch(e){}
+        }
+
+        // Only keep same-origin assets
+        const toCache = Array.from(assetUrls).filter((p) => p && p.startsWith('/'));
+        if (toCache.length) {
+          // Add with no-cache to ensure we get latest hashed files
+          await Promise.all(toCache.map((u) => cache.add(new Request(u, { cache: 'no-cache' }))));
+        }
+      }
+    } catch (err) {
+      // Parsing index.html failed — proceed with core cached assets only
+    }
+
+    await self.skipWaiting();
+  })());
 });
 
-// --------------------
-// ACTIVATE
-// --------------------
+// Activate: clean up old caches
 self.addEventListener('activate', (event) => {
-  event.waitUntil(
-    Promise.all([
-      caches.keys().then((cacheNames) =>
-        Promise.all(
-          cacheNames
-            .filter((name) => !ALL_CACHES.includes(name))
-            .map((name) => {
-              return caches.delete(name);
-            })
-        )
-      ),
-      self.clients.claim()
-    ])
-  );
+  event.waitUntil((async () => {
+    const keys = await caches.keys();
+    await Promise.all(keys.map((k) => {
+      if (k !== PRECACHE && k !== RUNTIME) return caches.delete(k);
+      return Promise.resolve(true);
+    }));
+    await self.clients.claim();
+  })());
 });
 
-// --------------------
-// FETCH
-// --------------------
+// Fetch handler: routing and strategies
 self.addEventListener('fetch', (event) => {
   const { request } = event;
+
+  // Ignore non-GET requests
+  if (request.method !== 'GET') return;
+
+  // Ignore browser extensions and non-http(s)
+  if (!request.url.startsWith(self.location.origin) && !request.url.startsWith('http')) return;
   const url = new URL(request.url);
+  if (url.protocol.startsWith('chrome-extension:')) return;
 
-  // Ignore non-GET requests and API calls
-  if (request.method !== 'GET' || url.pathname.startsWith('/api')) {
+  // Ignore API calls (server-driven endpoints)
+  if (url.pathname.startsWith('/api') || url.pathname.startsWith('/auth') || url.pathname.includes('/graphql')) return;
+
+  // Navigation requests — Network First with fallback to cached index.html or a safe offline page
+  if (request.mode === 'navigate' || (request.headers.get('accept') || '').includes('text/html')) {
+    event.respondWith(networkFirst(request));
     return;
   }
 
-  // Ignore browser extensions
-  if (url.protocol.startsWith('chrome-extension:')) {
-    return;
-  }
-
-  // Skip external resources - let browser handle them with native caching
-  if (url.hostname === 'fonts.googleapis.com' || 
-      url.hostname === 'fonts.gstatic.com' ||
-      url.hostname.includes('cloudflareinsights.com') ||
-      url.hostname.includes('workers.dev')) {
-    // Let browser handle these naturally without SW interference
-    return;
-  }
-
-  // Network First for navigation requests
-  if (request.mode === 'navigate') {
-    return;
-  }
-
-  // Cache First for static assets
+  // Static assets: JS/CSS/images/icons (Cache First)
   if (isStaticAsset(url)) {
     event.respondWith(cacheFirst(request));
     return;
   }
 
-  // Stale-While-Revalidate for everything else
+  // All other GET requests: Stale-While-Revalidate
   event.respondWith(staleWhileRevalidate(request));
 });
 
-// --------------------
-// CACHING STRATEGIES
-// --------------------
+// --- Strategies ---
 
-async function cacheFirstLongTerm(request) {
-  const cachedResponse = await caches.match(request);
-  
-  // If cached and still fresh (check Date header), return cached version
-  if (cachedResponse) {
-    const cachedDate = cachedResponse.headers.get('date');
-    if (cachedDate) {
-      const cacheAge = Date.now() - new Date(cachedDate).getTime();
-      const thirtyDays = 30 * 24 * 60 * 60 * 1000;
-      
-      // Return cached version if less than 30 days old
-      if (cacheAge < thirtyDays) {
-        return cachedResponse;
-      }
-    } else {
-      // No date header, return cached version anyway
-      return cachedResponse;
-    }
-  }
-
+async function networkFirst(request) {
+  const cache = await caches.open(RUNTIME);
   try {
-    const networkResponse = await fetch(request);
-
-    if (networkResponse.ok) {
-      const cache = await caches.open(STATIC_CACHE_NAME);
-      // Clone and add custom header to track cache time
-      const responseToCache = new Response(networkResponse.clone().body, {
-        status: networkResponse.status,
-        statusText: networkResponse.statusText,
-        headers: new Headers({
-          ...Object.fromEntries(networkResponse.headers.entries()),
-          'X-SW-Cached-Date': new Date().toISOString(),
-          'Cache-Control': 'public, max-age=2592000, immutable' // 30 days
-        })
-      });
-      cache.put(request, responseToCache);
-      return networkResponse;
-    }
-
-    return networkResponse;
-  } catch (error) {
-    // Return cached version even if stale on network error
-    if (cachedResponse) {
-      return cachedResponse;
-    }
-    
-    console.error(`[SW] Cache First Long Term failed for ${request.url}`, error);
-    return new Response('Network error', {
-      status: 408,
-      headers: { 'Content-Type': 'text/plain' }
+    const response = await fetch(request);
+    if (response && response.ok) cache.put('/index.html', response.clone());
+    return response;
+  } catch (err) {
+    // Prefer cached navigation response
+    const cachedIndex = await caches.match('/index.html');
+    if (cachedIndex) return cachedIndex;
+    // Safe inline fallback
+    return new Response(`<!doctype html><meta charset="utf-8"><title>Offline</title><meta name="viewport" content="width=device-width,initial-scale=1">` +
+      `<style>body{font-family:system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;margin:2rem;color:#222}</style>` +
+      `<h1>Offline</h1><p>The application is offline.</p>`, {
+      headers: { 'Content-Type': 'text/html' }
     });
   }
 }
 
 async function cacheFirst(request) {
-  const cachedResponse = await caches.match(request);
-  if (cachedResponse) {
-    return cachedResponse;
-  }
-
+  const cached = await caches.match(request);
+  if (cached) return cached;
   try {
-    const fetchRequest =
-      request.url.startsWith(self.location.origin)
-        ? request
-        : new Request(request.url, { mode: 'no-cors' });
-
-    const networkResponse = await fetch(fetchRequest);
-
-    if (
-      networkResponse.type === 'opaque' ||
-      (networkResponse.ok && networkResponse.status !== 404)
-    ) {
-      const cache = await caches.open(DYNAMIC_CACHE_NAME);
-      cache.put(request, networkResponse.clone());
+    const response = await fetch(request);
+    // Only cache successful, non-opaque responses
+    if (response && response.ok && response.type !== 'opaque') {
+      const cache = await caches.open(RUNTIME);
+      cache.put(request, response.clone());
     }
-
-    return networkResponse;
-  } catch (error) {
-    console.error(`[SW] Cache First failed for ${request.url}`, error);
-    return new Response('Network error', {
-      status: 408,
-      headers: { 'Content-Type': 'text/plain' }
-    });
-  }
-}
-
-async function networkFirst(request, fallbackUrl) {
-  try {
-    const networkResponse = await fetch(request);
-
-    if (networkResponse.ok) {
-      const cache = await caches.open(DYNAMIC_CACHE_NAME);
-      cache.put(request, networkResponse.clone());
-    }
-
-    return networkResponse;
-  } catch (error) {
-
-    const cachedResponse = await caches.match(request);
-    if (cachedResponse) {
-      return cachedResponse;
-    }
-
-    if (fallbackUrl) {
-      const fallback = await caches.match(fallbackUrl);
-      if (fallback) return fallback;
-    }
-
-    return new Response('You are offline', {
-      status: 408,
-      headers: { 'Content-Type': 'text/plain' }
-    });
+    return response;
+  } catch (err) {
+    // Return cached if available, otherwise fallback to a generic Response
+    const fall = await caches.match(request);
+    if (fall) return fall;
+    return new Response(null, { status: 504, statusText: 'Gateway Timeout' });
   }
 }
 
 async function staleWhileRevalidate(request) {
-  const cache = await caches.open(DYNAMIC_CACHE_NAME);
-  const cachedResponse = await caches.match(request);
+  const cache = await caches.open(RUNTIME);
+  const cached = await caches.match(request);
+  const fetchPromise = fetch(request).then((networkResponse) => {
+    if (networkResponse && networkResponse.ok && networkResponse.type !== 'opaque') {
+      cache.put(request, networkResponse.clone());
+    }
+    return networkResponse;
+  }).catch(() => null);
 
-  const fetchPromise = fetch(request)
-    .then((networkResponse) => {
-      if (networkResponse.ok) {
-        cache.put(request, networkResponse.clone());
-      }
-      return networkResponse;
-    })
-    .catch((error) => {
-      console.error(`[SW] SWR fetch failed for ${request.url}`, error);
-      // Return a proper offline response instead of null
-      return new Response('Network error', {
-        status: 408,
-        statusText: 'Request Timeout',
-        headers: { 'Content-Type': 'text/plain' }
-      });
-    });
-
-  // If we have cached content, return it immediately
-  if (cachedResponse) {
-    return cachedResponse;
-  }
-
-  // Otherwise wait for the network request
-  return fetchPromise;
+  return cached || (await fetchPromise) || new Response(null, { status: 504, statusText: 'Gateway Timeout' });
 }
 
-// --------------------
-// HELPERS
-// --------------------
+// --- Helpers ---
 
 function isStaticAsset(url) {
-  const patterns = [
-    /\.(jpg|jpeg|png|gif|webp|svg|ico)$/i,
-    /\/assets\/.*\.[a-f0-9]+\.(js|css)$/i,
-    (u) => u.origin.includes('r2.dev')
-  ];
-
-  return patterns.some((pattern) =>
-    typeof pattern === 'function'
-      ? pattern(url)
-      : pattern.test(url.pathname)
-  );
+  // Treat same-origin .js/.css and common image/icon extensions as static assets
+  if (!isSameOrigin(url)) return false;
+  return /\.(?:js|css|jpg|jpeg|png|gif|webp|svg|ico|json)$/.test(url.pathname);
 }
+
