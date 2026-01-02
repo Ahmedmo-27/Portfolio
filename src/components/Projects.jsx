@@ -76,38 +76,18 @@ export default function Projects() {
 
     mediaObserverRef.current = {}
 
-    // Observe all existing project elements
+    // Observe all existing project elements. Rely on IntersectionObserver callbacks
+    // to mark items as candidates; avoid an immediate getBoundingClientRect pass
+    // on mount which can force layout in some browsers.
     const elements = Object.values(projectItemElsRef.current)
-    const visibleCandidates = []
     for (const el of elements) {
       if (el) {
         const cleanup = observe(el, observeCallback, { threshold: 0.1, rootMargin: '200px' })
         cleanups[el.dataset?.projectId] = cleanup
-        visibleCandidates.push(el)
       }
     }
     mediaObserverRef.current = cleanups
     mediaObserverRef.current._callback = observeCallback
-
-    // Batch visibility checks in a requestAnimationFrame to avoid synchronous layout
-    if (visibleCandidates.length > 0) {
-      rafId = requestAnimationFrame(() => {
-        const winH = window.innerHeight
-        for (const el of visibleCandidates) {
-          const rect = el.getBoundingClientRect()
-          const isVisible = rect.top < winH + 200 && rect.bottom > -200
-          if (isVisible) {
-            const projectId = el.dataset?.projectId
-            if (projectId) pendingUpdates.add(projectId)
-          }
-        }
-
-        // Schedule processing of collected updates in a single rAF
-        if (pendingUpdates.size > 0) {
-          rafId = requestAnimationFrame(processUpdates)
-        }
-      })
-    }
 
     return () => {
       for (const fn of Object.values(mediaObserverRef.current || {})) {

@@ -13,7 +13,17 @@ function createObserver(threshold, rootMargin) {
       if (!cb) return
 
       // invoke callback asynchronously to avoid blocking the observer loop
-      if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
+      // Prefer requestIdleCallback on non-touch devices (desktop) to avoid
+      // janking main thread, but on touch/mobile devices requestIdleCallback
+      // can delay work significantly. Use rAF on touch devices for faster
+      // responsiveness.
+      const isTouch = typeof window !== 'undefined' && (
+        'ontouchstart' in window || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0
+      )
+
+      const useIdle = typeof window !== 'undefined' && 'requestIdleCallback' in window && !isTouch
+
+      if (useIdle) {
         window.requestIdleCallback(() => cb(entry))
       } else {
         requestAnimationFrame(() => cb(entry))

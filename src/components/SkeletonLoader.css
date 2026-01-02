@@ -1,36 +1,49 @@
 /* SkeletonLoader Component Styles */
 
 .skeleton-shimmer {
-  animation: shimmer 2s ease-in-out infinite;
+  animation: shimmer 1s ease-in-out infinite;
 }
 
 .skeleton-shimmer-delay-1 {
-  animation: shimmer 2s ease-in-out infinite;
-  animation-delay: 0.1s;
+  animation: shimmer 1s ease-in-out infinite;
+  animation-delay: 0.04s;
 }
 
 .skeleton-shimmer-delay-2 {
-  animation: shimmer 2s ease-in-out infinite;
-  animation-delay: 0.2s;
+  animation: shimmer 1s ease-in-out infinite;
+  animation-delay: 0.08s;
 }
 
 .skeleton-shimmer-delay-3 {
-  animation: shimmer 2s ease-in-out infinite;
-  animation-delay: 0.3s;
+  animation: shimmer 1s ease-in-out infinite;
+  animation-delay: 0.12s;
 }
 
 .skeleton-shimmer-delay-4 {
-  animation: shimmer 2s ease-in-out infinite;
-  animation-delay: 0.4s;
+  animation: shimmer 1s ease-in-out infinite;
+  animation-delay: 0.16s;
 }
 
 .skeleton-shimmer-delay-5 {
-  animation: shimmer 2s ease-in-out infinite;
-  animation-delay: 0.5s;
+  animation: shimmer 1s ease-in-out infinite;
+  animation-delay: 0.20s;
 }
 
 .skeleton-shimmer-delay-6 {
-  animation: shimmer 2s ease-in-out infinite;
-  animation-delay: 0.6s;
+  animation: shimmer 1s ease-in-out infinite;
+  animation-delay: 0.24s;
+}
+
+/* Faster, subtler shimmer on small screens to improve perceived performance */
+@media (max-width: 640px) {
+  .skeleton-shimmer {
+    animation-duration: 0.8s;
+  }
+  .skeleton-shimmer-delay-1 { animation-delay: 0.02s; }
+  .skeleton-shimmer-delay-2 { animation-delay: 0.04s; }
+  .skeleton-shimmer-delay-3 { animation-delay: 0.06s; }
+  .skeleton-shimmer-delay-4 { animation-delay: 0.08s; }
+  .skeleton-shimmer-delay-5 { animation-delay: 0.10s; }
+  .skeleton-shimmer-delay-6 { animation-delay: 0.12s; }
 }
 
