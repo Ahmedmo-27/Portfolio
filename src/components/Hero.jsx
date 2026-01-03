@@ -75,17 +75,17 @@ const Hero = () => {
             </div>
 
             {/* Right Content - Profile Card Skeleton */}
-          <div className="order-1 lg:order-2 flex justify-center lg:justify-end mb-6 md:mb-0 hero-col-preserve">
-              <SkeletonLoader 
-                variant="card" 
-                className="w-full max-w-xs sm:max-w-sm rounded-3xl"
-                style={{ 
-                  height: '80vh',
-                  maxHeight: '540px',
-                  aspectRatio: '0.718',
-                  minHeight: '400px'
-                }}
-              />
+          <div className="order-1 lg:order-2 flex items-center justify-center lg:justify-end mb-6 md:mb-0 hero-col-preserve h-screen lg:h-auto">
+            <SkeletonLoader
+              variant="card"
+              className="w-full max-w-xs sm:max-w-sm rounded-3xl"
+              style={{
+                height: 'min(80vh, 540px)',
+                maxHeight: '540px',
+                aspectRatio: '0.718',
+                minHeight: '400px'
+              }}
+            />
           </div>
           </div>
         </div>

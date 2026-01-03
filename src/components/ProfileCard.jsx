@@ -286,11 +286,17 @@ const ProfileCardComponent = ({
     const shell = shellRef.current
     if (!shell) return
 
-    // Initialize with current size
-    const rect = shell.getBoundingClientRect()
-    if (tiltEngine.updateDimensions) {
-      tiltEngine.updateDimensions(rect.width || shell.clientWidth || 0, rect.height || shell.clientHeight || 0)
-    }
+    // Initialize with current size — defer to rAF to avoid forced reflow
+    requestAnimationFrame(() => {
+      try {
+        const rect = shell.getBoundingClientRect()
+        if (tiltEngine.updateDimensions) {
+          tiltEngine.updateDimensions(rect.width || shell.clientWidth || 0, rect.height || shell.clientHeight || 0)
+        }
+      } catch (e) {
+        // ignore if element not available
+      }
+    })
 
     const ro = new ResizeObserver((entries) => {
       for (const entry of entries) {
@@ -511,6 +517,20 @@ const ProfileCardComponent = ({
       }
     };
     window.addEventListener('resize', handleResize, { passive: true });
+
+    // Also refresh rect cache on resize in a rAF to avoid the first pointer
+    // interaction causing a synchronous getBoundingClientRect read.
+    const refreshOnResize = () => {
+      if (!shellRef.current) return
+      requestAnimationFrame(() => {
+        const s = shellRef.current
+        if (!s) return
+        const r = s.getBoundingClientRect()
+        rectCacheRef.current = { left: r.left, top: r.top, width: r.width, height: r.height }
+        rectCacheValidRef.current = true
+      })
+    }
+    window.addEventListener('resize', refreshOnResize, { passive: true })
 
     return () => {
       shell.removeEventListener('pointerenter', pointerEnterHandler);

@@ -1,12 +1,12 @@
 
-import { useRef, useState, useEffect } from 'react'
+import { useRef, useState, useEffect, lazy, Suspense } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ArrowLeft, Github, ChevronRight, Filter } from '../components/icons'
 import batchSetProperty from '../utils/batchStyle'
 import { observe } from '../utils/sharedObserver'
 import CircuitBoard from '../components/CircuitBoard'
 import ViewMoreButton from '../components/ViewMoreButton'
-import MediaCarousel from '../components/MediaCarousel'
+const MediaCarousel = lazy(() => import('../components/MediaCarousel'))
 import { projects } from '../data/projects'
 import '../components/Projects.css'
 
@@ -233,10 +233,12 @@ export default function AllProjects() {
                       {/* Media Section */}
                       <div className="relative bg-surface/50 p-4 sm:p-6">
                         <div className="aspect-video rounded-xl bg-surface overflow-hidden relative">
-                          <MediaCarousel 
-                            project={project} 
-                            shouldLoad={index === 0 || mediaShouldLoad[project.id]} 
-                          />
+                          <Suspense fallback={<div className="w-full h-full bg-surface animate-pulse rounded-xl" aria-hidden="true" />}>
+                            <MediaCarousel 
+                              project={project} 
+                              shouldLoad={index === 0 || mediaShouldLoad[project.id]} 
+                            />
+                          </Suspense>
                         </div>
 
                         {project.award && (

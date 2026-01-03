@@ -7,28 +7,45 @@ const getKey = (threshold, rootMargin) => `${Array.isArray(threshold) ? threshol
 function createObserver(threshold, rootMargin) {
   const callbacks = new WeakMap()
 
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach((entry) => {
+  // Pending entries per observed target. We store the latest entry for each
+  // target and process them in a single scheduled task (rAF or rIC).
+  const pending = new Map()
+  let scheduled = null
+
+  const flush = () => {
+    scheduled = null
+    if (pending.size === 0) return
+
+    // Snapshot keys to avoid mutation issues while processing
+    const entries = Array.from(pending.values())
+    pending.clear()
+
+    for (const entry of entries) {
       const cb = callbacks.get(entry.target)
-      if (!cb) return
+      if (!cb) continue
+      try { cb(entry) } catch (e) { /* ignore callback errors */ }
+    }
+  }
 
-      // invoke callback asynchronously to avoid blocking the observer loop
-      // Prefer requestIdleCallback on non-touch devices (desktop) to avoid
-      // janking main thread, but on touch/mobile devices requestIdleCallback
-      // can delay work significantly. Use rAF on touch devices for faster
-      // responsiveness.
-      const isTouch = typeof window !== 'undefined' && (
-        'ontouchstart' in window || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0
-      )
+  const scheduleFlush = () => {
+    if (scheduled != null) return
+    const isTouch = typeof window !== 'undefined' && (
+      'ontouchstart' in window || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0
+    )
+    const useIdle = typeof window !== 'undefined' && 'requestIdleCallback' in window && !isTouch
+    if (useIdle) {
+      scheduled = requestIdleCallback(() => flush())
+    } else {
+      scheduled = requestAnimationFrame(() => flush())
+    }
+  }
 
-      const useIdle = typeof window !== 'undefined' && 'requestIdleCallback' in window && !isTouch
-
-      if (useIdle) {
-        window.requestIdleCallback(() => cb(entry))
-      } else {
-        requestAnimationFrame(() => cb(entry))
-      }
-    })
+  const observer = new IntersectionObserver((entries) => {
+    for (const entry of entries) {
+      // keep the latest entry for this target
+      pending.set(entry.target, entry)
+    }
+    scheduleFlush()
   }, { threshold, rootMargin })
 
   return { observer, callbacks }
