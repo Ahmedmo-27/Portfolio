@@ -233,10 +233,12 @@ export const projects = [
       'Task status tracking and deadlines',
     ],
     links: {
-      github: 'https://github.com/tickly-miu/tickly'
+      github: 'https://github.com/tickly-miu/tickly',
+      demo: 'https://tickly-miu.netlify.app'
     },
     ctas: [
       { label: 'View Source Code', icon: Github, href: 'https://github.com/tickly-miu/tickly' },
+      { label: 'View Website', icon: Globe, href: 'https://tickly-miu.netlify.app' },
     ],
     isHighlighted: false,
     media: {
@@ -313,6 +315,69 @@ export const projects = [
       screenshots: [assetUrl('/Projects/WhatNow Thumbnail.png')],
       video: assetUrl('/Projects/WhatNow Demo Video.mp4'),
       presentation: null,
+    },
+  },
+  {
+    id: 'java-ecommerce',
+    title: 'Java E-Commerce System',
+    subtitle: 'JavaFX Desktop E‑Commerce Platform',
+    description: 'JavaFX-based e-commerce app with multi-role users, inventory, order processing, and file-based persistence.',
+    category: 'Full-Stack',
+    icon: Globe,
+    color: 'from-indigo-500 to-blue-500',
+    tech: ['Java', 'JavaFX', 'ExecutorService', 'FXML', 'File I/O', 'Logger'],
+    features: [
+      '**Multi-role auth** (Admin, Seller, Customer)',
+      '**Shopping cart & order processing** with receipts',
+      '**Inventory & supplier management** and search',
+      '**Concurrent background tasks** using ExecutorService',
+      '**File-based persistence** with backup/recovery'
+    ],
+    impact: 'Demonstrates desktop app architecture, concurrency, and production-ready workflows',
+    role: 'Lead Developer — UI, persistence, and service layers',
+    links: {
+      github: 'https://github.com/Ahmedmo-27/E-Commerce-Application'
+    },
+    ctas: [
+      { label: 'View Source Code', icon: Github, href: 'https://github.com/Ahmedmo-27/E-Commerce-Application' },
+    ],
+    isHighlighted: false,
+    media: {
+      /* screenshots: [assetUrl('/Projects/JavaEcom1.png')],
+         video: null,
+         presentation: null, */
+    },
+  },
+  {
+    id: 'stock-trading-algo',
+    title: 'Stock Trading Algorithms Comparison',
+    subtitle: 'C++ Algorithms + Web Visualization',
+    description: 'Comparison of algorithmic trading approaches with C++ implementations and interactive web visualization (Chart.js).',
+    category: 'Backend',
+    icon: Brain,
+    color: 'from-rose-500 to-red-500',
+    tech: ['C++', 'JavaScript', 'Chart.js', 'HTML', 'CSS'],
+    features: [
+      '**Dual implementation**: C++ (core algorithms) and web UI',
+      '**Dynamic Programming & Greedy** algorithm comparisons',
+      '**Interactive visualization** with Chart.js',
+      '**Transaction limits & fee handling**',
+      '**Performance & step-by-step execution metrics**'
+    ],
+    impact: 'Demonstrates algorithm design, performance analysis, and cross-language tooling',
+    role: 'Implemented algorithms, C++ demos, and web visualization',
+    links: { github: 'https://github.com/ahmedmo-27/stock-trading-algorithms-comparison',
+      demo: 'https://stock-trading-algorithms-comparison.vercel.app/'
+     },
+    ctas: [
+      { label : 'View Website', icon: Globe, href: 'https://stock-trading-algorithms-comparison.vercel.app/' },
+      { label: 'View Source Code', icon: Github, href: 'https://github.com/ahmedmo-27/stock-trading-algorithms-comparison' },
+    ],
+    isHighlighted: false,
+    media: {
+      /* screenshots: [assetUrl('/Projects/StockTrading1.png')],
+         video: null,
+         presentation: null */
     },
   },
 ]

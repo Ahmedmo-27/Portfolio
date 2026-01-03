@@ -1,9 +1,44 @@
+html, body {
+  overflow-x: hidden !important;
+}
 /* stylelint-disable-next-line at-rule-no-unknown */
 @tailwind base;
 /* stylelint-disable-next-line at-rule-no-unknown */
 @tailwind components;
 /* stylelint-disable-next-line at-rule-no-unknown */
 @tailwind utilities;
+
+/* Visually hide skip-link except when focused for accessibility */
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  background: transparent;
+  color: inherit;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  z-index: 1000;
+  transition: none;
+}
+.skip-link:focus-visible {
+  position: fixed;
+  left: 1rem;
+  top: 1rem;
+  width: auto;
+  height: auto;
+  padding: 0.5rem 1rem;
+  background: #0ea5e9;
+  color: #fff;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  overflow: visible;
+}
+
 
 @layer base {
   /* Local, self-hosted fonts (downloaded into `public/fonts/`).
@@ -144,6 +179,20 @@
     text-rendering: optimizeLegibility;
     /* Match Syne font metrics to system font to reduce flash */
     font-size-adjust: 0.52;
+  }
+
+  /* Preserve hero column height to avoid layout shifts when swapping skeleton -> content */
+  .hero-col-preserve {
+    min-height: 400px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  @media (max-width: 480px) {
+    .hero-col-preserve {
+      min-height: 320px;
+    }
   }
 
   /* When fonts are loaded, ensure smooth rendering */
@@ -560,24 +609,7 @@
     color: var(--color-border);
   }
 
-  /* Skip link for accessibility */
-  .skip-link {
-    position: fixed;
-    top: 1rem;
-    left: 1rem;
-    z-index: 100;
-    padding: 0.5rem 1rem;
-    border-radius: 0.5rem;
-    background-color: #0ea5e9;
-    color: white;
-    font-weight: 500;
-    transform: translateY(-5rem);
-    transition: transform 0.2s;
-  }
-  
-  .skip-link:focus {
-    transform: translateY(0);
-  }
+  /* Skip link removed — handled by accessibility alternatives */
 
   /* Interactive card - optimized for INP */
   .interactive-card {
@@ -1117,6 +1149,11 @@
 #contact {
   content-visibility: auto;
   contain-intrinsic-size: auto 800px;
+  min-height: 800px;
+}
+
+footer {
+  min-height: 180px;
 }
 
 /* Optimize rendering performance with CSS containment */

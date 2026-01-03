@@ -1,12 +1,6 @@
 import nodemailer from 'nodemailer'
 
-function toBool(value) {
-  const v = String(value ?? '').trim().toLowerCase()
-  if (v === 'true') return true
-  if (v === 'false') return false
-  return undefined
-}
-
+// Simplified email config: minimal validation and no TLS override logic
 export function getEmailConfig(env = process.env) {
   const {
     SMTP_HOST,
@@ -20,11 +14,6 @@ export function getEmailConfig(env = process.env) {
     BRAND_NAME,
     BRAND_LOGO_URL,
   } = env
-
-  const portNum = Number(SMTP_PORT)
-  const parsedSecure = toBool(SMTP_SECURE)
-  const secure =
-    parsedSecure !== undefined ? parsedSecure : Number.isFinite(portNum) && portNum === 465
 
   const missing = []
   if (!SMTP_HOST) missing.push('SMTP_HOST')
@@ -40,12 +29,8 @@ export function getEmailConfig(env = process.env) {
     throw err
   }
 
-  if (!Number.isFinite(portNum) || portNum <= 0) {
-    const err = new Error('server_not_configured')
-    err.code = 'server_not_configured'
-    err.missing = ['SMTP_PORT']
-    throw err
-  }
+  const portNum = Number(SMTP_PORT) || 587
+  const secure = SMTP_SECURE === 'true' || SMTP_SECURE === '1' || portNum === 465
 
   return {
     smtp: {
@@ -68,12 +53,14 @@ export function getEmailConfig(env = process.env) {
 }
 
 export function createTransporter(emailConfig) {
-  return nodemailer.createTransport({
+  const opts = {
     host: emailConfig.smtp.host,
     port: emailConfig.smtp.port,
     secure: emailConfig.smtp.secure,
     auth: { user: emailConfig.smtp.user, pass: emailConfig.smtp.pass },
-  })
+  }
+
+  return nodemailer.createTransport(opts)
 }
 
 

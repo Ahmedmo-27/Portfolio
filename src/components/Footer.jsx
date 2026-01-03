@@ -27,7 +27,7 @@ export default function Footer() {
   }
 
   return (
-    <footer className="relative border-t border-border" role="contentinfo">
+    <footer className="relative border-t border-border min-h-[180px]" role="contentinfo" style={{ minHeight: 180 }}>
       {/* Background */}
       <div className="absolute inset-0 bg-gradient-to-t from-surface/50 to-transparent" aria-hidden="true" />
 

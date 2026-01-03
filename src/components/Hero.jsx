@@ -42,7 +42,7 @@ const Hero = () => {
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
           <div className="grid lg:grid-cols-2 gap-8 md:gap-12 lg:gap-16 items-center">
             {/* Left Content Skeleton */}
-            <div className="text-center lg:text-left order-2 lg:order-1 space-y-6">
+            <div className="text-center lg:text-left order-2 lg:order-1 space-y-6 hero-col-preserve">
               {/* Status Badge Skeleton */}
               <div className="flex justify-center lg:justify-start">
                 <SkeletonLoader variant="text" className="h-8 w-40 rounded-full" />
@@ -75,7 +75,7 @@ const Hero = () => {
             </div>
 
             {/* Right Content - Profile Card Skeleton */}
-          <div className="order-1 lg:order-2 flex justify-center lg:justify-end mb-6 md:mb-0">
+          <div className="order-1 lg:order-2 flex justify-center lg:justify-end mb-6 md:mb-0 hero-col-preserve">
               <SkeletonLoader 
                 variant="card" 
                 className="w-full max-w-xs sm:max-w-sm rounded-3xl"
