@@ -12,6 +12,7 @@ export const projects = [
     color: 'from-amber-500 to-yellow-500',
     tech: ['Node.js', 'Express', 'MongoDB', 'Stripe', 'Three.js', 'Twilio', 'CI/CD'],
     features: [
+      '**Deployed on Vercel** — frontend and serverless API deployed with automatic CI/CD and preview deployments',
       '**Integrated Stripe** for secure payment processing with full transaction lifecycle',
       '**Built 3D watch configurator** using Three.js WebGL for interactive product visualization',
       '**Created admin analytics dashboard** tracking sales, inventory, and user behavior',
@@ -20,10 +21,7 @@ export const projects = [
     ],
     impact: 'Awarded **Best Web Project of MIU 2025** • Serving real users in production',
     role: 'Full-Stack Developer - Built end-to-end architecture, payment integration, and 3D visualization',
-    links: {
-      demo: 'https://vaultique.live',
-      github: 'https://github.com/Ahmedmo-27/Vaultique-MIU',
-    },
+    // CTA buttons used by the UI (see `ctas` below)
     ctas: [
       { label: 'View Website', icon: ExternalLink, href: 'https://vaultique.live' },
       { label: 'View Source Code', icon: Github, href: 'https://github.com/Ahmedmo-27/Vaultique-MIU' },
@@ -59,9 +57,7 @@ export const projects = [
     ],
     impact: '**DIGITOPIA 2025 Semifinalist** • Generated largest SSH honeypot dataset in university research',
     role: 'Security Engineer - Designed infrastructure, automated data collection, and built analysis APIs',
-    links: {
-      github: 'https://github.com/CyberTopians/Cybertopia'
-    },
+    // CTA buttons used by the UI (see `ctas` below)
     ctas: [
       { label: 'View Source Code', icon: Github, href: 'https://github.com/CyberTopians/Cybertopia' }
     ],
@@ -95,10 +91,7 @@ export const projects = [
     ],
     impact: 'Used by **100+ MSP members** for event registration and community engagement',
     role: 'Lead Developer - Architected infrastructure, built features, and managed deployments',
-    links: {
-      demo: 'https://msp-miu.tech',
-      github: 'https://github.com/MSP-Tech-Club-MIU/MSP-MIU-Website',
-    },
+    // CTA buttons used by the UI (see `ctas` below)
     ctas: [
       { label: 'View Website', icon: Globe, href: 'https://msp-miu.tech' },
       { label: 'Download APK', icon: Download, href: assetUrl('/Projects/MSP-MIU.apk') },
@@ -132,10 +125,7 @@ export const projects = [
     ],
     impact: 'Completed as **DEPI capstone project** demonstrating production Android development skills',
     role: 'Android Developer - Built UI, API integration, and offline data synchronization',
-    links: {
-      demo: assetUrl('/Projects/Cinemeteor.apk'),
-      github: 'https://github.com/DEPI-3-Android/Cinemeteor',
-    },
+    // CTA buttons used by the UI (see `ctas` below)
     ctas: [
       { label: 'Download APK', icon: Download, href: assetUrl('/Projects/Cinemeteor.apk') },
       { label: 'View Source Code', icon: Github, href: 'https://github.com/DEPI-3-Android/Cinemeteor' },
@@ -165,9 +155,7 @@ export const projects = [
     ],
     impact: 'Scripts **adopted by NBE DevOps team** for production banking systems operations',
     role: 'DevOps Intern - Created automation toolkit used in live banking environment',
-    links: {
-      github: 'https://github.com/NBE-DevOps-Internship-2025/Deployment-Automation-for-Banking-Systems'
-    },
+    // CTA buttons used by the UI (see `ctas` below)
     ctas: [
       { label: 'View Scripts', icon: Github, href: 'https://github.com/NBE-DevOps-Internship-2025/Deployment-Automation-for-Banking-Systems' },
       { label: 'Documentation', icon: FileText, href: assetUrl('/Projects/DevOps.pdf') },
@@ -189,6 +177,7 @@ export const projects = [
     color: 'from-purple-500 to-pink-500',
     tech: ['React', 'Node.js', 'Express', 'MySQL', 'Python', 'Flask', 'SpeechRecognition'],
     features: [
+      '**Deployed on Vercel; DB on Aiven** — frontend and APIs run on Vercel (serverless); production MySQL hosted on Aiven (managed)',
       'Real-time voice transcription',
       'Audio file upload (WAV, MP3, MP4, M4A, FLAC, OGG, WebM)',
       'Note management with rich text support',
@@ -199,13 +188,13 @@ export const projects = [
       'Dark/light theme toggle',
       'Pin important notes',
     ],
-    links: {
-      github: 'https://github.com/ahmedmo-27/VoiceScript'
-    },
+    // CTA buttons used by the UI (see `ctas` below)
     ctas: [
       { label: 'View Source Code', icon: Github, href: 'https://github.com/ahmedmo-27/VoiceScript' },
     ],
-    isHighlighted: false,
+      impact: 'Improved transcription accuracy and note organization for user testing cohorts',
+      role: 'Full-Stack Engineer — implemented Flask API and Python transcription backend, plus the frontend UI',
+      isHighlighted: false,
     media: {
       screenshots:[],
       video: [assetUrl('/Projects/VoiceScript – Voice to Text Notes App - Project Details.mp4'), assetUrl('/Projects/VoiceScript – Voice to Text Notes App - Project Details_2.mp4'), assetUrl('/Projects/VoiceScript – Voice to Text Notes App - Project Details_3.mp4'), assetUrl('/Projects/VoiceScript – Voice to Text Notes App - Project Details_4.mp4'), assetUrl('/Projects/VoiceScript – Voice to Text Notes App - Project Details_5.mp4'), assetUrl('/Projects/VoiceScript – Voice to Text Notes App - Project Details_6.mp4'), assetUrl('/Projects/VoiceScript – Voice to Text Notes App - Project Details_7.mp4'), assetUrl('/Projects/VoiceScript – Voice to Text Notes App - Project Details_8.mp4')],
@@ -222,6 +211,7 @@ export const projects = [
     color: 'from-blue-500 to-indigo-500',
     tech: ['Angular', 'PHP', 'TypeScript', 'MySQL', 'Tailwind CSS', 'Flowbite', 'Chart.js'],
     features: [
+      '**Deployed on Netlify & Fly.io; DB on Aiven** — static frontend on Netlify, backend services in containers on Fly.io, and managed DB on Aiven',
       'User authentication & session management',
       'Task CRUD with categories and priorities',
       'Reminder system with email notifications',
@@ -232,14 +222,13 @@ export const projects = [
       'Password reset via OTP',
       'Task status tracking and deadlines',
     ],
-    links: {
-      github: 'https://github.com/tickly-miu/tickly',
-      demo: 'https://tickly-miu.netlify.app'
-    },
+    // CTA buttons used by the UI (see `ctas` below)
     ctas: [
       { label: 'View Source Code', icon: Github, href: 'https://github.com/tickly-miu/tickly' },
       { label: 'View Website', icon: Globe, href: 'https://tickly-miu.netlify.app' },
     ],
+    impact: 'Task management',
+    role: 'Full-Stack Developer - Built frontend, backend APIs, and admin analytics dashboard',
     isHighlighted: false,
     media: {
       screenshots: [assetUrl('/Projects/Tickly.png'),assetUrl('/Projects/login.png'), assetUrl('/Projects/homePage.png'), assetUrl('/Projects/createTask.png'),assetUrl('/Projects/category.png'), assetUrl('/Projects/admin.png')],
@@ -266,12 +255,12 @@ export const projects = [
       'Feature engineering and data analysis',
       'Reproducible evaluation pipelines',
     ],
-    links: {
-      github: 'https://github.com/Ahmedmo-27/credit-card-fraud-detection-using-ML-models'
-    },
+    // CTA buttons used by the UI (see `ctas` below)
     ctas: [
       { label: 'View Source Code', icon: Github, href: 'https://github.com/Ahmedmo-27/credit-card-fraud-detection-using-ML-models' },
     ],
+    impact: 'Provided comparative evaluation of multiple ML models and reproducible pipelines for fraud detection research',
+    role: 'Data Scientist - Implemented models, preprocessing pipelines, and evaluation benchmarks',
     isHighlighted: false,
     media: {
       screenshots: [
@@ -304,12 +293,12 @@ export const projects = [
       'Article sharing and web view',
       'Material Design 3 UI with smooth animations',
     ],
-    links: {
-      github: 'https://github.com/DEPI-3-Android/WhatNow'
-    },
+    // CTA buttons used by the UI (see `ctas` below)
     ctas: [
       { label: 'View Source Code', icon: Github, href: 'https://github.com/DEPI-3-Android/WhatNow' },
     ],
+    impact: 'Delivered a multilingual news experience with live updates for users across regions',
+    role: 'Android Developer - Implemented UI, Firebase integration, and real-time news fetching',
     isHighlighted: false,
     media: {
       screenshots: [assetUrl('/Projects/WhatNow Thumbnail.png')],
@@ -335,9 +324,7 @@ export const projects = [
     ],
     impact: 'Demonstrates desktop app architecture, concurrency, and production-ready workflows',
     role: 'Lead Developer — UI, persistence, and service layers',
-    links: {
-      github: 'https://github.com/Ahmedmo-27/E-Commerce-Application'
-    },
+    // CTA buttons used by the UI (see `ctas` below)
     ctas: [
       { label: 'View Source Code', icon: Github, href: 'https://github.com/Ahmedmo-27/E-Commerce-Application' },
     ],
@@ -362,13 +349,12 @@ export const projects = [
       '**Dynamic Programming & Greedy** algorithm comparisons',
       '**Interactive visualization** with Chart.js',
       '**Transaction limits & fee handling**',
-      '**Performance & step-by-step execution metrics**'
+      '**Performance & step-by-step execution metrics**',
+      '**Deployed on Vercel** — static web visualization deployed with automatic builds',
     ],
     impact: 'Demonstrates algorithm design, performance analysis, and cross-language tooling',
     role: 'Implemented algorithms, C++ demos, and web visualization',
-    links: { github: 'https://github.com/ahmedmo-27/stock-trading-algorithms-comparison',
-      demo: 'https://stock-trading-algorithms-comparison.vercel.app/'
-     },
+    // CTA buttons used by the UI (see `ctas` below)
     ctas: [
       { label : 'View Website', icon: Globe, href: 'https://stock-trading-algorithms-comparison.vercel.app/' },
       { label: 'View Source Code', icon: Github, href: 'https://github.com/ahmedmo-27/stock-trading-algorithms-comparison' },

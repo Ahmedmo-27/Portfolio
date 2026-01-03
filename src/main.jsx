@@ -19,6 +19,10 @@ const AppWrapper = import.meta.env.DEV ? (
 
 ReactDOM.createRoot(document.getElementById('root')).render(AppWrapper)
 
+// Load helpers after the app mounts so any events they dispatch are received by listeners in React
+import('./utils/locationChange')
+import('./utils/sectionObserver')
+
 // Defer Service Worker registration to avoid blocking main thread
 // Use requestIdleCallback for better performance
 if ('serviceWorker' in navigator && import.meta.env.PROD) {

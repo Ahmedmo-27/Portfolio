@@ -1,10 +1,10 @@
-import { useRef, useState, useEffect } from 'react'
+import { useRef, useState, useEffect, lazy, Suspense } from 'react'
 import batchSetProperty from '../utils/batchStyle'
 import Github from 'lucide-react/dist/esm/icons/github'
 import ChevronRight from 'lucide-react/dist/esm/icons/chevron-right'
 import CircuitBoard from './CircuitBoard'
 import ViewMoreButton from './ViewMoreButton'
-import MediaCarousel from './MediaCarousel'
+const MediaCarousel = lazy(() => import('./MediaCarousel'))
 import { projects } from '../data/projects'
 import { useInViewOnce } from '../utils/useInViewOnce'
 import { observe } from '../utils/sharedObserver'
@@ -170,10 +170,12 @@ export default function Projects() {
                     {/* Media Section */}
                     <div className={`${index === 0 ? 'lg:col-span-3' : ''} relative bg-surface/50 p-4 sm:p-6`}>
                       <div className="aspect-video rounded-xl bg-surface overflow-hidden relative">
-                        <MediaCarousel 
-                          project={project} 
-                          shouldLoad={mediaShouldLoad[project.id] || false} 
-                        />
+                        <Suspense fallback={<div className="w-full h-full bg-surface animate-pulse rounded-xl" aria-hidden="true" />}>
+                          <MediaCarousel 
+                            project={project} 
+                            shouldLoad={mediaShouldLoad[project.id] || false} 
+                          />
+                        </Suspense>
                       </div>
 
                       {/* Award Badge */}

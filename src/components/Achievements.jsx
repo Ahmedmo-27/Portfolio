@@ -1,5 +1,6 @@
 import { useInViewOnce } from '../utils/useInViewOnce'
 import batchSetProperty from '../utils/batchStyle'
+import { getNavbarHeight } from '../utils/navbarRect'
 import Trophy from 'lucide-react/dist/esm/icons/trophy'
 import Medal from 'lucide-react/dist/esm/icons/medal'
 import Star from 'lucide-react/dist/esm/icons/star'
@@ -73,25 +74,17 @@ export default function Achievements() {
     e.preventDefault()
     navigate('/#experience')
     // Smooth scroll to experience section after navigation
-    // Use requestAnimationFrame to batch layout reads and avoid forced reflow
+    // Defer layout reads to rAF to avoid forced reflow
     requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        const experienceSection = document.getElementById('experience')
-        if (experienceSection) {
-          // Batch all layout reads together
-          const navbar = document.querySelector('header')
-          const navbarRect = navbar ? navbar.getBoundingClientRect() : null
-          const elementRect = experienceSection.getBoundingClientRect()
-          const navbarHeight = navbarRect ? navbarRect.height : 80
-          const elementTop = elementRect.top + window.scrollY
-          const offset = navbarHeight + 16
-          const targetScrollY = elementTop - offset
-          window.scrollTo({
-            top: Math.max(0, targetScrollY),
-            behavior: 'smooth'
-          })
-        }
-      })
+      const experienceSection = document.getElementById('experience')
+      if (experienceSection) {
+        const navbarHeight = getNavbarHeight() || 80
+        const elementRect = experienceSection.getBoundingClientRect()
+        const elementTop = elementRect.top + window.scrollY
+        const offset = navbarHeight + 16
+        const targetScrollY = elementTop - offset
+        window.scrollTo({ top: Math.max(0, targetScrollY), behavior: 'smooth' })
+      }
     })
   }
 
@@ -99,25 +92,17 @@ export default function Achievements() {
     e.preventDefault()
     navigate('/#projects')
     // Smooth scroll to projects section after navigation
-    // Use requestAnimationFrame to batch layout reads and avoid forced reflow
+    // Defer layout reads to rAF to avoid forced reflow
     requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        const projectsSection = document.getElementById('projects')
-        if (projectsSection) {
-          // Batch all layout reads together
-          const navbar = document.querySelector('header')
-          const navbarRect = navbar ? navbar.getBoundingClientRect() : null
-          const elementRect = projectsSection.getBoundingClientRect()
-          const navbarHeight = navbarRect ? navbarRect.height : 80
-          const elementTop = elementRect.top + window.scrollY
-          const offset = navbarHeight + 16
-          const targetScrollY = elementTop - offset
-          window.scrollTo({
-            top: Math.max(0, targetScrollY),
-            behavior: 'smooth'
-          })
-        }
-      })
+      const projectsSection = document.getElementById('projects')
+      if (projectsSection) {
+        const navbarHeight = getNavbarHeight() || 80
+        const elementRect = projectsSection.getBoundingClientRect()
+        const elementTop = elementRect.top + window.scrollY
+        const offset = navbarHeight + 16
+        const targetScrollY = elementTop - offset
+        window.scrollTo({ top: Math.max(0, targetScrollY), behavior: 'smooth' })
+      }
     })
   }
 

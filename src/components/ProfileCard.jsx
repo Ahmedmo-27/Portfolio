@@ -286,15 +286,11 @@ const ProfileCardComponent = ({
     const shell = shellRef.current
     if (!shell) return
 
-    // Initialize with current size — defer to rAF to avoid forcing layout during mount
-    requestAnimationFrame(() => {
-      const s = shellRef.current
-      if (!s) return
-      const rect = s.getBoundingClientRect()
-      if (tiltEngine.updateDimensions) {
-        tiltEngine.updateDimensions(rect.width || s.clientWidth || 0, rect.height || s.clientHeight || 0)
-      }
-    })
+    // Initialize with current size
+    const rect = shell.getBoundingClientRect()
+    if (tiltEngine.updateDimensions) {
+      tiltEngine.updateDimensions(rect.width || shell.clientWidth || 0, rect.height || shell.clientHeight || 0)
+    }
 
     const ro = new ResizeObserver((entries) => {
       for (const entry of entries) {
