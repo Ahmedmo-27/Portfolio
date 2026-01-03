@@ -23,10 +23,21 @@ const AllProjects = lazy(() => import(/* webpackChunkName: "all-projects" */ './
 // This runs after initial render without blocking main thread
 if (typeof window !== 'undefined') {
   window.addEventListener('load', () => {
-    setTimeout(() => {
+    const doPrefetch = () => {
+      // Prefetch lazily on idle to avoid impacting LCP / main-thread work
       import('./components/About')
       import('./components/Achievements')
-    }, 3000)
+      import('./components/Projects')
+      import('./components/Skills')
+      import('./components/Experience')
+    }
+
+    if ('requestIdleCallback' in window) {
+      requestIdleCallback(() => doPrefetch(), { timeout: 3000 })
+    } else {
+      // Fallback: small delay after load
+      setTimeout(doPrefetch, 3000)
+    }
   }, { once: true })
 }
 
