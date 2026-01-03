@@ -131,8 +131,8 @@ export default function Achievements() {
         <div ref={ref}>
           {/* Section Header */}
           <div className='text-center mb-14 md:mb-20'>
-            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-accent-amber/30 border border-accent-amber/30 text-sm font-medium mb-4" style={{ backgroundColor: 'rgba(245, 158, 11, 0.3)', color: '#92400E'}}>
-              <span className="w-1.5 h-1.5 rounded-full" aria-hidden="true" style={{ backgroundColor: '#92400E' }} />
+            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border text-sm font-medium mb-4" style={{ backgroundColor: 'var(--pill-ach-bg)', color: 'var(--pill-ach-fg)', borderColor: 'rgba(245, 158, 11, 0.22)' }}>
+              <span className="w-1.5 h-1.5 rounded-full" aria-hidden="true" style={{ backgroundColor: 'var(--pill-ach-dot)' }} />
               Achievements
             </span>
             <h2 id="achievements-heading" className="section-heading mb-6">

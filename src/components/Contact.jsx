@@ -202,10 +202,10 @@ export default function Contact() {
             {/* Contact Info */}
             <div className= 'space-y-6 md:space-y-8'>
               <div>
-                <h3 className="text-xl md:text-2xl font-display font-bold text-foreground mb-4 md:mb-6">
+                <h3 className="text-xl md:text-2xl font-display font-bold text-[color:var(--color-muted)] mb-4 md:mb-6">
                   Get in Touch
                 </h3>
-                <p className="text-muted text-sm md:text-base mb-6 md:mb-8">
+                <p className="text-[color:var(--color-foreground)] text-sm md:text-base mb-6 md:mb-8">
                   I'm currently open to new opportunities, whether it's internships, 
                   full-time positions, or freelance projects. Feel free to reach out!
                 </p>
@@ -222,16 +222,16 @@ export default function Contact() {
                       <item.icon className="w-4 md:w-5 h-4 md:h-5 text-primary-400" />
                     </div>
                     <div>
-                      <p className="text-muted text-xs md:text-sm">{item.label}</p>
+                      <p className="text-[color:var(--color-foreground)] text-xs md:text-sm">{item.label}</p>
                       {item.href ? (
                         <a 
                           href={item.href}
-                          className="text-foreground hover:text-primary-400 transition-colors text-sm md:text-base focus-visible:outline-none focus-visible:text-primary-400"
+                          className="text-[color:var(--color-muted)] hover:text-primary-400 transition-colors text-sm md:text-base focus-visible:outline-none focus-visible:text-primary-400"
                         >
                           {item.value}
                         </a>
                       ) : (
-                        <p className="text-foreground text-sm md:text-base">{item.value}</p>
+                        <p className="text-[color:var(--color-muted)] text-sm md:text-base">{item.value}</p>
                       )}
                     </div>
                   </div>
@@ -240,7 +240,7 @@ export default function Contact() {
 
               {/* Social Links */}
               <div>
-                <p className="text-muted text-xs md:text-sm mb-3 md:mb-4">Find me on</p>
+                <p className="text-[color:var(--color-foreground)] text-xs md:text-sm mb-3 md:mb-4">Find me on</p>
                 <div className="flex gap-3" role="list" aria-label="Social media links">
                   {socialLinks.map((social) => (
                     <a
@@ -248,7 +248,7 @@ export default function Contact() {
                       href={social.href}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="w-10 md:w-12 h-10 md:h-12 rounded-xl glass hover:bg-primary-500/10 hover:border-primary-500/40 flex items-center justify-center text-muted hover:text-primary-400 transition-[transform,color,background-color,border-color] duration-200 hover:-translate-y-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
+                      className="w-10 md:w-12 h-10 md:h-12 rounded-xl glass hover:bg-primary-500/10 hover:border-primary-500/40 flex items-center justify-center text-[color:var(--color-foreground)] hover:text-primary-400 transition-[transform,color,background-color,border-color] duration-200 hover:-translate-y-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
                       aria-label={`Visit my ${social.label} profile`}
                       role="listitem"
                     >
@@ -264,7 +264,7 @@ export default function Contact() {
                   <span className="w-2.5 md:w-3 h-2.5 md:h-3 rounded-full bg-accent-emerald" aria-hidden="true" />
                   <span className="text-accent-emerald font-medium text-sm md:text-base">Available for Opportunities</span>
                 </div>
-                <p className="text-muted text-xs md:text-sm">
+                <p className="text-[color:var(--color-foreground)] text-xs md:text-sm">
                   Seeking Junior Software Engineer roles in backend and full-stack development. 
                   Open to internships and full-time positions where I can contribute to building scalable APIs and web applications.
                 </p>
@@ -280,7 +280,7 @@ export default function Contact() {
               >
                 <div className="grid sm:grid-cols-2 gap-4 md:gap-6">
                   <div>
-                    <label htmlFor="name" className="block text-xs md:text-sm font-medium text-muted mb-1.5 md:mb-2">
+                    <label htmlFor="name" className="block text-xs md:text-sm font-medium text-[color:var(--color-foreground)] mb-1.5 md:mb-2">
                       Name <span className="text-red-400" aria-hidden="true">*</span>
                     </label>
                     <input
@@ -291,12 +291,12 @@ export default function Contact() {
                       onChange={handleChange}
                       required
                       aria-required="true"
-                      className="w-full px-3 md:px-4 py-2.5 md:py-3 rounded-xl bg-surface border border-border text-foreground placeholder-muted focus:outline-none focus:border-primary-400 focus:ring-2 focus:ring-primary-400/30 transition-colors text-sm md:text-base"
+                      className="w-full px-3 md:px-4 py-2.5 md:py-3 rounded-xl bg-surface border border-border text-[color:var(--color-muted)] placeholder-[color:var(--color-muted)] focus:outline-none focus:border-primary-400 focus:ring-2 focus:ring-primary-400/30 transition-colors text-sm md:text-base"
                       placeholder="Your name"
                     />
                   </div>
                   <div>
-                    <label htmlFor="email" className="block text-xs md:text-sm font-medium text-muted mb-1.5 md:mb-2">
+                    <label htmlFor="email" className="block text-xs md:text-sm font-medium text-[color:var(--color-foreground)] mb-1.5 md:mb-2">
                       Email <span className="text-red-400" aria-hidden="true">*</span>
                     </label>
                     <input
@@ -307,7 +307,7 @@ export default function Contact() {
                       onChange={handleChange}
                       required
                       aria-required="true"
-                      className="w-full px-3 md:px-4 py-2.5 md:py-3 rounded-xl bg-surface border border-border text-foreground placeholder-muted focus:outline-none focus:border-primary-400 focus:ring-2 focus:ring-primary-400/30 transition-colors text-sm md:text-base"
+                      className="w-full px-3 md:px-4 py-2.5 md:py-3 rounded-xl bg-surface border border-border text-[color:var(--color-muted)] placeholder-[color:var(--color-muted)] focus:outline-none focus:border-primary-400 focus:ring-2 focus:ring-primary-400/30 transition-colors text-sm md:text-base"
                       placeholder="your@email.com"
                     />
                   </div>
@@ -329,7 +329,7 @@ export default function Contact() {
                     autoComplete="off"
                   />
 
-                  <label htmlFor="subject" className="block text-xs md:text-sm font-medium text-muted mb-1.5 md:mb-2">
+                  <label htmlFor="subject" className="block text-xs md:text-sm font-medium text-[color:var(--color-foreground)] mb-1.5 md:mb-2">
                     Subject <span className="text-red-400" aria-hidden="true">*</span>
                   </label>
                   <input
@@ -340,13 +340,13 @@ export default function Contact() {
                     onChange={handleChange}
                     required
                     aria-required="true"
-                    className="w-full px-3 md:px-4 py-2.5 md:py-3 rounded-xl bg-surface border border-border text-foreground placeholder-muted focus:outline-none focus:border-primary-400 focus:ring-2 focus:ring-primary-400/30 transition-colors text-sm md:text-base"
+                    className="w-full px-3 md:px-4 py-2.5 md:py-3 rounded-xl bg-surface border border-border text-[color:var(--color-muted)] placeholder-[color:var(--color-muted)] focus:outline-none focus:border-primary-400 focus:ring-2 focus:ring-primary-400/30 transition-colors text-sm md:text-base"
                     placeholder="What's this about?"
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="message" className="block text-xs md:text-sm font-medium text-muted mb-1.5 md:mb-2">
+                  <label htmlFor="message" className="block text-xs md:text-sm font-medium text-[color:var(--color-foreground)] mb-1.5 md:mb-2">
                     Message <span className="text-red-400" aria-hidden="true">*</span>
                   </label>
                   <textarea
@@ -357,7 +357,7 @@ export default function Contact() {
                     required
                     aria-required="true"
                     rows={5}
-                    className="w-full px-3 md:px-4 py-2.5 md:py-3 rounded-xl bg-surface border border-border text-foreground placeholder-muted focus:outline-none focus:border-primary-400 focus:ring-2 focus:ring-primary-400/30 transition-colors resize-none text-sm md:text-base"
+                    className="w-full px-3 md:px-4 py-2.5 md:py-3 rounded-xl bg-surface border border-border text-[color:var(--color-muted)] placeholder-[color:var(--color-muted)] focus:outline-none focus:border-primary-400 focus:ring-2 focus:ring-primary-400/30 transition-colors resize-none text-sm md:text-base"
                     placeholder="Tell me about your project or opportunity..."
                   />
                 </div>
@@ -400,12 +400,12 @@ export default function Contact() {
 
                 {/* Visible status message */}
                 {statusMessage && (
-                  <p className="text-center text-xs md:text-sm text-muted">
+                  <p className="text-center text-xs md:text-sm text-[color:var(--color-foreground)]">
                     {statusMessage}
                   </p>
                 )}
 
-                <p className="text-center text-muted text-xs md:text-sm">
+                <p className="text-center text-[color:var(--color-foreground)] text-xs md:text-sm">
                   Or email me directly at{' '}
                   <a 
                     href="mailto:ahmedmostafa.swe1@gmail.com" 

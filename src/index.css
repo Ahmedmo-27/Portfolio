@@ -128,6 +128,14 @@ html, body {
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
+    /* Pill badge colors (default = dark theme values) */
+    --pill-exp-bg: rgba(16, 185, 129, 0.12);
+    --pill-exp-fg: #34d399;
+    --pill-exp-dot: #10b981;
+
+    --pill-ach-bg: rgba(245, 158, 11, 0.16);
+    --pill-ach-fg: #f59e0b;
+    --pill-ach-dot: #f59e0b;
   }
 
   /* Light Theme */
@@ -141,6 +149,14 @@ html, body {
     --color-border: rgba(203, 213, 225, 0.6);
     /* Darken muted in light theme to improve contrast against light backgrounds */
     --color-muted: #475569;
+    /* Pill badge colors for light theme */
+    --pill-exp-bg: rgba(16, 185, 129, 0.2);
+    --pill-exp-fg: #065f46;
+    --pill-exp-dot: #065f46;
+
+    --pill-ach-bg: rgba(245, 158, 11, 0.3);
+    --pill-ach-fg: #92400E;
+    --pill-ach-dot: #92400E;
   }
 
   * {
@@ -193,6 +209,23 @@ html, body {
     .hero-col-preserve {
       min-height: 320px;
     }
+  }
+
+  /* Invert foreground/muted colors within the contact section for dark theme
+     so labels and values have the desired contrast swap. In light theme
+     the normal mapping applies. */
+  :root #contact .text-foreground {
+    color: var(--color-muted) !important;
+  }
+  :root #contact .text-muted {
+    color: var(--color-foreground) !important;
+  }
+
+  .light #contact .text-foreground {
+    color: var(--color-foreground) !important;
+  }
+  .light #contact .text-muted {
+    color: var(--color-muted) !important;
   }
 
   /* When fonts are loaded, ensure smooth rendering */
