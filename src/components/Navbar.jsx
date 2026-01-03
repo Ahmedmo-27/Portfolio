@@ -139,6 +139,7 @@ export default function Navbar() {
   useEffect(() => {
     if (!isHomePage) return
     const sections = navLinks.map(link => getSectionId(link.href))
+    // Map of id -> { ratio, rect }
     const intersectingSections = new Map()
     let isHeroInView = false
 
@@ -159,18 +160,9 @@ export default function Navbar() {
         const navbarHeight = navbarRectRef.current ? navbarRectRef.current.height : 100
 
         if (intersectingSectionsSnapshot.size > 0) {
-          const sectionRects = new Map()
-          intersectingSectionsSnapshot.forEach((ratio, id) => {
-            const el = document.getElementById(id)
-            if (el) {
-              sectionRects.set(id, {
-                ratio,
-                rect: el.getBoundingClientRect()
-              })
-            }
-          })
-
-          sectionRects.forEach(({ ratio, rect }, id) => {
+          // Use the cached rects provided by IntersectionObserver entries (boundingClientRect)
+          intersectingSectionsSnapshot.forEach(({ ratio, rect }, id) => {
+            if (!rect) return
             const topOffset = Math.max(0, rect.top - navbarHeight)
             const score = ratio * (1 - Math.min(topOffset / window.innerHeight, 0.5))
             if (score > topScore) {
@@ -208,7 +200,8 @@ export default function Navbar() {
 
       if (sections.includes(id)) {
         if (entry.isIntersecting) {
-          intersectingSections.set(id, entry.intersectionRatio)
+          // Store both ratio and latest boundingClientRect to avoid extra layout reads later
+          intersectingSections.set(id, { ratio: entry.intersectionRatio, rect: entry.boundingClientRect })
 
           const alreadyVisible = visibleLinksRef.current.includes(id)
           const alreadyQueued = revealQueueRef.current.includes(id)
