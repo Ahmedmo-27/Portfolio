@@ -139,6 +139,7 @@ export default function Navbar() {
   useEffect(() => {
     if (!isHomePage) return
     const sections = navLinks.map(link => getSectionId(link.href))
+    // Map id -> { ratio, rect } where rect is the last IntersectionObserverEntry.boundingClientRect
     const intersectingSections = new Map()
     let isHeroInView = false
 
@@ -151,7 +152,9 @@ export default function Navbar() {
         rafId = null
 
         // Determine top section for highlighting
+
         const heroInView = isHeroInView
+        // Snapshot the intersecting sections map (stores rects from IntersectionObserver entries)
         const intersectingSectionsSnapshot = new Map(intersectingSections)
 
         let topSection = null
@@ -159,18 +162,8 @@ export default function Navbar() {
         const navbarHeight = navbarRectRef.current ? navbarRectRef.current.height : 100
 
         if (intersectingSectionsSnapshot.size > 0) {
-          const sectionRects = new Map()
-          intersectingSectionsSnapshot.forEach((ratio, id) => {
-            const el = document.getElementById(id)
-            if (el) {
-              sectionRects.set(id, {
-                ratio,
-                rect: el.getBoundingClientRect()
-              })
-            }
-          })
-
-          sectionRects.forEach(({ ratio, rect }, id) => {
+          intersectingSectionsSnapshot.forEach(({ ratio, rect }, id) => {
+            if (!rect) return
             const topOffset = Math.max(0, rect.top - navbarHeight)
             const score = ratio * (1 - Math.min(topOffset / window.innerHeight, 0.5))
             if (score > topScore) {
@@ -208,7 +201,8 @@ export default function Navbar() {
 
       if (sections.includes(id)) {
         if (entry.isIntersecting) {
-          intersectingSections.set(id, entry.intersectionRatio)
+          // Store intersection ratio and the boundingClientRect provided by the entry
+          intersectingSections.set(id, { ratio: entry.intersectionRatio, rect: entry.boundingClientRect })
 
           const alreadyVisible = visibleLinksRef.current.includes(id)
           const alreadyQueued = revealQueueRef.current.includes(id)

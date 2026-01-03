@@ -585,7 +585,7 @@ const ProfileCardComponent = ({
             <div className="pc-content pc-avatar-content relative">
               {/* Skeleton loader overlay - shown when image is not loaded */}
               {!imageLoaded && (
-                <div className="absolute inset-0 flex items-center justify-center z-10">
+                <div className="absolute inset-0 flex items-center justify-center" style={{ zIndex: 0 }}>
                   <SkeletonLoader variant="card" className="w-full max-w-xs sm:max-w-sm h-[500px] md:h-[600px] rounded-3xl" />
                 </div>
               )}
@@ -594,15 +594,15 @@ const ProfileCardComponent = ({
                   return (
                     <img
                       ref={imageRef}
-                      className="avatar"
+                      className="avatar relative z-20"
                       src={avatarUrl}
                       alt={`${name || 'Ahmed Mostafa'} avatar`}
                       width={483}
                       height={644}
                       loading="eager"
-                      decoding="sync"
+                      decoding="async"
                       fetchPriority="high"
-                      style={{ opacity: imageLoaded ? 1 : 0, transition: 'opacity 0.3s ease-in', height: '95%', width: '100%' }}
+                      style={{ height: '95%', width: '100%' }}
                       onLoad={(e) => {
                         setImageLoaded(true);
                         // Mark image as loaded for LCP measurement
