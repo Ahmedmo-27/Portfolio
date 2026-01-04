@@ -329,6 +329,8 @@ const ProfileCardComponent = ({
     initialYOffset: ANIMATION_CONFIG.INITIAL_Y_OFFSET,
     deviceBetaOffset: ANIMATION_CONFIG.DEVICE_BETA_OFFSET
   });
+  // Cache whether current viewport is mobile to avoid reading `window.innerWidth` near writes
+  const isMobileRef = useRef(typeof window !== 'undefined' ? window.innerWidth <= 768 : false);
 
   const getOffsets = (evt, el) => {
     // If cache is not ready, return null so callers can defer reads to rAF
@@ -533,9 +535,8 @@ const ProfileCardComponent = ({
     const initTilt = () => {
       requestAnimationFrame(() => {
         if (!shellRef.current) return;
-
         // Adjust initial offsets for mobile devices using cached CSS vars
-        const isMobile = window.innerWidth <= 768;
+        const isMobile = isMobileRef.current;
         const cssX = cssVarCacheRef.current.initialXOffset || ANIMATION_CONFIG.INITIAL_X_OFFSET;
         const cssY = cssVarCacheRef.current.initialYOffset || ANIMATION_CONFIG.INITIAL_Y_OFFSET;
         const xOffset = isMobile ? cssX * 0.5 : cssX;
@@ -571,6 +572,10 @@ const ProfileCardComponent = ({
         cssVarCacheRef.current.deviceBetaOffset = readCssVarNumber(base, '--pc-device-beta-offset', ANIMATION_CONFIG.DEVICE_BETA_OFFSET);
         // Keep an initialDuration entry if present
         cssVarCacheRef.current.initialDuration = readCssVarNumber(base, '--pc-initial-duration', ANIMATION_CONFIG.INITIAL_DURATION);
+        // Cache mobile viewport flag here (this read happens in a resize handler rAF)
+        try {
+          isMobileRef.current = typeof window !== 'undefined' ? window.innerWidth <= 768 : false;
+        } catch (e) {}
       } catch (e) {}
     };
 

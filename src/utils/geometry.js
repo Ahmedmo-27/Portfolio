@@ -11,17 +11,31 @@ function scheduleFrame() {
 
     // Perform all reads first (safe to read layout)
     try {
-      for (const item of readQueue.splice(0)) {
-        try {
-          const r = item.el.getBoundingClientRect()
-          item.resolve(r)
-        } catch (e) {
-          item.resolve(null)
+        // Snapshot scroll position once per frame and copy rect values to plain objects
+        const pageY = typeof window !== 'undefined' ? window.scrollY : 0
+        for (const item of readQueue.splice(0)) {
+          try {
+            const r = item.el.getBoundingClientRect()
+            // Return a plain object with rect fields + page scroll to avoid later reads
+            const copy = {
+              left: r.left,
+              top: r.top,
+              right: r.right,
+              bottom: r.bottom,
+              width: r.width,
+              height: r.height,
+              x: r.x,
+              y: r.y,
+              scrollY: pageY
+            }
+            item.resolve(copy)
+          } catch (e) {
+            item.resolve(null)
+          }
         }
-      }
     } catch (e) {
       // ensure all promises are resolved even on error
-      for (const item of readQueue.splice(0)) item.resolve(null)
+        for (const item of readQueue.splice(0)) item.resolve(null)
     }
 
     // Then run writes (mutations)
@@ -51,7 +65,8 @@ export function smoothScrollToElement(targetElement, navbarHeight = 80, extraOff
 
   readRect(targetElement).then((rect) => {
     if (!rect) return
-    const elementTop = rect.top + (typeof window !== 'undefined' ? window.scrollY : 0)
+    // rect includes a snapshot of page scroll to avoid extra layout reads
+    const elementTop = rect.top + (rect.scrollY || 0)
     const offset = (navbarHeight || 0) + (extraOffset || 0)
     const targetScrollY = Math.max(0, elementTop - offset)
 

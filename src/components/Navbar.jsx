@@ -42,7 +42,35 @@ export default function Navbar() {
   const REVEAL_INTERVAL = 100
   // Header ref (visual) — size is provided by shared util
   const navbarRef = useRef(null)
-  const navbarHeightRef = useRef(getNavbarHeight() || (typeof window !== 'undefined' && window.innerWidth >= 768 ? 80 : 70))
+  const navbarHeightRef = useRef(getNavbarHeight() || (typeof window !== 'undefined' && window.innerWidth >= 768 ? 72 : 62))
+  // Centralized body-class updater to coalesce multiple toggles into a single rAF
+  const bodyClassRafRef = useRef(null)
+  const pendingBodyClassRef = useRef(null)
+  const scheduleBodyClassUpdate = (desired) => {
+    pendingBodyClassRef.current = desired
+    if (bodyClassRafRef.current != null) return
+    bodyClassRafRef.current = requestAnimationFrame(() => {
+      bodyClassRafRef.current = null
+      const want = pendingBodyClassRef.current
+      const has = document.body.classList.contains('navbar-menu-open')
+      if (want && !has) document.body.classList.add('navbar-menu-open')
+      else if (!want && has) document.body.classList.remove('navbar-menu-open')
+    })
+  }
+
+  // Helper wrapper to keep state updates and body-class scheduling consistent
+  const setMobileMenu = (value) => {
+    if (typeof value === 'function') {
+      setIsMobileMenuOpen((prev) => {
+        const next = value(prev)
+        scheduleBodyClassUpdate(next)
+        return next
+      })
+    } else {
+      setIsMobileMenuOpen(value)
+      scheduleBodyClassUpdate(value)
+    }
+  }
   
   // Check if we're on the home page or projects page (memoized to avoid recalculation)
   const isHomePage = useMemo(() => location.pathname === '/', [location.pathname])
@@ -187,7 +215,7 @@ export default function Navbar() {
         } else if (topSection) {
           desiredActive = topSection
           desiredHash = topSection
-        } else if (window.scrollY < 100) {
+        } else if (currentScrollY < 100) {
           desiredActive = ''
           if (location.hash) desiredHash = ''
         }
@@ -279,16 +307,21 @@ export default function Navbar() {
   // Keep a cached navbar height and update on resize (debounced via rAF)
   useEffect(() => {
     let rafId = null
+    const getDefaultNavbarHeight = () => {
+      const iw = typeof window !== 'undefined' ? window.innerWidth : 1024
+      return getNavbarHeight() || (iw >= 768 ? 80 : 70)
+    }
+
     const updateHeight = () => {
       if (rafId != null) return
       rafId = requestAnimationFrame(() => {
         rafId = null
-        navbarHeightRef.current = getNavbarHeight() || (window.innerWidth >= 768 ? 80 : 70)
+        navbarHeightRef.current = getDefaultNavbarHeight()
       })
     }
 
     // initialize
-    navbarHeightRef.current = getNavbarHeight() || (window.innerWidth >= 768 ? 80 : 70)
+    navbarHeightRef.current = getDefaultNavbarHeight()
     window.addEventListener('resize', updateHeight, { passive: true })
     return () => {
       window.removeEventListener('resize', updateHeight)
@@ -310,28 +343,20 @@ export default function Navbar() {
   useEffect(() => {
     const handleEscape = (e) => {
       if (e.key === 'Escape') {
-        setIsMobileMenuOpen(false)
+        setMobileMenu(false)
       }
     }
     document.addEventListener('keydown', handleEscape)
     return () => document.removeEventListener('keydown', handleEscape)
   }, [])
 
-  // Prevent body scroll when mobile menu is open
+  // Cleanup for body-class RAF and ensure class removed on unmount
   useEffect(() => {
-    let rafId = null
-    const applyClassChange = () => {
-      const has = document.body.classList.contains('navbar-menu-open')
-      if (isMobileMenuOpen && !has) document.body.classList.add('navbar-menu-open')
-      else if (!isMobileMenuOpen && has) document.body.classList.remove('navbar-menu-open')
-    }
-    rafId = requestAnimationFrame(applyClassChange)
     return () => {
-      if (rafId) cancelAnimationFrame(rafId)
-      // Ensure we remove the class on unmount to avoid leaving body locked
+      if (bodyClassRafRef.current) cancelAnimationFrame(bodyClassRafRef.current)
       if (document.body.classList.contains('navbar-menu-open')) document.body.classList.remove('navbar-menu-open')
     }
-  }, [isMobileMenuOpen])
+  }, [])
 
   // Navbar height is handled by `src/utils/navbarRect.js`
 
@@ -348,9 +373,7 @@ export default function Navbar() {
       
       // Close mobile menu immediately when a link is clicked
       if (wasMobileMenuOpen) {
-        setIsMobileMenuOpen(false)
-        // schedule removal to avoid synchronous layout
-        requestAnimationFrame(() => document.body.classList.remove('navbar-menu-open'))
+        setMobileMenu(false)
       }
       
       // If not on home page, navigate to home first, then scroll to section
@@ -362,7 +385,8 @@ export default function Navbar() {
       const targetElement = document.getElementById(targetId)
       if (!targetElement) return
 
-      const navbarHeight = navbarHeightRef.current || (window.innerWidth >= 768 ? 80 : 70)
+      const iw = window.innerWidth
+      const navbarHeight = navbarHeightRef.current || (iw >= 768 ? 65 : 25)
 
       const doScroll = () => {
         smoothScrollToElement(targetElement, navbarHeight, 16)
@@ -387,10 +411,10 @@ export default function Navbar() {
   return (
     <header
       ref={navbarRef}
-      style={{ height: `${navbarHeightRef.current || 80}px` }}
-      className={`fixed top-0 left-0 right-0 z-50 transition-[padding,background-color,backdrop-filter] duration-200 ${
-        isScrolled || isMobileMenuOpen ? 'glass py-3' : 'py-5'
-      }`}
+      style={{ height: `${navbarHeightRef.current || 72}px` }}
+        className={`fixed top-0 left-0 right-0 z-50 transition-[padding,background-color,backdrop-filter] duration-200 ${
+          isScrolled ? 'glass py-5' : 'py-8'
+        }`}
       role="banner"
     >
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" role="navigation" aria-label="Main navigation">
@@ -436,7 +460,7 @@ export default function Navbar() {
                   key={link.name}
                   href={link.href}
                   onClick={(e) => handleNavClick(e, link.href)}
-                  className={`px-4 py-2 font-medium transition-colors relative group rounded-lg opacity-0 animate-fade-in ${
+                  className={`px-4 py-3 font-medium transition-colors relative group rounded-lg opacity-0 animate-fade-in ${
                     activeSection === getSectionId(link.href)
                       ? 'text-primary-400'
                       : 'text-muted hover:text-foreground'
@@ -464,7 +488,7 @@ export default function Navbar() {
             <ThemeToggle />
             {linksStartedLoading && (
               <button
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                onClick={() => setMobileMenu((prev) => !prev)}
                 className="p-2 text-muted hover:text-foreground transition-colors rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
                 aria-expanded={isMobileMenuOpen}
                 aria-controls="mobile-menu"
@@ -480,9 +504,10 @@ export default function Navbar() {
         {isMobileMenuOpen && (
           <div
             id="mobile-menu"
-            className="md:hidden overflow-hidden animate-mobile-menu-open"
+            className="md:hidden absolute left-0 right-0 top-full overflow-hidden animate-mobile-menu-open bg-surface shadow-md"
+            style={{ zIndex: 60 }}
           >
-            <ul className="py-4 space-y-1" aria-label="Mobile">
+            <ul className="py-6 px-4 space-y-2" aria-label="Mobile">
               {navLinks
                 .filter((link) => visibleLinks.includes(getSectionId(link.href)))
                 .map((link, idx) => (
