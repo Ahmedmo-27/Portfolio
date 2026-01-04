@@ -42,7 +42,6 @@ export default function Navbar() {
   const REVEAL_INTERVAL = 100
   // Header ref (visual) — size is provided by shared util
   const navbarRef = useRef(null)
-  const navbarHeightRef = useRef(getNavbarHeight() || (typeof window !== 'undefined' && window.innerWidth >= 768 ? 72 : 62))
   // Centralized body-class updater to coalesce multiple toggles into a single rAF
   const bodyClassRafRef = useRef(null)
   const pendingBodyClassRef = useRef(null)
@@ -189,7 +188,7 @@ export default function Navbar() {
 
         let topSection = null
         let topScore = 0
-        const navbarHeight = navbarHeightRef.current || 100
+        const navbarHeight = getNavbarHeight() || 100
         const winH = window.innerHeight
         const currentScrollY = window.scrollY
 
@@ -304,30 +303,8 @@ export default function Navbar() {
     }
   }, [isHomePage, location.pathname])
 
-  // Keep a cached navbar height and update on resize (debounced via rAF)
-  useEffect(() => {
-    let rafId = null
-    const getDefaultNavbarHeight = () => {
-      const iw = typeof window !== 'undefined' ? window.innerWidth : 1024
-      return getNavbarHeight() || (iw >= 768 ? 80 : 70)
-    }
-
-    const updateHeight = () => {
-      if (rafId != null) return
-      rafId = requestAnimationFrame(() => {
-        rafId = null
-        navbarHeightRef.current = getDefaultNavbarHeight()
-      })
-    }
-
-    // initialize
-    navbarHeightRef.current = getDefaultNavbarHeight()
-    window.addEventListener('resize', updateHeight, { passive: true })
-    return () => {
-      window.removeEventListener('resize', updateHeight)
-      if (rafId) cancelAnimationFrame(rafId)
-    }
-  }, [])
+  // Navbar height is observed and cached by `src/utils/navbarRect.js`.
+  // We call `getNavbarHeight()` where we need the latest cached value.
 
   // If not on the home page, links are already available — show button
   useEffect(() => {
@@ -386,7 +363,7 @@ export default function Navbar() {
       if (!targetElement) return
 
       const iw = window.innerWidth
-      const navbarHeight = navbarHeightRef.current || (iw >= 768 ? 65 : 25)
+      const navbarHeight = getNavbarHeight() || (iw >= 768 ? 65 : 25)
 
       const doScroll = () => {
         smoothScrollToElement(targetElement, navbarHeight, 16)
@@ -411,9 +388,8 @@ export default function Navbar() {
   return (
     <header
       ref={navbarRef}
-      style={{ height: `${navbarHeightRef.current || 72}px` }}
         className={`fixed top-0 left-0 right-0 z-50 transition-[padding,background-color,backdrop-filter] duration-200 ${
-          isScrolled ? 'glass py-5' : 'py-8'
+          (isScrolled || isMobileMenuOpen) ? 'glass py-3' : 'py-5'
         }`}
       role="banner"
     >
@@ -507,7 +483,7 @@ export default function Navbar() {
             className="md:hidden absolute left-0 right-0 top-full overflow-hidden animate-mobile-menu-open bg-surface shadow-md"
             style={{ zIndex: 60 }}
           >
-            <ul className="py-6 px-4 space-y-2" aria-label="Mobile">
+            <ul className="py-4 px-4 space-y-1" aria-label="Mobile">
               {navLinks
                 .filter((link) => visibleLinks.includes(getSectionId(link.href)))
                 .map((link, idx) => (
