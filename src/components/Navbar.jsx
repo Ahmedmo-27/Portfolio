@@ -297,22 +297,23 @@ export default function Navbar() {
     const node = navbarRef.current
     if (!node) return
 
-    const updateRect = () => {
-      // Use getBoundingClientRect once to capture height; ResizeObserver provides sizes but
-      // using rAF around getBoundingClientRect reduces risk of forced synchronous layout here.
-      requestAnimationFrame(() => {
-        const r = node.getBoundingClientRect()
-        navbarRectRef.current = { height: r.height }
+      // Use ResizeObserver's contentRect to update navbar height without triggering layout reads
+      const ro = new ResizeObserver((entries) => {
+        if (!entries || !entries.length) return
+        const entry = entries[0]
+        if (entry.contentRect && entry.contentRect.height) {
+          navbarRectRef.current = { height: entry.contentRect.height }
+        } else {
+          // Fallback: defer a safe read to rAF
+          requestAnimationFrame(() => {
+            try {
+              const r = node.getBoundingClientRect()
+              navbarRectRef.current = { height: r.height }
+            } catch (e) {}
+          })
+        }
       })
-    }
-
-    // Initial capture
-    updateRect()
-
-    const ro = new ResizeObserver(() => {
-      updateRect()
-    })
-    ro.observe(node)
+      ro.observe(node)
 
     return () => ro.disconnect()
   }, [])

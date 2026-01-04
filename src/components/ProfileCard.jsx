@@ -315,33 +315,39 @@ const ProfileCardComponent = ({
   const rectCacheValidRef = useRef(false);
 
   const getOffsets = (evt, el) => {
-    // Use cached rect to avoid forced reflow
-    // Only read getBoundingClientRect when cache is invalid
-    if (!rectCacheValidRef.current) {
-      // Batch read: get all rect properties at once
-      const rect = el.getBoundingClientRect();
-      rectCacheRef.current = {
-        left: rect.left,
-        top: rect.top,
-        width: rect.width,
-        height: rect.height
-      };
-      rectCacheValidRef.current = true;
-    }
+    // If cache is not ready, return null so callers can defer reads to rAF
+    if (!rectCacheValidRef.current) return null;
     const cached = rectCacheRef.current;
-    // Use cached values - no layout read
-    return { 
-      x: evt.clientX - cached.left, 
-      y: evt.clientY - cached.top 
+    return {
+      x: evt.clientX - cached.left,
+      y: evt.clientY - cached.top
     };
+  };
+
+  const updateRectCacheNow = (el) => {
+    const s = el || shellRef.current;
+    if (!s) return;
+    const r = s.getBoundingClientRect();
+    rectCacheRef.current = { left: r.left, top: r.top, width: r.width, height: r.height };
+    rectCacheValidRef.current = true;
+    return rectCacheRef.current;
   };
 
   const handlePointerMove = useCallback(
     (event) => {
       const shell = shellRef.current;
       if (!shell || !tiltEngine) return;
-      const { x, y } = getOffsets(event, shell);
-      tiltEngine.setTarget(x, y);
+      const offsets = getOffsets(event, shell);
+      if (offsets) {
+        tiltEngine.setTarget(offsets.x, offsets.y);
+        return;
+      }
+      // Cache not ready — schedule a read in rAF and then set target
+      requestAnimationFrame(() => {
+        updateRectCacheNow(shell);
+        const o = getOffsets(event, shell);
+        if (o) tiltEngine.setTarget(o.x, o.y);
+      });
     },
     [tiltEngine]
   );
@@ -351,9 +357,8 @@ const ProfileCardComponent = ({
       const shell = shellRef.current;
       if (!shell || !tiltEngine) return;
 
-      // Read layout (cached or getBoundingClientRect) before performing DOM writes
-      // to avoid forcing a synchronous reflow.
-      const { x, y } = getOffsets(event, shell);
+      // Attempt to use cached offsets; if cache missing, defer layout read to rAF
+      const offsets = getOffsets(event, shell);
 
       shell.classList.add('active');
       shell.classList.add('entering');
@@ -362,7 +367,16 @@ const ProfileCardComponent = ({
         shell.classList.remove('entering');
       }, ANIMATION_CONFIG.ENTER_TRANSITION_MS);
 
-      tiltEngine.setTarget(x, y);
+      if (offsets) {
+        tiltEngine.setTarget(offsets.x, offsets.y);
+        return;
+      }
+
+      requestAnimationFrame(() => {
+        updateRectCacheNow(shell);
+        const o = getOffsets(event, shell);
+        if (o) tiltEngine.setTarget(o.x, o.y);
+      });
     },
     [tiltEngine]
   );
@@ -442,14 +456,8 @@ const ProfileCardComponent = ({
     const pointerLeaveHandler = handlePointerLeave;
     const deviceOrientationHandler = handleDeviceOrientation;
 
-    // Initialize rect cache in a rAF to avoid a forced reflow on first pointer interaction
-    requestAnimationFrame(() => {
-      const s = shellRef.current
-      if (!s) return
-      const r = s.getBoundingClientRect()
-      rectCacheRef.current = { left: r.left, top: r.top, width: r.width, height: r.height }
-      rectCacheValidRef.current = true
-    })
+    // Do not synchronously read layout on mount — defer to ResizeObserver and on-demand rAF updates
+    rectCacheValidRef.current = false
 
     // Use passive listeners for better scroll performance
     shell.addEventListener('pointerenter', pointerEnterHandler, { passive: true });
