@@ -182,29 +182,46 @@ function MediaCarousel({ project, shouldLoad = false }) {
     )
   }
 
+  // Compute visible indices: render only current + adjacent slides (wrap-aware)
+  const visibleIndices = useMemo(() => {
+    if (total <= 3) return galleryItems.map((_, i) => i)
+    const prev = (safeIndex - 1 + total) % total
+    const next = (safeIndex + 1) % total
+    return [prev, safeIndex, next]
+  }, [galleryItems, safeIndex, total])
+
   return (
     <div
-      className="media-carousel-container"
+      className="media-carousel-container relative overflow-hidden"
       onTouchStart={onTouchStart}
       onTouchMove={onTouchMove}
       onTouchEnd={onTouchEnd}
     >
-      {/* Carousel Track */}
-      <div 
-        className="media-carousel-track"
-        style={{ transform: `translateX(-${safeIndex * 100}%)` }}
-      >
-        {galleryItems.map((item, itemIndex) => {
+      {/* Only render visible slides to reduce DOM footprint */}
+      <div className="w-full h-full relative">
+        {visibleIndices.map((itemIndex) => {
+          const item = galleryItems[itemIndex]
           const isActive = itemIndex === safeIndex
           const itemShouldLoad = shouldLoad || loadedIndices.has(itemIndex)
+
+          // Position: prev = -100%, active = 0%, next = 100%
+          const offset = ((itemIndex - safeIndex + total) % total)
+          let translateX = 0
+          if (offset === 0) translateX = 0
+          else if (offset === 1 || (offset > total / 2 && total > 2 && itemIndex !== safeIndex)) translateX = 100
+          else translateX = -100
+
+          const slideStyle = {
+            position: 'absolute',
+            inset: 0,
+            transform: `translateX(${translateX}%)`,
+            transition: 'transform 280ms ease',
+          }
 
           // Placeholder for unloaded items
           if (!itemShouldLoad && (item.type === 'image' || item.type === 'video' || item.type === 'pdf')) {
             return (
-              <div 
-                key={`${item.type}-${itemIndex}`}
-                className={`media-carousel-item ${isActive ? 'active' : ''}`}
-              >
+              <div key={`${item.type}-${itemIndex}`} style={slideStyle} className={`media-carousel-item ${isActive ? 'active' : ''}`}>
                 <div className="absolute inset-0 flex items-center justify-center" aria-hidden="true">
                   <div className={`w-16 sm:w-24 h-16 sm:h-24 rounded-2xl sm:rounded-3xl bg-gradient-to-br ${project.color} opacity-30 flex items-center justify-center`}>
                     <project.icon className="w-8 sm:w-12 h-8 sm:h-12 text-foreground opacity-60" />
@@ -215,10 +232,7 @@ function MediaCarousel({ project, shouldLoad = false }) {
           }
 
           return (
-            <div 
-              key={`${item.type}-${itemIndex}`}
-              className={`media-carousel-item ${isActive ? 'active' : ''}`}
-            >
+            <div key={`${item.type}-${itemIndex}`} style={slideStyle} className={`media-carousel-item ${isActive ? 'active' : ''}`}>
               {item.type === 'image' && (
                 <div className={`w-full h-full ${portraitImages[itemIndex] ? 'bg-black/90 flex items-center justify-center' : ''}`}>
                   <img
@@ -232,14 +246,12 @@ function MediaCarousel({ project, shouldLoad = false }) {
                     height={1080}
                     onLoad={(e) => {
                       const img = e.currentTarget
-                      // Update width/height with actual dimensions once loaded
                       if (img.naturalWidth && img.naturalHeight) {
                         img.width = img.naturalWidth
                         img.height = img.naturalHeight
                       }
                       const isPortrait = img.naturalHeight > img.naturalWidth
                       if (isPortrait) {
-                        // Defer portrait detection to not block interaction
                         startTransition(() => {
                           setPortraitImages(prev => ({ ...prev, [itemIndex]: true }))
                         })
@@ -259,7 +271,6 @@ function MediaCarousel({ project, shouldLoad = false }) {
                     onLoadedMetadata={(e) => {
                       const v = e.currentTarget
                       if (v.videoHeight > v.videoWidth) {
-                        // Defer portrait detection to not block interaction
                         startTransition(() => {
                           setPortraitVideo(true)
                         })

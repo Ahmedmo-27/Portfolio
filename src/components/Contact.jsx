@@ -1,13 +1,11 @@
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import Mail from 'lucide-react/dist/esm/icons/mail'
 import MapPin from 'lucide-react/dist/esm/icons/map-pin'
-import Send from 'lucide-react/dist/esm/icons/send'
 import Github from 'lucide-react/dist/esm/icons/github'
 import Linkedin from 'lucide-react/dist/esm/icons/linkedin'
-import CheckCircle from 'lucide-react/dist/esm/icons/check-circle'
-import AlertCircle from 'lucide-react/dist/esm/icons/alert-circle'
-import Loader2 from 'lucide-react/dist/esm/icons/loader-2'
 import { useInViewOnce } from '../utils/useInViewOnce'
+import ContactDetails from './ContactDetails'
+import ContactForm from './ContactForm'
 
 const contactInfo = [
   {
@@ -173,248 +171,24 @@ export default function Contact() {
   }
 
   return (
-    <section 
-      id="contact" 
-      className="py-16 md:py-28 relative overflow-hidden"
-      aria-labelledby="contact-heading"
-    >
-      {/* Background */}
+    <section id="contact" className="py-16 md:py-28 relative overflow-hidden" aria-labelledby="contact-heading">
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-surface/30 to-transparent" aria-hidden="true" />
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div ref={ref}>
-          {/* Section Header */}
           <div className='text-center mb-14 md:mb-20'>
             <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary-500/10 border border-primary-500/20 text-primary-400 text-sm font-medium mb-4">
               <span className="w-1.5 h-1.5 rounded-full bg-primary-400" aria-hidden="true" />
               Contact
             </span>
-            <h2 id="contact-heading" className="section-heading mb-6">
-              Let's <span className="gradient-text">Connect</span>
-            </h2>
-            <p className="section-subheading mx-auto">
-              Have a project in mind or want to discuss opportunities? 
-              I'd love to hear from you.
-            </p>
+            <h2 id="contact-heading" className="section-heading mb-6">Let's <span className="gradient-text">Connect</span></h2>
+            <p className="section-subheading mx-auto">Have a project in mind or want to discuss opportunities? I'd love to hear from you.</p>
           </div>
 
           <div className="grid lg:grid-cols-2 gap-8 lg:gap-12">
-            {/* Contact Info */}
-            <div className= 'space-y-6 md:space-y-8'>
-              <div>
-                <h3 className="text-xl md:text-2xl font-display font-bold text-[color:var(--color-muted)] mb-4 md:mb-6">
-                  Get in Touch
-                </h3>
-                <p className="text-[color:var(--color-foreground)] text-sm md:text-base mb-6 md:mb-8">
-                  I'm currently open to new opportunities, whether it's internships, 
-                  full-time positions, or freelance projects. Feel free to reach out!
-                </p>
-              </div>
-
-              {/* Contact Details */}
-              <div className="space-y-3 md:space-y-4" role="list" aria-label="Contact information">
-                {contactInfo.map((item) => (
-                  <div key={item.label} className="flex items-center gap-3 md:gap-4" role="listitem">
-                    <div 
-                      className="w-10 md:w-12 h-10 md:h-12 rounded-xl bg-gradient-to-br from-primary-500/20 to-accent-cyan/20 flex items-center justify-center border border-primary-500/30"
-                      aria-hidden="true"
-                    >
-                      <item.icon className="w-4 md:w-5 h-4 md:h-5 text-primary-400" />
-                    </div>
-                    <div>
-                      <p className="text-[color:var(--color-foreground)] text-xs md:text-sm">{item.label}</p>
-                      {item.href ? (
-                        <a 
-                          href={item.href}
-                          className="text-[color:var(--color-muted)] hover:text-primary-400 transition-colors text-sm md:text-base focus-visible:outline-none focus-visible:text-primary-400"
-                        >
-                          {item.value}
-                        </a>
-                      ) : (
-                        <p className="text-[color:var(--color-muted)] text-sm md:text-base">{item.value}</p>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              {/* Social Links */}
-              <div>
-                <p className="text-[color:var(--color-foreground)] text-xs md:text-sm mb-3 md:mb-4">Find me on</p>
-                <div className="flex gap-3" role="list" aria-label="Social media links">
-                  {socialLinks.map((social) => (
-                    <a
-                      key={social.label}
-                      href={social.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-10 md:w-12 h-10 md:h-12 rounded-xl glass hover:bg-primary-500/10 hover:border-primary-500/40 flex items-center justify-center text-[color:var(--color-foreground)] hover:text-primary-400 transition-[transform,color,background-color,border-color] duration-200 hover:-translate-y-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
-                      aria-label={`Visit my ${social.label} profile`}
-                      role="listitem"
-                    >
-                      <social.icon className="w-4 md:w-5 h-4 md:h-5" aria-hidden="true" />
-                    </a>
-                  ))}
-                </div>
-              </div>
-
-              {/* Availability Status */}
-              <div className="glass-card p-4 md:p-6" role="status" aria-live="polite">
-                <div className="flex items-center gap-2 md:gap-3 mb-2 md:mb-3">
-                  <span className="w-2.5 md:w-3 h-2.5 md:h-3 rounded-full bg-accent-emerald" aria-hidden="true" />
-                  <span className="text-accent-emerald font-medium text-sm md:text-base">Available for Opportunities</span>
-                </div>
-                <p className="text-[color:var(--color-foreground)] text-xs md:text-sm">
-                  Seeking Junior Software Engineer roles in backend and full-stack development. 
-                  Open to internships and full-time positions where I can contribute to building scalable APIs and web applications.
-                </p>
-              </div>
-            </div>
-
-            {/* Contact Form */}
-            <div className="">
-              <form 
-                onSubmit={handleSubmit} 
-                className="glass-card p-5 sm:p-6 md:p-8 space-y-4 md:space-y-6"
-                aria-label="Contact form"
-              >
-                <div className="grid sm:grid-cols-2 gap-4 md:gap-6">
-                  <div>
-                    <label htmlFor="name" className="block text-xs md:text-sm font-medium text-[color:var(--color-foreground)] mb-1.5 md:mb-2">
-                      Name <span className="text-red-400" aria-hidden="true">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      id="name"
-                      name="name"
-                      value={formData.name}
-                      onChange={handleChange}
-                      required
-                      aria-required="true"
-                      className="w-full px-3 md:px-4 py-2.5 md:py-3 rounded-xl bg-surface border border-border text-[color:var(--color-muted)] placeholder-[color:var(--color-muted)] focus:outline-none focus:border-primary-400 focus:ring-2 focus:ring-primary-400/30 transition-colors text-sm md:text-base"
-                      placeholder="Your name"
-                    />
-                  </div>
-                  <div>
-                    <label htmlFor="email" className="block text-xs md:text-sm font-medium text-[color:var(--color-foreground)] mb-1.5 md:mb-2">
-                      Email <span className="text-red-400" aria-hidden="true">*</span>
-                    </label>
-                    <input
-                      type="email"
-                      id="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleChange}
-                      required
-                      aria-required="true"
-                      className="w-full px-3 md:px-4 py-2.5 md:py-3 rounded-xl bg-surface border border-border text-[color:var(--color-muted)] placeholder-[color:var(--color-muted)] focus:outline-none focus:border-primary-400 focus:ring-2 focus:ring-primary-400/30 transition-colors text-sm md:text-base"
-                      placeholder="your@email.com"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  {/* Honeypot (anti-bot). Hidden visually but present for simple spam protection. */}
-                  <label className="sr-only" htmlFor="company">
-                    Company
-                  </label>
-                  <input
-                    id="company"
-                    name="company"
-                    type="text"
-                    value={honeypot}
-                    onChange={(e) => setHoneypot(e.target.value)}
-                    className="hidden"
-                    tabIndex={-1}
-                    autoComplete="off"
-                  />
-
-                  <label htmlFor="subject" className="block text-xs md:text-sm font-medium text-[color:var(--color-foreground)] mb-1.5 md:mb-2">
-                    Subject <span className="text-red-400" aria-hidden="true">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    id="subject"
-                    name="subject"
-                    value={formData.subject}
-                    onChange={handleChange}
-                    required
-                    aria-required="true"
-                    className="w-full px-3 md:px-4 py-2.5 md:py-3 rounded-xl bg-surface border border-border text-[color:var(--color-muted)] placeholder-[color:var(--color-muted)] focus:outline-none focus:border-primary-400 focus:ring-2 focus:ring-primary-400/30 transition-colors text-sm md:text-base"
-                    placeholder="What's this about?"
-                  />
-                </div>
-
-                <div>
-                  <label htmlFor="message" className="block text-xs md:text-sm font-medium text-[color:var(--color-foreground)] mb-1.5 md:mb-2">
-                    Message <span className="text-red-400" aria-hidden="true">*</span>
-                  </label>
-                  <textarea
-                    id="message"
-                    name="message"
-                    value={formData.message}
-                    onChange={handleChange}
-                    required
-                    aria-required="true"
-                    rows={5}
-                    className="w-full px-3 md:px-4 py-2.5 md:py-3 rounded-xl bg-surface border border-border text-[color:var(--color-muted)] placeholder-[color:var(--color-muted)] focus:outline-none focus:border-primary-400 focus:ring-2 focus:ring-primary-400/30 transition-colors resize-none text-sm md:text-base"
-                    placeholder="Tell me about your project or opportunity..."
-                  />
-                </div>
-
-                <button
-                  type="submit"
-                  disabled={status === 'loading'}
-                  className="w-full btn-primary text-sm md:text-base"
-                  aria-describedby="form-status"
-                >
-                  {status === 'loading' ? (
-                    <>
-                      <Loader2 className="w-4 md:w-5 h-4 md:h-5 animate-spin" aria-hidden="true" />
-                      <span>Sending...</span>
-                    </>
-                  ) : status === 'success' ? (
-                    <>
-                      <CheckCircle className="w-4 md:w-5 h-4 md:h-5" aria-hidden="true" />
-                      <span>Message Sent!</span>
-                    </>
-                  ) : status === 'error' ? (
-                    <>
-                      <AlertCircle className="w-4 md:w-5 h-4 md:h-5" aria-hidden="true" />
-                      <span>Failed to Send</span>
-                    </>
-                  ) : (
-                    <>
-                      <Send className="w-4 md:w-5 h-4 md:h-5" aria-hidden="true" />
-                      <span>Send Message</span>
-                    </>
-                  )}
-                </button>
-
-                {/* Status message for screen readers */}
-                <div id="form-status" className="sr-only" role="status" aria-live="polite">
-                  {status === 'loading' && 'Sending your message...'}
-                  {status === 'success' && 'Your message has been sent successfully!'}
-                  {status === 'error' && 'Failed to send message. Please try again.'}
-                </div>
-
-                {/* Visible status message */}
-                {statusMessage && (
-                  <p className="text-center text-xs md:text-sm text-[color:var(--color-foreground)]">
-                    {statusMessage}
-                  </p>
-                )}
-
-                <p className="text-center text-[color:var(--color-foreground)] text-xs md:text-sm">
-                  Or email me directly at{' '}
-                  <a 
-                    href="mailto:ahmedmostafa.swe1@gmail.com" 
-                    className="text-primary-400 hover:underline focus-visible:underline focus-visible:outline-none"
-                  >
-                    ahmedmostafa.swe1@gmail.com
-                  </a>
-                </p>
-              </form>
+            <ContactDetails contactInfo={contactInfo} socialLinks={socialLinks} />
+            <div>
+              <ContactForm />
             </div>
           </div>
         </div>

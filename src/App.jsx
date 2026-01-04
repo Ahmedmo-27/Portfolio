@@ -19,27 +19,11 @@ const Contact = lazy(() => import(/* webpackChunkName: "contact" */ './component
 const Footer = lazy(() => import(/* webpackChunkName: "footer" */ './components/Footer'))
 const AllProjects = lazy(() => import(/* webpackChunkName: "all-projects" */ './pages/AllProjects'))
 
-// Prefetch components on idle to reduce load time when they become visible
-// This runs after initial render without blocking main thread
-if (typeof window !== 'undefined') {
-  window.addEventListener('load', () => {
-    const doPrefetch = () => {
-      // Prefetch lazily on idle to avoid impacting LCP / main-thread work
-      import('./components/About')
-      import('./components/Achievements')
-      import('./components/Projects')
-      import('./components/Skills')
-      import('./components/Experience')
-    }
-
-    if ('requestIdleCallback' in window) {
-      requestIdleCallback(() => doPrefetch(), { timeout: 3000 })
-    } else {
-      // Fallback: small delay after load
-      setTimeout(doPrefetch, 3000)
-    }
-  }, { once: true })
-}
+// Intentionally avoid eager runtime imports that force parsing/execution.
+// Prefetching via dynamic `import()` can cause the browser to download AND
+// execute code on the main thread. We keep components lazy and let the
+// network/browser decide when to fetch them (or use server-side prefetch
+// hints if needed) to reduce main-thread parse/compile time.
 
 // Loading fallback component for sections
 function SectionLoader() {

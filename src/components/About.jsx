@@ -10,6 +10,8 @@ import FolderGit2 from 'lucide-react/dist/esm/icons/folder-git-2'
 import Award from 'lucide-react/dist/esm/icons/award'
 import Building2 from 'lucide-react/dist/esm/icons/building-2'
 import CircuitBoard from './CircuitBoard'
+import StatCard from './StatCard'
+import HighlightCard from './HighlightCard'
 
 const highlights = [
   {
@@ -92,35 +94,9 @@ export default function About() {
           </div>
 
           {/* Stats Row - Enhanced */}
-          <div 
-            className='grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-14 md:mb-18'
-          >
-                {stats.map((stat, index) => (
-              <div
-                key={stat.label}
-                ref={(el) => {
-                  if (el) batchSetProperty(el, '--animation-delay', `${index * 0.1 + 0.3}s`)
-                }}
-                className='relative group transition-all duration-300 hover:-translate-y-2 hover:scale-105 about-stat-item'
-              >
-                <div className="text-center p-5 md:p-6 rounded-2xl glass-card h-full relative overflow-hidden border-2 border-primary-500/20 group-hover:border-primary-500/60 transition-all duration-300 group-hover:shadow-lg group-hover:shadow-primary-500/20" title={stat.tooltip || ''}>
-                  {/* Subtle gradient on hover */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-primary-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" aria-hidden="true" />
-                  
-                  <div className={`relative w-12 h-12 md:w-14 md:h-14 mx-auto mb-3 md:mb-4 rounded-xl bg-surface flex items-center justify-center ${stat.color} shadow-lg group-hover:scale-110 group-hover:shadow-xl transition-all duration-300`}>
-                    <stat.icon className="w-6 h-6 md:w-7 md:h-7" />
-                  </div>
-                  <div className="relative text-2xl md:text-3xl font-display font-bold gradient-text mb-2 group-hover:scale-110 transition-transform duration-300">
-                    {stat.value}
-                  </div>
-                  <div className="relative text-xs md:text-sm text-muted font-semibold group-hover:text-foreground/90 transition-colors duration-300">{stat.label}</div>
-                  {stat.tooltip && (
-                    <div className="relative mt-2 text-[10px] md:text-xs text-muted-foreground italic leading-relaxed">
-                      {stat.tooltip}
-                    </div>
-                  )}
-                </div>
-              </div>
+          <div className='grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-14 md:mb-18'>
+            {stats.map((stat, index) => (
+              <StatCard key={stat.label} stat={stat} index={index} />
             ))}
           </div>
 
@@ -212,69 +188,10 @@ export default function About() {
                   aria-label="Key highlights"
                 >
                   {highlights.map((item, index) => (
-                    <div
-                      key={item.title}
-                      ref={(el) => {
-                        if (el) batchSetProperty(el, '--animation-delay', `${index * 0.08 + 0.4}s`)
-                      }}
-                      className='glass-card p-4 group/card cursor-default relative overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-xl border-2 border-primary-500/20 hover:border-primary-500/50 about-highlight-item shadow-md'
-                      role="listitem"
-                      tabIndex={0}
-                    >
-                      {/* Gradient background on hover */}
-                      <div 
-                        className={`absolute inset-0 bg-gradient-to-br ${item.color} opacity-0 group-hover/card:opacity-15 transition-opacity duration-300`}
-                        aria-hidden="true"
-                      />
-                      
-                      <div className="flex items-start gap-3">
-                        <div 
-                          className={`relative w-10 h-10 md:w-11 md:h-11 rounded-xl bg-gradient-to-br ${item.color} flex items-center justify-center flex-shrink-0 shadow-lg group-hover/card:scale-110 group-hover/card:shadow-xl transition-all duration-300`}
-                          aria-hidden="true"
-                        >
-                          <item.icon className="w-5 h-5 md:w-6 md:h-6 text-white" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <h3 className="relative text-foreground font-bold mb-1 text-sm md:text-base">
-                            {item.title}
-                          </h3>
-                          <p className="relative text-xs md:text-sm text-muted leading-relaxed">
-                            {item.description}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
+                    <HighlightCard key={item.title} item={item} index={index} />
                   ))}
                 </div>
-
-                {/* Featured Highlight - Production Systems */}
-                <div 
-                  className='mt-3 glass-card p-4 group/card cursor-default relative overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-xl border-2 border-primary-500/20 hover:border-primary-500/50 about-highlight-item shadow-md'
-                  tabIndex={0}
-                >
-                  {/* Gradient background on hover */}
-                  <div 
-                    className={`absolute inset-0 bg-gradient-to-br ${featuredHighlight.color} opacity-0 group-hover/card:opacity-15 transition-opacity duration-300`}
-                    aria-hidden="true"
-                  />
-                  
-                  <div className="relative flex items-start gap-3">
-                    <div 
-                      className={`relative w-10 h-10 md:w-11 md:h-11 rounded-xl bg-gradient-to-br ${featuredHighlight.color} flex items-center justify-center flex-shrink-0 shadow-lg group-hover/card:scale-110 group-hover/card:shadow-xl transition-all duration-300`}
-                      aria-hidden="true"
-                    >
-                      <featuredHighlight.icon className="w-5 h-5 md:w-6 md:h-6 text-white" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <h3 className="relative text-foreground font-bold mb-1 text-sm md:text-base">
-                        {featuredHighlight.title}
-                      </h3>
-                      <p className="relative text-xs md:text-sm text-muted leading-relaxed">
-                        {featuredHighlight.description}
-                      </p>
-                    </div>
-                  </div>
-                </div>
+                <HighlightCard item={featuredHighlight} index={0} featured />
               </div>
             </div>
           </div>

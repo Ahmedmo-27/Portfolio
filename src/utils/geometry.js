@@ -1,40 +1,68 @@
 // Shared geometry helpers: smooth scrolling and safe rect reads
-export function smoothScrollToElement(targetElement, navbarHeight = 80, extraOffset = 16) {
-  if (!targetElement) return
+// Geometry scheduling: batch reads then writes in a single animation frame
+const readQueue = []
+const writeQueue = []
+let frameScheduled = null
 
-  // Batch layout read in rAF and perform the scroll in a subsequent rAF
-  requestAnimationFrame(() => {
+function scheduleFrame() {
+  if (frameScheduled != null) return
+  frameScheduled = typeof window !== 'undefined' ? requestAnimationFrame(() => {
+    frameScheduled = null
+
+    // Perform all reads first (safe to read layout)
     try {
-      const rect = targetElement.getBoundingClientRect()
-      const elementTop = rect.top + window.scrollY
-      const offset = (navbarHeight || 0) + (extraOffset || 0)
-      const targetScrollY = Math.max(0, elementTop - offset)
-
-      requestAnimationFrame(() => {
+      for (const item of readQueue.splice(0)) {
         try {
-          window.scrollTo({ top: targetScrollY, behavior: 'smooth' })
+          const r = item.el.getBoundingClientRect()
+          item.resolve(r)
         } catch (e) {
-          // fallback
-          try { window.scrollTo(0, targetScrollY) } catch (e) {}
+          item.resolve(null)
         }
-      })
+      }
     } catch (e) {
-      // ignore
+      // ensure all promises are resolved even on error
+      for (const item of readQueue.splice(0)) item.resolve(null)
     }
-  })
+
+    // Then run writes (mutations)
+    try {
+      for (const fn of writeQueue.splice(0)) {
+        try { fn() } catch (e) {}
+      }
+    } catch (e) {
+      // swallow
+    }
+  }) : null
 }
 
-// Safe rect read helper that defers to rAF and returns a Promise
+// Safe rect read helper that defers to a batched rAF and returns a Promise
 export function readRect(el) {
   return new Promise((resolve) => {
     if (!el) return resolve(null)
-    requestAnimationFrame(() => {
+    readQueue.push({ el, resolve })
+    scheduleFrame()
+  })
+}
+
+// Smooth scroll that uses the batched read/write scheduler. This avoids nested rAFs
+// and ensures layout reads happen before the scroll write.
+export function smoothScrollToElement(targetElement, navbarHeight = 80, extraOffset = 16) {
+  if (!targetElement) return
+
+  readRect(targetElement).then((rect) => {
+    if (!rect) return
+    const elementTop = rect.top + (typeof window !== 'undefined' ? window.scrollY : 0)
+    const offset = (navbarHeight || 0) + (extraOffset || 0)
+    const targetScrollY = Math.max(0, elementTop - offset)
+
+    // Schedule the actual scrolling as a write in the next frame
+    writeQueue.push(() => {
       try {
-        const r = el.getBoundingClientRect()
-        resolve(r)
+        window.scrollTo({ top: targetScrollY, behavior: 'smooth' })
       } catch (e) {
-        resolve(null)
+        try { window.scrollTo(0, targetScrollY) } catch (e) {}
       }
     })
-  })
+    scheduleFrame()
+  }).catch(() => {})
 }

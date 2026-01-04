@@ -321,6 +321,15 @@ const ProfileCardComponent = ({
   const rectCacheRef = useRef({ left: 0, top: 0, width: 0, height: 0 });
   const rectCacheValidRef = useRef(false);
 
+  // Cache CSS var numbers that are read frequently during interactions to avoid
+  // repeated getComputedStyle calls on every pointer event which can cause layout reads.
+  const cssVarCacheRef = useRef({
+    enterTransitionMs: ANIMATION_CONFIG.ENTER_TRANSITION_MS,
+    initialXOffset: ANIMATION_CONFIG.INITIAL_X_OFFSET,
+    initialYOffset: ANIMATION_CONFIG.INITIAL_Y_OFFSET,
+    deviceBetaOffset: ANIMATION_CONFIG.DEVICE_BETA_OFFSET
+  });
+
   const getOffsets = (evt, el) => {
     // If cache is not ready, return null so callers can defer reads to rAF
     if (!rectCacheValidRef.current) return null;
@@ -334,10 +343,11 @@ const ProfileCardComponent = ({
   const updateRectCacheNow = (el) => {
     const s = el || shellRef.current;
     if (!s) return;
+    // If cache is already valid, return it immediately to avoid a layout read
+    if (rectCacheValidRef.current) return Promise.resolve(rectCacheRef.current);
+
     // Use async read to avoid forced synchronous layout reads
     try {
-      // Prefer the shared helper which schedules the read in rAF
-      // and returns a Promise resolving to the DOMRect-like object
       return readRect(s).then((r) => {
         if (!r) return null;
         rectCacheRef.current = { left: r.left, top: r.top, width: r.width, height: r.height };
@@ -372,27 +382,39 @@ const ProfileCardComponent = ({
     (event) => {
       const shell = shellRef.current;
       if (!shell || !tiltEngine) return;
-
-      // Attempt to use cached offsets; if cache missing, defer layout read to rAF
+      // Attempt to use cached offsets; if cache missing, defer layout reads then apply writes together
       const offsets = getOffsets(event, shell);
 
-      shell.classList.add('active');
-      shell.classList.add('entering');
-      if (enterTimerRef.current) window.clearTimeout(enterTimerRef.current);
-      const enterMs = readCssVarNumber(wrapRef.current, '--pc-enter-transition-ms', ANIMATION_CONFIG.ENTER_TRANSITION_MS);
-      enterTimerRef.current = window.setTimeout(() => {
-        shell.classList.remove('entering');
-      }, enterMs);
+        const applyEnter = (o) => {
+        // Batch writes in one frame to avoid interleaved layout reads
+        requestAnimationFrame(() => {
+          if (!shellRef.current) return;
+          const el = shellRef.current;
+          el.classList.add('active');
+          el.classList.add('entering');
+          if (enterTimerRef.current) window.clearTimeout(enterTimerRef.current);
+          const enterMs = cssVarCacheRef.current.enterTransitionMs || ANIMATION_CONFIG.ENTER_TRANSITION_MS;
+          enterTimerRef.current = window.setTimeout(() => {
+            el.classList.remove('entering');
+          }, enterMs);
+
+          if (o) tiltEngine.setTarget(o.x, o.y);
+        });
+      };
 
       if (offsets) {
-        tiltEngine.setTarget(offsets.x, offsets.y);
+        // We have cached offsets; apply enter in next frame
+        applyEnter(offsets);
         return;
       }
 
+      // Cache not ready — schedule an async read then apply writes in same frame
+      // updateRectCacheNow will use cached value when available to avoid extra reads
       requestAnimationFrame(() => {
-        updateRectCacheNow(shell);
-        const o = getOffsets(event, shell);
-        if (o) tiltEngine.setTarget(o.x, o.y);
+        updateRectCacheNow(shell).then(() => {
+          const o = getOffsets(event, shell);
+          applyEnter(o);
+        });
       });
     },
     [tiltEngine]
@@ -439,7 +461,7 @@ const ProfileCardComponent = ({
           const height = (dims && dims.height) || (r ? r.height : 0) || 0;
           const centerX = width * 0.5;
           const centerY = height * 0.5;
-          const deviceBetaOffset = readCssVarNumber(wrapRef.current, '--pc-device-beta-offset', ANIMATION_CONFIG.DEVICE_BETA_OFFSET);
+          const deviceBetaOffset = cssVarCacheRef.current.deviceBetaOffset || ANIMATION_CONFIG.DEVICE_BETA_OFFSET;
           const x = clamp(centerX + gamma * mobileTiltSensitivity, 0, width);
           const y = clamp(
               centerY + (beta - deviceBetaOffset) * mobileTiltSensitivity,
@@ -511,11 +533,11 @@ const ProfileCardComponent = ({
     const initTilt = () => {
       requestAnimationFrame(() => {
         if (!shellRef.current) return;
-        
-        // Adjust initial offsets for mobile devices and read from CSS vars
+
+        // Adjust initial offsets for mobile devices using cached CSS vars
         const isMobile = window.innerWidth <= 768;
-        const cssX = readCssVarNumber(wrapRef.current, '--pc-initial-x-offset', ANIMATION_CONFIG.INITIAL_X_OFFSET);
-        const cssY = readCssVarNumber(wrapRef.current, '--pc-initial-y-offset', ANIMATION_CONFIG.INITIAL_Y_OFFSET);
+        const cssX = cssVarCacheRef.current.initialXOffset || ANIMATION_CONFIG.INITIAL_X_OFFSET;
+        const cssY = cssVarCacheRef.current.initialYOffset || ANIMATION_CONFIG.INITIAL_Y_OFFSET;
         const xOffset = isMobile ? cssX * 0.5 : cssX;
         const yOffset = isMobile ? cssY * 0.5 : cssY;
 
@@ -527,7 +549,7 @@ const ProfileCardComponent = ({
         const initialY = yOffset;
         tiltEngine.setImmediate(initialX, initialY);
         tiltEngine.toCenter();
-        const initialDuration = readCssVarNumber(wrapRef.current, '--pc-initial-duration', ANIMATION_CONFIG.INITIAL_DURATION);
+        const initialDuration = cssVarCacheRef.current.initialDuration || ANIMATION_CONFIG.INITIAL_DURATION;
         tiltEngine.beginInitial(initialDuration);
       });
     };
@@ -538,6 +560,26 @@ const ProfileCardComponent = ({
     } else {
       setTimeout(initTilt, 300);
     }
+
+    // Populate cached CSS vars now and on resize; this minimizes computedStyle calls
+    const populateCssVars = () => {
+      try {
+        const base = wrapRef.current || document.documentElement;
+        cssVarCacheRef.current.enterTransitionMs = readCssVarNumber(base, '--pc-enter-transition-ms', ANIMATION_CONFIG.ENTER_TRANSITION_MS);
+        cssVarCacheRef.current.initialXOffset = readCssVarNumber(base, '--pc-initial-x-offset', ANIMATION_CONFIG.INITIAL_X_OFFSET);
+        cssVarCacheRef.current.initialYOffset = readCssVarNumber(base, '--pc-initial-y-offset', ANIMATION_CONFIG.INITIAL_Y_OFFSET);
+        cssVarCacheRef.current.deviceBetaOffset = readCssVarNumber(base, '--pc-device-beta-offset', ANIMATION_CONFIG.DEVICE_BETA_OFFSET);
+        // Keep an initialDuration entry if present
+        cssVarCacheRef.current.initialDuration = readCssVarNumber(base, '--pc-initial-duration', ANIMATION_CONFIG.INITIAL_DURATION);
+      } catch (e) {}
+    };
+
+    populateCssVars();
+    const cssResizeHandler = () => {
+      // Re-populate cached CSS vars on resize in rAF to avoid layout reads during interaction
+      requestAnimationFrame(populateCssVars);
+    };
+    window.addEventListener('resize', cssResizeHandler, { passive: true });
 
     // Handle resize to invalidate cache
     const handleResize = () => {
@@ -568,6 +610,7 @@ const ProfileCardComponent = ({
       shell.removeEventListener('click', handleClick);
       window.removeEventListener('deviceorientation', deviceOrientationHandler);
       window.removeEventListener('resize', handleResize);
+      window.removeEventListener('resize', cssResizeHandler);
       if (enterTimerRef.current) window.clearTimeout(enterTimerRef.current);
       if (leaveRafRef.current) cancelAnimationFrame(leaveRafRef.current);
       tiltEngine.cancel();

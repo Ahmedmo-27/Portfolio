@@ -10,7 +10,7 @@ import FileText from 'lucide-react/dist/esm/icons/file-text'
 import Download from 'lucide-react/dist/esm/icons/download'
 import { assetUrl } from '../utils/assetUrl'
 import { useNavigate } from 'react-router-dom'
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 
 const achievements = [
   {
@@ -70,15 +70,35 @@ export default function Achievements() {
   
   
   const navigate = useNavigate()
+  const navbarHeightRef = useRef(getNavbarHeight() || 80)
+
+  useEffect(() => {
+    let rafId = null
+    const updateHeight = () => {
+      if (rafId != null) return
+      rafId = requestAnimationFrame(() => {
+        rafId = null
+        navbarHeightRef.current = getNavbarHeight() || 80
+      })
+    }
+
+    // initialize
+    navbarHeightRef.current = getNavbarHeight() || 80
+    window.addEventListener('resize', updateHeight, { passive: true })
+    return () => {
+      window.removeEventListener('resize', updateHeight)
+      if (rafId) cancelAnimationFrame(rafId)
+    }
+  }, [])
   
   const handleExperienceClick = (e) => {
     e.preventDefault()
     navigate('/#experience')
     // Smooth scroll to experience section after navigation
-    // Defer to shared helper that batches layout reads
-    window.requestAnimationFrame(() => {
+    // Defer to shared helper that batches layout reads; use cached navbar height
+    requestAnimationFrame(() => {
       const experienceSection = document.getElementById('experience')
-      smoothScrollToElement(experienceSection, getNavbarHeight() || 80, 16)
+      smoothScrollToElement(experienceSection, navbarHeightRef.current || 80, 16)
     })
   }
 
@@ -86,10 +106,10 @@ export default function Achievements() {
     e.preventDefault()
     navigate('/#projects')
     // Smooth scroll to projects section after navigation
-    // Defer to shared helper that batches layout reads
-    window.requestAnimationFrame(() => {
+    // Defer to shared helper that batches layout reads; use cached navbar height
+    requestAnimationFrame(() => {
       const projectsSection = document.getElementById('projects')
-      smoothScrollToElement(projectsSection, getNavbarHeight() || 80, 16)
+      smoothScrollToElement(projectsSection, navbarHeightRef.current || 80, 16)
     })
   }
 

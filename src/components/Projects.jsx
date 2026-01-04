@@ -5,6 +5,7 @@ import ChevronRight from 'lucide-react/dist/esm/icons/chevron-right'
 import CircuitBoard from './CircuitBoard'
 import ViewMoreButton from './ViewMoreButton'
 const MediaCarousel = lazy(() => import('./MediaCarousel'))
+import { MediaSkeleton } from './SkeletonLoader'
 import { projects } from '../data/projects'
 import { useInViewOnce } from '../utils/useInViewOnce'
 import { observe } from '../utils/sharedObserver'
@@ -35,6 +36,38 @@ export default function Projects() {
   const [mediaShouldLoad, setMediaShouldLoad] = useState({}) // projectId -> boolean
   const projectItemElsRef = useRef({}) // projectId -> HTMLElement
   const mediaObserverRef = useRef({})
+  const pendingUpdatesRef = useRef(new Set())
+  const processRafRef = useRef(null)
+
+  // schedule processing of pending updates in a single rAF
+  const scheduleProcess = () => {
+    if (processRafRef.current != null) return
+    processRafRef.current = requestAnimationFrame(() => {
+      processRafRef.current = null
+      const pending = pendingUpdatesRef.current
+      if (pending.size === 0) return
+      setMediaShouldLoad((prev) => {
+        const updates = {}
+        let hasChanges = false
+        for (const projectId of pending) {
+          if (!prev[projectId]) {
+            updates[projectId] = true
+            hasChanges = true
+          }
+        }
+        return hasChanges ? { ...prev, ...updates } : prev
+      })
+      pending.clear()
+    })
+  }
+
+  const observeCallback = (entry) => {
+    if (!entry.isIntersecting) return
+    const projectId = entry.target?.dataset?.projectId
+    if (!projectId) return
+    pendingUpdatesRef.current.add(projectId)
+    scheduleProcess()
+  }
 
   // Lazy load heavy media when the project card approaches viewport
   // Only start observing after the section is in view to avoid unnecessary work
@@ -42,43 +75,7 @@ export default function Projects() {
     // Don't set up observer until section is in view
     if (!isInView) return
 
-    let pendingUpdates = new Set()
-    let rafId = null
-    
-    const processUpdates = () => {
-      if (pendingUpdates.size > 0) {
-        setMediaShouldLoad((prev) => {
-          const updates = {}
-          let hasChanges = false
-          for (const projectId of pendingUpdates) {
-            if (!prev[projectId]) {
-              updates[projectId] = true
-              hasChanges = true
-            }
-          }
-          return hasChanges ? { ...prev, ...updates } : prev
-        })
-        pendingUpdates.clear()
-      }
-      rafId = null
-    }
-    
     const cleanups = {}
-    const observeCallback = (entry) => {
-      if (!entry.isIntersecting) return
-      const projectId = entry.target?.dataset?.projectId
-      if (!projectId) return
-      pendingUpdates.add(projectId)
-      if (pendingUpdates.size > 0 && !rafId) {
-        rafId = requestAnimationFrame(processUpdates)
-      }
-    }
-
-    mediaObserverRef.current = {}
-
-    // Observe all existing project elements. Rely on IntersectionObserver callbacks
-    // to mark items as candidates; avoid an immediate getBoundingClientRect pass
-    // on mount which can force layout in some browsers.
     const elements = Object.values(projectItemElsRef.current)
     for (const el of elements) {
       if (el) {
@@ -94,9 +91,40 @@ export default function Projects() {
         try { fn() } catch (e) {}
       }
       mediaObserverRef.current = {}
-      if (rafId) cancelAnimationFrame(rafId)
+      pendingUpdatesRef.current.clear()
+      if (processRafRef.current) cancelAnimationFrame(processRafRef.current)
+      processRafRef.current = null
     }
   }, [isInView])
+
+  // Stable ref callback to register/unregister project item elements
+  const handleProjectRef = (projectId, delay) => (el) => {
+    if (el) {
+      batchSetProperty(el, '--animation-delay', delay)
+      projectItemElsRef.current[projectId] = el
+
+      // If section already in view, schedule observer registration inside rAF
+      if (isInView && mediaObserverRef.current && typeof mediaObserverRef.current._callback === 'function') {
+        requestAnimationFrame(() => {
+          // Avoid double-registering
+          if (!mediaObserverRef.current[projectId]) {
+            try {
+              const cleanup = observe(el, mediaObserverRef.current._callback, { threshold: 0.1, rootMargin: '200px' })
+              mediaObserverRef.current[projectId] = cleanup
+            } catch (e) {
+              // ignore observer errors
+            }
+          }
+        })
+      }
+    } else {
+      delete projectItemElsRef.current[projectId]
+      if (mediaObserverRef.current && mediaObserverRef.current[projectId]) {
+        try { mediaObserverRef.current[projectId]() } catch (e) {}
+        delete mediaObserverRef.current[projectId]
+      }
+    }
+  }
 
   return (
     <section 
@@ -132,22 +160,7 @@ export default function Projects() {
               <article
                 key={project.id}
                 data-project-id={project.id}
-                    ref={(el) => {
-                  if (el) {
-                    batchSetProperty(el, '--animation-delay', `${index * 0.15 + 0.2}s`)
-                    projectItemElsRef.current[project.id] = el
-                    if (mediaObserverRef.current && mediaObserverRef.current._callback) {
-                      const cleanup = observe(el, mediaObserverRef.current._callback, { threshold: 0.1, rootMargin: '200px' })
-                      mediaObserverRef.current[project.id] = cleanup
-                    }
-                  } else {
-                    delete projectItemElsRef.current[project.id]
-                    if (mediaObserverRef.current && mediaObserverRef.current[project.id]) {
-                      try { mediaObserverRef.current[project.id]() } catch (e) {}
-                      delete mediaObserverRef.current[project.id]
-                    }
-                  }
-                }}
+                    ref={handleProjectRef(project.id, `${index * 0.15 + 0.2}s`)}
                 className={`${project.isHighlighted ? 'relative' : ''} projects-item animate-fade-in-up`}
                 role="listitem"
                 aria-labelledby={`project-title-${project.id}`}
@@ -170,7 +183,7 @@ export default function Projects() {
                     {/* Media Section */}
                     <div className={`${index === 0 ? 'lg:col-span-3' : ''} relative bg-surface/50 p-4 sm:p-6`}>
                       <div className="aspect-video rounded-xl bg-surface overflow-hidden relative">
-                        <Suspense fallback={<div className="w-full h-full bg-surface animate-pulse rounded-xl" aria-hidden="true" />}>
+                        <Suspense fallback={<MediaSkeleton className="w-full h-full" aria-hidden="true" />}>
                           <MediaCarousel 
                             project={project} 
                             shouldLoad={mediaShouldLoad[project.id] || false} 

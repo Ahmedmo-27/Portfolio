@@ -42,6 +42,7 @@ export default function Navbar() {
   const REVEAL_INTERVAL = 100
   // Header ref (visual) — size is provided by shared util
   const navbarRef = useRef(null)
+  const navbarHeightRef = useRef(getNavbarHeight() || (typeof window !== 'undefined' && window.innerWidth >= 768 ? 80 : 70))
   
   // Check if we're on the home page or projects page (memoized to avoid recalculation)
   const isHomePage = useMemo(() => location.pathname === '/', [location.pathname])
@@ -160,7 +161,7 @@ export default function Navbar() {
 
         let topSection = null
         let topScore = 0
-        const navbarHeight = getNavbarHeight() || 100
+        const navbarHeight = navbarHeightRef.current || 100
 
         if (intersectingSectionsSnapshot.size > 0) {
           intersectingSectionsSnapshot.forEach(({ ratio, rect }, id) => {
@@ -174,20 +175,31 @@ export default function Navbar() {
           })
         }
 
+        // Decide desired active section and desired URL hash once, then apply writes
+        let desiredActive = ''
+        let desiredHash = null // null = no change, '' = remove hash, 'id' = set hash
+
         if (heroInView) {
-          setActiveSection('')
-          if (location.hash) {
-            window.history.replaceState(null, '', location.pathname)
-          }
+          desiredActive = ''
+          if (location.hash) desiredHash = ''
         } else if (topSection) {
-          setActiveSection(topSection)
-          if (window.location.hash !== `#${topSection}`) {
-            window.history.replaceState(null, '', `#${topSection}`)
-          }
+          desiredActive = topSection
+          desiredHash = topSection
         } else if (window.scrollY < 100) {
-          setActiveSection('')
-          if (location.hash) {
-            window.history.replaceState(null, '', location.pathname)
+          desiredActive = ''
+          if (location.hash) desiredHash = ''
+        }
+
+        // Apply state change if different
+        setActiveSection((prev) => (prev === desiredActive ? prev : desiredActive))
+
+        // Apply history change once if needed
+        if (desiredHash !== null) {
+          const currentHash = (window.location.hash || '')
+          const desiredHashString = desiredHash ? `#${desiredHash}` : ''
+          if (currentHash !== desiredHashString) {
+            const url = desiredHashString ? `${location.pathname}${desiredHashString}` : location.pathname
+            window.history.replaceState(null, '', url)
           }
         }
       })
@@ -260,6 +272,26 @@ export default function Navbar() {
     }
   }, [isHomePage, location.pathname])
 
+  // Keep a cached navbar height and update on resize (debounced via rAF)
+  useEffect(() => {
+    let rafId = null
+    const updateHeight = () => {
+      if (rafId != null) return
+      rafId = requestAnimationFrame(() => {
+        rafId = null
+        navbarHeightRef.current = getNavbarHeight() || (window.innerWidth >= 768 ? 80 : 70)
+      })
+    }
+
+    // initialize
+    navbarHeightRef.current = getNavbarHeight() || (window.innerWidth >= 768 ? 80 : 70)
+    window.addEventListener('resize', updateHeight, { passive: true })
+    return () => {
+      window.removeEventListener('resize', updateHeight)
+      if (rafId) cancelAnimationFrame(rafId)
+    }
+  }, [])
+
   // If not on the home page, links are already available — show button
   useEffect(() => {
     if (!isHomePage) setLinksStartedLoading(true)
@@ -283,12 +315,14 @@ export default function Navbar() {
 
   // Prevent body scroll when mobile menu is open
   useEffect(() => {
+    let rafId = null
     if (isMobileMenuOpen) {
-      document.body.classList.add('navbar-menu-open')
+      rafId = requestAnimationFrame(() => document.body.classList.add('navbar-menu-open'))
     } else {
-      document.body.classList.remove('navbar-menu-open')
+      rafId = requestAnimationFrame(() => document.body.classList.remove('navbar-menu-open'))
     }
     return () => {
+      if (rafId) cancelAnimationFrame(rafId)
       document.body.classList.remove('navbar-menu-open')
     }
   }, [isMobileMenuOpen])
@@ -309,7 +343,8 @@ export default function Navbar() {
       // Close mobile menu immediately when a link is clicked
       if (wasMobileMenuOpen) {
         setIsMobileMenuOpen(false)
-        document.body.classList.remove('navbar-menu-open')
+        // schedule removal to avoid synchronous layout
+        requestAnimationFrame(() => document.body.classList.remove('navbar-menu-open'))
       }
       
       // If not on home page, navigate to home first, then scroll to section
@@ -339,9 +374,14 @@ export default function Navbar() {
     }
   }
 
+  // Apply a fixed inline height based on the cached navbar height to avoid
+  // padding-driven height changes that can cause layout shifts when the
+  // header toggles between states (e.g. 'py-5' -> 'py-3'). Using a stable
+  // height prevents content jumping beneath the fixed header.
   return (
     <header
       ref={navbarRef}
+      style={{ height: `${navbarHeightRef.current || 80}px` }}
       className={`fixed top-0 left-0 right-0 z-50 transition-[padding,background-color,backdrop-filter] duration-200 ${
         isScrolled || isMobileMenuOpen ? 'glass py-3' : 'py-5'
       }`}
