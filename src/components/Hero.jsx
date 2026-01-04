@@ -45,7 +45,7 @@ const Hero = () => {
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
         <div className="grid lg:grid-cols-2 gap-8 md:gap-12 lg:gap-16 items-center">
           {/* Left Content (show skeleton placeholders while loading) */}
-          <div className="text-center lg:text-left order-2 lg:order-1">
+          <div className="text-center lg:text-left order-2 lg:order-1 hero-col-preserve">
             {/* Status Badge */}
             <div className="mb-4 md:mb-6 flex justify-center lg:justify-start">
               {isLoading ? (
