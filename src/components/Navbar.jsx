@@ -162,12 +162,14 @@ export default function Navbar() {
         let topSection = null
         let topScore = 0
         const navbarHeight = navbarHeightRef.current || 100
+        const winH = window.innerHeight
+        const currentScrollY = window.scrollY
 
         if (intersectingSectionsSnapshot.size > 0) {
           intersectingSectionsSnapshot.forEach(({ ratio, rect }, id) => {
             if (!rect) return
             const topOffset = Math.max(0, rect.top - navbarHeight)
-            const score = ratio * (1 - Math.min(topOffset / window.innerHeight, 0.5))
+            const score = ratio * (1 - Math.min(topOffset / winH, 0.5))
             if (score > topScore) {
               topScore = score
               topSection = id
@@ -190,8 +192,9 @@ export default function Navbar() {
           if (location.hash) desiredHash = ''
         }
 
-        // Apply state change if different
-        setActiveSection((prev) => (prev === desiredActive ? prev : desiredActive))
+        // NOTE: activeSection (link highlight) is intentionally derived only
+        // from the URL hash / router location elsewhere. We avoid setting
+        // it here to ensure link highlight relies only on URL state.
 
         // Apply history change once if needed
         if (desiredHash !== null) {
@@ -199,6 +202,7 @@ export default function Navbar() {
           const desiredHashString = desiredHash ? `#${desiredHash}` : ''
           if (currentHash !== desiredHashString) {
             const url = desiredHashString ? `${location.pathname}${desiredHashString}` : location.pathname
+            // Only update history if it actually changes
             window.history.replaceState(null, '', url)
           }
         }
@@ -316,14 +320,16 @@ export default function Navbar() {
   // Prevent body scroll when mobile menu is open
   useEffect(() => {
     let rafId = null
-    if (isMobileMenuOpen) {
-      rafId = requestAnimationFrame(() => document.body.classList.add('navbar-menu-open'))
-    } else {
-      rafId = requestAnimationFrame(() => document.body.classList.remove('navbar-menu-open'))
+    const applyClassChange = () => {
+      const has = document.body.classList.contains('navbar-menu-open')
+      if (isMobileMenuOpen && !has) document.body.classList.add('navbar-menu-open')
+      else if (!isMobileMenuOpen && has) document.body.classList.remove('navbar-menu-open')
     }
+    rafId = requestAnimationFrame(applyClassChange)
     return () => {
       if (rafId) cancelAnimationFrame(rafId)
-      document.body.classList.remove('navbar-menu-open')
+      // Ensure we remove the class on unmount to avoid leaving body locked
+      if (document.body.classList.contains('navbar-menu-open')) document.body.classList.remove('navbar-menu-open')
     }
   }, [isMobileMenuOpen])
 
@@ -356,7 +362,7 @@ export default function Navbar() {
       const targetElement = document.getElementById(targetId)
       if (!targetElement) return
 
-      const navbarHeight = getNavbarHeight() || (window.innerWidth >= 768 ? 80 : 70)
+      const navbarHeight = navbarHeightRef.current || (window.innerWidth >= 768 ? 80 : 70)
 
       const doScroll = () => {
         smoothScrollToElement(targetElement, navbarHeight, 16)
