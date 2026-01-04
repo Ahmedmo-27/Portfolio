@@ -2,6 +2,8 @@ import React, { useEffect, useRef, useCallback, useMemo, useState } from 'react'
 import './ProfileCard.css';
 import SkeletonLoader from './SkeletonLoader'
 import batchSetProperty from '../utils/batchStyle'
+import setProfileVars from '../utils/profileGeometry'
+import { readRect } from '../utils/geometry'
 
 // Default gradient adapts to theme via CSS variables
 const DEFAULT_INNER_GRADIENT = 'linear-gradient(145deg, rgba(96, 73, 110, 0.55) 0%, rgba(113, 196, 255, 0.27) 100%)';
@@ -13,6 +15,21 @@ const ANIMATION_CONFIG = {
   DEVICE_BETA_OFFSET: 20,
   ENTER_TRANSITION_MS: 180
 };
+
+// Read numeric CSS variable (supports px and ms suffixes)
+function readCssVarNumber(el, name, fallback) {
+  try {
+    const node = el || document.documentElement;
+    const s = getComputedStyle(node).getPropertyValue(name);
+    if (!s) return fallback;
+    const str = s.trim();
+    // remove trailing ms or px
+    const n = parseFloat(str.replace(/ms$|px$/i, ''))
+    return Number.isFinite(n) ? n : fallback
+  } catch (e) {
+    return fallback
+  }
+}
 
 const clamp = (v, min = 0, max = 100) => Math.min(Math.max(v, min), max);
 const round = (v, precision = 3) => parseFloat(v.toFixed(precision));
@@ -118,12 +135,25 @@ const ProfileCardComponent = ({
       if (dimensionsDirty) {
         const shell = shellRef.current;
         if (shell) {
-          cachedWidth = shell.clientWidth || 1;
-          cachedHeight = shell.clientHeight || 1;
-          dimensionsDirty = false;
+          // Schedule an async read to avoid forcing a synchronous layout
+          readRect(shell).then((r) => {
+            if (r) {
+              cachedWidth = r.width || cachedWidth || 1;
+              cachedHeight = r.height || cachedHeight || 1;
+            } else {
+              cachedWidth = cachedWidth || 1;
+              cachedHeight = cachedHeight || 1;
+            }
+            dimensionsDirty = false;
+          }).catch(() => {
+            // Ensure we mark as not dirty to avoid repeated sync reads
+            cachedWidth = cachedWidth || 1;
+            cachedHeight = cachedHeight || 1;
+            dimensionsDirty = false;
+          })
         }
       }
-      return { width: cachedWidth, height: cachedHeight };
+      return { width: cachedWidth || 1, height: cachedHeight || 1 };
     };
 
       // Cache last values to avoid redundant style updates
@@ -160,28 +190,10 @@ const ProfileCardComponent = ({
             if (!pendingStyleUpdate || !wrapRef.current) return;
             
             const { percentX, percentY } = pendingStyleUpdate;
-            pendingStyleUpdate = null;
-            
-            const wrap = wrapRef.current;
-            const centerX = percentX - 50;
-            const centerY = percentY - 50;
-
-            // Pre-calculate common values
-            const percentXDiv100 = percentX * 0.01;
-            const percentYDiv100 = percentY * 0.01;
-            const centerDist = Math.hypot(centerY, centerX);
-            const pointerFromCenter = clamp(centerDist * 0.02, 0, 1);
-
-            // Batch CSS variable updates (CSS vars don't cause reflows, but batching reduces function call overhead)
-            wrap.style.setProperty('--pointer-x', `${percentX}%`);
-            wrap.style.setProperty('--pointer-y', `${percentY}%`);
-            wrap.style.setProperty('--background-x', `${adjust(percentX, 0, 100, 35, 65)}%`);
-            wrap.style.setProperty('--background-y', `${adjust(percentY, 0, 100, 35, 65)}%`);
-            wrap.style.setProperty('--pointer-from-center', `${pointerFromCenter}`);
-            wrap.style.setProperty('--pointer-from-top', `${percentYDiv100}`);
-            wrap.style.setProperty('--pointer-from-left', `${percentXDiv100}`);
-            wrap.style.setProperty('--rotate-x', `${round(-centerX * 0.2)}deg`);
-            wrap.style.setProperty('--rotate-y', `${round(centerY * 0.25)}deg`);
+              pendingStyleUpdate = null;
+              const wrap = wrapRef.current;
+              // Offload calculations and batched writes to helper
+              setProfileVars(wrap, percentX, percentY)
           });
         }
       };
@@ -286,17 +298,12 @@ const ProfileCardComponent = ({
     const shell = shellRef.current
     if (!shell) return
 
-    // Initialize with current size — defer to rAF to avoid forced reflow
-    requestAnimationFrame(() => {
-      try {
-        const rect = shell.getBoundingClientRect()
-        if (tiltEngine.updateDimensions) {
-          tiltEngine.updateDimensions(rect.width || shell.clientWidth || 0, rect.height || shell.clientHeight || 0)
-        }
-      } catch (e) {
-        // ignore if element not available
+    // Initialize with current size using shared readRect helper
+    readRect(shell).then((rect) => {
+      if (rect && tiltEngine.updateDimensions) {
+        tiltEngine.updateDimensions(rect.width || 0, rect.height || 0)
       }
-    })
+    }).catch(() => {})
 
     const ro = new ResizeObserver((entries) => {
       for (const entry of entries) {
@@ -327,10 +334,19 @@ const ProfileCardComponent = ({
   const updateRectCacheNow = (el) => {
     const s = el || shellRef.current;
     if (!s) return;
-    const r = s.getBoundingClientRect();
-    rectCacheRef.current = { left: r.left, top: r.top, width: r.width, height: r.height };
-    rectCacheValidRef.current = true;
-    return rectCacheRef.current;
+    // Use async read to avoid forced synchronous layout reads
+    try {
+      // Prefer the shared helper which schedules the read in rAF
+      // and returns a Promise resolving to the DOMRect-like object
+      return readRect(s).then((r) => {
+        if (!r) return null;
+        rectCacheRef.current = { left: r.left, top: r.top, width: r.width, height: r.height };
+        rectCacheValidRef.current = true;
+        return rectCacheRef.current;
+      }).catch(() => null);
+    } catch (e) {
+      return null;
+    }
   };
 
   const handlePointerMove = useCallback(
@@ -363,9 +379,10 @@ const ProfileCardComponent = ({
       shell.classList.add('active');
       shell.classList.add('entering');
       if (enterTimerRef.current) window.clearTimeout(enterTimerRef.current);
+      const enterMs = readCssVarNumber(wrapRef.current, '--pc-enter-transition-ms', ANIMATION_CONFIG.ENTER_TRANSITION_MS);
       enterTimerRef.current = window.setTimeout(() => {
         shell.classList.remove('entering');
-      }, ANIMATION_CONFIG.ENTER_TRANSITION_MS);
+      }, enterMs);
 
       if (offsets) {
         tiltEngine.setTarget(offsets.x, offsets.y);
@@ -412,23 +429,25 @@ const ProfileCardComponent = ({
       const dimensions = tiltEngine.getDimensions ? tiltEngine.getDimensions() : null;
       if (!dimensions || dimensions.width === 0 || dimensions.height === 0) {
         // Defer dimension reads to next frame to avoid forced reflow
-        requestAnimationFrame(() => {
-          const shell = shellRef.current;
-          if (!shell) return;
+        const shell = shellRef.current;
+        if (!shell) return;
+        // Use shared readRect to defer layout read
+        readRect(shell).then((r) => {
           // Prefer cached dimensions from tiltEngine to avoid forced layout reads
-          const dims = tiltEngine.getDimensions ? tiltEngine.getDimensions() : { width: shell.clientWidth, height: shell.clientHeight };
-          const width = dims.width || shell.clientWidth || 0;
-          const height = dims.height || shell.clientHeight || 0;
+          const dims = tiltEngine.getDimensions ? tiltEngine.getDimensions() : null;
+          const width = (dims && dims.width) || (r ? r.width : 0) || 0;
+          const height = (dims && dims.height) || (r ? r.height : 0) || 0;
           const centerX = width * 0.5;
           const centerY = height * 0.5;
+          const deviceBetaOffset = readCssVarNumber(wrapRef.current, '--pc-device-beta-offset', ANIMATION_CONFIG.DEVICE_BETA_OFFSET);
           const x = clamp(centerX + gamma * mobileTiltSensitivity, 0, width);
           const y = clamp(
-            centerY + (beta - ANIMATION_CONFIG.DEVICE_BETA_OFFSET) * mobileTiltSensitivity,
-            0,
-            height
-          );
+              centerY + (beta - deviceBetaOffset) * mobileTiltSensitivity,
+              0,
+              height
+            );
           tiltEngine.setTarget(x, y);
-        });
+        }).catch(() => {});
         return;
       } else {
         const centerX = dimensions.width * 0.5;
@@ -493,20 +512,23 @@ const ProfileCardComponent = ({
       requestAnimationFrame(() => {
         if (!shellRef.current) return;
         
-        // Adjust initial offsets for mobile devices
+        // Adjust initial offsets for mobile devices and read from CSS vars
         const isMobile = window.innerWidth <= 768;
-        const xOffset = isMobile ? ANIMATION_CONFIG.INITIAL_X_OFFSET * 0.5 : ANIMATION_CONFIG.INITIAL_X_OFFSET;
-        const yOffset = isMobile ? ANIMATION_CONFIG.INITIAL_Y_OFFSET * 0.5 : ANIMATION_CONFIG.INITIAL_Y_OFFSET;
-        
+        const cssX = readCssVarNumber(wrapRef.current, '--pc-initial-x-offset', ANIMATION_CONFIG.INITIAL_X_OFFSET);
+        const cssY = readCssVarNumber(wrapRef.current, '--pc-initial-y-offset', ANIMATION_CONFIG.INITIAL_Y_OFFSET);
+        const xOffset = isMobile ? cssX * 0.5 : cssX;
+        const yOffset = isMobile ? cssY * 0.5 : cssY;
+
         // Batch read: get dimensions once
         const shell = shellRef.current;
-        const dims = tiltEngine.getDimensions ? tiltEngine.getDimensions() : { width: shell.clientWidth || 0 };
+        const dims = tiltEngine.getDimensions ? tiltEngine.getDimensions() : { width: 0 };
         const shellWidth = dims.width || 0;
         const initialX = shellWidth - xOffset;
         const initialY = yOffset;
         tiltEngine.setImmediate(initialX, initialY);
         tiltEngine.toCenter();
-        tiltEngine.beginInitial(ANIMATION_CONFIG.INITIAL_DURATION);
+        const initialDuration = readCssVarNumber(wrapRef.current, '--pc-initial-duration', ANIMATION_CONFIG.INITIAL_DURATION);
+        tiltEngine.beginInitial(initialDuration);
       });
     };
     
@@ -530,13 +552,12 @@ const ProfileCardComponent = ({
     // interaction causing a synchronous getBoundingClientRect read.
     const refreshOnResize = () => {
       if (!shellRef.current) return
-      requestAnimationFrame(() => {
-        const s = shellRef.current
-        if (!s) return
-        const r = s.getBoundingClientRect()
+      const s = shellRef.current
+      readRect(s).then((r) => {
+        if (!r) return
         rectCacheRef.current = { left: r.left, top: r.top, width: r.width, height: r.height }
         rectCacheValidRef.current = true
-      })
+      }).catch(() => {})
     }
     window.addEventListener('resize', refreshOnResize, { passive: true })
 

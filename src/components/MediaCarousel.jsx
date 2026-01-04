@@ -282,35 +282,33 @@ function MediaCarousel({ project, shouldLoad = false }) {
               )}
 
               {(item.type === 'csv' || item.type === 'file') && (
-                <div className="w-full h-full bg-surface/70 flex items-center justify-center text-center">
-                  <div className="csv-preview-inner flex flex-col items-center justify-center">
-                    <div className="csv-preview-icon w-12 h-12 rounded-xl bg-surface border border-border flex items-center justify-center mb-3">
-                      <FileText className="w-6 h-6 text-primary-400" />
-                    </div>
-                    <p className="text-sm font-semibold text-foreground mb-1">
-                      {item.type === 'csv' ? 'Data file (CSV)' : 'Document'}
-                    </p>
-                    <p className="text-xs text-muted mb-3 break-all csv-filename">
-                      {(() => {
-                        const seg = String(item.src).split('/').pop() || ''
-                        try {
-                          return decodeURIComponent(seg)
-                        } catch (e) {
-                          return seg.replace(/%20/g, ' ')
-                        }
-                      })()}
-                    </p>
-                    <a
-                      href={assetUrl(item.src)}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="btn-cta text-xs px-3 py-1.5"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <FileText className="w-3.5 h-3.5" />
-                      Open {item.type === 'csv' ? 'CSV' : 'file'}
-                    </a>
+                <div className="w-full h-full bg-surface/70 flex flex-col items-center justify-center text-center csv-preview-simple">
+                  <div className="csv-preview-icon w-12 h-12 rounded-xl bg-surface border border-border flex items-center justify-center mb-3">
+                    <FileText className="w-6 h-6 text-primary-400" />
                   </div>
+                  <p className="text-sm font-semibold text-foreground mb-1">
+                    {item.type === 'csv' ? 'Data file (CSV)' : 'Document'}
+                  </p>
+                  <p className="text-xs text-muted mb-3 break-all csv-filename">
+                    {(() => {
+                      const seg = String(item.src).split('/').pop() || ''
+                      try {
+                        return decodeURIComponent(seg)
+                      } catch (e) {
+                        return seg.replace(/%20/g, ' ')
+                      }
+                    })()}
+                  </p>
+                  <a
+                    href={assetUrl(item.src)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn-cta text-xs px-3 py-1.5"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <FileText className="w-3.5 h-3.5" />
+                    Open {item.type === 'csv' ? 'CSV' : 'file'}
+                  </a>
                 </div>
               )}
             </div>

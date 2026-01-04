@@ -1,5 +1,14 @@
 /* Projects Component Styles */
 
+:root {
+  --projects-animation-delay-base: 0.2s;
+  --carousel-transition-duration: 200ms;
+  --carousel-transition-easing: ease-out;
+  --media-loading-overlay-bg: rgba(0, 0, 0, 0.4);
+  --media-spinner-size: 40px;
+  --media-spinner-duration: 800ms;
+}
+
 /* Animation delay utilities for project items */
 .projects-item {
   animation-delay: var(--animation-delay, 0.2s);
@@ -20,7 +29,7 @@
   width: 100%;
   height: 100%;
   /* Faster transition for better INP - GPU accelerated */
-  transition: transform 0.2s ease-out;
+  transition: transform var(--carousel-transition-duration, 0.2s) var(--carousel-transition-easing, ease-out);
   will-change: transform;
   /* Force GPU layer to prevent main thread blocking */
   transform: translateZ(0);
@@ -42,7 +51,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(0, 0, 0, 0.4);
+  background: var(--media-loading-overlay-bg, rgba(0, 0, 0, 0.4));
   backdrop-filter: blur(2px);
   z-index: 10;
   opacity: 0;
@@ -56,12 +65,12 @@
 }
 
 .media-loading-spinner {
-  width: 40px;
-  height: 40px;
+  width: var(--media-spinner-size, 40px);
+  height: var(--media-spinner-size, 40px);
   border: 3px solid rgba(255, 255, 255, 0.2);
   border-top-color: rgba(14, 165, 233, 0.9);
   border-radius: 50%;
-  animation: spin 0.8s linear infinite;
+  animation: spin var(--media-spinner-duration, 800ms) linear infinite;
 }
 
 @keyframes spin {

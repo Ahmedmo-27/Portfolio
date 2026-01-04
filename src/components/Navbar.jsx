@@ -5,6 +5,8 @@ import X from 'lucide-react/dist/esm/icons/x'
 import ThemeToggle from './ThemeToggle'
 import './Navbar.css'
 import { observe } from '../utils/sharedObserver'
+import { smoothScrollToElement } from '../utils/geometry'
+import { getNavbarHeight } from '../utils/navbarRect'
 
 const navLinks = [
   { name: 'About', href: '/#about' },
@@ -38,9 +40,8 @@ export default function Navbar() {
   const revealQueueRef = useRef([])
   const revealTimerRef = useRef(null)
   const REVEAL_INTERVAL = 100
-  // Header (navbar) size cache to avoid repetitive getBoundingClientRect reads
+  // Header ref (visual) — size is provided by shared util
   const navbarRef = useRef(null)
-  const navbarRectRef = useRef(null)
   
   // Check if we're on the home page or projects page (memoized to avoid recalculation)
   const isHomePage = useMemo(() => location.pathname === '/', [location.pathname])
@@ -159,7 +160,7 @@ export default function Navbar() {
 
         let topSection = null
         let topScore = 0
-        const navbarHeight = navbarRectRef.current ? navbarRectRef.current.height : 100
+        const navbarHeight = getNavbarHeight() || 100
 
         if (intersectingSectionsSnapshot.size > 0) {
           intersectingSectionsSnapshot.forEach(({ ratio, rect }, id) => {
@@ -292,31 +293,7 @@ export default function Navbar() {
     }
   }, [isMobileMenuOpen])
 
-  // Cache navbar bounding values using ResizeObserver to avoid repeated layout reads
-  useEffect(() => {
-    const node = navbarRef.current
-    if (!node) return
-
-      // Use ResizeObserver's contentRect to update navbar height without triggering layout reads
-      const ro = new ResizeObserver((entries) => {
-        if (!entries || !entries.length) return
-        const entry = entries[0]
-        if (entry.contentRect && entry.contentRect.height) {
-          navbarRectRef.current = { height: entry.contentRect.height }
-        } else {
-          // Fallback: defer a safe read to rAF
-          requestAnimationFrame(() => {
-            try {
-              const r = node.getBoundingClientRect()
-              navbarRectRef.current = { height: r.height }
-            } catch (e) {}
-          })
-        }
-      })
-      ro.observe(node)
-
-    return () => ro.disconnect()
-  }, [])
+  // Navbar height is handled by `src/utils/navbarRect.js`
 
   // Smooth scroll handler for navigation links
   const handleNavClick = (e, href) => {
@@ -343,41 +320,21 @@ export default function Navbar() {
       
       const targetElement = document.getElementById(targetId)
       if (!targetElement) return
-      
-      const scrollToTarget = () => {
-        // Batch DOM queries to avoid forced reflows
-        // Use requestAnimationFrame to batch all layout reads together
-        requestAnimationFrame(() => {
-          // Batch all DOM reads together to minimize reflows
-          const navbarRect = navbarRectRef.current
-          const elementRect = targetElement.getBoundingClientRect()
 
-          // Calculate values from batched reads
-          const navbarHeight = navbarRect ? navbarRect.height : (window.innerWidth >= 768 ? 80 : 70)
-          const elementTop = elementRect.top + window.scrollY
-          const offset = navbarHeight + 16
-          const targetScrollY = elementTop - offset
+      const navbarHeight = getNavbarHeight() || (window.innerWidth >= 768 ? 80 : 70)
 
-          // Batch write operations in next frame
-          requestAnimationFrame(() => {
-            window.scrollTo({
-              top: Math.max(0, targetScrollY),
-              behavior: 'smooth'
-            })
-            
-            // Update URL hash
-            window.history.replaceState(null, '', `#${targetId}`)
-          })
-        })
+      const doScroll = () => {
+        smoothScrollToElement(targetElement, navbarHeight, 16)
+        window.history.replaceState(null, '', `#${targetId}`)
       }
 
       // On mobile, wait for menu to close before scrolling (mobile browsers can ignore scrollTo while overflow is hidden)
       if (wasMobileMenuOpen) {
         window.requestAnimationFrame(() => {
-          window.requestAnimationFrame(scrollToTarget)
+          window.requestAnimationFrame(doScroll)
         })
       } else {
-        scrollToTarget()
+        doScroll()
       }
     }
   }

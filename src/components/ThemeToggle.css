@@ -1,0 +1,8 @@
+.theme-toggle {
+  transition: transform var(--theme-toggle-duration, 300ms) ease;
+}
+
+.theme-toggle-inner {
+  transition: transform var(--theme-toggle-inner-duration, 300ms) ease;
+  transform: rotate(var(--theme-rotate, 0deg));
+}

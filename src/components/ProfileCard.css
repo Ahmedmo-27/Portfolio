@@ -9,6 +9,31 @@
   --rotate-y: 0deg;
   --background-x: 50%;
   --background-y: 50%;
+  /* Layout / sizing variables */
+  --card-perspective: 700px;
+  --card-min-height: 360px;
+  --card-height: 75svh;
+  --card-max-height: 560px;
+  --grain-size: 240px 240px;
+  --inside-icon-width: 140px;
+  --inside-icon-height: 80px;
+  --inside-icon-opacity: 0.7;
+  --avatar-scale: 1.25;
+  --title-font-size: min(5svh, 2.8em);
+
+  /* Shadow multipliers (used with pointer-from-*) */
+  --shadow-x-mult: 12px;
+  --shadow-x-offset: -4px;
+  --shadow-y-mult: 24px;
+  --shadow-y-offset: -8px;
+  --shadow-blur: 36px;
+  --shadow-spread: -6px;
+  /* Animation / initial offsets (read by ProfileCard.jsx) */
+  --pc-initial-duration: 1000ms; /* duration for initial motion */
+  --pc-initial-x-offset: 60px;
+  --pc-initial-y-offset: 50px;
+  --pc-device-beta-offset: 18; /* degrees */
+  --pc-enter-transition-ms: 160ms;
   /* Set by ProfileCard at runtime (so it can come from R2). Keep empty by default. */
   --icon: url('/Geometric AM logo design.webp');
   --behind-glow-color: rgba(125, 190, 255, 0.67);
@@ -35,12 +60,12 @@
 }
 
 .pc-card-wrapper {
-  perspective: 500px;
+  perspective: var(--card-perspective);
   transform: translate3d(0, 0, 0.1px);
   position: relative;
   touch-action: none;
   /* Prevent layout shift by reserving space - critical for LCP */
-  min-height: 400px;
+  min-height: var(--card-min-height);
   width: 100%;
   contain: layout style paint;
   will-change: transform;
@@ -54,9 +79,8 @@
 }
 
 .pc-card-skeleton {
-  height: 80vh; /* Fallback for browsers without svh support */
-  height: 80svh;
-  max-height: 540px;
+  height: var(--card-height, 80svh);
+  max-height: var(--card-max-height);
   aspect-ratio: 0.718;
   border-radius: var(--card-radius);
   background: var(--pc-card-bg);
@@ -66,7 +90,7 @@
   /* Optimize skeleton rendering - prevent layout shift */
   contain: layout style paint;
   /* Ensure dimensions are set to prevent CLS */
-  min-height: 400px;
+  min-height: var(--card-min-height);
   width: 100%;
 }
 
@@ -94,17 +118,15 @@
 
 @media (max-width: 768px) {
   .pc-card-skeleton {
-    height: 70vh; /* Fallback for browsers without svh support */
-    height: 70svh;
-    max-height: 450px;
-    min-height: 400px;
+    height: calc(var(--card-height) * 0.875);
+    max-height: calc(var(--card-max-height) * 0.8333);
+    min-height: var(--card-min-height);
   }
 }
 
 @media (max-width: 480px) {
   .pc-card-skeleton {
-    height: 65vh; /* Fallback for browsers without svh support */
-    height: 65svh;
+    height: calc(var(--card-height) * 0.8125);
     max-height: 420px;
     min-height: 350px;
   }
@@ -112,8 +134,7 @@
 
 @media (max-width: 320px) {
   .pc-card-skeleton {
-    height: 60vh; /* Fallback for browsers without svh support */
-    height: 60svh;
+    height: calc(var(--card-height) * 0.75);
     max-height: 360px;
     min-height: 320px;
   }
@@ -121,7 +142,7 @@
 
 /* Touch device optimizations */
 .pc-touch-device {
-  perspective: 400px;
+  perspective: calc(var(--card-perspective) * 0.8);
 }
 
 .pc-touch-device .pc-card-shell {
@@ -194,7 +215,7 @@
   background: 
     var(--grain),
     var(--pc-card-bg);
-  background-size: 200px 200px, 100% 100%;
+  background-size: var(--grain-size), 100% 100%;
   background-position: 50% 50%;
   background-repeat: repeat, no-repeat;
   background-blend-mode: overlay, normal;
@@ -207,7 +228,7 @@
   will-change: transform;
   /* Prevent layout shift by ensuring dimensions are set - critical for LCP */
   width: 100%;
-  min-height: 400px;
+  min-height: var(--card-min-height);
 }
 
 /* Optimize for touch devices */
@@ -220,8 +241,8 @@
 .pc-card.active {
   transition: none;
   transform: translateZ(0) rotateX(var(--rotate-y)) rotateY(var(--rotate-x));
-  box-shadow: var(--pc-card-shadow) calc((var(--pointer-from-left) * 10px) - 3px)
-    calc((var(--pointer-from-top) * 20px) - 6px) 30px -5px,
+  box-shadow: var(--pc-card-shadow) calc((var(--pointer-from-left) * var(--shadow-x-mult)) + var(--shadow-x-offset))
+    calc((var(--pointer-from-top) * var(--shadow-y-mult)) + var(--shadow-y-offset)) var(--shadow-blur) var(--shadow-spread),
     0 0 40px rgba(14, 165, 233, 0.2);
 }
 
@@ -231,8 +252,8 @@
 
 .light .pc-card:hover,
 .light .pc-card.active {
-  box-shadow: var(--pc-card-shadow) calc((var(--pointer-from-left) * 10px) - 3px)
-    calc((var(--pointer-from-top) * 20px) - 6px) 30px -5px,
+  box-shadow: var(--pc-card-shadow) calc((var(--pointer-from-left) * var(--shadow-x-mult)) + var(--shadow-x-offset))
+    calc((var(--pointer-from-top) * var(--shadow-y-mult)) + var(--shadow-y-offset)) var(--shadow-blur) var(--shadow-spread),
     0 0 30px rgba(14, 165, 233, 0.08);
 }
 
@@ -615,7 +636,7 @@
   inset: 0;
   opacity: 0.15;
   pointer-events: none;
-  background-size: 200px;
+  background-size: var(--grain-size);
   background-repeat: repeat;
 }
 

@@ -1,6 +1,7 @@
 import { useInViewOnce } from '../utils/useInViewOnce'
 import batchSetProperty from '../utils/batchStyle'
 import { getNavbarHeight } from '../utils/navbarRect'
+import { smoothScrollToElement } from '../utils/geometry'
 import Trophy from 'lucide-react/dist/esm/icons/trophy'
 import Medal from 'lucide-react/dist/esm/icons/medal'
 import Star from 'lucide-react/dist/esm/icons/star'
@@ -74,17 +75,10 @@ export default function Achievements() {
     e.preventDefault()
     navigate('/#experience')
     // Smooth scroll to experience section after navigation
-    // Defer layout reads to rAF to avoid forced reflow
-    requestAnimationFrame(() => {
+    // Defer to shared helper that batches layout reads
+    window.requestAnimationFrame(() => {
       const experienceSection = document.getElementById('experience')
-      if (experienceSection) {
-        const navbarHeight = getNavbarHeight() || 80
-        const elementRect = experienceSection.getBoundingClientRect()
-        const elementTop = elementRect.top + window.scrollY
-        const offset = navbarHeight + 16
-        const targetScrollY = elementTop - offset
-        window.scrollTo({ top: Math.max(0, targetScrollY), behavior: 'smooth' })
-      }
+      smoothScrollToElement(experienceSection, getNavbarHeight() || 80, 16)
     })
   }
 
@@ -92,17 +86,10 @@ export default function Achievements() {
     e.preventDefault()
     navigate('/#projects')
     // Smooth scroll to projects section after navigation
-    // Defer layout reads to rAF to avoid forced reflow
-    requestAnimationFrame(() => {
+    // Defer to shared helper that batches layout reads
+    window.requestAnimationFrame(() => {
       const projectsSection = document.getElementById('projects')
-      if (projectsSection) {
-        const navbarHeight = getNavbarHeight() || 80
-        const elementRect = projectsSection.getBoundingClientRect()
-        const elementTop = elementRect.top + window.scrollY
-        const offset = navbarHeight + 16
-        const targetScrollY = elementTop - offset
-        window.scrollTo({ top: Math.max(0, targetScrollY), behavior: 'smooth' })
-      }
+      smoothScrollToElement(projectsSection, getNavbarHeight() || 80, 16)
     })
   }
 
