@@ -16,19 +16,13 @@ const skillCategories = [
     icon: Database,
     color: 'from-emerald-500 to-teal-500',
     skills: [
-      { name: 'Node.js'},
-      { name: 'Express'},
+      { name: 'Node.js (Express)'},
       { name: 'Python'},
       { name: 'Flask'},
-      { name: 'PHP'},
       { name: 'MongoDB'},
       { name: 'PostgreSQL'},
       { name: 'MySQL'},
-      { name: 'REST APIs'},
-      { name: 'JWT Authentication'},
-      { name: 'API Design'},
-      { name: 'Pandas'},
-      { name: 'NumPy'},
+      { name: 'REST APIs (JWT/OAuth basics).'},
     ],
   },
   {
@@ -37,9 +31,7 @@ const skillCategories = [
     color: 'from-violet-500 to-purple-500',
     skills: [
       { name: 'React'},
-      { name: 'Angular'},
       { name: 'JavaScript'},
-      { name: 'TypeScript'},
       { name: 'Vite'},
       { name: 'Tailwind CSS'},
       { name: 'HTML5'},
@@ -53,8 +45,7 @@ const skillCategories = [
     color: 'from-blue-500 to-cyan-500',
     skills: [
       { name: 'Docker'},
-      { name: 'CI/CD'},
-      { name: 'Azure DevOps'},
+      { name: 'Azure Pipelines'},
       { name: 'GitHub Actions'},
       { name: 'Bash'},
       { name: 'PowerShell'},
@@ -76,20 +67,7 @@ const skillCategories = [
     ],
   },
   {
-    title: 'Other Tools',
-    icon: Wrench,
-    color: 'from-pink-500 to-rose-500',
-    skills: [
-      { name: 'Git'},
-      { name: 'GitHub'},
-      { name: 'Stripe Integration'},
-      { name: 'Chart.js'},
-      { name: 'Matplotlib'},
-      { name: 'Figma'},
-    ],
-  },
-  {
-    title: 'Additional Skills',
+    title: 'Android Development',
     icon: Smartphone,
     color: 'from-green-500 to-emerald-500',
     skills: [
@@ -103,7 +81,29 @@ const skillCategories = [
       { name: 'Material Design'},
     ],
   },
+  {
+    title: 'Additional Skills',
+    icon: Wrench,
+    color: 'from-pink-500 to-rose-500',
+    skills: [
+      { name: 'Pandas'},
+      { name: 'NumPy'},
+      { name: 'Matplotlib'},
+      { name: 'PHP'},
+      { name: 'Angular'},
+      { name: 'TypeScript'},
+      { name: 'Git'},
+      { name: 'GitHub'},
+      { name: 'Stripe Integration'},
+      { name: 'Chart.js'},
+      { name: 'Figma'},
+    ],
+  }
 ]
+
+// Grouping: first 3 are Core, remaining are Familiar With
+const coreCategories = skillCategories.slice(0, 3)
+const familiarCategories = skillCategories.slice(3)
 
 export default function Skills() {
   const { ref, isInView } = useInViewOnce()
@@ -143,59 +143,116 @@ export default function Skills() {
             </p>
           </div>
 
-          {/* Skills Grid */}
-          <div 
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-4 md:gap-6"
-            role="list"
-            aria-label="Skill categories"
-          >
-            {skillCategories.map((category, index) => (
-              <article
-                key={category.title}
-                ref={(el) => {
-                  if (el) batchSetProperty(el, '--animation-delay', `${index * 0.1 + 0.2}s`)
-                }}
-                className='glass-card p-5 md:p-6 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 transition-all duration-300 hover:-translate-y-2 hover:shadow-lg hover:shadow-primary-500/10 focus-visible:-translate-y-2 relative overflow-hidden skills-category-item'
-                role="listitem"
-                tabIndex={0}
-                aria-labelledby={`skill-${category.title.replace(/\s+/g, '-')}`}
-              >
-                {/* Gradient background on hover */}
-                <div 
-                  className={`absolute inset-0 bg-gradient-to-br ${category.color} opacity-0 group-hover:opacity-5 transition-opacity duration-300 pointer-events-none`}
-                  aria-hidden="true"
-                />
-                
-                {/* Category Header */}
-                <div className="relative flex items-center gap-3 md:gap-4 mb-4 md:mb-5">
+          {/* Core Section */}
+          <div className="mb-8">
+            <div className='text-center mb-6'>
+              <h3 className="text-lg md:text-xl font-display font-semibold text-foreground">Core</h3>
+            </div>
+            <div 
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-4 md:gap-6"
+              role="list"
+              aria-label="Core skill categories"
+            >
+              {coreCategories.map((category, index) => (
+                <article
+                  key={category.title}
+                  ref={(el) => {
+                    if (el) batchSetProperty(el, '--animation-delay', `${index * 0.1 + 0.2}s`)
+                  }}
+                  className='glass-card p-5 md:p-6 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 transition-all duration-300 hover:-translate-y-2 hover:shadow-lg hover:shadow-primary-500/10 focus-visible:-translate-y-2 relative overflow-hidden skills-category-item'
+                  role="listitem"
+                  tabIndex={0}
+                  aria-labelledby={`skill-${category.title.replace(/\s+/g, '-')}`}
+                >
                   <div 
-                    className={`w-10 md:w-12 h-10 md:h-12 rounded-xl bg-gradient-to-br ${category.color} flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform duration-200`}
+                    className={`absolute inset-0 bg-gradient-to-br ${category.color} opacity-0 group-hover:opacity-5 transition-opacity duration-300 pointer-events-none`}
                     aria-hidden="true"
-                  >
-                    <category.icon className="w-5 md:w-6 h-5 md:h-6 text-white" />
-                  </div>
-                  <h3 
-                    id={`skill-${category.title.replace(/\s+/g, '-')}`}
-                    className="text-lg md:text-xl font-display font-semibold text-foreground group-hover:text-primary-400 transition-colors duration-300"
-                  >
-                    {category.title}
-                  </h3>
-                </div>
-
-                {/* Skills Tags */}
-                <div className="relative flex flex-wrap gap-1.5 md:gap-2 mt-3" role="list" aria-label={`${category.title} skills`}>
-                  {category.skills.map((skill) => (
-                    <span 
-                      key={skill.name} 
-                      className="tech-tag text-xs md:text-sm transition-transform duration-150 hover:scale-105"
-                      role="listitem"
+                  />
+                  <div className="relative flex items-center gap-3 md:gap-4 mb-4 md:mb-5">
+                    <div 
+                      className={`w-10 md:w-12 h-10 md:h-12 rounded-xl bg-gradient-to-br ${category.color} flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform duration-200`}
+                      aria-hidden="true"
                     >
-                      {skill.name}
-                    </span>
-                  ))}
-                </div>
-              </article>
-            ))}
+                      <category.icon className="w-5 md:w-6 h-5 md:h-6 text-white" />
+                    </div>
+                    <h4 
+                      id={`skill-${category.title.replace(/\s+/g, '-')}`}
+                      className="text-lg md:text-xl font-display font-semibold text-foreground group-hover:text-primary-400 transition-colors duration-300"
+                    >
+                      {category.title}
+                    </h4>
+                  </div>
+
+                  <div className="relative flex flex-wrap gap-1.5 md:gap-2 mt-3" role="list" aria-label={`${category.title} skills`}>
+                    {category.skills.map((skill) => (
+                      <span 
+                        key={skill.name} 
+                        className="tech-tag text-xs md:text-sm transition-transform duration-150 hover:scale-105"
+                        role="listitem"
+                      >
+                        {skill.name}
+                      </span>
+                    ))}
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
+
+          {/* Familiar With Section */}
+          <div>
+            <div className='text-center mb-6'>
+              <h3 className="text-lg md:text-xl font-display font-semibold text-foreground">Familiar With</h3>
+            </div>
+            <div 
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-4 md:gap-6"
+              role="list"
+              aria-label="Familiar skill categories"
+            >
+              {familiarCategories.map((category, index) => (
+                <article
+                  key={category.title}
+                  ref={(el) => {
+                    if (el) batchSetProperty(el, '--animation-delay', `${index * 0.1 + 0.2}s`)
+                  }}
+                  className='glass-card p-5 md:p-6 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 transition-all duration-300 hover:-translate-y-2 hover:shadow-lg hover:shadow-primary-500/10 focus-visible:-translate-y-2 relative overflow-hidden skills-category-item'
+                  role="listitem"
+                  tabIndex={0}
+                  aria-labelledby={`skill-${category.title.replace(/\s+/g, '-')}`}
+                >
+                  <div 
+                    className={`absolute inset-0 bg-gradient-to-br ${category.color} opacity-0 group-hover:opacity-5 transition-opacity duration-300 pointer-events-none`}
+                    aria-hidden="true"
+                  />
+                  <div className="relative flex items-center gap-3 md:gap-4 mb-4 md:mb-5">
+                    <div 
+                      className={`w-10 md:w-12 h-10 md:h-12 rounded-xl bg-gradient-to-br ${category.color} flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform duration-200`}
+                      aria-hidden="true"
+                    >
+                      <category.icon className="w-5 md:w-6 h-5 md:h-6 text-white" />
+                    </div>
+                    <h4 
+                      id={`skill-${category.title.replace(/\s+/g, '-')}`}
+                      className="text-lg md:text-xl font-display font-semibold text-foreground group-hover:text-primary-400 transition-colors duration-300"
+                    >
+                      {category.title}
+                    </h4>
+                  </div>
+
+                  <div className="relative flex flex-wrap gap-1.5 md:gap-2 mt-3" role="list" aria-label={`${category.title} skills`}>
+                    {category.skills.map((skill) => (
+                      <span 
+                        key={skill.name} 
+                        className="tech-tag text-xs md:text-sm transition-transform duration-150 hover:scale-105"
+                        role="listitem"
+                      >
+                        {skill.name}
+                      </span>
+                    ))}
+                  </div>
+                </article>
+              ))}
+            </div>
           </div>
 
         </div>

@@ -1,5 +1,4 @@
 import { useEffect } from 'react'
-import batchSetProperty from '../utils/batchStyle'
 import { useInViewOnce } from '../utils/useInViewOnce'
 import GraduationCap from 'lucide-react/dist/esm/icons/graduation-cap'
 import Globe from 'lucide-react/dist/esm/icons/globe'
@@ -23,13 +22,13 @@ const highlights = [
   {
     icon: Code2,
     title: 'Backend & Full-Stack',
-    description: 'REST APIs, Node.js, Python, PHP, Angular, and React',
+    description: 'MERN stack and SQL databases',
     color: 'from-emerald-500 to-teal-500',
   },
   {
     icon: Server,
     title: 'DevOps Interest',
-    description: 'CI/CD, automation, and cloud infrastructure',
+    description: 'CI/CD, automation, cloud infrastructure, and deployments',
     color: 'from-violet-500 to-purple-500',
   },
   {
@@ -43,7 +42,7 @@ const highlights = [
 const featuredHighlight = {
   icon: Rocket,
   title: 'Production Systems',
-  description: 'Building real-world applications that solve business problems. Experience developing scalable, production-ready systems deployed and used by real users.',
+  description: 'Experience developing scalable, production-ready systems deployed and used by real users.',
   color: 'from-cyan-500 to-blue-500',
 }
 
@@ -67,12 +66,12 @@ export default function About() {
   return (
     <section 
       id="about" 
-      className="py-16 md:py-28 relative overflow-hidden"
+      className="py-16 md:py-28 relative overflow-hidden border-t-2 border-b-2 border-primary-500/10"
       aria-labelledby="about-heading"
     >
-      {/* Background decorative elements */}
-      <CircuitBoard className="opacity-30" />
-      <div className="tech-grid opacity-20" />
+      {/* Background decorative elements (lighter) */}
+      <CircuitBoard className="opacity-8" />
+      <div className="tech-grid opacity-5" />
       <div className="about-bg-blur-1" aria-hidden="true" />
       <div className="about-bg-blur-2" aria-hidden="true" />
 
@@ -88,8 +87,7 @@ export default function About() {
               Building <span className="gradient-text">Modern Solutions</span>
             </h2>
             <p className="section-subheading mx-auto text-balance max-w-2xl text-sm md:text-base">
-              A Junior Software Engineer specializing in backend and full-stack development, 
-              with hands-on experience building scalable APIs, web applications, and DevOps automation.
+              A Junior Software Engineer specializing in the MERN stack and SQL databases; open to DevOps and deployment roles. Built CI/CD pipelines and automation scripts used by DevOps teams (NBE), scalable APIs and web applications, automated deployments, and deployed databases across platforms.
             </p>
           </div>
 
@@ -104,12 +102,12 @@ export default function About() {
           <div className="grid lg:grid-cols-5 gap-5 lg:gap-6">
             {/* Left Column - Bio & Specializations (3 columns) */}
             <div className='flex flex-col gap-5 lg:col-span-3'>
-              <div className="glass-card p-4 md:p-5 lg:p-6 relative overflow-hidden group border-2 border-primary-500/20 hover:border-primary-500/40 transition-all duration-300 shadow-lg">
-                {/* Subtle background gradient */}
-                <div className="absolute inset-0 bg-gradient-to-br from-primary-500/5 via-transparent to-accent-cyan/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" aria-hidden="true" />
+              <div className="glass-card p-4 md:p-5 lg:p-6 relative overflow-hidden group border-2 border-primary-500/20 shadow-none">
+                {/* Subtle background gradient (very light) */}
+                <div className="absolute inset-0 bg-gradient-to-br from-primary-500/5 via-transparent to-accent-cyan/5 opacity-0 group-hover:opacity-30 transition-opacity duration-300 pointer-events-none" aria-hidden="true" />
                 
                 <h3 className="relative text-lg md:text-xl font-display font-bold text-foreground mb-3 md:mb-4 flex items-center gap-3">
-                  <span className="w-10 h-10 md:w-11 md:h-11 rounded-xl bg-gradient-to-br from-primary-500 to-accent-cyan flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                  <span className="w-10 h-10 md:w-11 md:h-11 rounded-xl bg-gradient-to-br from-primary-500 to-accent-cyan flex items-center justify-center shadow-none">
                     <GraduationCap className="w-5 h-5 md:w-6 md:h-6 text-white" />
                   </span>
                   Background
@@ -131,40 +129,33 @@ export default function About() {
               </div>
 
               {/* Tech Specializations */}
-              <div className="glass-card p-4 md:p-5 lg:p-6 relative overflow-hidden group border-2 border-primary-500/20 hover:border-primary-500/40 transition-all duration-300 flex-1 shadow-lg">
-                {/* Subtle background gradient */}
-                <div className="absolute inset-0 bg-gradient-to-br from-accent-emerald/5 via-transparent to-accent-cyan/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" aria-hidden="true" />
+              <div className="glass-card p-4 md:p-5 lg:p-6 relative overflow-hidden group border-2 border-primary-500/20 flex-1 shadow-none">
+                {/* Subtle background gradient (very light) */}
+                <div className="absolute inset-0 bg-gradient-to-br from-accent-emerald/5 via-transparent to-accent-cyan/5 opacity-0 group-hover:opacity-30 transition-opacity duration-300 pointer-events-none" aria-hidden="true" />
                 
                 <h3 className="relative text-lg md:text-xl font-display font-bold text-foreground mb-3 md:mb-4">
                   Specializations
                 </h3>
-                <div className="relative grid gap-3">
-                  <div className="flex items-start gap-3 group/item hover:translate-x-2 transition-transform duration-300">
-                    <div className="w-2.5 h-2.5 rounded-full bg-accent-emerald mt-1.5 flex-shrink-0 group-hover/item:scale-150 transition-transform duration-300 shadow-lg shadow-accent-emerald/50" />
+                <div className="relative grid gap-4 md:gap-9">
+                  <div className="flex items-start gap-3 group/item">
+                    <div className="w-2.5 h-2.5 rounded-full bg-accent-emerald mt-1.5 flex-shrink-0 shadow-none" />
                     <div className="flex-1">
                       <span className="text-accent-emerald font-bold text-sm md:text-base block mb-1 group-hover/item:text-accent-emerald/90 transition-colors">Backend Development</span>
-                      <span className="text-muted text-xs md:text-sm leading-relaxed">Node.js, Express, Python, Flask, PHP, MongoDB, PostgreSQL, MySQL, REST APIs</span>
+                      <span className="text-muted text-xs md:text-sm leading-relaxed">MERN & SQL (Node.js, Express, MongoDB; PostgreSQL/MySQL)</span>
                     </div>
                   </div>
-                  <div className="flex items-start gap-3 group/item hover:translate-x-2 transition-transform duration-300">
-                    <div className="w-2.5 h-2.5 rounded-full bg-accent-cyan mt-1.5 flex-shrink-0 group-hover/item:scale-150 transition-transform duration-300 shadow-lg shadow-accent-cyan/50" />
+                  <div className="flex items-start gap-3 group/item">
+                    <div className="w-2.5 h-2.5 rounded-full bg-accent-cyan mt-1.5 flex-shrink-0 shadow-none" />
                     <div className="flex-1">
                       <span className="text-accent-cyan font-bold text-sm md:text-base block mb-1 group-hover/item:text-accent-cyan/90 transition-colors">Frontend Development</span>
-                      <span className="text-muted text-xs md:text-sm leading-relaxed">React, Angular, JavaScript, TypeScript, Tailwind CSS</span>
+                      <span className="text-muted text-xs md:text-sm leading-relaxed">React & TypeScript (MERN front-end)</span>
                     </div>
                   </div>
-                  <div className="flex items-start gap-3 group/item hover:translate-x-2 transition-transform duration-300">
-                    <div className="w-2.5 h-2.5 rounded-full bg-accent-violet mt-1.5 flex-shrink-0 group-hover/item:scale-150 transition-transform duration-300 shadow-lg shadow-accent-violet/50" />
+                  <div className="flex items-start gap-3 group/item">
+                    <div className="w-2.5 h-2.5 rounded-full bg-accent-violet mt-1.5 flex-shrink-0 shadow-none" />
                     <div className="flex-1">
                       <span className="text-accent-violet font-bold text-sm md:text-base block mb-1 group-hover/item:text-accent-violet/90 transition-colors">DevOps & Automation</span>
-                      <span className="text-muted text-xs md:text-sm leading-relaxed">CI/CD, Docker, GitHub Actions, Bash, Cloudflare R2</span>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-3 group/item hover:translate-x-2 transition-transform duration-300">
-                    <div className="w-2.5 h-2.5 rounded-full bg-accent-amber mt-1.5 flex-shrink-0 group-hover/item:scale-150 transition-transform duration-300 shadow-lg shadow-accent-amber/50" />
-                    <div className="flex-1">
-                      <span className="text-accent-amber font-bold text-sm md:text-base block mb-1 group-hover/item:text-accent-amber/90 transition-colors">Testing & QA</span>
-                      <span className="text-muted text-xs md:text-sm leading-relaxed">Postman, API Testing, Selenium, JUnit, Mockito</span>
+                      <span className="text-muted text-xs md:text-sm leading-relaxed">CI/CD, Docker, GitHub Actions — multi-platform deployments and DB deployments</span>
                     </div>
                   </div>
                 </div>

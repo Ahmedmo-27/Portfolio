@@ -74,7 +74,9 @@ export default function Achievements() {
 
   useEffect(() => {
     let rafId = null
-    const updateHeight = () => {
+    let debounceId = null
+
+    const scheduleUpdate = () => {
       if (rafId != null) return
       rafId = requestAnimationFrame(() => {
         rafId = null
@@ -82,12 +84,26 @@ export default function Achievements() {
       })
     }
 
+    const onResize = () => {
+      // immediate coalesced update next frame
+      scheduleUpdate()
+
+      // debounce a final update after resize ends to ensure accuracy
+      if (debounceId) clearTimeout(debounceId)
+      debounceId = setTimeout(() => {
+        // schedule one more frame to capture final layout
+        scheduleUpdate()
+        debounceId = null
+      }, 150)
+    }
+
     // initialize
     navbarHeightRef.current = getNavbarHeight() || 80
-    window.addEventListener('resize', updateHeight, { passive: true })
+    window.addEventListener('resize', onResize, { passive: true })
     return () => {
-      window.removeEventListener('resize', updateHeight)
+      window.removeEventListener('resize', onResize)
       if (rafId) cancelAnimationFrame(rafId)
+      if (debounceId) clearTimeout(debounceId)
     }
   }, [])
   
@@ -96,10 +112,8 @@ export default function Achievements() {
     navigate('/#experience')
     // Smooth scroll to experience section after navigation
     // Defer to shared helper that batches layout reads; use cached navbar height
-    requestAnimationFrame(() => {
-      const experienceSection = document.getElementById('experience')
-      smoothScrollToElement(experienceSection, navbarHeightRef.current || 80, 16)
-    })
+    const experienceSection = document.getElementById('experience')
+    smoothScrollToElement(experienceSection, navbarHeightRef.current || 80, 16)
   }
 
   const handleProjectsClick = (e) => {
@@ -107,10 +121,8 @@ export default function Achievements() {
     navigate('/#projects')
     // Smooth scroll to projects section after navigation
     // Defer to shared helper that batches layout reads; use cached navbar height
-    requestAnimationFrame(() => {
-      const projectsSection = document.getElementById('projects')
-      smoothScrollToElement(projectsSection, navbarHeightRef.current || 80, 16)
-    })
+    const projectsSection = document.getElementById('projects')
+    smoothScrollToElement(projectsSection, navbarHeightRef.current || 80, 16)
   }
 
   return (
