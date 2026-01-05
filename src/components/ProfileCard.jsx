@@ -37,7 +37,7 @@ const adjust = (v, fMin, fMax, tMin, tMax) =>
   round(tMin + ((tMax - tMin) * (v - fMin)) / (fMax - fMin));
 
 const ProfileCardComponent = ({
-  avatarUrl = '/Ahmed Mostafa.webp',
+  avatarUrl = '/Ahmed Mostafa.avif',
   iconUrl = '/Geometric AM logo design.webp',
   grainUrl = '/Grain.webp',
   innerGradient,
