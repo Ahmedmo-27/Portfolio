@@ -579,7 +579,12 @@ const ProfileCardComponent = ({
       } catch (e) {}
     };
 
-    populateCssVars();
+    // Defer initial CSS var reads to avoid forced synchronous layout reads during mount
+    if ('requestIdleCallback' in window) {
+      window.requestIdleCallback(populateCssVars, { timeout: 1000 });
+    } else {
+      requestAnimationFrame(populateCssVars);
+    }
     const cssResizeHandler = () => {
       // Re-populate cached CSS vars on resize in rAF to avoid layout reads during interaction
       requestAnimationFrame(populateCssVars);

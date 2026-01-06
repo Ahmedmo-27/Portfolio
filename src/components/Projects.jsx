@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect, lazy, Suspense } from 'react'
-import batchSetProperty from '../utils/batchStyle'
+// animation delays set inline; observer registration handled separately
 import Github from 'lucide-react/dist/esm/icons/github'
 import ChevronRight from 'lucide-react/dist/esm/icons/chevron-right'
 import CircuitBoard from './CircuitBoard'
@@ -98,9 +98,8 @@ export default function Projects() {
   }, [isInView])
 
   // Stable ref callback to register/unregister project item elements
-  const handleProjectRef = (projectId, delay) => (el) => {
+  const handleProjectRef = (projectId) => (el) => {
     if (el) {
-      batchSetProperty(el, '--animation-delay', delay)
       projectItemElsRef.current[projectId] = el
 
       // If section already in view, schedule observer registration inside rAF
@@ -160,7 +159,8 @@ export default function Projects() {
               <article
                 key={project.id}
                 data-project-id={project.id}
-                    ref={handleProjectRef(project.id, `${index * 0.15 + 0.2}s`)}
+                ref={handleProjectRef(project.id)}
+                style={{ ['--animation-delay']: `${index * 0.15 + 0.2}s` }}
                 className={`${project.isHighlighted ? 'relative' : ''} projects-item animate-fade-in-up`}
                 role="listitem"
                 aria-labelledby={`project-title-${project.id}`}

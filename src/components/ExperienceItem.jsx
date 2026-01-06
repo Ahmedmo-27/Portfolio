@@ -1,5 +1,5 @@
 import React from 'react'
-import batchSetProperty from '../utils/batchStyle'
+// animation delay via inline style to avoid runtime writes
 import Calendar from 'lucide-react/dist/esm/icons/calendar'
 import MapPin from 'lucide-react/dist/esm/icons/map-pin'
 import FileText from 'lucide-react/dist/esm/icons/file-text'
@@ -12,9 +12,7 @@ export default function ExperienceItem({ exp, index }) {
   return (
     <article
       key={exp.company}
-      ref={(el) => {
-        if (el) batchSetProperty(el, '--animation-delay', `${index * 0.15 + 0.2}s`)
-      }}
+      style={{ ['--animation-delay']: `${index * 0.15 + 0.2}s` }}
       className={`relative flex flex-col md:flex-row gap-6 md:gap-8 ${index % 2 === 0 ? 'md:flex-row-reverse' : ''} experience-item animate-fade-in-left`}
       role="listitem"
       aria-labelledby={`exp-title-${index}`}

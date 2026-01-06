@@ -1,8 +1,9 @@
 
 import { useRef, useState, useEffect, lazy, Suspense } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ArrowLeft, Github, Filter } from '../components/icons'
-import batchSetProperty from '../utils/batchStyle'
+import ArrowLeft from 'lucide-react/dist/esm/icons/arrow-left'
+import Github from 'lucide-react/dist/esm/icons/github'
+import Filter from 'lucide-react/dist/esm/icons/filter'
 import { observe } from '../utils/sharedObserver'
 import CircuitBoard from '../components/CircuitBoard'
 import ViewMoreButton from '../components/ViewMoreButton'

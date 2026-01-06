@@ -1,5 +1,5 @@
 import React from 'react'
-import batchSetProperty from '../utils/batchStyle'
+// animation delay is applied inline to avoid runtime style writes
 import Award from 'lucide-react/dist/esm/icons/award'
 import ExternalLink from 'lucide-react/dist/esm/icons/external-link'
 import ChevronDown from 'lucide-react/dist/esm/icons/chevron-down'
@@ -8,9 +8,7 @@ export default function EducationCertCard({ cert, index, expandedCertSkills, tog
   return (
     <article
       key={cert.id}
-      ref={(el) => {
-        if (el) batchSetProperty(el, '--animation-delay', `${index * 0.08 + 0.25}s`)
-      }}
+      style={{ ['--animation-delay']: `${index * 0.08 + 0.25}s` }}
       className='glass-card p-5 sm:p-6 group relative overflow-hidden transition-transform hover:-translate-y-1 focus-visible:-translate-y-1 education-cert-item'
       tabIndex={0}
       aria-label={cert.title}

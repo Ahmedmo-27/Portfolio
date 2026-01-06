@@ -10,6 +10,61 @@
   animation-delay: var(--animation-delay, 0.3s);
 }
 
+/* Reserve space for action links to avoid layout shifts when optional links appear */
+.ach-actions-placeholder {
+  min-height: 2.5rem; /* reserve ~40px for buttons/links */
+  display: block;
+}
+
+/* Reserve space for project/project-link line in other achievements */
+.ach-project-placeholder {
+  min-height: 1.25rem; /* reserve ~20px for project line */
+}
+
+/* Promote smoother rendering for decorative elements */
+.achievements-featured-item,
+.achievements-other-item {
+  -webkit-font-smoothing: antialiased;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+}
+
+/* Reserve stable card heights to avoid reflow when actions/content appear */
+.achievements-featured-item {
+  min-height: 220px; /* approximate height for featured cards */
+}
+
+@media (min-width: 768px) {
+  .achievements-featured-item {
+    min-height: 260px;
+  }
+}
+
+.achievements-other-item {
+  min-height: 140px; /* approximate height for other cards */
+}
+
+@media (min-width: 768px) {
+  .achievements-other-item {
+    min-height: 160px;
+  }
+}
+
+/* Hint to the compositor to avoid layout paints for decorative changes */
+.achievements-featured-item .absolute,
+.achievements-other-item .absolute,
+.achievements-featured-item .group-hover\:opacity-40,
+.achievements-featured-item .group-hover\:opacity-20 {
+  will-change: opacity, transform;
+  pointer-events: none;
+}
+
+/* Ensure SVGs render as block-level to avoid inline leading/layout quirks */
+.achievements-featured-item svg,
+.achievements-other-item svg {
+  display: block;
+}
+
 
 
 

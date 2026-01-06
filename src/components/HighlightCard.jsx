@@ -1,13 +1,10 @@
 import React from 'react'
-import batchSetProperty from '../utils/batchStyle'
 
 export default function HighlightCard({ item, index, featured }) {
   return (
     <div
       key={item.title}
-      ref={(el) => {
-        if (el) batchSetProperty(el, '--animation-delay', `${index * 0.08 + 0.4}s`)
-      }}
+      style={{ ['--animation-delay']: `${index * 0.08 + 0.4}s` }}
       className={`${featured ? 'mt-3' : ''} glass-card p-4 ${featured ? 'group/card' : 'group/card cursor-default'} cursor-default relative overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-xl border-2 border-primary-500/20 hover:border-primary-500/50 about-highlight-item shadow-md`}
       {...(featured ? {} : { role: 'listitem', tabIndex: 0 })}
     >

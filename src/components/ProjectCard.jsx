@@ -1,6 +1,6 @@
 import React, { lazy, Suspense } from 'react'
-import batchSetProperty from '../utils/batchStyle'
-import { ChevronRight } from '../components/icons'
+// animation delays set by parent; avoid runtime writes here
+import ChevronRight from 'lucide-react/dist/esm/icons/chevron-right'
 import { MediaSkeleton } from './SkeletonLoader'
 
 const MediaCarousel = lazy(() => import('./MediaCarousel'))
@@ -15,9 +15,7 @@ export default function ProjectCard({ project, index, mediaShouldLoad, activePro
     <article
       key={project.id}
       data-project-id={project.id}
-      ref={(el) => {
-        if (el) batchSetProperty(el, '--animation-delay', `${index * 0.15 + 0.2}s`)
-      }}
+      style={{ ['--animation-delay']: `${index * 0.15 + 0.2}s` }}
       className={`${project.isHighlighted ? 'relative' : ''} projects-item `}
       role="listitem"
       aria-labelledby={`project-title-${project.id}`}

@@ -1,16 +1,14 @@
-import React from 'react'
 import batchSetProperty from '../utils/batchStyle'
 import Calendar from 'lucide-react/dist/esm/icons/calendar'
 import ExternalLink from 'lucide-react/dist/esm/icons/external-link'
-import { Star, Heart } from './icons'
+import Star from 'lucide-react/dist/esm/icons/star'
+import Heart from 'lucide-react/dist/esm/icons/heart'
 
 export default function VolunteerItem({ exp, index }) {
   return (
     <article
       key={exp.organization}
-      ref={(el) => {
-        if (el) batchSetProperty(el, '--animation-delay', `${index * 0.15 + 0.2}s`)
-      }}
+      style={{ ['--animation-delay']: `${index * 0.15 + 0.2}s` }}
       className={`${exp.isHighlighted ? 'relative' : ''} volunteering-experience-item`}
       role="article"
       aria-labelledby={`vol-title-${index}`}

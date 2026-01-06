@@ -5,9 +5,7 @@ export default function StatCard({ stat, index }) {
   return (
     <div
       key={stat.label}
-      ref={(el) => {
-        if (el) batchSetProperty(el, '--animation-delay', `${index * 0.1 + 0.3}s`)
-      }}
+      style={{ ['--animation-delay']: `${index * 0.1 + 0.3}s` }}
       className='relative group transition-all duration-300 hover:-translate-y-2 hover:scale-105 about-stat-item'
     >
       <div className="text-center p-5 md:p-6 rounded-2xl glass-card h-full relative overflow-hidden border-2 border-primary-500/20 group-hover:border-primary-500/60 transition-all duration-300 group-hover:shadow-lg group-hover:shadow-primary-500/20" title={stat.tooltip || ''}>

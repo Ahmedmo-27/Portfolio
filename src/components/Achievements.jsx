@@ -1,5 +1,5 @@
 import { useInViewOnce } from '../utils/useInViewOnce'
-import batchSetProperty from '../utils/batchStyle'
+// Note: avoid runtime style writes here — use inline CSS custom properties
 import { getNavbarHeight } from '../utils/navbarRect'
 import { smoothScrollToElement } from '../utils/geometry'
 import Trophy from 'lucide-react/dist/esm/icons/trophy'
@@ -73,37 +73,50 @@ export default function Achievements() {
   const navbarHeightRef = useRef(getNavbarHeight() || 80)
 
   useEffect(() => {
-    let rafId = null
-    let debounceId = null
+    // Prefer ResizeObserver on the header to get size updates without
+    // scheduling rAF-based reads/writes here which can cause forced reflows.
+    let ro = null
+    const header = typeof document !== 'undefined' ? document.querySelector('header') : null
 
-    const scheduleUpdate = () => {
-      if (rafId != null) return
-      rafId = requestAnimationFrame(() => {
-        rafId = null
-        navbarHeightRef.current = getNavbarHeight() || 80
-      })
-    }
-
-    const onResize = () => {
-      // immediate coalesced update next frame
-      scheduleUpdate()
-
-      // debounce a final update after resize ends to ensure accuracy
-      if (debounceId) clearTimeout(debounceId)
-      debounceId = setTimeout(() => {
-        // schedule one more frame to capture final layout
-        scheduleUpdate()
-        debounceId = null
-      }, 150)
-    }
-
-    // initialize
+    // initialize from shared helper (may schedule its own reads safely)
     navbarHeightRef.current = getNavbarHeight() || 80
-    window.addEventListener('resize', onResize, { passive: true })
+
+    try {
+      if (header && typeof ResizeObserver !== 'undefined') {
+        ro = new ResizeObserver((entries) => {
+          if (!entries || !entries.length) return
+          const entry = entries[0]
+          if (entry.contentRect && entry.contentRect.height) {
+            navbarHeightRef.current = entry.contentRect.height
+          } else {
+            // fallback: read from shared helper but defer to idle to avoid rAF contention
+            if (typeof requestIdleCallback !== 'undefined') {
+              requestIdleCallback(() => { navbarHeightRef.current = getNavbarHeight() || navbarHeightRef.current })
+            } else {
+              setTimeout(() => { navbarHeightRef.current = getNavbarHeight() || navbarHeightRef.current }, 100)
+            }
+          }
+        })
+        ro.observe(header)
+      } else {
+        // Fallback for environments without ResizeObserver: debounce reads on resize,
+        // but defer actual reads to idle/setTimeout to avoid forcing layout during rAF.
+        const onResize = () => {
+          if (typeof requestIdleCallback !== 'undefined') {
+            requestIdleCallback(() => { navbarHeightRef.current = getNavbarHeight() || navbarHeightRef.current })
+          } else {
+            setTimeout(() => { navbarHeightRef.current = getNavbarHeight() || navbarHeightRef.current }, 120)
+          }
+        }
+        window.addEventListener('resize', onResize, { passive: true })
+        return () => window.removeEventListener('resize', onResize)
+      }
+    } catch (e) {
+      // ignore
+    }
+
     return () => {
-      window.removeEventListener('resize', onResize)
-      if (rafId) cancelAnimationFrame(rafId)
-      if (debounceId) clearTimeout(debounceId)
+      try { if (ro) ro.disconnect() } catch (e) {}
     }
   }, [])
   
@@ -154,9 +167,7 @@ export default function Achievements() {
               {achievements.filter(a => a.isHighlighted).map((achievement, index) => (
                 <article
                   key={achievement.title}
-                  ref={(el) => {
-                    if (el) batchSetProperty(el, '--animation-delay', `${index * 0.15 + 0.2}s`)
-                  }}
+                  style={{ ['--animation-delay']: `${index * 0.15 + 0.2}s` }}
                   className={`relative overflow-hidden rounded-2xl p-6 sm:p-8 border-2 ${achievement.borderColor} ${achievement.bgColor} group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 transition-all duration-300 hover:-translate-y-2 hover:scale-[1.02] hover:shadow-xl hover:shadow-primary-500/10 focus-visible:-translate-y-2 focus-visible:scale-[1.02] achievements-featured-item`}
                   tabIndex={0}
                   aria-labelledby={`achievement-${achievement.title.replace(/\s+/g, '-')}`}
@@ -191,66 +202,68 @@ export default function Achievements() {
                       {achievement.description}
                     </p>
 
-                    {(achievement.website || achievement.pdfUrl || achievement.showExperienceLink || achievement.showProjectsLink) && (
-                      <div className="mt-5 flex flex-wrap gap-4">
-                        {achievement.website && (
-                          <a
-                            href={achievement.website}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1.5 dark:text-primary-400 text-primary-500 hover:text-primary-500 transition-colors text-sm font-medium"
-                          >
-                            Visit Website
-                            <ExternalLink className="w-4 h-4" aria-hidden="true" />
-                          </a>
-                        )}
-                        {achievement.pdfUrl && (
-                          <>
-                            {(() => {
-                              const pdfHref = assetUrl(achievement.pdfUrl)
-                              return (
-                                <a
-                                  href={pdfHref}
-                                  download
-                                  className="inline-flex items-center gap-1.5 dark:text-primary-400 text-primary-500 hover:text-primary-500 transition-colors text-sm font-medium"
-                                >
-                                  <Download className="w-4 h-4" aria-hidden="true" />
-                                  Download PDF
-                                </a>
-                              )
-                            })()}
+                    <div className="mt-5 ach-actions-placeholder">
+                      {(achievement.website || achievement.pdfUrl || achievement.showExperienceLink || achievement.showProjectsLink) && (
+                        <div className="flex flex-wrap gap-4">
+                          {achievement.website && (
+                            <a
+                              href={achievement.website}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-1.5 dark:text-primary-400 text-primary-500 hover:text-primary-500 transition-colors text-sm font-medium"
+                            >
+                              Visit Website
+                              <ExternalLink className="w-4 h-4" aria-hidden="true" />
+                            </a>
+                          )}
+                          {achievement.pdfUrl && (
+                            <>
+                              {(() => {
+                                const pdfHref = assetUrl(achievement.pdfUrl)
+                                return (
+                                  <a
+                                    href={pdfHref}
+                                    download
+                                    className="inline-flex items-center gap-1.5 dark:text-primary-400 text-primary-500 hover:text-primary-500 transition-colors text-sm font-medium"
+                                  >
+                                    <Download className="w-4 h-4" aria-hidden="true" />
+                                    Download PDF
+                                  </a>
+                                )
+                              })()}
+                              <a
+                                href="/#experience"
+                                onClick={handleExperienceClick}
+                                className="inline-flex items-center gap-1.5 text-primary-500 hover:text-primary-500 transition-colors text-sm font-medium"
+                              >
+                                View Experience
+                                <ExternalLink className="w-4 h-4" aria-hidden="true" />
+                              </a>
+                            </>
+                          )}
+                          {achievement.showExperienceLink && !achievement.pdfUrl && (
                             <a
                               href="/#experience"
                               onClick={handleExperienceClick}
-                              className="inline-flex items-center gap-1.5 text-primary-500 hover:text-primary-500 transition-colors text-sm font-medium"
+                              className="inline-flex items-center gap-1.5 dark:text-primary-400 text-primary-500 hover:text-primary-500 transition-colors text-sm font-medium"
                             >
                               View Experience
                               <ExternalLink className="w-4 h-4" aria-hidden="true" />
                             </a>
-                          </>
-                        )}
-                        {achievement.showExperienceLink && !achievement.pdfUrl && (
-                          <a
-                            href="/#experience"
-                            onClick={handleExperienceClick}
-                            className="inline-flex items-center gap-1.5 dark:text-primary-400 text-primary-500 hover:text-primary-500 transition-colors text-sm font-medium"
-                          >
-                            View Experience
-                            <ExternalLink className="w-4 h-4" aria-hidden="true" />
-                          </a>
-                        )}
-                        {achievement.showProjectsLink && (
-                          <a
-                            href="/#projects"
-                            onClick={handleProjectsClick}
-                            className="inline-flex items-center gap-1.5 text-primary-500 hover:text-primary-500 transition-colors text-sm font-medium"
-                          >
-                            View Projects
-                            <ExternalLink className="w-4 h-4" aria-hidden="true" />
-                          </a>
-                        )}
-                      </div>
-                    )}
+                          )}
+                          {achievement.showProjectsLink && (
+                            <a
+                              href="/#projects"
+                              onClick={handleProjectsClick}
+                              className="inline-flex items-center gap-1.5 text-primary-500 hover:text-primary-500 transition-colors text-sm font-medium"
+                            >
+                              View Projects
+                              <ExternalLink className="w-4 h-4" aria-hidden="true" />
+                            </a>
+                          )}
+                        </div>
+                      )}
+                    </div>
                   </div>
 
                   {/* Decorative background icon */}
@@ -267,9 +280,7 @@ export default function Achievements() {
             {achievements.filter(a => !a.isHighlighted).map((achievement, index) => (
             <article
               key={achievement.title}
-              ref={(el) => {
-                if (el) batchSetProperty(el, '--animation-delay', `${index * 0.1 + 0.3}s`)
-              }}
+              style={{ ['--animation-delay']: `${index * 0.1 + 0.3}s` }}
               className={`relative glass-card p-6 group overflow-hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 transition-transform hover:-translate-y-1 hover:scale-[1.01] focus-visible:-translate-y-1 focus-visible:scale-[1.01] achievements-other-item`}
               tabIndex={0}
               aria-labelledby={`achievement-other-${achievement.title.replace(/\s+/g, '-')}`}
@@ -293,19 +304,21 @@ export default function Achievements() {
                 <p className="text-primary-500 font-medium text-sm mb-1">
                   {achievement.organization}
                 </p>
-                {achievement.projectLink ? (
-                  <a 
-                    href={achievement.projectLink}
-                    className="inline-flex items-center gap-1 text-muted text-sm mb-3 hover:text-primary-500 transition-colors"
-                  >
-                    Project: {achievement.project}
-                    <ExternalLink className="w-3 h-3" aria-hidden="true" />
-                  </a>
-                ) : (
-                  <p className="text-muted text-sm mb-3">
-                    Project: {achievement.project}
-                  </p>
-                )}
+                <div className="ach-project-placeholder mb-3">
+                  {achievement.projectLink ? (
+                    <a 
+                      href={achievement.projectLink}
+                      className="inline-flex items-center gap-1 text-muted text-sm hover:text-primary-500 transition-colors"
+                    >
+                      Project: {achievement.project}
+                      <ExternalLink className="w-3 h-3" aria-hidden="true" />
+                    </a>
+                  ) : (
+                    <p className="text-muted text-sm">
+                      Project: {achievement.project}
+                    </p>
+                  )}
+                </div>
                 <p className="text-muted text-sm">
                   {achievement.description}
                 </p>

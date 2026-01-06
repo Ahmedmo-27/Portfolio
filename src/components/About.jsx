@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, lazy, Suspense } from 'react'
 import { useInViewOnce } from '../utils/useInViewOnce'
 import GraduationCap from 'lucide-react/dist/esm/icons/graduation-cap'
 import Globe from 'lucide-react/dist/esm/icons/globe'
@@ -8,7 +8,7 @@ import Server from 'lucide-react/dist/esm/icons/server'
 import FolderGit2 from 'lucide-react/dist/esm/icons/folder-git-2'
 import Award from 'lucide-react/dist/esm/icons/award'
 import Building2 from 'lucide-react/dist/esm/icons/building-2'
-import CircuitBoard from './CircuitBoard'
+const CircuitBoard = lazy(() => import('./CircuitBoard'))
 import StatCard from './StatCard'
 import HighlightCard from './HighlightCard'
 
@@ -66,12 +66,14 @@ export default function About() {
   return (
     <section 
       id="about" 
-      className="py-16 md:py-28 relative overflow-hidden border-t-2 border-b-2 border-primary-500/10"
+      className="py-16 md:py-28 relative overflow-hidden"
       aria-labelledby="about-heading"
     >
-      {/* Background decorative elements (lighter) */}
-      <CircuitBoard className="opacity-8" />
-      <div className="tech-grid opacity-5" />
+      {/* Background decorative elements */}
+      <Suspense fallback={null}>
+        <CircuitBoard className="opacity-30" />
+      </Suspense>
+      <div className="tech-grid opacity-20" />
       <div className="about-bg-blur-1" aria-hidden="true" />
       <div className="about-bg-blur-2" aria-hidden="true" />
 
@@ -87,7 +89,8 @@ export default function About() {
               Building <span className="gradient-text">Modern Solutions</span>
             </h2>
             <p className="section-subheading mx-auto text-balance max-w-2xl text-sm md:text-base">
-              A Junior Software Engineer specializing in the MERN stack and SQL databases; open to DevOps and deployment roles. Built CI/CD pipelines and automation scripts used by DevOps teams (NBE), scalable APIs and web applications, automated deployments, and deployed databases across platforms.
+              A Junior Software Engineer specializing in backend and full-stack development, 
+              with hands-on experience building scalable APIs, web applications, and DevOps automation.
             </p>
           </div>
 
@@ -102,12 +105,12 @@ export default function About() {
           <div className="grid lg:grid-cols-5 gap-5 lg:gap-6">
             {/* Left Column - Bio & Specializations (3 columns) */}
             <div className='flex flex-col gap-5 lg:col-span-3'>
-              <div className="glass-card p-4 md:p-5 lg:p-6 relative overflow-hidden group border-2 border-primary-500/20 shadow-none">
-                {/* Subtle background gradient (very light) */}
-                <div className="absolute inset-0 bg-gradient-to-br from-primary-500/5 via-transparent to-accent-cyan/5 opacity-0 group-hover:opacity-30 transition-opacity duration-300 pointer-events-none" aria-hidden="true" />
+              <div className="glass-card p-4 md:p-5 lg:p-6 relative overflow-hidden group border-2 border-primary-500/20 hover:border-primary-500/40 transition-all duration-300 shadow-lg">
+                {/* Subtle background gradient */}
+                <div className="absolute inset-0 bg-gradient-to-br from-primary-500/5 via-transparent to-accent-cyan/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" aria-hidden="true" />
                 
                 <h3 className="relative text-lg md:text-xl font-display font-bold text-foreground mb-3 md:mb-4 flex items-center gap-3">
-                  <span className="w-10 h-10 md:w-11 md:h-11 rounded-xl bg-gradient-to-br from-primary-500 to-accent-cyan flex items-center justify-center shadow-none">
+                  <span className="w-10 h-10 md:w-11 md:h-11 rounded-xl bg-gradient-to-br from-primary-500 to-accent-cyan flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
                     <GraduationCap className="w-5 h-5 md:w-6 md:h-6 text-white" />
                   </span>
                   Background

@@ -5,7 +5,7 @@ import X from 'lucide-react/dist/esm/icons/x'
 import ThemeToggle from './ThemeToggle'
 import './Navbar.css'
 import { observe } from '../utils/sharedObserver'
-import { smoothScrollToElement } from '../utils/geometry'
+import { smoothScrollToElement, scheduleWrite } from '../utils/geometry'
 import { getNavbarHeight } from '../utils/navbarRect'
 
 const navLinks = [
@@ -47,9 +47,9 @@ export default function Navbar() {
   const pendingBodyClassRef = useRef(null)
   const scheduleBodyClassUpdate = (desired) => {
     pendingBodyClassRef.current = desired
-    if (bodyClassRafRef.current != null) return
-    bodyClassRafRef.current = requestAnimationFrame(() => {
-      bodyClassRafRef.current = null
+    // Schedule the DOM mutation via the centralized geometry write queue
+    // so writes run after batched reads and avoid causing forced reflows.
+    scheduleWrite(() => {
       const want = pendingBodyClassRef.current
       const has = document.body.classList.contains('navbar-menu-open')
       if (want && !has) document.body.classList.add('navbar-menu-open')

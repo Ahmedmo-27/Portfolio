@@ -16,6 +16,17 @@ function flush() {
   pending.clear();
 }
 
+function scheduleFlush() {
+  // Ensure we run the actual DOM writes after the current rAF frame's reads.
+  // Prefer requestIdleCallback when available (non-blocking), otherwise
+  // defer with setTimeout to the next macrotask so any rAF-based reads run first.
+  if (typeof requestIdleCallback !== 'undefined') {
+    requestIdleCallback(flush, { timeout: 100 });
+  } else {
+    setTimeout(flush, 0);
+  }
+}
+
 export default function batchSetProperty(el, prop, value) {
   if (!el) return;
   let props = pending.get(el);
@@ -25,6 +36,11 @@ export default function batchSetProperty(el, prop, value) {
   }
   props[prop] = value;
   if (!rafId) {
-    rafId = requestAnimationFrame(flush);
+    // Schedule a rAF to coalesce multiple synchronous calls, then defer the
+    // actual style writes until after rAF via scheduleFlush.
+    rafId = requestAnimationFrame(() => {
+      rafId = null;
+      scheduleFlush();
+    });
   }
 }

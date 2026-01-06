@@ -58,6 +58,15 @@ export function readRect(el) {
   })
 }
 
+// Schedule a write (DOM mutation) to run in the write phase of the
+// batched rAF scheduler. Use this instead of calling rAF directly when
+// the write should occur after batched reads to avoid forced reflows.
+export function scheduleWrite(fn) {
+  if (typeof fn !== 'function') return
+  writeQueue.push(fn)
+  scheduleFrame()
+}
+
 // Smooth scroll that uses the batched read/write scheduler. This avoids nested rAFs
 // and ensures layout reads happen before the scroll write.
 export function smoothScrollToElement(targetElement, navbarHeight = 80, extraOffset = 16) {

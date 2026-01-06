@@ -1,5 +1,10 @@
 import React, { useState, useEffect, lazy, Suspense } from 'react'
-import { Download, Mail, ExternalLink, Github, Linkedin, Code2 } from './icons'
+import Download from 'lucide-react/dist/esm/icons/download'
+import Mail from 'lucide-react/dist/esm/icons/mail'
+import ExternalLink from 'lucide-react/dist/esm/icons/external-link'
+import Github from 'lucide-react/dist/esm/icons/github'
+import Linkedin from 'lucide-react/dist/esm/icons/linkedin'
+import Code2 from 'lucide-react/dist/esm/icons/code-2'
 const ProfileCard = lazy(() => import('./ProfileCard'))
 import { assetUrl } from '../utils/assetUrl'
 import SkeletonLoader from './SkeletonLoader'
