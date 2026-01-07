@@ -3,7 +3,7 @@ import './ProfileCard.css';
 import SkeletonLoader from './SkeletonLoader'
 import batchSetProperty from '../utils/batchStyle'
 import setProfileVars from '../utils/profileGeometry'
-import { readRect } from '../utils/geometry'
+import { readRect, scheduleWrite } from '../utils/geometry'
 
 // Default gradient adapts to theme via CSS variables
 const DEFAULT_INNER_GRADIENT = 'linear-gradient(145deg, rgba(96, 73, 110, 0.55) 0%, rgba(113, 196, 255, 0.27) 100%)';
@@ -20,12 +20,24 @@ const ANIMATION_CONFIG = {
 function readCssVarNumber(el, name, fallback) {
   try {
     const node = el || document.documentElement;
+    // Use a short-lived cache to avoid repeated getComputedStyle calls
+    // which can force layout if used frequently during interactions.
+    if (!readCssVarNumber._cache) readCssVarNumber._cache = new WeakMap();
+    const nodeCache = readCssVarNumber._cache.get(node) || {};
+    const now = Date.now();
+    if (nodeCache[name] && (now - nodeCache[name].ts) < 1000) {
+      const cached = nodeCache[name].value;
+      return Number.isFinite(cached) ? cached : fallback;
+    }
     const s = getComputedStyle(node).getPropertyValue(name);
     if (!s) return fallback;
     const str = s.trim();
     // remove trailing ms or px
     const n = parseFloat(str.replace(/ms$|px$/i, ''))
-    return Number.isFinite(n) ? n : fallback
+    const val = Number.isFinite(n) ? n : fallback
+    // store in cache
+    readCssVarNumber._cache.set(node, { ...(readCssVarNumber._cache.get(node) || {}), [name]: { value: val, ts: now } });
+    return val
   } catch (e) {
     return fallback
   }
@@ -389,15 +401,18 @@ const ProfileCardComponent = ({
 
         const applyEnter = (o) => {
         // Batch writes in one frame to avoid interleaved layout reads
-        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
           if (!shellRef.current) return;
           const el = shellRef.current;
-          el.classList.add('active');
-          el.classList.add('entering');
+          // schedule class mutations in write phase to avoid layout thrashing
+          scheduleWrite(() => {
+            try { el.classList.add('active'); } catch (e) {}
+            try { el.classList.add('entering'); } catch (e) {}
+          });
           if (enterTimerRef.current) window.clearTimeout(enterTimerRef.current);
           const enterMs = cssVarCacheRef.current.enterTransitionMs || ANIMATION_CONFIG.ENTER_TRANSITION_MS;
           enterTimerRef.current = window.setTimeout(() => {
-            el.classList.remove('entering');
+            scheduleWrite(() => { try { el.classList.remove('entering'); } catch (e) {} });
           }, enterMs);
 
           if (o) tiltEngine.setTarget(o.x, o.y);
@@ -428,11 +443,11 @@ const ProfileCardComponent = ({
 
     tiltEngine.toCenter();
 
-    const checkSettle = () => {
+      const checkSettle = () => {
       const { x, y, tx, ty } = tiltEngine.getCurrent();
       const settled = Math.hypot(tx - x, ty - y) < 0.6;
       if (settled) {
-        shell.classList.remove('active');
+        scheduleWrite(() => { try { shell.classList.remove('active'); } catch (e) {} });
         leaveRafRef.current = null;
       } else {
         leaveRafRef.current = requestAnimationFrame(checkSettle);
@@ -701,34 +716,39 @@ const ProfileCardComponent = ({
 
                 return (
                   <picture>
-                    <source type="image/avif" srcSet={avifSrcSet} sizes={sizes} />
-                    <source type="image/webp" srcSet={webpSrcSet} sizes={sizes} />
-                    <img
-                      ref={imageRef}
-                      className="avatar relative z-20"
-                      src={avif1x}
-                      srcSet={avifSrcSet}
-                      sizes={sizes}
-                      alt={`${name || 'Ahmed Mostafa'} avatar`}
-                      width={478}
-                      height={639}
-                      loading="eager"
-                      decoding="async"
-                      fetchPriority="high"
-                      style={{ height: '95%', width: '100%' }}
-                      onLoad={(e) => {
-                        setImageLoaded(true);
-                        if (window.performance && window.performance.mark) {
-                          window.performance.mark('lcp-image-loaded');
-                        }
-                      }}
-                      onError={e => {
-                        const t = e.target;
-                        console.error('Failed to load avatar image:', avatarUrl);
-                        t.classList.add('avatar-error');
-                        setImageLoaded(true);
-                      }}
-                    />
+                  {/* AVIF sources */}
+                  <source
+                    type="image/avif"
+                    srcSet="/Ahmed-Mostafa@1x.avif 478w, /Ahmed-Mostafa@2x.avif 956w"
+                    sizes="(max-width:480px) 320px, (max-width:768px) 480px, 478px"
+                  />
+                  {/* WebP sources */}
+                  <source
+                    type="image/webp"
+                    srcSet="/Ahmed-Mostafa@1x.webp 478w, /Ahmed-Mostafa@2x.webp 956w"
+                    sizes="(max-width:480px) 320px, (max-width:768px) 480px, 478px"
+                  />
+                  {/* Fallback img */}
+                  <img
+                    ref={imageRef}
+                    className="avatar relative z-20"
+                    src="/Ahmed-Mostafa@1x.avif"
+                    srcSet="/Ahmed-Mostafa@1x.avif 478w, /Ahmed-Mostafa@2x.avif 956w"
+                    sizes="(max-width:480px) 320px, (max-width:768px) 480px, 478px"
+                    alt={`${name || 'Ahmed Mostafa'} avatar`}
+                    width={478}
+                    height={637}
+                    loading="eager"
+                    decoding="async"
+                    fetchPriority="high"
+                    style={{ height: '95%', width: '100%' }}
+                    onLoad={(e) => setImageLoaded(true)}
+                    onError={(e) => {
+                      console.error('Failed to load avatar image');
+                      setImageLoaded(true);
+                      e.target.classList.add('avatar-error');
+                    }}
+                  />
                   </picture>
                 );
               })()}

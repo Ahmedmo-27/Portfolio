@@ -13,10 +13,18 @@ function scheduleFrame() {
     try {
         // Snapshot scroll position once per frame and copy rect values to plain objects
         const pageY = typeof window !== 'undefined' ? window.scrollY : 0
-        for (const item of readQueue.splice(0)) {
+        // Dedupe multiple read requests for the same element in this frame to
+        // avoid calling getBoundingClientRect more than once per element.
+        const items = readQueue.splice(0)
+        const rectMap = new WeakMap()
+        for (const item of items) {
+          const el = item.el
+          if (rectMap.has(el)) {
+            item.resolve(rectMap.get(el))
+            continue
+          }
           try {
-            const r = item.el.getBoundingClientRect()
-            // Return a plain object with rect fields + page scroll to avoid later reads
+            const r = el.getBoundingClientRect()
             const copy = {
               left: r.left,
               top: r.top,
@@ -28,8 +36,10 @@ function scheduleFrame() {
               y: r.y,
               scrollY: pageY
             }
+            rectMap.set(el, copy)
             item.resolve(copy)
           } catch (e) {
+            rectMap.set(el, null)
             item.resolve(null)
           }
         }
