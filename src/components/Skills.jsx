@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, lazy, Suspense } from 'react'
 // animation delays set via inline styles to avoid runtime writes
 import { useInViewOnce } from '../utils/useInViewOnce'
 import Cloud from 'lucide-react/dist/esm/icons/cloud'
@@ -7,7 +7,7 @@ import Layout from 'lucide-react/dist/esm/icons/layout'
 import Smartphone from 'lucide-react/dist/esm/icons/smartphone'
 import TestTube from 'lucide-react/dist/esm/icons/test-tube'
 import Wrench from 'lucide-react/dist/esm/icons/wrench'
-import CircuitBoard from './CircuitBoard'
+const CircuitBoard = lazy(() => import('./CircuitBoard'))
 import './Skills.css'
 
 const skillCategories = [
@@ -122,7 +122,9 @@ export default function Skills() {
       aria-labelledby="skills-heading"
     >
       {/* Background Elements */}
-      <CircuitBoard className="opacity-20" />
+      <Suspense fallback={<div aria-hidden="true" />}>
+        <CircuitBoard className="opacity-20" />
+      </Suspense>
       <div className="tech-grid opacity-15" />
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-surface/30 to-transparent" aria-hidden="true" />
 

@@ -412,7 +412,7 @@ export default function Navbar() {
               aria-hidden="true"
             >
               <img 
-                src={'/Geometric AM logo design.webp'}
+                src={'/Geometric-AM-logo-design.webp'}
                 alt="AM Logo" 
                 width={32}
                 height={32}

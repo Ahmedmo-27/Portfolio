@@ -37,8 +37,8 @@ const adjust = (v, fMin, fMax, tMin, tMax) =>
   round(tMin + ((tMax - tMin) * (v - fMin)) / (fMax - fMin));
 
 const ProfileCardComponent = ({
-  avatarUrl = '/Ahmed Mostafa.avif',
-  iconUrl = '/Geometric AM logo design.webp',
+  avatarUrl = '/Ahmed-Mostafa.avif',
+  iconUrl = '/Geometric-AM-logo-design.webp',
   grainUrl = '/Grain.webp',
   innerGradient,
   behindGlowEnabled = true,
@@ -671,23 +671,53 @@ const ProfileCardComponent = ({
                   <SkeletonLoader variant="card" className="w-full max-w-xs sm:max-w-sm h-[500px] md:h-[600px] rounded-3xl" />
                 </div>
               )}
-              {/* Image element - always rendered so it can load */}
+              {/* Image element - always rendered so it can load (responsive via <picture>) */}
               {(() => {
-                  return (
+                // Derive common variant filenames from the provided avatarUrl when possible
+                // Use width descriptors matching actual display size to avoid downloading oversized images
+                const sizes = "(max-width:480px) 320px, (max-width:768px) 480px, 478px";
+                let avif1x = avatarUrl;
+                let avif2x = avatarUrl;
+                let webp1x = avatarUrl;
+                let webp2x = avatarUrl;
+                try {
+                  if (/\.avif$/i.test(avatarUrl)) {
+                    avif1x = avatarUrl;
+                    avif2x = avatarUrl.replace(/\.avif$/i, '@2x.avif');
+                    webp1x = avatarUrl.replace(/\.avif$/i, '.webp');
+                    webp2x = avif2x.replace(/\.avif$/i, '@2x.webp').replace(/@2x\.avif$/i, '@2x.webp');
+                  } else if (/\.webp$/i.test(avatarUrl)) {
+                    webp1x = avatarUrl;
+                    webp2x = avatarUrl.replace(/\.webp$/i, '@2x.webp');
+                    avif1x = avatarUrl.replace(/\.webp$/i, '.avif');
+                    avif2x = avif1x.replace(/\.avif$/i, '@2x.avif');
+                  }
+                } catch (e) {}
+
+                // Use width descriptors rather than 1x/2x to let the browser pick exact resource
+                // expected display width is 478px (1x) and 956px (2x)
+                const avifSrcSet = `${avif1x} 478w, ${avif2x} 956w`;
+                const webpSrcSet = `${webp1x} 478w, ${webp2x} 956w`;
+
+                return (
+                  <picture>
+                    <source type="image/avif" srcSet={avifSrcSet} sizes={sizes} />
+                    <source type="image/webp" srcSet={webpSrcSet} sizes={sizes} />
                     <img
                       ref={imageRef}
                       className="avatar relative z-20"
-                      src={avatarUrl}
+                      src={avif1x}
+                      srcSet={avifSrcSet}
+                      sizes={sizes}
                       alt={`${name || 'Ahmed Mostafa'} avatar`}
-                      width={483}
-                      height={644}
+                      width={478}
+                      height={639}
                       loading="eager"
                       decoding="async"
                       fetchPriority="high"
                       style={{ height: '95%', width: '100%' }}
                       onLoad={(e) => {
                         setImageLoaded(true);
-                        // Mark image as loaded for LCP measurement
                         if (window.performance && window.performance.mark) {
                           window.performance.mark('lcp-image-loaded');
                         }
@@ -696,11 +726,11 @@ const ProfileCardComponent = ({
                         const t = e.target;
                         console.error('Failed to load avatar image:', avatarUrl);
                         t.classList.add('avatar-error');
-                        // Still set loaded to hide skeleton even on error
                         setImageLoaded(true);
                       }}
                     />
-                  );                
+                  </picture>
+                );
               })()}
             </div>
             <div className="pc-content">

@@ -5,7 +5,7 @@ import ArrowLeft from 'lucide-react/dist/esm/icons/arrow-left'
 import Github from 'lucide-react/dist/esm/icons/github'
 import Filter from 'lucide-react/dist/esm/icons/filter'
 import { observe } from '../utils/sharedObserver'
-import CircuitBoard from '../components/CircuitBoard'
+const CircuitBoard = lazy(() => import('../components/CircuitBoard'))
 import ViewMoreButton from '../components/ViewMoreButton'
 import ProjectCard from '../components/ProjectCard'
 import { projects } from '../data/projects'
@@ -125,7 +125,9 @@ export default function AllProjects() {
         aria-labelledby="all-projects-heading"
       >
         {/* Background */}
-        <CircuitBoard className="opacity-15" />
+        <Suspense fallback={<div aria-hidden="true" />}>
+          <CircuitBoard className="opacity-15" />
+        </Suspense>
         <div className="tech-grid opacity-10" />
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-surface/30 to-transparent" aria-hidden="true" />
 

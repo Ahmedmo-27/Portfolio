@@ -2,7 +2,7 @@ import { useRef, useState, useEffect, lazy, Suspense } from 'react'
 // animation delays set inline; observer registration handled separately
 import Github from 'lucide-react/dist/esm/icons/github'
 import ChevronRight from 'lucide-react/dist/esm/icons/chevron-right'
-import CircuitBoard from './CircuitBoard'
+const CircuitBoard = lazy(() => import('./CircuitBoard'))
 import ViewMoreButton from './ViewMoreButton'
 const MediaCarousel = lazy(() => import('./MediaCarousel'))
 import { MediaSkeleton } from './SkeletonLoader'
@@ -132,7 +132,9 @@ export default function Projects() {
       aria-labelledby="projects-heading"
     >
       {/* Background */}
-      <CircuitBoard className="opacity-15" />
+      <Suspense fallback={<div aria-hidden="true" /> }>
+        <CircuitBoard className="opacity-15" />
+      </Suspense>
       <div className="tech-grid opacity-10" />
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-surface/30 to-transparent" aria-hidden="true" />
 

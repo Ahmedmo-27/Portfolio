@@ -35,7 +35,7 @@
   --pc-device-beta-offset: 18; /* degrees */
   --pc-enter-transition-ms: 160ms;
   /* Set by ProfileCard at runtime (so it can come from R2). Keep empty by default. */
-  --icon: url('/Geometric AM logo design.webp');
+  --icon: url('/Geometric-AM-logo-design.webp');
   --behind-glow-color: rgba(125, 190, 255, 0.67);
   --behind-glow-size: 25%;
   --inner-gradient: none;
