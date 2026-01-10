@@ -383,11 +383,16 @@ const ProfileCardComponent = ({
         return;
       }
       // Cache not ready — schedule a read in rAF and then set target
-      requestAnimationFrame(() => {
-        updateRectCacheNow(shell);
-        const o = getOffsets(event, shell);
-        if (o) tiltEngine.setTarget(o.x, o.y);
-      });
+      // Ensure we obtain the cached rect before computing offsets to avoid
+      // any synchronous getBoundingClientRect reads during the pointer move.
+      // Use the shared `readRect`-backed helper which returns a promise.
+      updateRectCacheNow(shell).then(() => {
+        // Run in rAF to keep reads and writes in the same frame
+        requestAnimationFrame(() => {
+          const o = getOffsets(event, shell);
+          if (o) tiltEngine.setTarget(o.x, o.y);
+        });
+      }).catch(() => {});
     },
     [tiltEngine]
   );
@@ -589,7 +594,13 @@ const ProfileCardComponent = ({
         cssVarCacheRef.current.initialDuration = readCssVarNumber(base, '--pc-initial-duration', ANIMATION_CONFIG.INITIAL_DURATION);
         // Cache mobile viewport flag here (this read happens in a resize handler rAF)
         try {
-          isMobileRef.current = typeof window !== 'undefined' ? window.innerWidth <= 768 : false;
+          // Use matchMedia to determine viewport category instead of reading
+          // `window.innerWidth` directly to avoid layout-triggering reads.
+          if (typeof window !== 'undefined' && typeof window.matchMedia === 'function') {
+            isMobileRef.current = window.matchMedia('(max-width:768px)').matches;
+          } else {
+            isMobileRef.current = typeof window !== 'undefined' ? window.innerWidth <= 768 : false;
+          }
         } catch (e) {}
       } catch (e) {}
     };
@@ -738,9 +749,8 @@ const ProfileCardComponent = ({
                     alt={`${name || 'Ahmed Mostafa'} avatar`}
                     width={478}
                     height={637}
-                    loading="eager"
+                    loading="lazy"
                     decoding="async"
-                    fetchPriority="high"
                     style={{ height: '95%', width: '100%' }}
                     onLoad={(e) => setImageLoaded(true)}
                     onError={(e) => {

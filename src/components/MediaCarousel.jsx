@@ -90,17 +90,38 @@ function MediaCarousel({ project, shouldLoad = false }) {
   useEffect(() => {
     if (!shouldLoad || total === 0) return
     
-    // Preload first 3 images in background
+    // Preload first 3 images in background during idle time to avoid
+    // blocking the main thread during load/hydration.
     const imagesToPreload = galleryItems
       .slice(0, 3)
       .filter(item => item.type === 'image')
       .map(item => assetUrl(item.src))
-    
-    imagesToPreload.forEach(src => {
-      const img = new Image()
-      img.src = src
-      img.fetchPriority = 'low'
-    })
+
+    const doPreload = () => {
+      for (const src of imagesToPreload) {
+        try {
+          const img = new Image()
+          img.src = src
+          try { img.fetchPriority = 'low' } catch (e) {}
+        } catch (e) {}
+      }
+    }
+
+    let idleId
+    if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
+      idleId = window.requestIdleCallback(doPreload, { timeout: 2000 })
+    } else {
+      // Fallback: schedule after short delay
+      idleId = setTimeout(doPreload, 500)
+    }
+
+    return () => {
+      if (typeof window !== 'undefined' && 'cancelIdleCallback' in window && idleId != null && typeof idleId === 'number') {
+        try { window.cancelIdleCallback(idleId) } catch (e) {}
+      } else if (idleId != null) {
+        try { clearTimeout(idleId) } catch (e) {}
+      }
+    }
   }, [shouldLoad, total, galleryItems])
 
   const goTo = useCallback((index) => {

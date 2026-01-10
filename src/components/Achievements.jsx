@@ -1,6 +1,4 @@
 import { useInViewOnce } from '../utils/useInViewOnce'
-// Note: avoid runtime style writes here — use inline CSS custom properties
-import { getNavbarHeight } from '../utils/navbarRect'
 import { smoothScrollToElement } from '../utils/geometry'
 import Trophy from 'lucide-react/dist/esm/icons/trophy'
 import Medal from 'lucide-react/dist/esm/icons/medal'
@@ -70,55 +68,8 @@ export default function Achievements() {
   
   
   const navigate = useNavigate()
-  const navbarHeightRef = useRef(getNavbarHeight() || 80)
-
-  useEffect(() => {
-    // Prefer ResizeObserver on the header to get size updates without
-    // scheduling rAF-based reads/writes here which can cause forced reflows.
-    let ro = null
-    const header = typeof document !== 'undefined' ? document.querySelector('header') : null
-
-    // initialize from shared helper (may schedule its own reads safely)
-    navbarHeightRef.current = getNavbarHeight() || 80
-
-    try {
-      if (header && typeof ResizeObserver !== 'undefined') {
-        ro = new ResizeObserver((entries) => {
-          if (!entries || !entries.length) return
-          const entry = entries[0]
-          if (entry.contentRect && entry.contentRect.height) {
-            navbarHeightRef.current = entry.contentRect.height
-          } else {
-            // fallback: read from shared helper but defer to idle to avoid rAF contention
-            if (typeof requestIdleCallback !== 'undefined') {
-              requestIdleCallback(() => { navbarHeightRef.current = getNavbarHeight() || navbarHeightRef.current })
-            } else {
-              setTimeout(() => { navbarHeightRef.current = getNavbarHeight() || navbarHeightRef.current }, 100)
-            }
-          }
-        })
-        ro.observe(header)
-      } else {
-        // Fallback for environments without ResizeObserver: debounce reads on resize,
-        // but defer actual reads to idle/setTimeout to avoid forcing layout during rAF.
-        const onResize = () => {
-          if (typeof requestIdleCallback !== 'undefined') {
-            requestIdleCallback(() => { navbarHeightRef.current = getNavbarHeight() || navbarHeightRef.current })
-          } else {
-            setTimeout(() => { navbarHeightRef.current = getNavbarHeight() || navbarHeightRef.current }, 120)
-          }
-        }
-        window.addEventListener('resize', onResize, { passive: true })
-        return () => window.removeEventListener('resize', onResize)
-      }
-    } catch (e) {
-      // ignore
-    }
-
-    return () => {
-      try { if (ro) ro.disconnect() } catch (e) {}
-    }
-  }, [])
+  // Use a fixed navbar height fallback; avoid any DOM reads here
+  const navbarHeightRef = useRef(80)
   
   const handleExperienceClick = (e) => {
     e.preventDefault()
@@ -164,126 +115,164 @@ export default function Achievements() {
           {/* Highlighted Achievements - Featured Cards */}
           <div className='mb-8'>
             <div className="grid md:grid-cols-2 gap-6">
-              {achievements.filter(a => a.isHighlighted).map((achievement, index) => (
-                <article
-                  key={achievement.title}
-                  style={{ ['--animation-delay']: `${index * 0.15 + 0.2}s` }}
-                  className={`relative overflow-hidden rounded-2xl p-6 sm:p-8 border-2 ${achievement.borderColor} ${achievement.bgColor} group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 transition-all duration-300 hover:-translate-y-2 hover:scale-[1.02] hover:shadow-xl hover:shadow-primary-500/10 focus-visible:-translate-y-2 focus-visible:scale-[1.02] achievements-featured-item`}
-                  tabIndex={0}
-                  aria-labelledby={`achievement-${achievement.title.replace(/\s+/g, '-')}`}
-                >
-                  {/* Glow effect */}
-                  <div className={`absolute top-0 right-0 w-40 h-40 bg-gradient-to-br ${achievement.color} opacity-20 blur-3xl group-hover:opacity-40 transition-opacity`} aria-hidden="true" />
-                  
-                  {/* Featured badge */}
-                  <div className="absolute top-4 right-4">
-                    <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-accent-amber/30 text-accent-amber text-xs font-bold">
-                      ⭐ Featured
-                    </span>
-                  </div>
-                  
-                  {/* Icon */}
-                  <div className={`relative w-16 sm:w-20 h-16 sm:h-20 rounded-2xl bg-gradient-to-br ${achievement.color} flex items-center justify-center mb-6 shadow-lg`} aria-hidden="true">
-                    <achievement.icon className="w-8 sm:w-10 h-8 sm:h-10 text-dark-900" />
-                  </div>
-
-                  {/* Content */}
-                  <div className="relative">
-                    <h3 
-                      id={`achievement-${achievement.title.replace(/\s+/g, '-')}`}
-                      className="text-xl sm:text-2xl font-display font-bold text-foreground mb-2"
+              {achievements.filter(a => a.isHighlighted).map((achievement, index) => {
+                const id = `achievement-${achievement.title.replace(/\s+/g, '-')}`
+                // Render a lightweight placeholder until section is in view
+                if (!isInView) {
+                  return (
+                    <article
+                      key={achievement.title}
+                      style={{ ['--animation-delay']: `${index * 0.15 + 0.2}s` }}
+                      className={`relative overflow-hidden rounded-2xl p-6 sm:p-8 border-2 ${achievement.borderColor} ${achievement.bgColor} group achievements-featured-item`}
+                      aria-hidden={true}
+                      tabIndex={-1}
                     >
-                      {achievement.title}
-                    </h3>
-                    <p className="dark:text-primary-400 text-primary-500 font-medium text-sm mb-1">
-                      {achievement.organization}
-                    </p>
-                    <p className="text-muted text-sm sm:text-base">
-                      {achievement.description}
-                    </p>
+                      <div className="w-full h-2 bg-transparent" />
+                      <div className="mt-4 w-3/4 h-4 bg-gray-200/20 rounded" />
+                      <div className="mt-2 w-1/2 h-3 bg-gray-200/10 rounded" />
+                    </article>
+                  )
+                }
 
-                    <div className="mt-5 ach-actions-placeholder">
-                      {(achievement.website || achievement.pdfUrl || achievement.showExperienceLink || achievement.showProjectsLink) && (
-                        <div className="flex flex-wrap gap-4">
-                          {achievement.website && (
-                            <a
-                              href={achievement.website}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="inline-flex items-center gap-1.5 dark:text-primary-400 text-primary-500 hover:text-primary-500 transition-colors text-sm font-medium"
-                            >
-                              Visit Website
-                              <ExternalLink className="w-4 h-4" aria-hidden="true" />
-                            </a>
-                          )}
-                          {achievement.pdfUrl && (
-                            <>
-                              {(() => {
-                                const pdfHref = assetUrl(achievement.pdfUrl)
-                                return (
-                                  <a
-                                    href={pdfHref}
-                                    download
-                                    className="inline-flex items-center gap-1.5 dark:text-primary-400 text-primary-500 hover:text-primary-500 transition-colors text-sm font-medium"
-                                  >
-                                    <Download className="w-4 h-4" aria-hidden="true" />
-                                    Download PDF
-                                  </a>
-                                )
-                              })()}
+                return (
+                  <article
+                    key={achievement.title}
+                    style={{ ['--animation-delay']: `${index * 0.15 + 0.2}s` }}
+                    className={`relative overflow-hidden rounded-2xl p-6 sm:p-8 border-2 ${achievement.borderColor} ${achievement.bgColor} group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 transition-all duration-300 hover:-translate-y-2 hover:scale-[1.02] hover:shadow-xl hover:shadow-primary-500/10 focus-visible:-translate-y-2 focus-visible:scale-[1.02] achievements-featured-item`}
+                    tabIndex={0}
+                    aria-labelledby={id}
+                  >
+                    {/* Glow effect */}
+                    <div className={`absolute top-0 right-0 w-40 h-40 bg-gradient-to-br ${achievement.color} opacity-20 blur-3xl group-hover:opacity-40 transition-opacity`} aria-hidden="true" />
+                    
+                    {/* Featured badge */}
+                    <div className="absolute top-4 right-4">
+                      <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-accent-amber/30 text-accent-amber text-xs font-bold">
+                        ⭐ Featured
+                      </span>
+                    </div>
+                    
+                    {/* Icon */}
+                    <div className={`relative w-16 sm:w-20 h-16 sm:h-20 rounded-2xl bg-gradient-to-br ${achievement.color} flex items-center justify-center mb-6 shadow-lg`} aria-hidden="true">
+                      <achievement.icon className="w-8 sm:w-10 h-8 sm:h-10 text-dark-900" />
+                    </div>
+
+                    {/* Content */}
+                    <div className="relative">
+                      <h3 
+                        id={id}
+                        className="text-xl sm:text-2xl font-display font-bold text-foreground mb-2"
+                      >
+                        {achievement.title}
+                      </h3>
+                      <p className="dark:text-primary-400 text-primary-500 font-medium text-sm mb-1">
+                        {achievement.organization}
+                      </p>
+                      <p className="text-muted text-sm sm:text-base">
+                        {achievement.description}
+                      </p>
+
+                      <div className="mt-5 ach-actions-placeholder">
+                        {(achievement.website || achievement.pdfUrl || achievement.showExperienceLink || achievement.showProjectsLink) && (
+                          <div className="flex flex-wrap gap-4">
+                            {achievement.website && (
+                              <a
+                                href={achievement.website}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-1.5 dark:text-primary-400 text-primary-500 hover:text-primary-500 transition-colors text-sm font-medium"
+                              >
+                                Visit Website
+                                <ExternalLink className="w-4 h-4" aria-hidden="true" />
+                              </a>
+                            )}
+                            {achievement.pdfUrl && (
+                              <>
+                                {(() => {
+                                  const pdfHref = assetUrl(achievement.pdfUrl)
+                                  return (
+                                    <a
+                                      href={pdfHref}
+                                      download
+                                      className="inline-flex items-center gap-1.5 dark:text-primary-400 text-primary-500 hover:text-primary-500 transition-colors text-sm font-medium"
+                                    >
+                                      <Download className="w-4 h-4" aria-hidden="true" />
+                                      Download PDF
+                                    </a>
+                                  )
+                                })()}
+                                <a
+                                  href="/#experience"
+                                  onClick={handleExperienceClick}
+                                  className="inline-flex items-center gap-1.5 text-primary-500 hover:text-primary-500 transition-colors text-sm font-medium"
+                                >
+                                  View Experience
+                                  <ExternalLink className="w-4 h-4" aria-hidden="true" />
+                                </a>
+                              </>
+                            )}
+                            {achievement.showExperienceLink && !achievement.pdfUrl && (
                               <a
                                 href="/#experience"
                                 onClick={handleExperienceClick}
-                                className="inline-flex items-center gap-1.5 text-primary-500 hover:text-primary-500 transition-colors text-sm font-medium"
+                                className="inline-flex items-center gap-1.5 dark:text-primary-400 text-primary-500 hover:text-primary-500 transition-colors text-sm font-medium"
                               >
                                 View Experience
                                 <ExternalLink className="w-4 h-4" aria-hidden="true" />
                               </a>
-                            </>
-                          )}
-                          {achievement.showExperienceLink && !achievement.pdfUrl && (
-                            <a
-                              href="/#experience"
-                              onClick={handleExperienceClick}
-                              className="inline-flex items-center gap-1.5 dark:text-primary-400 text-primary-500 hover:text-primary-500 transition-colors text-sm font-medium"
-                            >
-                              View Experience
-                              <ExternalLink className="w-4 h-4" aria-hidden="true" />
-                            </a>
-                          )}
-                          {achievement.showProjectsLink && (
-                            <a
-                              href="/#projects"
-                              onClick={handleProjectsClick}
-                              className="inline-flex items-center gap-1.5 text-primary-500 hover:text-primary-500 transition-colors text-sm font-medium"
-                            >
-                              View Projects
-                              <ExternalLink className="w-4 h-4" aria-hidden="true" />
-                            </a>
-                          )}
-                        </div>
-                      )}
+                            )}
+                            {achievement.showProjectsLink && (
+                              <a
+                                href="/#projects"
+                                onClick={handleProjectsClick}
+                                className="inline-flex items-center gap-1.5 text-primary-500 hover:text-primary-500 transition-colors text-sm font-medium"
+                              >
+                                View Projects
+                                <ExternalLink className="w-4 h-4" aria-hidden="true" />
+                              </a>
+                            )}
+                          </div>
+                        )}
+                      </div>
                     </div>
-                  </div>
 
-                  {/* Decorative background icon */}
-                  <div className="absolute bottom-4 right-4 opacity-10" aria-hidden="true">
-                    <achievement.icon className="w-20 sm:w-28 h-20 sm:h-28" />
-                  </div>
-                </article>
-              ))}
+                    {/* Decorative background icon */}
+                    <div className="absolute bottom-4 right-4 opacity-10" aria-hidden="true">
+                      <achievement.icon className="w-20 sm:w-28 h-20 sm:h-28" />
+                    </div>
+                  </article>
+                )
+              })}
             </div>
           </div>
 
           {/* Other Achievements */}
           <div className="grid md:grid-cols-2 gap-6">
-            {achievements.filter(a => !a.isHighlighted).map((achievement, index) => (
+            {achievements.filter(a => !a.isHighlighted).map((achievement, index) => {
+            const id = `achievement-other-${achievement.title.replace(/\s+/g, '-')}`
+            if (!isInView) {
+              return (
+                <article
+                  key={achievement.title}
+                  style={{ ['--animation-delay']: `${index * 0.1 + 0.3}s` }}
+                  className={`relative glass-card p-6 group overflow-hidden achievements-other-item`}
+                  aria-hidden={true}
+                  tabIndex={-1}
+                >
+                  <div className="w-full h-2 bg-transparent" />
+                  <div className="mt-3 w-3/4 h-4 bg-gray-200/20 rounded" />
+                  <div className="mt-2 w-1/2 h-3 bg-gray-200/10 rounded" />
+                </article>
+              )
+            }
+
+            return (
             <article
               key={achievement.title}
               style={{ ['--animation-delay']: `${index * 0.1 + 0.3}s` }}
               className={`relative glass-card p-6 group overflow-hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 transition-transform hover:-translate-y-1 hover:scale-[1.01] focus-visible:-translate-y-1 focus-visible:scale-[1.01] achievements-other-item`}
               tabIndex={0}
-              aria-labelledby={`achievement-other-${achievement.title.replace(/\s+/g, '-')}`}
+              aria-labelledby={id}
             >
               {/* Background Gradient */}
               <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${achievement.color} opacity-10 blur-3xl group-hover:opacity-20 transition-opacity`} aria-hidden="true" />
@@ -296,7 +285,7 @@ export default function Achievements() {
               {/* Content */}
               <div className="relative">
                 <h3 
-                  id={`achievement-other-${achievement.title.replace(/\s+/g, '-')}`}
+                  id={id}
                   className="text-lg font-display font-bold text-foreground mb-2"
                 >
                   {achievement.title}
@@ -329,7 +318,8 @@ export default function Achievements() {
                 <achievement.icon className="w-16 h-16" />
               </div>
             </article>
-            ))}
+            )
+            })}
           </div>
         </div>
       </div>

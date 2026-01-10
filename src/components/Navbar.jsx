@@ -1,10 +1,10 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import Menu from 'lucide-react/dist/esm/icons/menu'
-import X from 'lucide-react/dist/esm/icons/x'
+// Icons are lazy-loaded below to avoid adding them to the main bundle
 import ThemeToggle from './ThemeToggle'
 import './Navbar.css'
-import { observe } from '../utils/sharedObserver'
+// `observe` is imported dynamically inside the effect to avoid registering
+// IntersectionObservers on the main thread during initial load.
 import { smoothScrollToElement, scheduleWrite } from '../utils/geometry'
 import { getNavbarHeight } from '../utils/navbarRect'
 
@@ -35,6 +35,21 @@ export default function Navbar() {
   useEffect(() => {
     visibleLinksRef.current = visibleLinks
   }, [visibleLinks])
+
+  // Lazy-load mobile menu icons to keep initial bundle small
+  const [MenuIcon, setMenuIcon] = useState(null)
+  const [CloseIcon, setCloseIcon] = useState(null)
+  useEffect(() => {
+    if (!linksStartedLoading && !isMobileMenuOpen) return
+    let mounted = true
+    void import('lucide-react/dist/esm/icons/menu')
+      .then((m) => { if (mounted) setMenuIcon(() => m.default) })
+      .catch(() => {})
+    void import('lucide-react/dist/esm/icons/x')
+      .then((m) => { if (mounted) setCloseIcon(() => m.default) })
+      .catch(() => {})
+    return () => { mounted = false }
+  }, [linksStartedLoading, isMobileMenuOpen])
 
   // Queue-based stagger refs
   const revealQueueRef = useRef([])
@@ -123,7 +138,7 @@ export default function Navbar() {
     }
     
     // Check periodically (less frequent to avoid performance issues)
-    const intervalId = setInterval(checkHashChange, 300)
+    const intervalId = setInterval(checkHashChange, 500)
     
     // Also listen to hashchange events (for direct hash changes)
     const handleHashChange = () => {
@@ -275,22 +290,32 @@ export default function Navbar() {
       scheduleProcess()
     }
 
-    // Observe hero and all sections using shared observer (continuous)
-    const heroEl = document.getElementById('hero')
-    if (heroEl) {
-      const cleanup = observe(heroEl, handleEntry, { rootMargin: '-100px 0px -50% 0px', threshold: [0.1,0.2,0.3,0.4,0.5], once: false })
-      cleanupMap.set('hero', cleanup)
-    }
 
-    sections.forEach((id) => {
-      const el = document.getElementById(id)
-      if (el) {
-        const cleanup = observe(el, handleEntry, { rootMargin: '-100px 0px -50% 0px', threshold: [0.1,0.2,0.3,0.4,0.5], once: false })
-        cleanupMap.set(id, cleanup)
-      }
-    })
+    // Observe hero and all sections using shared observer (continuous)
+    // Import the observer dynamically so we avoid creating observers during initial load.
+    let didCancel = false
+    void import('../utils/sharedObserver')
+      .then(({ observe }) => {
+        if (didCancel) return
+
+        const heroEl = document.getElementById('hero')
+        if (heroEl) {
+          const cleanup = observe(heroEl, handleEntry, { rootMargin: '-100px 0px -50% 0px', threshold: [0.1,0.2,0.3,0.4,0.5], once: false })
+          cleanupMap.set('hero', cleanup)
+        }
+
+        sections.forEach((id) => {
+          const el = document.getElementById(id)
+          if (el) {
+            const cleanup = observe(el, handleEntry, { rootMargin: '-100px 0px -50% 0px', threshold: [0.1,0.2,0.3,0.4,0.5], once: false })
+            cleanupMap.set(id, cleanup)
+          }
+        })
+      })
+      .catch(() => {})
 
     return () => {
+      didCancel = true
       for (const fn of cleanupMap.values()) {
         try { fn() } catch (e) {}
       }
@@ -362,8 +387,15 @@ export default function Navbar() {
       const targetElement = document.getElementById(targetId)
       if (!targetElement) return
 
-      const iw = window.innerWidth
-      const navbarHeight = getNavbarHeight() || (iw >= 768 ? 65 : 25)
+      // Avoid directly reading `window.innerWidth` (can be near writes); use
+      // `matchMedia` which doesn't trigger layout reads.
+      let isWide = false
+      try {
+        isWide = typeof window !== 'undefined' && typeof window.matchMedia === 'function' ? window.matchMedia('(min-width:768px)').matches : (window.innerWidth >= 768)
+      } catch (e) {
+        isWide = window.innerWidth >= 768
+      }
+      const navbarHeight = getNavbarHeight() || (isWide ? 65 : 25)
 
       const doScroll = () => {
         smoothScrollToElement(targetElement, navbarHeight, 16)
@@ -417,7 +449,7 @@ export default function Navbar() {
                 width={32}
                 height={32}
                 className="w-8 h-8 object-contain"
-                loading="eager"
+                loading="lazy"
                 decoding="async"
                 fetchPriority="low"
               />
@@ -470,7 +502,15 @@ export default function Navbar() {
                 aria-controls="mobile-menu"
                 aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
               >
-                {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+                {isMobileMenuOpen ? (
+                  CloseIcon ? <CloseIcon className="w-6 h-6" /> : (
+                    <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                  )
+                ) : (
+                  MenuIcon ? <MenuIcon className="w-6 h-6" /> : (
+                    <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+                  )
+                )}
               </button>
             )}
           </div>

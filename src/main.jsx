@@ -3,25 +3,31 @@ import ReactDOM from 'react-dom/client'
 import App from './App'
 import './index.css'
 
-// Disable console.error in production
-if (import.meta.env.PROD) {
-  console.error = () => {};
-}
-
-// Only use StrictMode in development to avoid double-rendering overhead in production
-const AppWrapper = import.meta.env.DEV ? (
+// Wrap the app in StrictMode to catch potential problems early
+const AppWrapper = (
   <React.StrictMode>
     <App />
   </React.StrictMode>
-) : (
-  <App />
 )
 
-ReactDOM.createRoot(document.getElementById('root')).render(AppWrapper)
+const rootEl = document.getElementById('root')
+if (!rootEl) {
+  throw new Error('Root element with id "root" not found.')
+}
+ReactDOM.createRoot(rootEl).render(AppWrapper)
 
 // Load helpers after the app mounts so any events they dispatch are received by listeners in React
-import('./utils/locationChange')
-import('./utils/sectionObserver')
+// Defer loading these utilities to idle time to avoid blocking the main thread during initial load
+const loadDeferredHelpers = () => {
+  void import('./utils/locationChange').catch(() => {})
+  void import('./utils/sectionObserver').catch(() => {})
+}
+
+if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
+  window.requestIdleCallback(loadDeferredHelpers, { timeout: 2000 })
+} else {
+  setTimeout(loadDeferredHelpers, 1200)
+}
 
 // Defer Service Worker registration to avoid blocking main thread
 // Use requestIdleCallback for better performance

@@ -1,7 +1,7 @@
 import { useEffect, useState, lazy, Suspense } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { ThemeProvider } from './context/ThemeContext'
-import Navbar from './components/Navbar'
+const Navbar = lazy(() => import(/* webpackChunkName: "navbar" */ './components/Navbar'))
 import Hero from './components/Hero'
 import SkeletonLoader from './components/SkeletonLoader'
 import LazySection from './components/LazySection'
