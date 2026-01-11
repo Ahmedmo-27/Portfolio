@@ -8,6 +8,7 @@ import ChevronUp from 'lucide-react/dist/esm/icons/chevron-up'
 import ViewMoreButton from './ViewMoreButton'
 import { useInViewOnce } from '../utils/useInViewOnce'
 import VolunteerItem from './VolunteerItem'
+import { useEffect } from 'react'
 
 // Real volunteering & leadership roles
 const volunteeringExperiences = [
@@ -76,7 +77,11 @@ export default function Volunteering() {
   const initialDisplayCount = 2
   const displayedExperiences = showAll ? volunteeringExperiences : volunteeringExperiences.slice(0, initialDisplayCount)
 
-    // URL hash updates are handled centrally by the Navbar observer
+  useEffect(() => {
+    if (isInView && window.location.hash !== '#education') {
+      window.history.replaceState(null, '', '#education')
+    }
+    }, [isInView])
 
   return (
     <section 

@@ -6,6 +6,7 @@ import ExternalLink from 'lucide-react/dist/esm/icons/external-link'
 import FileText from 'lucide-react/dist/esm/icons/file-text'
 import Download from 'lucide-react/dist/esm/icons/download'
 import { assetUrl } from '../utils/assetUrl'
+import { useEffect } from 'react'
 
 const achievements = [
   {
@@ -57,9 +58,12 @@ const achievements = [
 export default function Achievements() {
   const { ref, isInView } = useInViewOnce()
 
-    // URL hash updates are handled centrally by the Navbar observer
+  useEffect(() => {
+    if (isInView && window.location.hash !== '#about') {
+      window.history.replaceState(null, '', '#about')
+    }
+    }, [isInView])
   
-    
   return (
     <section 
       id="achievements" 
@@ -86,134 +90,113 @@ export default function Achievements() {
           {/* Highlighted Achievements - Featured Cards */}
           <div className='mb-8'>
             <div className="grid md:grid-cols-2 gap-6">
-              {achievements.filter(a => a.isHighlighted).map((achievement, index) => {
-                const id = `achievement-${achievement.title.replace(/\s+/g, '-')}`
-                // Render a lightweight placeholder until section is in view
-                if (!isInView) {
-                  return (
-                    <article
-                      key={achievement.title}
-                      style={{ ['--animation-delay']: `${index * 0.15 + 0.2}s` }}
-                      className={`relative overflow-hidden rounded-2xl p-6 sm:p-8 border-2 ${achievement.borderColor} ${achievement.bgColor} group achievements-featured-item`}
-                      aria-hidden={true}
-                      tabIndex={-1}
+              {achievements.filter(a => a.isHighlighted).map((achievement, index) => (
+                <article
+                  key={achievement.title}
+                  style={{ ['--animation-delay']: `${index * 0.15 + 0.2}s` }}
+                  className={`relative overflow-hidden rounded-2xl p-6 sm:p-8 border-2 ${achievement.borderColor} ${achievement.bgColor} group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 transition-all duration-300 hover:-translate-y-2 hover:scale-[1.02] hover:shadow-xl hover:shadow-primary-500/10 focus-visible:-translate-y-2 focus-visible:scale-[1.02] achievements-featured-item`}
+                  tabIndex={0}
+                  aria-labelledby={`achievement-${achievement.title.replace(/\s+/g, '-')}`}
+                >
+                  {/* Glow effect */}
+                  <div className={`absolute top-0 right-0 w-40 h-40 bg-gradient-to-br ${achievement.color} opacity-20 blur-3xl group-hover:opacity-40 transition-opacity`} aria-hidden="true" />
+                  
+                  {/* Featured badge */}
+                  <div className="absolute top-4 right-4">
+                    <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-accent-amber/30 text-accent-amber text-xs font-bold">
+                      ⭐ Featured
+                    </span>
+                  </div>
+                  
+                  {/* Icon */}
+                  <div className={`relative w-16 sm:w-20 h-16 sm:h-20 rounded-2xl bg-gradient-to-br ${achievement.color} flex items-center justify-center mb-6 shadow-lg`} aria-hidden="true">
+                    <achievement.icon className="w-8 sm:w-10 h-8 sm:h-10 text-dark-900" />
+                  </div>
+
+                  {/* Content */}
+                  <div className="relative">
+                    <h3 
+                      id={`achievement-${achievement.title.replace(/\s+/g, '-')}`}
+                      className="text-xl sm:text-2xl font-display font-bold text-foreground mb-2"
                     >
-                      <div className="w-full h-2 bg-transparent" />
-                      <div className="mt-4 w-3/4 h-4 bg-gray-200/20 rounded" />
-                      <div className="mt-2 w-1/2 h-3 bg-gray-200/10 rounded" />
-                    </article>
-                  )
-                }
+                      {achievement.title}
+                    </h3>
+                    <p className="dark:text-primary-400 text-primary-500 font-medium text-sm mb-1">
+                      {achievement.organization}
+                    </p>
+                    <p className="text-muted text-sm sm:text-base">
+                      {achievement.description}
+                    </p>
 
-                return (
-                  <article
-                    key={achievement.title}
-                    style={{ ['--animation-delay']: `${index * 0.15 + 0.2}s` }}
-                    className={`relative overflow-hidden rounded-2xl p-6 sm:p-8 border-2 ${achievement.borderColor} ${achievement.bgColor} group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 transition-all duration-300 hover:-translate-y-2 hover:scale-[1.02] hover:shadow-xl hover:shadow-primary-500/10 focus-visible:-translate-y-2 focus-visible:scale-[1.02] achievements-featured-item`}
-                    tabIndex={0}
-                    aria-labelledby={id}
-                  >
-                    {/* Glow effect */}
-                    <div className={`absolute top-0 right-0 w-40 h-40 bg-gradient-to-br ${achievement.color} opacity-20 blur-3xl group-hover:opacity-40 transition-opacity`} aria-hidden="true" />
-                    
-                    {/* Featured badge */}
-                    <div className="absolute top-4 right-4">
-                      <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-accent-amber/30 text-accent-amber text-xs font-bold">
-                        ⭐ Featured
-                      </span>
-                    </div>
-                    
-                    {/* Icon */}
-                    <div className={`relative w-16 sm:w-20 h-16 sm:h-20 rounded-2xl bg-gradient-to-br ${achievement.color} flex items-center justify-center mb-6 shadow-lg`} aria-hidden="true">
-                      <achievement.icon className="w-8 sm:w-10 h-8 sm:h-10 text-dark-900" />
-                    </div>
-
-                    {/* Content */}
-                    <div className="relative">
-                      <h3 
-                        id={id}
-                        className="text-xl sm:text-2xl font-display font-bold text-foreground mb-2"
-                      >
-                        {achievement.title}
-                      </h3>
-                      <p className="dark:text-primary-400 text-primary-500 font-medium text-sm mb-1">
-                        {achievement.organization}
-                      </p>
-                      <p className="text-muted text-sm sm:text-base">
-                        {achievement.description}
-                      </p>
-
-                      <div className="mt-5 ach-actions-placeholder">
-                        {(achievement.website || achievement.pdfUrl || achievement.showExperienceLink || achievement.showProjectsLink) && (
-                          <div className="flex flex-wrap gap-4">
-                            {achievement.website && (
-                              <a
-                                href={achievement.website}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="inline-flex items-center gap-1.5 dark:text-primary-400 text-primary-500 hover:text-primary-500 transition-colors text-sm font-medium"
-                              >
-                                Visit Website
-                                <ExternalLink className="w-4 h-4" aria-hidden="true" />
-                              </a>
-                            )}
-                            {achievement.pdfUrl && (
-                              <>
-                                {(() => {
-                                  const pdfHref = assetUrl(achievement.pdfUrl)
-                                  return (
-                                    <a
-                                      href={pdfHref}
-                                      download
-                                      className="inline-flex items-center gap-1.5 dark:text-primary-400 text-primary-500 hover:text-primary-500 transition-colors text-sm font-medium"
-                                    >
-                                      <Download className="w-4 h-4" aria-hidden="true" />
-                                      Download PDF
-                                    </a>
-                                  )
-                                })()}
-                                <a
-                                  href="/#experience"
-                                  className="inline-flex items-center gap-1.5 text-primary-500 hover:text-primary-500 transition-colors text-sm font-medium"
-                                >
-                                  View Experience
-                                  <ExternalLink className="w-4 h-4" aria-hidden="true" />
-                                </a>
-                              </>
-                            )}
-                            {achievement.showExperienceLink && !achievement.pdfUrl && (
+                    <div className="mt-5 ach-actions-placeholder">
+                      {(achievement.website || achievement.pdfUrl || achievement.showExperienceLink || achievement.showProjectsLink) && (
+                        <div className="flex flex-wrap gap-4">
+                          {achievement.website && (
+                            <a
+                              href={achievement.website}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-1.5 dark:text-primary-400 text-primary-500 hover:text-primary-500 transition-colors text-sm font-medium"
+                            >
+                              Visit Website
+                              <ExternalLink className="w-4 h-4" aria-hidden="true" />
+                            </a>
+                          )}
+                          {achievement.pdfUrl && (
+                            <>
+                              {(() => {
+                                const pdfHref = assetUrl(achievement.pdfUrl)
+                                return (
+                                  <a
+                                    href={pdfHref}
+                                    download
+                                    className="inline-flex items-center gap-1.5 dark:text-primary-400 text-primary-500 hover:text-primary-500 transition-colors text-sm font-medium"
+                                  >
+                                    <Download className="w-4 h-4" aria-hidden="true" />
+                                    Download PDF
+                                  </a>
+                                )
+                              })()}
                               <a
                                 href="/#experience"
-                                className="inline-flex items-center gap-1.5 dark:text-primary-400 text-primary-500 hover:text-primary-500 transition-colors text-sm font-medium"
+                                className="inline-flex items-center gap-1.5 text-primary-500 hover:text-primary-500 transition-colors text-sm font-medium"
                               >
                                 View Experience
                                 <ExternalLink className="w-4 h-4" aria-hidden="true" />
                               </a>
-                            )}
-                            {achievement.showProjectsLink && (
-                              <a
-                                href="/#projects"
-                                className="inline-flex items-center gap-1.5 text-primary-500 hover:text-primary-500 transition-colors text-sm font-medium"
-                              >
-                                View Projects
-                                <ExternalLink className="w-4 h-4" aria-hidden="true" />
-                              </a>
-                            )}
-                          </div>
-                        )}
-                      </div>
+                            </>
+                          )}
+                          {achievement.showExperienceLink && !achievement.pdfUrl && (
+                            <a
+                              href="/#experience"
+                              className="inline-flex items-center gap-1.5 dark:text-primary-400 text-primary-500 hover:text-primary-500 transition-colors text-sm font-medium"
+                            >
+                              View Experience
+                              <ExternalLink className="w-4 h-4" aria-hidden="true" />
+                            </a>
+                          )}
+                          {achievement.showProjectsLink && (
+                            <a
+                              href="/#projects"
+                              className="inline-flex items-center gap-1.5 text-primary-500 hover:text-primary-500 transition-colors text-sm font-medium"
+                            >
+                              View Projects
+                              <ExternalLink className="w-4 h-4" aria-hidden="true" />
+                            </a>
+                          )}
+                        </div>
+                      )}
                     </div>
+                  </div>
 
-                    {/* Decorative background icon */}
-                    <div className="absolute bottom-4 right-4 opacity-10" aria-hidden="true">
-                      <achievement.icon className="w-20 sm:w-28 h-20 sm:h-28" />
-                    </div>
-                  </article>
-                )
-              })}
+                  {/* Decorative background icon */}
+                  <div className="absolute bottom-4 right-4 opacity-10" aria-hidden="true">
+                    <achievement.icon className="w-20 sm:w-28 h-20 sm:h-28" />
+                  </div>
+                </article>
+              ))}
             </div>
           </div>
-
         </div>
       </div>
     </section>
