@@ -22,7 +22,7 @@
       .pc-card-skeleton::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.05),transparent);animation:shimmer 1.5s infinite}
       @keyframes shimmer{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
 
-      .pc-card{height:80vh;height:80svh;max-height:540px;display:grid;aspect-ratio:0.718;border-radius:var(--card-radius);position:relative;transition:transform 0.8s ease;transform:translateZ(0) rotateX(0deg) rotateY(0deg);background:var(--grain),var(--pc-card-bg);background-size:200px 200px,100% 100%;background-position:50% 50%;background-repeat:repeat,no-repeat;backface-visibility:hidden;overflow:hidden;border:1px solid var(--color-border);contain:layout style paint;will-change:transform;width:100%;min-height:400px}
+      .pc-card{height:80vh;height:80svh;max-height:540px;display:grid;aspect-ratio:0.718;border-radius:var(--card-radius);position:relative;transition:transform 0.8s ease;transform:translateZ(0) rotateX(0deg) rotateY(0deg),var(--pc-card-bg);background-size:200px 200px,100% 100%;background-position:50% 50%;background-repeat:repeat,no-repeat;backface-visibility:hidden;overflow:hidden;border:1px solid var(--color-border);contain:layout style paint;will-change:transform;width:100%;min-height:400px}
 
       .pc-avatar-content{mix-blend-mode:luminosity;overflow:hidden;transform:translateZ(2);backface-visibility:hidden;contain:layout style paint;will-change:transform}
       .pc-card-shell{position:relative;z-index:1;will-change:transform;transform:translateZ(0)}
@@ -96,7 +96,6 @@
     <!-- Preload LCP image (ProfileCard avatar) - Critical for performance -->
     <!-- This ensures the browser discovers and starts downloading the LCP image immediately -->
     <link rel="preload" href="/Ahmed-Mostafa@1x.avif" as="image" type="image/avif" fetchpriority="high" imagesrcset="/Ahmed-Mostafa@1x.avif 478w, /Ahmed-Mostafa@2x.avif 956w" imagesizes="(max-width:480px) 320px, (max-width:768px) 480px, 478px" />
-    <link rel="preload" href="/Grain.webp" as="image" type="image/webp" fetchpriority="high" />    
     <link rel="preload" href="/Geometric-AM-logo-design.webp" as="image" type="image/webp" fetchpriority="high" />
 
     <!-- Open Graph / Facebook -->
@@ -184,10 +183,10 @@
       })();
     </script>
     <!-- Preload critical JS to break network dependency chain -->
-    <link rel="modulepreload" href="/assets/index-BDyORY7v.js" />
+    <link rel="modulepreload" href="/assets/index-BK6qgAwA.js" />
     <link rel="modulepreload" href="/assets/react-router-W-qgBu9W.js" />
 
-    <link rel="prefetch" href="/assets/components-2pgYBinP.js" as="script"/>
+    <link rel="prefetch" href="/assets/components-Cf3OwrLQ.js" as="script"/>
 
     <script type="module" src="/src/main.jsx" defer></script>
   </head>

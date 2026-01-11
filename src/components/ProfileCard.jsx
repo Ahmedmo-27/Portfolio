@@ -51,7 +51,6 @@ const adjust = (v, fMin, fMax, tMin, tMax) =>
 const ProfileCardComponent = ({
   avatarUrl = '/Ahmed-Mostafa.avif',
   iconUrl = '/Geometric-AM-logo-design.webp',
-  grainUrl = '/Grain.webp',
   innerGradient,
   behindGlowEnabled = true,
   behindGlowColor,
@@ -669,13 +668,11 @@ const ProfileCardComponent = ({
   useEffect(() => {
     if (cardWrapperRef.current) {
       batchSetProperty(cardWrapperRef.current, '--icon', iconUrl ? `url(${iconUrl})` : 'none');
-      batchSetProperty(cardWrapperRef.current, '--grain', grainUrl ? `url(${grainUrl})` : 'none');
       batchSetProperty(cardWrapperRef.current, '--inner-gradient', innerGradient ?? DEFAULT_INNER_GRADIENT);
       batchSetProperty(cardWrapperRef.current, '--behind-glow-color', behindGlowColor ?? 'rgba(125, 190, 255, 0.67)');
       batchSetProperty(cardWrapperRef.current, '--behind-glow-size', behindGlowSize ?? '50%');
     }
-  }, [iconUrl, grainUrl, innerGradient, behindGlowColor, behindGlowSize]);
-
+  }, [iconUrl, innerGradient, behindGlowColor, behindGlowSize]);
   return (
     <div 
       ref={(node) => {
