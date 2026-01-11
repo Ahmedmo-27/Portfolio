@@ -749,7 +749,8 @@ const ProfileCardComponent = ({
                     alt={`${name || 'Ahmed Mostafa'} avatar`}
                     width={478}
                     height={637}
-                    loading="lazy"
+                    loading="eager"
+                    fetchpriority="high"
                     decoding="async"
                     style={{ height: '95%', width: '100%' }}
                     onLoad={(e) => setImageLoaded(true)}
