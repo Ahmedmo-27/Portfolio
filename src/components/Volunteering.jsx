@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import Users from 'lucide-react/dist/esm/icons/users'
 import Star from 'lucide-react/dist/esm/icons/star'
 import Heart from 'lucide-react/dist/esm/icons/heart'
@@ -76,11 +76,7 @@ export default function Volunteering() {
   const initialDisplayCount = 2
   const displayedExperiences = showAll ? volunteeringExperiences : volunteeringExperiences.slice(0, initialDisplayCount)
 
-  useEffect(() => {
-    if (isInView && window.location.hash !== '#education') {
-      window.history.replaceState(null, '', '#education')
-    }
-  }, [isInView])
+    // URL hash updates are handled centrally by the Navbar observer
 
   return (
     <section 

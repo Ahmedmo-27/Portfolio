@@ -1,4 +1,4 @@
-import { useEffect, lazy, Suspense } from 'react'
+import { lazy, Suspense } from 'react'
 // animation delays set via inline styles to avoid runtime writes
 import { useInViewOnce } from '../utils/useInViewOnce'
 import Cloud from 'lucide-react/dist/esm/icons/cloud'
@@ -108,12 +108,7 @@ const familiarCategories = skillCategories.slice(3)
 export default function Skills() {
   const { ref, isInView } = useInViewOnce()
 
-  // Update URL hash when section comes into view
-  useEffect(() => {
-    if (isInView && window.location.hash !== '#skills') {
-      window.history.replaceState(null, '', '#skills')
-    }
-  }, [isInView])
+  // URL hash updates are handled centrally by the Navbar observer
 
   return (
     <section 

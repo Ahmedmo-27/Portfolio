@@ -1,4 +1,4 @@
-import { useEffect, lazy, Suspense } from 'react'
+import { lazy, Suspense } from 'react'
 import { useInViewOnce } from '../utils/useInViewOnce'
 import GraduationCap from 'lucide-react/dist/esm/icons/graduation-cap'
 import Globe from 'lucide-react/dist/esm/icons/globe'
@@ -56,12 +56,7 @@ const stats = [
 export default function About() {
   const { ref, isInView } = useInViewOnce()
 
-  // Update URL hash when section comes into view
-  useEffect(() => {
-    if (isInView && window.location.hash !== '#about') {
-      window.history.replaceState(null, '', '#about')
-    }
-  }, [isInView])
+  // URL hash updates are handled centrally by the Navbar observer
 
   return (
     <section 

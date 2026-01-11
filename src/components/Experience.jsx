@@ -1,10 +1,7 @@
-import { useState, useMemo, useEffect } from 'react'
-import batchSetProperty from '../utils/batchStyle'
+import {useMemo } from 'react'
 import Building2 from 'lucide-react/dist/esm/icons/building-2'
 import Award from 'lucide-react/dist/esm/icons/award'
 import Code from 'lucide-react/dist/esm/icons/code'
-import Calendar from 'lucide-react/dist/esm/icons/calendar'
-import MapPin from 'lucide-react/dist/esm/icons/map-pin'
 import Cpu from 'lucide-react/dist/esm/icons/cpu'
 import { useInViewOnce } from '../utils/useInViewOnce'
 import ExperienceItem from './ExperienceItem'
@@ -79,20 +76,13 @@ const experiences = [
 ]
 
 export default function Experience() {
-  const { ref, isInView } = useInViewOnce()
-  const [showAll, setShowAll] = useState(false)
+  const { ref } = useInViewOnce()
 
-  // Update URL hash when section comes into view
-  useEffect(() => {
-    if (isInView && window.location.hash !== '#experience') {
-      window.history.replaceState(null, '', '#experience')
-    }
-  }, [isInView])
+  // URL hash updates are handled centrally by the Navbar observer
 
-  const initialDisplayCount = 4
   const displayedExperiences = useMemo(() => {
-    return showAll ? experiences : experiences.slice(0, initialDisplayCount)
-  }, [showAll])
+    return experiences
+  }, [])
 
   return (
     <section 

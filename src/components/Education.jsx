@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import GraduationCap from 'lucide-react/dist/esm/icons/graduation-cap'
 import Calendar from 'lucide-react/dist/esm/icons/calendar'
 import BookOpen from 'lucide-react/dist/esm/icons/book-open'
@@ -101,12 +101,7 @@ const coursework = [
 export default function Education() {
   const { ref, isInView } = useInViewOnce()
 
-  // Update URL hash when section comes into view
-  useEffect(() => {
-    if (isInView && window.location.hash !== '#education') {
-      window.history.replaceState(null, '', '#education')
-    }
-  }, [isInView])
+  // URL hash updates are handled centrally by the Navbar observer
 
   const [expandedCertSkills, setExpandedCertSkills] = useState({})
   const [showAllCerts, setShowAllCerts] = useState(false)

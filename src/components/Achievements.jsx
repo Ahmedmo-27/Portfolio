@@ -1,5 +1,4 @@
 import { useInViewOnce } from '../utils/useInViewOnce'
-import { smoothScrollToElement } from '../utils/geometry'
 import Trophy from 'lucide-react/dist/esm/icons/trophy'
 import Medal from 'lucide-react/dist/esm/icons/medal'
 import Star from 'lucide-react/dist/esm/icons/star'
@@ -7,8 +6,6 @@ import ExternalLink from 'lucide-react/dist/esm/icons/external-link'
 import FileText from 'lucide-react/dist/esm/icons/file-text'
 import Download from 'lucide-react/dist/esm/icons/download'
 import { assetUrl } from '../utils/assetUrl'
-import { useNavigate } from 'react-router-dom'
-import { useEffect, useRef } from 'react'
 
 const achievements = [
   {
@@ -60,35 +57,9 @@ const achievements = [
 export default function Achievements() {
   const { ref, isInView } = useInViewOnce()
 
-  useEffect(() => {
-    if (isInView && window.location.hash !== '#about') {
-      window.history.replaceState(null, '', '#about')
-    }
-    }, [isInView])
+    // URL hash updates are handled centrally by the Navbar observer
   
-  
-  const navigate = useNavigate()
-  // Use a fixed navbar height fallback; avoid any DOM reads here
-  const navbarHeightRef = useRef(80)
-  
-  const handleExperienceClick = (e) => {
-    e.preventDefault()
-    navigate('/#experience')
-    // Smooth scroll to experience section after navigation
-    // Defer to shared helper that batches layout reads; use cached navbar height
-    const experienceSection = document.getElementById('experience')
-    smoothScrollToElement(experienceSection, navbarHeightRef.current || 80, 16)
-  }
-
-  const handleProjectsClick = (e) => {
-    e.preventDefault()
-    navigate('/#projects')
-    // Smooth scroll to projects section after navigation
-    // Defer to shared helper that batches layout reads; use cached navbar height
-    const projectsSection = document.getElementById('projects')
-    smoothScrollToElement(projectsSection, navbarHeightRef.current || 80, 16)
-  }
-
+    
   return (
     <section 
       id="achievements" 
@@ -203,7 +174,6 @@ export default function Achievements() {
                                 })()}
                                 <a
                                   href="/#experience"
-                                  onClick={handleExperienceClick}
                                   className="inline-flex items-center gap-1.5 text-primary-500 hover:text-primary-500 transition-colors text-sm font-medium"
                                 >
                                   View Experience
@@ -214,7 +184,6 @@ export default function Achievements() {
                             {achievement.showExperienceLink && !achievement.pdfUrl && (
                               <a
                                 href="/#experience"
-                                onClick={handleExperienceClick}
                                 className="inline-flex items-center gap-1.5 dark:text-primary-400 text-primary-500 hover:text-primary-500 transition-colors text-sm font-medium"
                               >
                                 View Experience
@@ -224,7 +193,6 @@ export default function Achievements() {
                             {achievement.showProjectsLink && (
                               <a
                                 href="/#projects"
-                                onClick={handleProjectsClick}
                                 className="inline-flex items-center gap-1.5 text-primary-500 hover:text-primary-500 transition-colors text-sm font-medium"
                               >
                                 View Projects
@@ -246,81 +214,6 @@ export default function Achievements() {
             </div>
           </div>
 
-          {/* Other Achievements */}
-          <div className="grid md:grid-cols-2 gap-6">
-            {achievements.filter(a => !a.isHighlighted).map((achievement, index) => {
-            const id = `achievement-other-${achievement.title.replace(/\s+/g, '-')}`
-            if (!isInView) {
-              return (
-                <article
-                  key={achievement.title}
-                  style={{ ['--animation-delay']: `${index * 0.1 + 0.3}s` }}
-                  className={`relative glass-card p-6 group overflow-hidden achievements-other-item`}
-                  aria-hidden={true}
-                  tabIndex={-1}
-                >
-                  <div className="w-full h-2 bg-transparent" />
-                  <div className="mt-3 w-3/4 h-4 bg-gray-200/20 rounded" />
-                  <div className="mt-2 w-1/2 h-3 bg-gray-200/10 rounded" />
-                </article>
-              )
-            }
-
-            return (
-            <article
-              key={achievement.title}
-              style={{ ['--animation-delay']: `${index * 0.1 + 0.3}s` }}
-              className={`relative glass-card p-6 group overflow-hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 transition-transform hover:-translate-y-1 hover:scale-[1.01] focus-visible:-translate-y-1 focus-visible:scale-[1.01] achievements-other-item`}
-              tabIndex={0}
-              aria-labelledby={id}
-            >
-              {/* Background Gradient */}
-              <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${achievement.color} opacity-10 blur-3xl group-hover:opacity-20 transition-opacity`} aria-hidden="true" />
-              
-              {/* Icon */}
-              <div className={`relative w-14 h-14 rounded-xl bg-gradient-to-br ${achievement.color} flex items-center justify-center mb-4 shadow-lg`} aria-hidden="true">
-                <achievement.icon className="w-7 h-7 text-dark-900" />
-              </div>
-
-              {/* Content */}
-              <div className="relative">
-                <h3 
-                  id={id}
-                  className="text-lg font-display font-bold text-foreground mb-2"
-                >
-                  {achievement.title}
-                </h3>
-                <p className="text-primary-500 font-medium text-sm mb-1">
-                  {achievement.organization}
-                </p>
-                <div className="ach-project-placeholder mb-3">
-                  {achievement.projectLink ? (
-                    <a 
-                      href={achievement.projectLink}
-                      className="inline-flex items-center gap-1 text-muted text-sm hover:text-primary-500 transition-colors"
-                    >
-                      Project: {achievement.project}
-                      <ExternalLink className="w-3 h-3" aria-hidden="true" />
-                    </a>
-                  ) : (
-                    <p className="text-muted text-sm">
-                      Project: {achievement.project}
-                    </p>
-                  )}
-                </div>
-                <p className="text-muted text-sm">
-                  {achievement.description}
-                </p>
-              </div>
-
-              {/* Decorative Elements */}
-              <div className="absolute bottom-3 right-3 opacity-10" aria-hidden="true">
-                <achievement.icon className="w-16 h-16" />
-              </div>
-            </article>
-            )
-            })}
-          </div>
         </div>
       </div>
     </section>

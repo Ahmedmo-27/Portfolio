@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import Mail from 'lucide-react/dist/esm/icons/mail'
 import MapPin from 'lucide-react/dist/esm/icons/map-pin'
 import Github from 'lucide-react/dist/esm/icons/github'
@@ -38,12 +38,7 @@ const socialLinks = [
 export default function Contact() {
   const { ref, isInView } = useInViewOnce()
 
-  // Update URL hash when section comes into view
-  useEffect(() => {
-    if (isInView && window.location.hash !== '#contact') {
-      window.history.replaceState(null, '', '#contact')
-    }
-  }, [isInView])
+  // URL hash updates are handled centrally by the Navbar observer
 
   const [formData, setFormData] = useState({
     name: '',
