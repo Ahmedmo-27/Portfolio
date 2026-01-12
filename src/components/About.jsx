@@ -100,7 +100,7 @@ export default function About() {
           <div className="grid lg:grid-cols-5 gap-5 lg:gap-6">
             {/* Left Column - Bio & Specializations (3 columns) */}
             <div className='flex flex-col gap-5 lg:col-span-3'>
-              <div className="glass-card p-4 md:p-5 lg:p-6 relative overflow-hidden group border-2 border-primary-500/20 hover:border-primary-500/40 transition-all duration-300 shadow-lg">
+              <div className="glass-card p-4 md:p-5 lg:p-6 relative overflow-hidden group border-2 border-primary-500/20 hover:border-primary-500/40 transition-border-color duration-300 shadow-lg">
                 {/* Subtle background gradient */}
                 <div className="absolute inset-0 bg-gradient-to-br from-primary-500/5 via-transparent to-accent-cyan/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" aria-hidden="true" />
                 
@@ -164,7 +164,7 @@ export default function About() {
             <div 
               className='lg:col-span-2'
             >
-              <div className="glass-card p-4 md:p-5 lg:p-6 relative overflow-hidden group border-2 border-primary-500/20 hover:border-primary-500/40 transition-all duration-300 h-full flex flex-col shadow-lg">
+              <div className="glass-card p-4 md:p-5 lg:p-6 relative overflow-hidden group border-2 border-primary-500/20 hover:border-primary-500/40 transition-border-color duration-300 h-full flex flex-col shadow-lg">
                 {/* Subtle background gradient */}
                 <div className="absolute inset-0 bg-gradient-to-br from-violet-500/5 via-transparent to-cyan-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" aria-hidden="true" />
                 

@@ -154,7 +154,7 @@ export default function Skills() {
                 <article
                   key={category.title}
                   style={{ ['--animation-delay']: `${index * 0.1 + 0.2}s` }}
-                  className='glass-card p-5 md:p-6 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 transition-all duration-300 hover:-translate-y-2 hover:shadow-lg hover:shadow-primary-500/10 focus-visible:-translate-y-2 relative overflow-hidden skills-category-item'
+                  className='glass-card p-5 md:p-6 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 transition-transform transition-shadow duration-300 hover:-translate-y-2 hover:shadow-lg hover:shadow-primary-500/10 focus-visible:-translate-y-2 relative overflow-hidden skills-category-item'
                   role="listitem"
                   tabIndex={0}
                   aria-labelledby={`skill-${category.title.replace(/\s+/g, '-')}`}
@@ -208,7 +208,7 @@ export default function Skills() {
                 <article
                   key={category.title}
                   style={{ ['--animation-delay']: `${index * 0.1 + 0.2}s` }}
-                  className='glass-card p-5 md:p-6 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 transition-all duration-300 hover:-translate-y-2 hover:shadow-lg hover:shadow-primary-500/10 focus-visible:-translate-y-2 relative overflow-hidden skills-category-item'
+                  className='glass-card p-5 md:p-6 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 transition-transform transition-shadow duration-300 hover:-translate-y-2 hover:shadow-lg hover:shadow-primary-500/10 focus-visible:-translate-y-2 relative overflow-hidden skills-category-item'
                   role="listitem"
                   tabIndex={0}
                   aria-labelledby={`skill-${category.title.replace(/\s+/g, '-')}`}
