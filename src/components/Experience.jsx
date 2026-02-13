@@ -39,6 +39,7 @@ const experiences = [
       'Awarded Achiever Level Certificate',
     ],
     tags: ['Kotlin', 'Jetpack Compose', 'Room', 'Retrofit', 'Firebase', 'XML'],
+    certificate: [{ label: 'Internship Certificate', href: '/Experience/Ahmed Mostafa Anwar DEPI.pdf' }],
   },
   {
     company: 'Fuzetek',
