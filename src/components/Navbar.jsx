@@ -300,14 +300,14 @@ export default function Navbar() {
 
         const heroEl = document.getElementById('hero')
         if (heroEl) {
-          const cleanup = observe(heroEl, handleEntry, { rootMargin: '-100px 0px -50% 0px', threshold: [0.1,0.2,0.3,0.4,0.5], once: false })
+          const cleanup = observe(heroEl, handleEntry, { rootMargin: '-100px 0px 0px 0px', threshold: [0.1,0.2,0.3,0.4,0.5], once: false })
           cleanupMap.set('hero', cleanup)
         }
 
         sections.forEach((id) => {
           const el = document.getElementById(id)
           if (el) {
-            const cleanup = observe(el, handleEntry, { rootMargin: '-100px 0px -50% 0px', threshold: [0.1,0.2,0.3,0.4,0.5], once: false })
+            const cleanup = observe(el, handleEntry, { rootMargin: '-100px 0px 0px 0px', threshold: [0.1,0.2,0.3,0.4,0.5], once: false })
             cleanupMap.set(id, cleanup)
           }
         })

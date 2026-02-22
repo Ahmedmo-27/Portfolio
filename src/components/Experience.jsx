@@ -87,7 +87,6 @@ export default function Experience() {
 
   return (
     <section 
-      id="experience" 
       className="py-16 md:py-28 relative overflow-hidden"
       aria-labelledby="experience-heading"
     >
