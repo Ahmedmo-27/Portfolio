@@ -3,10 +3,28 @@ import Building2 from 'lucide-react/dist/esm/icons/building-2'
 import Award from 'lucide-react/dist/esm/icons/award'
 import Code from 'lucide-react/dist/esm/icons/code'
 import Cpu from 'lucide-react/dist/esm/icons/cpu'
+import Server from 'lucide-react/dist/esm/icons/server'
 import { useInViewOnce } from '../utils/useInViewOnce'
 import ExperienceItem from './ExperienceItem'
 
 const experiences = [
+  {
+    company: 'El Zatuna',
+    role: 'Full-Stack Developer (Backend Focus) — Part-time',
+    period: 'Jan 2026 – Present',
+    location: 'Remote',
+    icon: Server,
+    color: 'from-purple-500 to-violet-500',
+    highlights: [
+      'Deployed and managed cloud infrastructure including Cloudflare R2 storage, CDN optimization, and production release pipelines with zero-downtime strategies',
+      'Designed and implemented MySQL database schemas for complex course hierarchies, user authentication, and payment processing workflows',
+      'Built RESTful APIs with Laravel 10/PHP 8.2 for course management and multi-step email verification',
+      'Integrated Geidea payment gateway and Firebase real-time notifications',
+      'Configured SMTP email routing infrastructure with JWT/OAuth authentication',
+    ],
+    tags: ['Laravel', 'PHP', 'MySQL', 'Cloudflare R2', 'Firebase', 'JWT/OAuth', 'REST APIs', 'Geidea'],
+    documents: [{ label: 'El Zatuna Website', href: 'https://elzatuna.com/' }],
+  },
   {
     company: 'National Bank of Egypt (NBE)',
     role: 'Live Environment Support — DevOps & Automation Intern',

@@ -22,7 +22,7 @@ const highlights = [
   {
     icon: Code2,
     title: 'Backend & Full-Stack',
-    description: 'MERN stack and SQL databases',
+    description: 'MERN & LAMP stacks with SQL databases',
     color: 'from-emerald-500 to-teal-500',
   },
   {
@@ -50,7 +50,7 @@ const stats = [
   { value: '10+', label: 'Full-Stack Applications', icon: FolderGit2, color: 'text-primary-400' },
   { value: '500K+', label: 'SSH Logs Analyzed', icon: Server, color: 'text-accent-emerald', tooltip: 'Cybersecurity honeypot project (DIGITOPIA 2025)' },
   { value: '2', label: 'Awards', icon: Award, color: 'text-accent-amber' },
-  { value: '4', label: 'Internships', icon: Building2, color: 'text-accent-violet', tooltip: 'NBE, DEPI, ITIDA, and Fuzetek' },
+  { value: '5', label: 'Professional Roles', icon: Building2, color: 'text-accent-violet', tooltip: 'El Zatuna, NBE, DEPI, ITIDA, and Fuzetek' },
 ]
 
 export default function About() {
@@ -117,11 +117,12 @@ export default function About() {
                     I'm passionate about building scalable APIs, RESTful services, and modern web applications.
                   </p>
                   <p>
-                    Through internships at <span className="text-foreground font-semibold">NBE</span>, 
+                    Currently working as a part-time <span className="text-foreground font-semibold">Full-Stack Developer at El Zatuna</span> (Laravel/PHP), 
+                    with prior internships at <span className="text-foreground font-semibold">NBE</span>, 
                     <span className="text-foreground font-semibold"> DEPI</span>,
                     <span className="text-foreground font-semibold"> ITIDA</span>, and
-                    <span className="text-foreground font-semibold"> Fuzetek</span>, I've developed production-ready 
-                    backend services, automated deployment pipelines, and full-stack applications that solve real business problems.
+                    <span className="text-foreground font-semibold"> Fuzetek</span> — building production-ready 
+                    backend services, cloud infrastructure, automated deployment pipelines, and full-stack applications.
                   </p>
                 </div>
               </div>
@@ -139,7 +140,7 @@ export default function About() {
                     <div className="w-2.5 h-2.5 rounded-full bg-accent-emerald mt-1.5 flex-shrink-0 shadow-none" />
                     <div className="flex-1">
                       <span className="text-accent-emerald font-bold text-sm md:text-base block mb-1 group-hover/item:text-accent-emerald/90 transition-colors">Backend Development</span>
-                      <span className="text-muted text-xs md:text-sm leading-relaxed">MERN & SQL (Node.js, Express, MongoDB; PostgreSQL/MySQL)</span>
+                      <span className="text-muted text-xs md:text-sm leading-relaxed">MERN & LAMP stacks (Node.js, Express, Laravel/PHP, MongoDB, PostgreSQL, MySQL)</span>
                     </div>
                   </div>
                   <div className="flex items-start gap-3 group/item">
@@ -152,8 +153,8 @@ export default function About() {
                   <div className="flex items-start gap-3 group/item">
                     <div className="w-2.5 h-2.5 rounded-full bg-accent-violet mt-1.5 flex-shrink-0 shadow-none" />
                     <div className="flex-1">
-                      <span className="text-accent-violet font-bold text-sm md:text-base block mb-1 group-hover/item:text-accent-violet/90 transition-colors">DevOps & Automation</span>
-                      <span className="text-muted text-xs md:text-sm leading-relaxed">CI/CD, Docker, GitHub Actions — multi-platform deployments and DB deployments</span>
+                      <span className="text-accent-violet font-bold text-sm md:text-base block mb-1 group-hover/item:text-accent-violet/90 transition-colors">DevOps & Cloud Infrastructure</span>
+                      <span className="text-muted text-xs md:text-sm leading-relaxed">CI/CD, Docker, Cloudflare R2/CDN, AWS, GitHub Actions — cloud deployments and infrastructure</span>
                     </div>
                   </div>
                 </div>

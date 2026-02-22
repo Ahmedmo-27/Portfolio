@@ -34,12 +34,13 @@ const volunteeringExperiences = [
     icon: Rocket,
     color: 'from-violet-500 to-purple-500',
     description:
-      'Leading the software development department and building impactful projects for the MSP Tech Club community.',
+      'Leading the software development department, hosting workshops, and building impactful projects for the MSP Tech Club community.',
     achievements: [
+      'Leading a cross-department software team of 25+ developers, coordinating priorities and driving technical initiatives',
+      'Hosted 2 hands-on software development sessions on architecture, testing, and CI/CD practices',
+      'Assigning and overseeing mini-projects for members, running demo/review checkpoints to produce portfolio-ready deliverables',
+      'Providing code reviews, technical guidance, and mentoring to ensure clean, maintainable implementations',
       'Developing the official club website using React, Node.js, and MySQL',
-      'Leading a department of 25+ volunteers across frontend, backend, and UI/UX',
-      'Creating modern project ideas for members in Python, JavaScript, C++, MySQL, React, and Angular',
-      'Mentoring members and reviewing code to ensure clean, maintainable implementations',
     ],
     isHighlighted: true,
   },
