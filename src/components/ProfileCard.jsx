@@ -747,7 +747,7 @@ const ProfileCardComponent = ({
                     width={478}
                     height={637}
                     loading="eager"
-                    fetchpriority="high"
+                    fetchPriority="high"
                     decoding="async"
                     style={{ height: '95%', width: '100%' }}
                     onLoad={(e) => setImageLoaded(true)}

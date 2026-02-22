@@ -110,7 +110,7 @@ const Hero = () => {
               ) : (
                 <>
                   <a 
-                    href={assetUrl("Ahmed Mostafa's CV.pdf")} 
+                    href={assetUrl("Ahmed Mostafa's Full-Stack CV.pdf")} 
                     download 
                     className="btn-primary text-sm md:text-base px-4 py-2 md:px-6 md:py-3" 
                     target="_blank"
