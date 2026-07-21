@@ -9,19 +9,29 @@ import EducationCertCard from './EducationCertCard'
 
 const education = {
   university: 'Misr International University (MIU)',
-  degree: 'Bachelor of Computer Science majoring in Software Engineering',
-  status: 'Junior (3rd Year)',
-  expectedGraduation: 'Expected: 2027',
+  degree: 'Bachelor of Computer Science, Major: Software Engineering',
+  status: 'Class of 2027',
+  expectedGraduation: 'Expected: July 2027',
   location: 'Cairo, Egypt',
   highlights: [
-    'Focus on Software Engineering and Cloud Computing',
-    'Active software development head of Microsoft Student Partners (MSP - MIU)',
-    'Completed coursework in Data Structures, Algorithms, Databases, and Software Architecture',
+    'Oct 2023 – Present · Focus on Software Engineering and full-stack systems',
+    'President, MSP – MIU Tech Club (previously Head of Software Development)',
+    'Award-winning projects: Best Web Project MIU 2025, ITIDA Top 5, Digitopia Semifinalist',
   ],
 }
 
 // Licenses & Certifications (compact grid, styled similarly to Projects cards)
 const certifications = [
+  {
+    id: 'build-with-ai',
+    title: 'Build With AI',
+    issuer: 'Google x ITI',
+    date: '2025',
+    type: 'Program',
+    color: 'from-emerald-500 to-teal-500',
+    skills: ['AI', 'Generative AI', 'Google Cloud'],
+    link: null,
+  },
   {
     id: 'azure-cloud-concepts',
     title: 'Introduction to Microsoft Azure: Describe cloud concepts',
@@ -34,7 +44,7 @@ const certifications = [
   },
   {
     id: 'sprints-devops-foundations',
-    title: 'Sprints x Microsoft Summer Camp - DevOps Foundations',
+    title: 'DevOps Foundations',
     issuer: 'Sprints x Microsoft',
     date: 'Sep 2025',
     type: 'Bootcamp',
@@ -44,7 +54,7 @@ const certifications = [
   },
   {
     id: 'odc-istqb',
-    title: 'ISTQB® Course',
+    title: 'ISTQB Foundation',
     issuer: 'Orange Digital Center Egypt',
     date: 'Feb 2025',
     type: 'Course',
@@ -87,7 +97,17 @@ const certifications = [
     color: 'from-cyan-500 to-emerald-500',
     skills: ['C++'],
     link: 'https://moonshot.scaler.com/s/li/3OObsvS0Ws',
-  }
+  },
+  {
+    id: 'goethe-a2-german',
+    title: 'A2 German',
+    issuer: 'Goethe-Institut',
+    date: '2024',
+    type: 'Language Certificate',
+    color: 'from-rose-500 to-orange-500',
+    skills: ['German', 'A2'],
+    link: null,
+  },
 ]
 
 const coursework = [

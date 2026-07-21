@@ -9,30 +9,214 @@ import Download from 'lucide-react/dist/esm/icons/download'
 import FileText from 'lucide-react/dist/esm/icons/file-text'
 import Mic from 'lucide-react/dist/esm/icons/mic'
 import ClipboardList from 'lucide-react/dist/esm/icons/clipboard-list'
-import Brain from 'lucide-react/dist/esm/icons/brain'
 import Newspaper from 'lucide-react/dist/esm/icons/newspaper'
+import Code2 from 'lucide-react/dist/esm/icons/code-2'
+import Dumbbell from 'lucide-react/dist/esm/icons/dumbbell'
+import BookOpen from 'lucide-react/dist/esm/icons/book-open'
+import Heart from 'lucide-react/dist/esm/icons/heart'
 import { assetUrl } from '../utils/assetUrl'
 
 export const projects = [
   {
+    id: 'debuggo',
+    title: 'Debuggo',
+    subtitle: 'AI-Powered VS Code Extension · Top 5 ITIDA Testing Day 2026',
+    description: 'Led a 4-member team building a production VS Code extension that uses AST-based analysis to generate context-aware automated tests across 1,000+ project files.',
+    category: 'Full-Stack',
+    icon: Code2,
+    color: 'from-cyan-500 to-blue-500',
+    tech: ['TypeScript', 'Node.js', 'Express', 'MongoDB', 'VS Code Extension API', 'AST Analysis'],
+    features: [
+      '**AST-based code analysis** and project mapping to generate context-aware IEEE-style test cases',
+      '**Runnable test scripts** auto-recommended for the detected tech stack',
+      '**One-click Excel export** of full test plans for QA handoff',
+      '**JWT authentication** with guest-first workspace UX and per-account history',
+      '**Published on the VS Code Marketplace** as a production-ready extension',
+    ],
+    impact: '**Top 5 among 128 teams** — ITIDA Software Testing Day Competition 2026 (4th Edition)',
+    role: 'Team Lead — Led a 4-member team; Node.js/Express backend, MongoDB, and extension architecture',
+    ctas: [
+      { label: 'VS Code Marketplace', icon: ExternalLink, href: 'https://marketplace.visualstudio.com/items?itemName=IntelliTest.debuggo' },
+      { label: 'View Source Code', icon: Github, href: 'https://github.com/mohamedelziat50/intellitest' },
+    ],
+    isHighlighted: true,
+    media: {
+      screenshots: [],
+      video: null,
+      presentation: null,
+    },
+  },
+  {
+    id: 'el-zatuna-lms',
+    title: 'El Zatuna LMS',
+    subtitle: 'Production Learning Platform · El Zatuna (Part-time)',
+    description: 'Collaborated with a cross-functional team at El Zatuna to deliver backend features for a production LMS used by 100+ users — REST APIs for iOS/Android/PWA clients, media storage, email, and payment/live-class integrations.',
+    category: 'Full-Stack',
+    icon: BookOpen,
+    color: 'from-emerald-500 to-teal-500',
+    tech: ['Laravel', 'PHP', 'MySQL', 'Cloudflare R2', 'Geidea', 'Stripe', 'Zoom', 'Brevo', 'GitHub Actions', 'DigitalOcean'],
+    features: [
+      '**REST APIs** powering iOS, Android, and PWA clients for courses, enrollments, and live sessions',
+      '**Cloudflare R2 media pipeline** for high-throughput course uploads and authenticated streaming',
+      '**Payment & live-class integrations** — Geidea, Stripe, Zoom, plus Brevo/Cloudflare email infrastructure',
+      '**CI/CD on GitHub Actions + DigitalOcean** for reliable production deployments',
+      '**LMS core** — multimedia courses, quizzes, certificates, instructor/admin panels',
+    ],
+    impact: 'Production LMS at **elzatuna.com**, used by **100+ users** · Built as Full-Stack Developer (Part-time) at El Zatuna',
+    role: 'Full-Stack Developer (Part-time) at El Zatuna — Backend features, cloud media, payments, and CI/CD',
+    ctas: [
+      { label: 'View Website', icon: ExternalLink, href: 'https://elzatuna.com/' },
+      { label: 'View Source Code', icon: Github, href: 'https://github.com/Ahmedmo-27/El-Zatuna' },
+    ],
+    isHighlighted: true,
+    media: {
+      screenshots: [],
+      video: null,
+      presentation: null,
+    },
+  },
+  {
+    id: 'the-mind-space',
+    title: 'The Mind Space — Management System',
+    subtitle: 'Gym & Wellness Ops Platform · El Zatuna (Part-time)',
+    description: 'Collaborated across backend and web teams at El Zatuna to build the TMS management system — a Node.js/TypeScript API and Next.js admin panel with multi-role access and multi-branch scoping, powering bookings, attendance, payments, and staff workflows for 1,000+ members.',
+    category: 'Full-Stack',
+    icon: Heart,
+    color: 'from-rose-500 to-pink-500',
+    tech: ['Node.js', 'TypeScript', 'Express', 'MongoDB', 'Next.js', 'Socket.io', 'JWT', 'Geidea'],
+    features: [
+      '**Multi-role access control** — management (HQ), branch_admin, and coach portals with JWT role gates and isolated coach APIs',
+      '**Multi-branch location scoping** — branch admins locked to their location; management can view all branches or act on a selected branch',
+      '**Branch-aware ops dashboard** — shared members/tickets globally; scans, schedule, catalog, payments, and orders scoped per branch',
+      '**Per-branch Open Gym & PT QR** with package-at-location enforcement and real-time Socket.io scan feedback',
+      '**Booking & package workflows** with MongoDB transactions across classes, drop-ins, waiting lists, and subscriptions',
+      '**Payment records & automated API testing** for critical member and ops endpoints',
+    ],
+    impact: 'Powers multi-branch day-to-day ops for a platform serving **1,000+ members** · Built at El Zatuna (Part-time)',
+    role: 'Full-Stack Developer (Part-time) at El Zatuna — Node/TS backend and Next.js admin features',
+    ctas: [
+      { label: 'View Website', icon: ExternalLink, href: 'https://the-mind-space.com' },
+      { label: 'View Source Code', icon: Github, href: 'https://github.com/ahmedmo-27/tms-api' },
+    ],
+    isHighlighted: true,
+    media: {
+      screenshots: [],
+      video: null,
+      presentation: null,
+    },
+  },
+  {
+    id: 'the-mind-space-mobile',
+    title: 'The Mind Space — Mobile App',
+    subtitle: 'Flutter Member App · El Zatuna (Part-time)',
+    description: 'Collaborated with the mobile team at El Zatuna to deliver The Mind Space Flutter member app — multi-branch discovery, class booking, packages, branch-aware QR check-in, push notifications, and Geidea payments for 1,000+ members.',
+    category: 'Android',
+    icon: Smartphone,
+    color: 'from-fuchsia-500 to-rose-500',
+    tech: ['Flutter', 'Dart', 'Firebase', 'Geidea', 'QR Scanner', 'REST APIs'],
+    features: [
+      '**Multi-branch location discovery** — members browse and navigate across TMS branches',
+      '**Branch-aware QR check-in** for classes, open gym, and PT — backend enforces package access at the scanned location',
+      '**Class booking & packages** across multi-branch schedules',
+      '**Firebase Cloud Messaging** for waiting-list and engagement notifications',
+      '**Geidea payment flows** for packages, drop-ins, and subscriptions',
+      '**Member experience** — profiles, schedules, challenges/feed, and role-based Bearer JWT auth',
+    ],
+    impact: 'iOS App Store member app for a multi-branch platform serving **1,000+ members** · Built at El Zatuna (Part-time)',
+    role: 'Full-Stack Developer (Part-time) at El Zatuna — Flutter member app features with cross-team collaboration',
+    ctas: [
+      { label: 'App Store', icon: ExternalLink, href: 'https://apps.apple.com/tm/app/the-mind-space/id6738055505' },
+      { label: 'View Website', icon: Globe, href: 'https://the-mind-space.com' },
+    ],
+    isHighlighted: true,
+    media: {
+      screenshots: [],
+      video: null,
+      presentation: null,
+    },
+  },
+  {
+    id: 'flame-factory',
+    title: 'Flame Factory',
+    subtitle: 'Gym & CrossFit Operations Platform',
+    description: 'Full-stack gym and CrossFit management platform unifying reception, sales, coaching, and accounting in one role-based web app — currently serving 100+ members in production.',
+    category: 'Full-Stack',
+    icon: Dumbbell,
+    color: 'from-orange-500 to-red-500',
+    tech: ['React', 'Vite', 'Node.js', 'Express', 'MongoDB', 'JWT', 'Tailwind CSS', 'Vercel', 'Render'],
+    features: [
+      '**Role-based dashboards** for Owner, Reception, Sales, Coaches, and Accounting',
+      '**Member CRM** with packages, freezes, invitations, alerts, and secure document uploads',
+      '**Front-desk & PT check-in flows** with subscription and freeze automation',
+      '**Sales pipeline** — targets, team transfers, call-center notes, and package-exception approvals',
+      '**Accounting workflows** for package requests and contract/revenue history',
+      '**Production hardening** — JWT roles, rate limiting, and privacy-aware file access',
+    ],
+    impact: 'Currently serving **100+ members** in production',
+    role: 'Full-Stack Developer — Designed and built the React/Vite frontend, Express/MongoDB API, and cloud deployment',
+    ctas: [
+      { label: 'View Website', icon: ExternalLink, href: 'https://flame-factory.vercel.app' },
+      { label: 'View Source Code', icon: Github, href: 'https://github.com/Ahmedmo-27/flame-factory' },
+    ],
+    isHighlighted: true,
+    media: {
+      screenshots: [],
+      video: null,
+      presentation: null,
+    },
+  },
+  {
+    id: 'msp-miu',
+    title: 'MSP – MIU Tech Club Website',
+    subtitle: 'Production Club Platform & Android App',
+    description: 'Leading development of a production full-stack club platform and Android app serving 200+ users, with JWT authentication, Cloudflare R2 storage, events, competitions, and leaderboards.',
+    category: 'Full-Stack',
+    icon: Globe,
+    color: 'from-violet-500 to-purple-500',
+    tech: ['React', 'Node.js', 'MySQL', 'Capacitor', 'JWT', 'Cloudflare R2', 'DigitalOcean'],
+    features: [
+      '**Leading production development** of the official MSP–MIU platform and Android app',
+      '**JWT authentication** with secure session management for members and admins',
+      '**Cloudflare R2 storage** for fast media and asset delivery',
+      '**Event management, competitions, and leaderboards** for 200+ active users',
+      '**Capacitor Android app** for mobile-first club engagement',
+    ],
+    impact: 'Serving **200+ active users** in production for the MSP–MIU Tech Club',
+    role: 'Lead Developer — Architecture, full-stack features, and deployments',
+    ctas: [
+      { label: 'View Website', icon: Globe, href: 'https://msp-miu.tech' },
+      { label: 'Download APK', icon: Download, href: assetUrl('/Projects/MSP-MIU.apk') },
+      { label: 'View Source Code', icon: Github, href: 'https://github.com/MSP-Tech-Club-MIU/MSP-MIU-Website' },
+    ],
+    isHighlighted: true,
+    media: {
+      screenshots: ['/Projects/MSP - MIU (1).png',
+         '/Projects/MSP - MIU (2).png', 
+         '/Projects/MSP - MIU (3).png', 
+         '/Projects/MSP - MIU (4).png'],
+      video: null,
+      presentation: null,
+    },
+  },
+  {
     id: 'vaultique',
     title: 'Vaultique',
-    subtitle: 'Award-Winning E-Commerce Platform 🏆',
-    description: 'Built a production-ready luxury watch marketplace supporting customizable 3D product views and payments.',
+    subtitle: 'Best Web Project MIU 2025 🏆',
+    description: 'Developed a production e-commerce platform while leading a 5-member team with JWT/Google OAuth, real-time inventory, 90%+ test coverage, and a Three.js configurator.',
     category: 'Full-Stack',
     icon: Gem,
     color: 'from-amber-500 to-yellow-500',
-    tech: ['Node.js', 'Express', 'MongoDB', 'Stripe', 'Three.js', 'Twilio', 'CI/CD', 'Vercel'],
+    tech: ['Node.js', 'Express', 'MongoDB', 'JWT', 'Google OAuth', 'Stripe', 'Three.js', 'CI/CD', 'Vercel'],
     features: [
-      '**Deployed on Vercel** — frontend and serverless API deployed with automatic CI/CD and preview deployments',
-      '**Integrated Stripe** for secure payment processing with full transaction lifecycle',
-      '**Built 3D watch configurator** using Three.js WebGL for interactive product visualization',
-      '**Created admin analytics dashboard** tracking sales, inventory, and user behavior',
-      '**Implemented real-time SMS notifications** via Twilio for order confirmations',
+      '**Led a 5-member team** to build and deploy a production e-commerce platform',
+      '**JWT & Google OAuth authentication** for secure user access',
+      '**Real-time inventory management** with admin analytics dashboard',
+      '**90%+ test coverage** across critical application paths',
+      '**Three.js 3D configurator** for interactive product visualization',
+      '**Stripe payment integration** with full transaction lifecycle',
     ],
     impact: 'Awarded **Best Web Project of MIU 2025** • Serving real users in production',
-    role: 'Full-Stack Developer - Built end-to-end architecture, payment integration, and 3D visualization',
-    // CTA buttons used by the UI (see `ctas` below)
+    role: 'Team Lead / Full-Stack Developer — End-to-end architecture, auth, payments, and 3D visualization',
     ctas: [
       { label: 'View Website', icon: ExternalLink, href: 'https://vaultique.live' },
       { label: 'View Source Code', icon: Github, href: 'https://github.com/Ahmedmo-27/Vaultique-MIU' },
@@ -53,23 +237,20 @@ export const projects = [
   {
     id: 'cybertopia',
     title: 'Cybertopia',
-    subtitle: 'Cybersecurity Honeypot Platform (DIGITOPIA 2025 Semifinalist)',
-    description: 'Deployed an automated SSH honeypot capturing real-world cyberattacks to build threat intelligence for security research.',
+    subtitle: 'Honeypot Platform · Digitopia 2025 Semifinalist',
+    description: 'Led a 5-member team to build a Cowrie-based honeypot platform on DigitalOcean, processing and analyzing 500K+ SSH attack logs from 300+ malicious IPs.',
     category: 'Security',
     icon: Shield,
     color: 'from-red-500 to-rose-500',
     tech: ['Python', 'Cowrie', 'PostgreSQL', 'Node.js', 'DigitalOcean', 'OSINT APIs'],
     features: [
-      '**Deployed Cowrie honeypot** on DigitalOcean capturing live SSH attack attempts 24/7',
-      '**Used Python scripts and cron jobs** for automated honeypot logs forwarding to PostgreSQL database',
-      '**Captured 500K+ attack logs** from real-world threat actors over 3 months',
-      '**Identified 300+ unique attackers** with geolocation and behavior analysis',
-      '**Enriched data with OSINT APIs** for IP reputation, ASN, and threat classification',
-      '**Built 3 REST APIs** exposing attack data for research and visualization'
+      '**Led a 5-member team** building a Cowrie honeypot on DigitalOcean capturing live SSH attacks 24/7',
+      '**Processed 500K+ attack logs** from 300+ malicious IPs with automated telemetry pipelines',
+      '**PostgreSQL + OSINT APIs** for enrichment, geolocation, ASN, and threat classification',
+      '**Built REST APIs** exposing attack data for research and visualization',
     ],
-    impact: '**DIGITOPIA 2025 Semifinalist** • Generated largest SSH honeypot dataset in university research',
-    role: 'Security Engineer - Designed infrastructure, automated data collection, and built analysis APIs',
-    // CTA buttons used by the UI (see `ctas` below)
+    impact: '**Semifinalist — Digitopia 2025** (Cybersecurity Section) • Largest SSH honeypot dataset in university research',
+    role: 'Team Lead / Security Engineer — Infrastructure, data pipelines, and analysis APIs',
     ctas: [
       { label: 'View Source Code', icon: Github, href: 'https://github.com/CyberTopians/Cybertopia' }
     ],
@@ -86,40 +267,6 @@ export const projects = [
     },
   },
   {
-    id: 'msp-miu',
-    title: 'MSP-MIU Website',
-    subtitle: 'Student Organization Portal',
-    description: 'Led the development of the official digital hub for Microsoft Student Partners at MIU, serving 100+ active members with event management and community features.',
-    category: 'Full-Stack',
-    icon: Globe,
-    color: 'from-violet-500 to-purple-500',
-    tech: ['Node.js', 'Express', 'MySQL', 'DigitalOcean', 'Heroku', 'Git', 'Cloudflare R2', 'Android WebView'],
-    features: [
-      '**Led a team of 10+ developers** to develop a digital hub with Node.js backend and MySQL database',
-      '**Created Android WebView app** for mobile-first experience (APK distribution)',
-      '**Optimized asset delivery** using Cloudflare R2 for fast global content distribution',
-      '**Implemented Git workflow** with separate test/production branches for safe deployments',
-      '**Deployed dual infrastructure** on DigitalOcean (database) and Heroku (application)',
-    ],
-    impact: 'Used by **100+ MSP members** for event registration and community engagement',
-    role: 'Lead Developer - Architected infrastructure, built features, and managed deployments',
-    // CTA buttons used by the UI (see `ctas` below)
-    ctas: [
-      { label: 'View Website', icon: Globe, href: 'https://msp-miu.tech' },
-      { label: 'Download APK', icon: Download, href: assetUrl('/Projects/MSP-MIU.apk') },
-      { label: 'View Source Code', icon: Github, href: 'https://github.com/MSP-Tech-Club-MIU/MSP-MIU-Website' },
-    ],
-    isHighlighted: true,
-    media: {
-      screenshots: ['/Projects/MSP - MIU (1).png',
-         '/Projects/MSP - MIU (2).png', 
-         '/Projects/MSP - MIU (3).png', 
-         '/Projects/MSP - MIU (4).png'],
-      video: null,
-      presentation: null,
-    },
-  },
-    {
     id: 'cinemeteor',
     title: 'Cinemeteor',
     subtitle: 'Android Movie Discovery App (DEPI Capstone)',
@@ -137,7 +284,6 @@ export const projects = [
     ],
     impact: 'Completed as **DEPI capstone project** demonstrating production Android development skills',
     role: 'Android Developer - Built UI, API integration, and offline data synchronization',
-    // CTA buttons used by the UI (see `ctas` below)
     ctas: [
       { label: 'Download APK', icon: Download, href: assetUrl('/Projects/Cinemeteor.apk') },
       { label: 'View Source Code', icon: Github, href: 'https://github.com/DEPI-3-Android/Cinemeteor' },
@@ -168,7 +314,6 @@ export const projects = [
     ],
     impact: 'Scripts **adopted by NBE DevOps team** for production banking systems operations',
     role: 'DevOps Intern - Created automation toolkit used in live banking environment',
-    // CTA buttons used by the UI (see `ctas` below)
     ctas: [
       { label: 'View Scripts', icon: Github, href: 'https://github.com/NBE-DevOps-Internship-2025/Deployment-Automation-for-Banking-Systems' },
       { label: 'Documentation', icon: FileText, href: assetUrl('/Projects/DevOps.pdf') },
@@ -196,7 +341,6 @@ export const projects = [
       'Deployed serverless frontend and APIs with managed cloud database',
       'Handled multi-language transcription workflows',
     ],
-    // CTA buttons used by the UI (see `ctas` below)
     ctas: [
       { label: 'View Source Code', icon: Github, href: 'https://github.com/ahmedmo-27/VoiceScript' },
     ],
@@ -230,7 +374,6 @@ export const projects = [
       'Password reset via OTP',
       'Task status tracking and deadlines',
     ],
-    // CTA buttons used by the UI (see `ctas` below)
     ctas: [
       { label: 'View Source Code', icon: Github, href: 'https://github.com/tickly-miu/tickly' },
       { label: 'View Website', icon: Globe, href: 'https://tickly-miu.netlify.app' },
@@ -240,44 +383,6 @@ export const projects = [
     isHighlighted: false,
     media: {
       screenshots: [assetUrl('/Projects/Tickly.png'),assetUrl('/Projects/login.png'), assetUrl('/Projects/homePage.png'), assetUrl('/Projects/createTask.png'),assetUrl('/Projects/category.png'), assetUrl('/Projects/admin.png')],
-      video: null,
-      presentation: null,
-    },
-  },
-  {
-    id: 'credit-card-fraud-detection',
-    title: 'Credit Card Fraud Detection',
-    subtitle: 'Machine Learning Project',
-    description: 'A comprehensive machine learning project implementing and comparing 6 different algorithms (Logistic Regression, Random Forest, XGBoost, SVM, Decision Tree, KNN) for detecting fraudulent credit card transactions. Evaluated on two distinct datasets with comprehensive preprocessing and visualization.',
-    category: 'Backend',
-    icon: Brain,
-    color: 'from-rose-500 to-red-500',
-    tech: ['Python', 'Scikit-learn', 'XGBoost', 'Pandas', 'NumPy', 'Matplotlib', 'Seaborn'],
-    features: [
-      'Implemented and benchmarked 6 ML models under class-imbalanced conditions',
-      'Two distinct fraud detection datasets',
-      'Comprehensive preprocessing pipelines',
-      'Class imbalance handling techniques',
-      'Performance metrics (accuracy, precision, recall, F1, ROC-AUC)',
-      'Extensive visualizations and model comparisons',
-      'Feature engineering and data analysis',
-      'Reproducible evaluation pipelines',
-    ],
-    // CTA buttons used by the UI (see `ctas` below)
-    ctas: [
-      { label: 'View Source Code', icon: Github, href: 'https://github.com/Ahmedmo-27/credit-card-fraud-detection-using-ML-models' },
-    ],
-    impact: 'Provided comparative evaluation of multiple ML models and reproducible pipelines for fraud detection research',
-    role: 'Data Scientist - Implemented models, preprocessing pipelines, and evaluation benchmarks',
-    isHighlighted: false,
-    media: {
-      screenshots: [
-        assetUrl('/Projects/Credit Card Fraud Detection.png'),
-        assetUrl('/Projects/Average F1-Score per Model.png'),
-        assetUrl('/Projects/Dataset1_Preprocessing.png'),
-        assetUrl('/Projects/daily_fraud_count.png'),
-        assetUrl('/Projects/figure5_objectives.png'),
-      ],
       video: null,
       presentation: null,
     },
@@ -302,7 +407,6 @@ export const projects = [
       'Article sharing and web view',
       'Material Design 3 UI with smooth animations',
     ],
-    // CTA buttons used by the UI (see `ctas` below)
     ctas: [
       { label: 'View Source Code', icon: Github, href: 'https://github.com/DEPI-3-Android/WhatNow' },
     ],
@@ -315,65 +419,4 @@ export const projects = [
       presentation: null,
     },
   },
-  {
-    id: 'java-ecommerce',
-    title: 'Java E-Commerce System',
-    subtitle: 'JavaFX Desktop E‑Commerce Platform',
-    description: 'JavaFX-based e-commerce app with multi-role users, inventory, order processing, and file-based persistence.',
-    category: 'Full-Stack',
-    icon: Globe,
-    color: 'from-indigo-500 to-blue-500',
-    tech: ['Java', 'JavaFX', 'ExecutorService', 'FXML', 'File I/O', 'Logger'],
-    features: [
-      '**Multi-role auth** (Admin, Seller, Customer)',
-      '**Shopping cart & order processing** with receipts',
-      '**Inventory & supplier management** and search',
-      '**Concurrent background tasks** using ExecutorService',
-      '**File-based persistence** with backup/recovery'
-    ],
-    impact: 'Demonstrates desktop app architecture, concurrency, and production-ready workflows',
-    role: 'Lead Developer — UI, persistence, and service layers',
-    // CTA buttons used by the UI (see `ctas` below)
-    ctas: [
-      { label: 'View Source Code', icon: Github, href: 'https://github.com/Ahmedmo-27/E-Commerce-Application' },
-    ],
-    isHighlighted: false,
-    media: {
-      /* screenshots: [assetUrl('/Projects/JavaEcom1.png')],
-         video: null,
-         presentation: null, */
-    },
-  },
-  {
-    id: 'stock-trading-algo',
-    title: 'Stock Trading Algorithms Comparison',
-    subtitle: 'C++ Algorithms + Web Visualization',
-    description: 'Comparison of algorithmic trading approaches with C++ implementations and interactive web visualization (Chart.js).',
-    category: 'Backend',
-    icon: Brain,
-    color: 'from-rose-500 to-red-500',
-    tech: ['C++', 'JavaScript', 'Chart.js', 'HTML', 'CSS'],
-    features: [
-      '**Dual implementation**: C++ (core algorithms) and web UI',
-      '**Dynamic Programming & Greedy** algorithm comparisons',
-      '**Interactive visualization** with Chart.js',
-      '**Transaction limits & fee handling**',
-      '**Analyzed time complexity** and execution steps across algorithms',
-      '**Deployed on Vercel** — static web visualization deployed with automatic builds',
-    ],
-    impact: 'Demonstrates algorithm design, performance analysis, and cross-language tooling',
-    role: 'Implemented algorithms, C++ demos, and web visualization',
-    // CTA buttons used by the UI (see `ctas` below)
-    ctas: [
-      { label : 'View Website', icon: Globe, href: 'https://stock-trading-algorithms-comparison.vercel.app/' },
-      { label: 'View Source Code', icon: Github, href: 'https://github.com/ahmedmo-27/stock-trading-algorithms-comparison' },
-    ],
-    isHighlighted: false,
-    media: {
-      /* screenshots: [assetUrl('/Projects/StockTrading1.png')],
-         video: null,
-         presentation: null */
-    },
-  },
 ]
-

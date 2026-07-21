@@ -16,19 +16,19 @@ const highlights = [
   {
     icon: GraduationCap,
     title: 'MIU Student',
-    description: 'Junior Software Engineering at Misr International University',
+    description: 'Software Engineering student (Class of 2027) at Misr International University',
     color: 'from-blue-500 to-indigo-500',
   },
   {
     icon: Code2,
     title: 'Backend & Full-Stack',
-    description: 'MERN & LAMP stacks with SQL databases',
+    description: 'Production MERN and Laravel/MySQL applications',
     color: 'from-emerald-500 to-teal-500',
   },
   {
     icon: Server,
-    title: 'DevOps Interest',
-    description: 'CI/CD, automation, cloud infrastructure, and deployments',
+    title: 'Team Leadership',
+    description: 'Leading 4–5 person engineering teams on award-winning projects',
     color: 'from-violet-500 to-purple-500',
   },
   {
@@ -42,14 +42,14 @@ const highlights = [
 const featuredHighlight = {
   icon: Rocket,
   title: 'Production Systems',
-  description: 'Experience developing scalable, production-ready systems deployed and used by real users.',
+  description: 'Hands-on experience collaborating on production apps from development through deployment.',
   color: 'from-cyan-500 to-blue-500',
 }
 
 const stats = [
   { value: '10+', label: 'Full-Stack Applications', icon: FolderGit2, color: 'text-primary-400' },
-  { value: '500K+', label: 'SSH Logs Analyzed', icon: Server, color: 'text-accent-emerald', tooltip: 'Cybersecurity honeypot project (DIGITOPIA 2025)' },
-  { value: '2', label: 'Awards', icon: Award, color: 'text-accent-amber' },
+  { value: '1,000+', label: 'Platform Members Served', icon: Server, color: 'text-accent-emerald', tooltip: 'The Mind Space (TMS) at El Zatuna' },
+  { value: '3', label: 'Competition Awards', icon: Award, color: 'text-accent-amber', tooltip: 'Best Web Project MIU 2025 · Top 5 ITIDA Testing Day 2026 · Digitopia 2025 Semifinalist' },
   { value: '5', label: 'Professional Roles', icon: Building2, color: 'text-accent-violet', tooltip: 'El Zatuna, NBE, DEPI, ITIDA, and Fuzetek' },
 ]
 
@@ -84,8 +84,8 @@ export default function About() {
               Building <span className="gradient-text">Modern Solutions</span>
             </h2>
             <p className="section-subheading mx-auto text-balance max-w-2xl text-sm md:text-base">
-              A Junior Software Engineer specializing in backend and full-stack development, 
-              with hands-on experience building scalable APIs, web applications, and DevOps automation.
+              Software Engineering student (Class of 2027) with hands-on experience collaborating on
+              production MERN and Laravel/MySQL applications from development through deployment.
             </p>
           </div>
 
@@ -112,17 +112,20 @@ export default function About() {
                 </h3>
                 <div className="relative space-y-2.5 md:space-y-3 text-muted leading-relaxed text-sm md:text-base">
                   <p>
-                    I'm a <span className="text-foreground font-semibold">Junior Software Engineering student</span> at 
-                    Misr International University, specializing in <span className="text-primary-400 font-medium">backend and full-stack development</span>. 
-                    I'm passionate about building scalable APIs, RESTful services, and modern web applications.
+                    I'm a <span className="text-foreground font-semibold">Software Engineering student (Class of 2027)</span> at
+                    Misr International University with hands-on experience delivering production
+                    <span className="text-primary-400 font-medium"> MERN and Laravel/MySQL</span> applications —
+                    including cloud infrastructure, CI/CD automation, and real-time full-stack features.
                   </p>
                   <p>
-                    Currently working as a part-time <span className="text-foreground font-semibold">Full-Stack Developer at El Zatuna</span> (Laravel/PHP), 
-                    with prior internships at <span className="text-foreground font-semibold">NBE</span>, 
+                    Currently a part-time <span className="text-foreground font-semibold">Full-Stack Developer at El Zatuna</span>,
+                    shipping the LMS and The Mind Space platforms, with prior roles at
+                    <span className="text-foreground font-semibold"> NBE</span>,
                     <span className="text-foreground font-semibold"> DEPI</span>,
                     <span className="text-foreground font-semibold"> ITIDA</span>, and
-                    <span className="text-foreground font-semibold"> Fuzetek</span> — building production-ready 
-                    backend services, cloud infrastructure, automated deployment pipelines, and full-stack applications.
+                    <span className="text-foreground font-semibold"> Fuzetek</span>. Recognized with
+                    <span className="text-foreground font-semibold"> Best Web Project MIU 2025</span>,
+                    Top 5 at ITIDA Software Testing Day 2026, and Digitopia 2025 Semifinalist.
                   </p>
                 </div>
               </div>
@@ -140,21 +143,21 @@ export default function About() {
                     <div className="w-2.5 h-2.5 rounded-full bg-accent-emerald mt-1.5 flex-shrink-0 shadow-none" />
                     <div className="flex-1">
                       <span className="text-accent-emerald font-bold text-sm md:text-base block mb-1 group-hover/item:text-accent-emerald/90 transition-colors">Backend Development</span>
-                      <span className="text-muted text-xs md:text-sm leading-relaxed">MERN & LAMP stacks (Node.js, Express, Laravel/PHP, MongoDB, PostgreSQL, MySQL)</span>
+                      <span className="text-muted text-xs md:text-sm leading-relaxed">MERN & Laravel/MySQL (Node.js, Express, Laravel, MongoDB, PostgreSQL, MySQL, Socket.io)</span>
                     </div>
                   </div>
                   <div className="flex items-start gap-3 group/item">
                     <div className="w-2.5 h-2.5 rounded-full bg-accent-cyan mt-1.5 flex-shrink-0 shadow-none" />
                     <div className="flex-1">
                       <span className="text-accent-cyan font-bold text-sm md:text-base block mb-1 group-hover/item:text-accent-cyan/90 transition-colors">Frontend Development</span>
-                      <span className="text-muted text-xs md:text-sm leading-relaxed">React & TypeScript (MERN front-end)</span>
+                      <span className="text-muted text-xs md:text-sm leading-relaxed">React, TypeScript, Tailwind CSS, Vite, Capacitor, Next.js</span>
                     </div>
                   </div>
                   <div className="flex items-start gap-3 group/item">
                     <div className="w-2.5 h-2.5 rounded-full bg-accent-violet mt-1.5 flex-shrink-0 shadow-none" />
                     <div className="flex-1">
                       <span className="text-accent-violet font-bold text-sm md:text-base block mb-1 group-hover/item:text-accent-violet/90 transition-colors">DevOps & Cloud Infrastructure</span>
-                      <span className="text-muted text-xs md:text-sm leading-relaxed">CI/CD, Docker, Cloudflare R2/CDN, AWS, GitHub Actions — cloud deployments and infrastructure</span>
+                      <span className="text-muted text-xs md:text-sm leading-relaxed">CI/CD, Docker, GitHub Actions, DigitalOcean, Cloudflare R2/CDN, AWS S3</span>
                     </div>
                   </div>
                 </div>

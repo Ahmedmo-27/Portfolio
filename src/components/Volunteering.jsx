@@ -3,6 +3,7 @@ import Users from 'lucide-react/dist/esm/icons/users'
 import Star from 'lucide-react/dist/esm/icons/star'
 import Heart from 'lucide-react/dist/esm/icons/heart'
 import Rocket from 'lucide-react/dist/esm/icons/rocket'
+import Crown from 'lucide-react/dist/esm/icons/crown'
 import ExternalLink from 'lucide-react/dist/esm/icons/external-link'
 import ChevronUp from 'lucide-react/dist/esm/icons/chevron-up'
 import ViewMoreButton from './ViewMoreButton'
@@ -13,34 +14,49 @@ import { useEffect } from 'react'
 // Real volunteering & leadership roles
 const volunteeringExperiences = [
   {
+    organization: 'MSP – MIU Tech Club',
+    role: 'President',
+    period: 'Jul 2026 – Present',
+    icon: Crown,
+    color: 'from-amber-500 to-yellow-500',
+    description:
+      'Leading the MSP–MIU Tech Club as President after serving as Head of Software Development — setting direction across departments, representing the club, and driving technical and community initiatives.',
+    achievements: [
+      'Elected President after leading the software development department since Sep 2025',
+      'Overseeing club strategy, cross-department coordination, and public representation of MSP–MIU',
+      'Continuing to mentor teams and support delivery of the official club platform serving 200+ users',
+      'Fostering collaboration, technical sessions, and member growth across the organization',
+    ],
+    isHighlighted: true,
+  },
+  {
+    organization: 'MSP – MIU Tech Club',
+    role: 'Head of Software Development',
+    period: 'Sep 2025 – Jun 2026',
+    icon: Rocket,
+    color: 'from-violet-500 to-purple-500',
+    description:
+      'Provided leadership, mentoring, coordination, and public speaking for a 25+ member software team through technical sessions and project leadership.',
+    achievements: [
+      'Led and mentored a 25+ member software team, coordinating project delivery across departments',
+      'Reviewed technical work and supported junior developers through collaborative development practices',
+      'Hosted technical sessions covering architecture, testing, and CI/CD practices',
+      'Led development of the official club website and Android app (React, Node.js, MySQL, Capacitor)',
+    ],
+    isHighlighted: true,
+  },
+  {
     organization: 'Sprints',
     role: 'Student Ambassador',
     period: 'Nov 2025 – Present',
     icon: Heart,
     color: 'from-rose-500 to-red-500',
     description:
-      'Representing Sprints on campus, supporting students, and promoting technical programs and initiatives.',
+      'Representing Sprints at MIU by communicating opportunities, coordinating outreach activities, and building relationships with students.',
     achievements: [
       'Acted as a liaison between Sprints and university students to promote tech opportunities',
+      'Coordinated outreach activities and info sessions on campus',
       'Helped students discover relevant learning paths and resources',
-      'Supported organization of info sessions and engagement activities',
-    ],
-    isHighlighted: true,
-  },
-  {
-    organization: 'MSP Tech Club - MIU',
-    role: 'Head of Software Development',
-    period: 'Sep 2025 – Present',
-    icon: Rocket,
-    color: 'from-violet-500 to-purple-500',
-    description:
-      'Leading the software development department, hosting workshops, and building impactful projects for the MSP Tech Club community.',
-    achievements: [
-      'Leading a cross-department software team of 25+ developers, coordinating priorities and driving technical initiatives',
-      'Hosted 2 hands-on software development sessions on architecture, testing, and CI/CD practices',
-      'Assigning and overseeing mini-projects for members, running demo/review checkpoints to produce portfolio-ready deliverables',
-      'Providing code reviews, technical guidance, and mentoring to ensure clean, maintainable implementations',
-      'Developing the official club website using React, Node.js, and MySQL',
     ],
     isHighlighted: true,
   },
@@ -114,7 +130,7 @@ export default function Volunteering() {
           {/* Volunteering Experiences */}
           <div className="space-y-6">
             {displayedExperiences.map((exp, index) => (
-              <VolunteerItem key={exp.organization} exp={exp} index={index} />
+              <VolunteerItem key={`${exp.organization}-${exp.role}`} exp={exp} index={index} />
             ))}
           </div>
 

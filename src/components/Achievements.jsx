@@ -1,7 +1,6 @@
 import { useInViewOnce } from '../utils/useInViewOnce'
 import Trophy from 'lucide-react/dist/esm/icons/trophy'
 import Medal from 'lucide-react/dist/esm/icons/medal'
-import Star from 'lucide-react/dist/esm/icons/star'
 import ExternalLink from 'lucide-react/dist/esm/icons/external-link'
 import FileText from 'lucide-react/dist/esm/icons/file-text'
 import Download from 'lucide-react/dist/esm/icons/download'
@@ -12,7 +11,7 @@ const achievements = [
   {
     title: 'Best Web Project of 2025',
     organization: 'Misr International University',
-    description: 'Recognized for building an exceptional e-commerce platform with 3D configurator, payment integration, and comprehensive analytics.',
+    description: 'Recognized for building Vaultique — a production e-commerce platform with JWT/Google OAuth, real-time inventory, 90%+ test coverage, and a Three.js configurator while leading a 5-member team.',
     icon: Trophy,
     color: 'from-amber-400 to-yellow-500',
     bgColor: 'bg-amber-500/10',
@@ -21,9 +20,20 @@ const achievements = [
     website: 'https://vaultique.live',
   },
   {
+    title: 'Top 5 — ITIDA Software Testing Day 2026',
+    organization: 'ITIDA-SECC (4th Edition · 128 teams)',
+    description: 'Placed Top 5 with Debuggo, an AI-powered VS Code extension using AST-based analysis to generate context-aware tests across 1,000+ project files.',
+    icon: Medal,
+    color: 'from-emerald-400 to-teal-500',
+    bgColor: 'bg-emerald-500/10',
+    borderColor: 'border-emerald-500/30',
+    isHighlighted: true,
+    showProjectsLink: true,
+  },
+  {
     title: 'Semifinalist in DIGITOPIA 2025',
-    organization: 'Digitopia Competition',
-    description: 'Team reached semifinals with an innovative cybersecurity honeypot system capturing 500K+ SSH attack logs.',
+    organization: 'Digitopia Competition — Cybersecurity',
+    description: 'Team reached semifinals with Cybertopia, a Cowrie-based honeypot platform analyzing 500K+ SSH attack logs from 300+ malicious IPs.',
     icon: Medal,
     color: 'from-slate-300 to-slate-400',
     bgColor: 'bg-slate-500/10',
@@ -34,7 +44,7 @@ const achievements = [
   {
     title: 'Recommendation Letter (NBE Internship)',
     organization: 'National Bank of Egypt (NBE)',
-    description: 'Received a recommendation letter from my internship supervisor.',
+    description: 'Received a recommendation letter from my internship supervisor for DevOps & automation contributions in live banking environments.',
     icon: FileText,
     color: 'from-blue-400 to-cyan-500',
     bgColor: 'bg-cyan-500/10',
@@ -42,17 +52,6 @@ const achievements = [
     pdfUrl: '/Experience/NBE Letter of Recommendation.pdf',
     isHighlighted: true,
   },
-  {
-    title: 'Top Performer',
-    organization: 'Multiple Internships',
-    description: 'Consistently recognized as a top performer across internships at National Bank of Egypt, DEPI, ITIDA + GIGS program, and Fuzetek.',
-    icon: Star,
-    color: 'from-blue-400 to-cyan-500',
-    bgColor: 'bg-cyan-500/10',
-    borderColor: 'border-cyan-500/30',
-    isHighlighted: true,
-    showExperienceLink: true,
-  }
 ]
 
 export default function Achievements() {

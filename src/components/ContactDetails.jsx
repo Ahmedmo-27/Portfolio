@@ -44,7 +44,7 @@ export default function ContactDetails({ contactInfo, socialLinks }) {
           <span className="w-2.5 md:w-3 h-2.5 md:h-3 rounded-full bg-accent-emerald" aria-hidden="true" />
           <span className="text-accent-emerald font-medium text-sm md:text-base">Available for Opportunities</span>
         </div>
-        <p className="text-[color:var(--color-foreground)] text-xs md:text-sm">Seeking Junior Software Engineer roles in backend and full-stack development. Open to internships and full-time positions where I can contribute to building scalable APIs and web applications.</p>
+        <p className="text-[color:var(--color-foreground)] text-xs md:text-sm">Software Engineering student (Class of 2027) open to Junior Software Engineer roles in backend and full-stack development — production MERN/Laravel apps, cloud infrastructure, and CI/CD.</p>
       </div>
     </div>
   )

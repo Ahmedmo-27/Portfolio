@@ -17,7 +17,7 @@ const contactInfo = [
   {
     icon: MapPin,
     label: 'Location',
-    value: 'Cairo, Egypt',
+    value: 'Heliopolis, Cairo',
     href: null,
   },
 ]

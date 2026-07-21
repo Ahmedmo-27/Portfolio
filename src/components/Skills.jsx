@@ -16,16 +16,15 @@ const skillCategories = [
     icon: Database,
     color: 'from-emerald-500 to-teal-500',
     skills: [
-      { name: 'Node.js (Express)'},
-      { name: 'Laravel (PHP)'},
-      { name: 'Python'},
-      { name: 'Flask'},
-      { name: 'MongoDB'},
-      { name: 'PostgreSQL'},
-      { name: 'MySQL'},
+      { name: 'Node.js'},
+      { name: 'Express.js'},
+      { name: 'Laravel'},
       { name: 'REST APIs'},
       { name: 'JWT/OAuth'},
-      { name: 'Composer'},
+      { name: 'Socket.io'},
+      { name: 'MongoDB'},
+      { name: 'MySQL'},
+      { name: 'PostgreSQL'},
     ],
   },
   {
@@ -35,27 +34,29 @@ const skillCategories = [
     skills: [
       { name: 'React'},
       { name: 'JavaScript'},
-      { name: 'Vite'},
+      { name: 'TypeScript'},
       { name: 'Tailwind CSS'},
-      { name: 'HTML5'},
-      { name: 'CSS3'},
-      { name: 'Responsive Design'},
+      { name: 'Vite'},
+      { name: 'Capacitor'},
+      { name: 'Next.js'},
+      { name: 'HTML5/CSS3'},
     ],
   },
   {
-    title: 'DevOps & Cloud',
+    title: 'Cloud & DevOps',
     icon: Cloud,
     color: 'from-blue-500 to-cyan-500',
     skills: [
       { name: 'Docker'},
-      { name: 'Azure Pipelines'},
       { name: 'GitHub Actions'},
-      { name: 'Bash'},
-      { name: 'PowerShell'},
-      { name: 'Linux'},
-      { name: 'Cloudflare (R2, CDN)'},
-      { name: 'AWS (S3/SDK)'},
+      { name: 'CI/CD'},
       { name: 'DigitalOcean'},
+      { name: 'Cloudflare R2/CDN'},
+      { name: 'AWS S3'},
+      { name: 'Azure DevOps'},
+      { name: 'Linux'},
+      { name: 'Bash/PowerShell'},
+      { name: 'Git'},
     ],
   },
   {
@@ -63,46 +64,42 @@ const skillCategories = [
     icon: TestTube,
     color: 'from-orange-500 to-amber-500',
     skills: [
+      { name: 'Jest'},
+      { name: 'JUnit'},
+      { name: 'Selenium'},
       { name: 'Postman'},
       { name: 'API Testing'},
-      { name: 'Selenium WebDriver'},
-      { name: 'JUnit'},
-      { name: 'Mockito'},
     ],
   },
   {
-    title: 'Android Development',
-    icon: Smartphone,
-    color: 'from-green-500 to-emerald-500',
-    skills: [
-      { name: 'Kotlin'},
-      { name: 'Android Development'},
-      { name: 'Jetpack Compose'},
-      { name: 'Firebase'},
-      { name: 'Retrofit'},
-      { name: 'MVVM'},
-      { name: 'XML'},
-      { name: 'Material Design'},
-    ],
-  },
-  {
-    title: 'Additional Skills',
+    title: 'Languages',
     icon: Wrench,
     color: 'from-pink-500 to-rose-500',
     skills: [
-      { name: 'Pandas'},
-      { name: 'NumPy'},
-      { name: 'Matplotlib'},
-      { name: 'Angular'},
+      { name: 'JavaScript'},
       { name: 'TypeScript'},
-      { name: 'Git'},
-      { name: 'GitHub'},
-      { name: 'Payment Gateway Integration'},
-      { name: 'Stripe'},
-      { name: 'Chart.js'},
-      { name: 'Figma'},
+      { name: 'PHP'},
+      { name: 'Python'},
+      { name: 'Java'},
+      { name: 'C++'},
+      { name: 'SQL'},
+      { name: 'Kotlin'},
     ],
-  }
+  },
+  {
+    title: 'Mobile & Additional',
+    icon: Smartphone,
+    color: 'from-green-500 to-emerald-500',
+    skills: [
+      { name: 'Flutter'},
+      { name: 'Kotlin'},
+      { name: 'Jetpack Compose'},
+      { name: 'Firebase'},
+      { name: 'Stripe'},
+      { name: 'Geidea'},
+      { name: 'Three.js'},
+    ],
+  },
 ]
 
 // Grouping: first 3 are Core, remaining are Familiar With
@@ -139,8 +136,8 @@ export default function Skills() {
               My <span className="gradient-text">Tech Stack</span>
             </h2>
             <p className="section-subheading mx-auto">
-              Focused on backend and full-stack development, with DevOps automation experience 
-              and a strong foundation in building scalable APIs and web applications.
+              Focused on backend and full-stack development across MERN and Laravel stacks,
+              with cloud infrastructure, CI/CD automation, and testing experience.
             </p>
           </div>
 
