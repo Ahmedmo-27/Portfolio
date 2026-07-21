@@ -70,7 +70,12 @@ export const projects = [
     ],
     isHighlighted: true,
     media: {
-      screenshots: [],
+      screenshots: [
+        assetUrl('/Projects/elzatuna-hero.png'),
+        assetUrl('/Projects/elzatuna-all-courses.png'),
+        assetUrl('/Projects/elzatuna-course-details.png'),
+        assetUrl('/Projects/elzatuna-learning-video.png'),
+      ],
       video: null,
       presentation: null,
     },
