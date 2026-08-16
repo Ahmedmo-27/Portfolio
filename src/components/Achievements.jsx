@@ -19,7 +19,7 @@ const achievements = [
       'Recognized for building Vaultique — a production e-commerce platform with JWT/Google OAuth, real-time inventory, 90%+ test coverage, and a Three.js configurator while leading a 5-member team.',
     icon: Trophy,
     color: 'from-amber-400 to-yellow-500',
-    website: 'https://vaultique.live',
+    website: 'https://vaultique-puce.vercel.app',
   },
   {
     id: 'itida',
