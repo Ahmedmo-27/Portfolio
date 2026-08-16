@@ -1,5 +1,4 @@
 import { lazy, Suspense } from 'react'
-import { useInViewOnce } from '../utils/useInViewOnce'
 import GraduationCap from 'lucide-react/dist/esm/icons/graduation-cap'
 import Globe from 'lucide-react/dist/esm/icons/globe'
 import Rocket from 'lucide-react/dist/esm/icons/rocket'
@@ -8,6 +7,8 @@ import Server from 'lucide-react/dist/esm/icons/server'
 import FolderGit2 from 'lucide-react/dist/esm/icons/folder-git-2'
 import Award from 'lucide-react/dist/esm/icons/award'
 import Building2 from 'lucide-react/dist/esm/icons/building-2'
+import { useSectionReveal, animateStatCounters } from '../hooks/useSectionReveal'
+import { gsap } from '../utils/gsapSetup'
 const CircuitBoard = lazy(() => import('./CircuitBoard'))
 import StatCard from './StatCard'
 import HighlightCard from './HighlightCard'
@@ -54,29 +55,30 @@ const stats = [
 ]
 
 export default function About() {
-  const { ref, isInView } = useInViewOnce()
-
-  // URL hash updates are handled centrally by the Navbar observer
+  const scopeRef = useSectionReveal({
+    itemSelector: '.gsap-reveal-item',
+    stagger: 0.09,
+    setup: (root, tl, reduced) => {
+      if (reduced || !tl) return
+      const statEls = gsap.utils.toArray('.about-stat-item', root)
+      animateStatCounters(statEls, tl, '-=0.55')
+    },
+  })
 
   return (
     <section 
-      id="about" 
       className="py-16 md:py-28 relative overflow-hidden"
       aria-labelledby="about-heading"
     >
-      {/* Background decorative elements */}
       <Suspense fallback={null}>
         <CircuitBoard className="opacity-30" />
       </Suspense>
       <div className="tech-grid opacity-20" />
-      <div className="about-bg-blur-1" aria-hidden="true" />
-      <div className="about-bg-blur-2" aria-hidden="true" />
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div ref={ref}>
-          {/* Section Header */}
-          <div className='text-center mb-14 md:mb-20'>
-            <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary-500/10 border border-primary-500/20 text-primary-400 text-sm font-medium mb-4 animate-fade-in">
+        <div ref={scopeRef}>
+          <div className="gsap-section-header text-center mb-10 md:mb-14">
+            <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary-500/10 border border-primary-500/20 text-primary-400 text-sm font-medium mb-4">
               <span className="w-1.5 h-1.5 rounded-full bg-primary-400 animate-pulse" aria-hidden="true" />
               About Me
             </span>
@@ -89,21 +91,17 @@ export default function About() {
             </p>
           </div>
 
-          {/* Stats Row - Enhanced */}
-          <div className='grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-14 md:mb-18'>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-10 md:mb-14">
             {stats.map((stat, index) => (
               <StatCard key={stat.label} stat={stat} index={index} />
             ))}
           </div>
 
-          {/* Main Content - Improved Layout */}
           <div className="grid lg:grid-cols-5 gap-5 lg:gap-6">
-            {/* Left Column - Bio & Specializations (3 columns) */}
-            <div className='flex flex-col gap-5 lg:col-span-3'>
-              <div className="glass-card p-4 md:p-5 lg:p-6 relative overflow-hidden group border-2 border-primary-500/20 hover:border-primary-500/40 transition-border-color duration-300 shadow-lg">
-                {/* Subtle background gradient */}
+            <div className="flex flex-col gap-5 lg:col-span-3">
+              <div className="gsap-reveal-item glass-card p-4 md:p-5 lg:p-6 relative overflow-hidden group border-2 border-primary-500/20 hover:border-primary-500/40 transition-border-color duration-300 shadow-lg">
                 <div className="absolute inset-0 bg-gradient-to-br from-primary-500/5 via-transparent to-accent-cyan/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" aria-hidden="true" />
-                
+
                 <h3 className="relative text-lg md:text-xl font-display font-bold text-foreground mb-3 md:mb-4 flex items-center gap-3">
                   <span className="w-10 h-10 md:w-11 md:h-11 rounded-xl bg-gradient-to-br from-primary-500 to-accent-cyan flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
                     <GraduationCap className="w-5 h-5 md:w-6 md:h-6 text-white" />
@@ -130,11 +128,9 @@ export default function About() {
                 </div>
               </div>
 
-              {/* Tech Specializations */}
-              <div className="glass-card p-4 md:p-5 lg:p-6 relative overflow-hidden group border-2 border-primary-500/20 flex-1 shadow-none">
-                {/* Subtle background gradient (very light) */}
+              <div className="gsap-reveal-item glass-card p-4 md:p-5 lg:p-6 relative overflow-hidden group border-2 border-primary-500/20 flex-1 shadow-none">
                 <div className="absolute inset-0 bg-gradient-to-br from-accent-emerald/5 via-transparent to-accent-cyan/5 opacity-0 group-hover:opacity-30 transition-opacity duration-300 pointer-events-none" aria-hidden="true" />
-                
+
                 <h3 className="relative text-lg md:text-xl font-display font-bold text-foreground mb-3 md:mb-4">
                   Specializations
                 </h3>
@@ -164,22 +160,14 @@ export default function About() {
               </div>
             </div>
 
-            {/* Right Column - Highlights Grid (2 columns) */}
-            <div 
-              className='lg:col-span-2'
-            >
+            <div className="lg:col-span-2">
               <div className="glass-card p-4 md:p-5 lg:p-6 relative overflow-hidden group border-2 border-primary-500/20 hover:border-primary-500/40 transition-border-color duration-300 h-full flex flex-col shadow-lg">
-                {/* Subtle background gradient */}
                 <div className="absolute inset-0 bg-gradient-to-br from-violet-500/5 via-transparent to-cyan-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" aria-hidden="true" />
-                
+
                 <h3 className="relative text-lg md:text-xl font-display font-bold text-foreground mb-3 md:mb-4">
                   Key Highlights
                 </h3>
-                <div 
-                  className="grid gap-3 flex-1"
-                  role="list"
-                  aria-label="Key highlights"
-                >
+                <div className="grid gap-3 flex-1" role="list" aria-label="Key highlights">
                   {highlights.map((item, index) => (
                     <HighlightCard key={item.title} item={item} index={index} />
                   ))}
@@ -188,7 +176,6 @@ export default function About() {
               </div>
             </div>
           </div>
-
         </div>
       </div>
     </section>

@@ -75,13 +75,12 @@ export default function ContactForm() {
     } catch (err) {
       setStatus('error')
       const code = String(err?.message || '')
-      if (code === 'server_not_configured') setStatusMessage('Backend email is not configured yet (SMTP env vars missing).')
-      else if (code === 'smtp_auth_failed') setStatusMessage('SMTP authentication failed. Check Gmail App Password / SMTP credentials.')
-      else if (code === 'smtp_tls_failed') setStatusMessage('SMTP TLS failed (certificate issue). Try a different network.')
-      else if (code === 'smtp_connection_failed') setStatusMessage('SMTP connection failed. Check SMTP host/port and network/firewall.')
-      else if (code === 'validation') setStatusMessage('Please check your inputs and try again.')
-      else setStatusMessage('Failed to send. Please try again or email me directly.')
-      setTimeout(() => setStatus('idle'), 3000)
+      if (code === 'validation') {
+        setStatusMessage('Please check your inputs and try again.')
+      } else {
+        setStatusMessage('Failed to send. Please try again or email me directly at ahmedmostafa.swe1@gmail.com.')
+      }
+      setTimeout(() => setStatus('idle'), 4000)
     }
   }
 
@@ -90,8 +89,8 @@ export default function ContactForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="glass-card p-5 sm:p-6 md:p-8 space-y-4 md:space-y-6" aria-label="Contact form">
-      <div className="grid sm:grid-cols-2 gap-4 md:gap-6">
+    <form onSubmit={handleSubmit} className="gsap-reveal-item glass-card p-5 sm:p-6 md:p-8 space-y-4 md:space-y-6" aria-label="Contact form">
+      <div className="gsap-contact-field grid sm:grid-cols-2 gap-4 md:gap-6">
         <div>
           <label htmlFor="name" className="block text-xs md:text-sm font-medium text-[color:var(--color-foreground)] mb-1.5 md:mb-2">Name <span className="text-red-400" aria-hidden="true">*</span></label>
           <input id="name" name="name" value={formData.name} onChange={handleChange} required aria-required="true" className="w-full px-3 md:px-4 py-2.5 md:py-3 rounded-xl bg-surface border border-border text-[color:var(--color-muted)] placeholder-[color:var(--color-muted)] focus:outline-none focus:border-primary-400 focus:ring-2 focus:ring-primary-400/30 transition-colors text-sm md:text-base" placeholder="Your name" />
@@ -102,7 +101,7 @@ export default function ContactForm() {
         </div>
       </div>
 
-      <div>
+      <div className="gsap-contact-field">
         <label className="sr-only" htmlFor="company">Company</label>
         <input id="company" name="company" type="text" value={honeypot} onChange={(e) => setHoneypot(e.target.value)} className="hidden" tabIndex={-1} autoComplete="off" />
 
@@ -110,12 +109,12 @@ export default function ContactForm() {
         <input id="subject" name="subject" value={formData.subject} onChange={handleChange} required aria-required="true" className="w-full px-3 md:px-4 py-2.5 md:py-3 rounded-xl bg-surface border border-border text-[color:var(--color-muted)] placeholder-[color:var(--color-muted)] focus:outline-none focus:border-primary-400 focus:ring-2 focus:ring-primary-400/30 transition-colors text-sm md:text-base" placeholder="What's this about?" />
       </div>
 
-      <div>
+      <div className="gsap-contact-field">
         <label htmlFor="message" className="block text-xs md:text-sm font-medium text-[color:var(--color-foreground)] mb-1.5 md:mb-2">Message <span className="text-red-400" aria-hidden="true">*</span></label>
         <textarea id="message" name="message" value={formData.message} onChange={handleChange} required aria-required="true" rows={5} className="w-full px-3 md:px-4 py-2.5 md:py-3 rounded-xl bg-surface border border-border text-[color:var(--color-muted)] placeholder-[color:var(--color-muted)] focus:outline-none focus:border-primary-400 focus:ring-2 focus:ring-primary-400/30 transition-colors resize-none text-sm md:text-base" placeholder="Tell me about your project or opportunity..." />
       </div>
 
-      <button type="submit" disabled={status === 'loading'} className="w-full btn-primary text-sm md:text-base" aria-describedby="form-status">
+      <button type="submit" disabled={status === 'loading'} className="gsap-contact-field w-full btn-primary text-sm md:text-base" aria-describedby="form-status">
         {status === 'loading' ? (
           <><Loader2 className="w-4 md:w-5 h-4 md:h-5 animate-spin" aria-hidden="true" /><span>Sending...</span></>
         ) : status === 'success' ? (
@@ -128,14 +127,24 @@ export default function ContactForm() {
       </button>
 
       <div id="form-status" className="sr-only" role="status" aria-live="polite">
-        {status === 'loading' && 'Sending your message...'}
-        {status === 'success' && 'Your message has been sent successfully!'}
-        {status === 'error' && 'Failed to send message. Please try again.'}
+        {statusMessage || (status === 'loading' ? 'Sending your message...' : '')}
       </div>
 
-      {statusMessage && (<p className="text-center text-xs md:text-sm text-[color:var(--color-foreground)]">{statusMessage}</p>)}
+      {statusMessage && (
+        <p className="text-center text-xs md:text-sm text-foreground" aria-hidden="true">
+          {statusMessage}
+        </p>
+      )}
 
-      <p className="text-center text-[color:var(--color-foreground)] text-xs md:text-sm">Or email me directly at <a href="mailto:ahmedmostafa.swe1@gmail.com" className="text-primary-400 hover:underline focus-visible:underline focus-visible:outline-none">ahmedmostafa.swe1@gmail.com</a></p>
+      <p className="text-center text-muted text-xs md:text-sm">
+        Or email me directly at{' '}
+        <a
+          href="mailto:ahmedmostafa.swe1@gmail.com"
+          className="text-primary-400 hover:underline focus-visible:underline focus-visible:outline-none"
+        >
+          ahmedmostafa.swe1@gmail.com
+        </a>
+      </p>
     </form>
   )
 }

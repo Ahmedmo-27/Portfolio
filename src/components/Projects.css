@@ -1,17 +1,11 @@
 /* Projects Component Styles */
 
 :root {
-  --projects-animation-delay-base: 0.2s;
   --carousel-transition-duration: 200ms;
   --carousel-transition-easing: ease-out;
   --media-loading-overlay-bg: rgba(0, 0, 0, 0.4);
   --media-spinner-size: 40px;
   --media-spinner-duration: 800ms;
-}
-
-/* Animation delay utilities for project items */
-.projects-item {
-  animation-delay: var(--animation-delay, 0.2s);
 }
 
 /* Media Carousel Styles */

@@ -4,13 +4,11 @@ import Award from 'lucide-react/dist/esm/icons/award'
 import ExternalLink from 'lucide-react/dist/esm/icons/external-link'
 import ChevronDown from 'lucide-react/dist/esm/icons/chevron-down'
 
-export default function EducationCertCard({ cert, index, expandedCertSkills, toggleCertSkills }) {
+export default function EducationCertCard({ cert, index, expandedCertSkills, toggleCertSkills, isNew = false }) {
   return (
     <article
       key={cert.id}
-      style={{ ['--animation-delay']: `${index * 0.08 + 0.25}s` }}
-      className='glass-card p-5 sm:p-6 group relative overflow-hidden transition-transform hover:-translate-y-1 focus-visible:-translate-y-1 education-cert-item'
-      tabIndex={0}
+      className={`glass-card p-5 sm:p-6 group relative overflow-hidden transition-transform hover:-translate-y-1 education-cert-item gsap-reveal-item${isNew ? ' gsap-reveal-item-new' : ''}`}
       aria-label={cert.title}
     >
       <div

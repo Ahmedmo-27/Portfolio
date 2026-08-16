@@ -14,9 +14,11 @@
     "dev:full": "npm run dev"
   },
   "dependencies": {
+    "@gsap/react": "^2.1.2",
     "compression": "^1.8.1",
     "dotenv": "^17.2.3",
     "express": "^4.18.2",
+    "gsap": "^3.15.0",
     "lucide-react": "^0.561.0",
     "nodemailer": "^7.0.11",
     "preact": "^10.15.0",

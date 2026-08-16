@@ -1,12 +1,11 @@
 import React from 'react'
 
-export default function HighlightCard({ item, index, featured }) {
+export default function HighlightCard({ item, featured }) {
   return (
     <div
       key={item.title}
-      style={{ ['--animation-delay']: `${index * 0.08 + 0.4}s` }}
-      className={`${featured ? 'mt-3' : ''} glass-card p-4 ${featured ? 'group/card' : 'group/card cursor-default'} cursor-default relative overflow-hidden transition-transform transition-shadow duration-300 hover:-translate-y-1 hover:shadow-xl border-2 border-primary-500/20 hover:border-primary-500/50 about-highlight-item shadow-md`}
-      {...(featured ? {} : { role: 'listitem', tabIndex: 0 })}
+      className={`${featured ? 'mt-3' : ''} glass-card p-4 group/card relative overflow-hidden transition-transform transition-shadow duration-300 hover:-translate-y-1 hover:shadow-xl border-2 border-primary-500/20 hover:border-primary-500/50 about-highlight-item gsap-reveal-item shadow-md`}
+      {...(featured ? {} : { role: 'listitem' })}
     >
       <div className={`absolute inset-0 bg-gradient-to-br ${item.color} opacity-0 group-hover/card:opacity-15 transition-opacity duration-300`} aria-hidden="true" />
       <div className="flex items-start gap-3">

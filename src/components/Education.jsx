@@ -1,10 +1,10 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import GraduationCap from 'lucide-react/dist/esm/icons/graduation-cap'
 import Calendar from 'lucide-react/dist/esm/icons/calendar'
 import BookOpen from 'lucide-react/dist/esm/icons/book-open'
 import BadgeCheck from 'lucide-react/dist/esm/icons/badge-check'
 import ChevronDown from 'lucide-react/dist/esm/icons/chevron-down'
-import { useInViewOnce } from '../utils/useInViewOnce'
+import { useSectionReveal, animateNewItems } from '../hooks/useSectionReveal'
 import EducationCertCard from './EducationCertCard'
 
 const education = {
@@ -20,7 +20,6 @@ const education = {
   ],
 }
 
-// Licenses & Certifications (compact grid, styled similarly to Projects cards)
 const certifications = [
   {
     id: 'build-with-ai',
@@ -115,16 +114,19 @@ const coursework = [
   'Operating Systems',
   'Computer Networks',
   'Web Development',
-  'Artificial Intelligence'
+  'Artificial Intelligence',
 ]
 
 export default function Education() {
-  const { ref, isInView } = useInViewOnce()
-
-  // URL hash updates are handled centrally by the Navbar observer
-
   const [expandedCertSkills, setExpandedCertSkills] = useState({})
   const [showAllCerts, setShowAllCerts] = useState(false)
+  const prevShowAllRef = useRef(false)
+  const certsGridRef = useRef(null)
+
+  const scopeRef = useSectionReveal({
+    itemSelector: '.gsap-reveal-item',
+    stagger: 0.08,
+  })
 
   const toggleCertSkills = (certId) => {
     setExpandedCertSkills((prev) => ({
@@ -136,20 +138,26 @@ export default function Education() {
   const displayedCerts = showAllCerts ? certifications : certifications.slice(0, 4)
   const hasMoreCerts = certifications.length > 4
 
+  useEffect(() => {
+    if (showAllCerts && !prevShowAllRef.current && certsGridRef.current) {
+      requestAnimationFrame(() => {
+        animateNewItems(certsGridRef.current)
+      })
+    }
+    prevShowAllRef.current = showAllCerts
+  }, [showAllCerts])
+
   return (
     <section 
-      id="education" 
       className="py-16 md:py-28 relative overflow-hidden"
       aria-labelledby="education-heading"
     >
-      {/* Background Elements */}
       <div className="education-bg-blur-1" aria-hidden="true" />
       <div className="education-bg-blur-2" aria-hidden="true" />
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div ref={ref}>
-          {/* Section Header */}
-          <div className='text-center mb-14 md:mb-20'>
+        <div ref={scopeRef}>
+          <div className="gsap-section-header text-center mb-10 md:mb-14">
             <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-accent-violet/20 border border-accent-violet/30 text-accent-violet text-sm font-medium mb-4">
               <span className="w-1.5 h-1.5 rounded-full bg-accent-violet" aria-hidden="true" />
               Education & Certifications
@@ -158,18 +166,16 @@ export default function Education() {
               Academic <span className="gradient-text">Background</span>
             </h2>
             <p className="section-subheading mx-auto">
-              My educational journey and professional certifications that have shaped 
+              My educational journey and professional certifications that have shaped
               my expertise in software engineering and development.
             </p>
           </div>
 
           <div className="grid lg:grid-cols-5 gap-8 lg:gap-10 education-layout items-start">
-            {/* Education Card */}
-            <div className= 'lg:col-span-2'>
-              <div className="glass-card p-6 md:p-8 h-full">
-                {/* University Header */}
+            <div className="lg:col-span-2">
+              <div className="gsap-reveal-item glass-card p-6 md:p-8 h-full">
                 <div className="flex items-start gap-4 mb-6">
-                  <div 
+                  <div
                     className="w-12 md:w-14 h-12 md:h-14 rounded-2xl bg-gradient-to-br from-accent-violet to-purple-500 flex items-center justify-center flex-shrink-0 shadow-lg"
                     aria-hidden="true"
                   >
@@ -185,7 +191,6 @@ export default function Education() {
                   </div>
                 </div>
 
-                {/* Education Details */}
                 <div className="space-y-4 mb-6">
                   <div className="flex flex-wrap gap-3">
                     <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface text-sm">
@@ -199,7 +204,6 @@ export default function Education() {
                   </div>
                 </div>
 
-                {/* Highlights */}
                 <div className="mb-6">
                   <h4 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
                     <span className="w-1.5 h-1.5 rounded-full bg-accent-violet" aria-hidden="true" />
@@ -207,8 +211,8 @@ export default function Education() {
                   </h4>
                   <ul className="space-y-2" role="list">
                     {education.highlights.map((highlight, index) => (
-                      <li 
-                        key={`education-highlight-${index}`} 
+                      <li
+                        key={`education-highlight-${index}`}
                         className="flex items-start gap-2 text-muted text-sm"
                       >
                         <span className="w-1.5 h-1.5 rounded-full bg-primary-500 mt-1.5 flex-shrink-0" aria-hidden="true" />
@@ -218,7 +222,6 @@ export default function Education() {
                   </ul>
                 </div>
 
-                {/* Relevant Coursework */}
                 <div>
                   <h4 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
                     <span className="w-1.5 h-1.5 rounded-full bg-accent-cyan" aria-hidden="true" />
@@ -226,8 +229,8 @@ export default function Education() {
                   </h4>
                   <div className="flex flex-wrap gap-2">
                     {coursework.map((course) => (
-                      <span 
-                        key={course} 
+                      <span
+                        key={course}
                         className="px-2.5 py-1 rounded-lg bg-surface border border-border text-xs text-muted hover:text-foreground hover:border-primary-500/30 transition-colors"
                       >
                         {course}
@@ -237,8 +240,8 @@ export default function Education() {
                 </div>
               </div>
             </div>
-            {/* Certifications */}
-            <div className={`lg:col-span-3`}>
+
+            <div className="lg:col-span-3">
               <div className="space-y-5 md:space-y-6">
                 <div className="flex items-center justify-between gap-2 mb-2">
                   <h3 className="text-lg font-display font-bold text-foreground flex items-center gap-2">
@@ -250,8 +253,7 @@ export default function Education() {
                   </span>
                 </div>
 
-                {/* Primary approach: compact grid of cards (Projects-like, smaller) */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-2 gap-5 md:gap-6 lg:gap-8">
+                <div ref={certsGridRef} className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-2 gap-5 md:gap-6 lg:gap-8">
                   {displayedCerts.map((cert, index) => (
                     <EducationCertCard
                       key={cert.id}
@@ -259,14 +261,14 @@ export default function Education() {
                       index={index}
                       expandedCertSkills={expandedCertSkills}
                       toggleCertSkills={toggleCertSkills}
+                      isNew={showAllCerts && index >= 4}
                     />
                   ))}
                 </div>
 
-                {/* Show More Button */}
                 {hasMoreCerts && (
                   <div className="flex justify-center mt-6">
-                      <button
+                    <button
                       type="button"
                       onClick={() => setShowAllCerts(!showAllCerts)}
                       className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-surface border border-border dark:text-primary-400 text-primary-500 hover:text-primary-500 hover:border-primary-500/40 hover:bg-surface-hover transition-colors duration-150 text-sm font-medium"
@@ -295,4 +297,3 @@ export default function Education() {
     </section>
   )
 }
-

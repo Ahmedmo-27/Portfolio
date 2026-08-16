@@ -1,14 +1,17 @@
-import {useMemo } from 'react'
+import { useState, useRef, useCallback } from 'react'
 import Building2 from 'lucide-react/dist/esm/icons/building-2'
 import Award from 'lucide-react/dist/esm/icons/award'
 import Code from 'lucide-react/dist/esm/icons/code'
 import Cpu from 'lucide-react/dist/esm/icons/cpu'
 import Server from 'lucide-react/dist/esm/icons/server'
-import { useInViewOnce } from '../utils/useInViewOnce'
-import ExperienceItem from './ExperienceItem'
+import { useGSAP } from '@gsap/react'
+import { gsap } from '../utils/gsapSetup'
+import ExperienceDetail from './ExperienceDetail'
 
 const experiences = [
   {
+    id: 'el-zatuna',
+    railLabel: 'El Zatuna',
     company: 'El Zatuna',
     role: 'Full-Stack Developer — Part-time',
     period: 'Jan 2026 – Present',
@@ -24,6 +27,8 @@ const experiences = [
     documents: [{ label: 'El Zatuna Website', href: 'https://elzatuna.com/' }],
   },
   {
+    id: 'nbe',
+    railLabel: 'NBE',
     company: 'National Bank of Egypt (NBE)',
     role: 'Live Environment Support (DevOps & Automation) Intern — Onsite',
     period: 'Jul 2025 – Aug 2025',
@@ -40,6 +45,8 @@ const experiences = [
     certificate: [{ label: 'Internship Certificate', href: '/Experience/NBE.jpg' }],
   },
   {
+    id: 'depi',
+    railLabel: 'DEPI',
     company: 'DEPI – Digital Egyptian Pioneers Initiative',
     role: 'Android Mobile App Developer',
     period: 'Jun 2025 – Dec 2025',
@@ -57,6 +64,8 @@ const experiences = [
     certificate: [{ label: 'Internship Certificate', href: '/Experience/Ahmed Mostafa Anwar DEPI.pdf' }],
   },
   {
+    id: 'itida',
+    railLabel: 'ITIDA Gigs',
     company: 'ITIDA Gigs Freelancing Program',
     role: 'Freelancing Software Tester — Remote',
     period: 'Feb 2025 – May 2025',
@@ -72,6 +81,8 @@ const experiences = [
     documents: [{ label: 'Program Certificate', href: '/Experience/ITIDA + GIGS.jpg' }],
   },
   {
+    id: 'fuzetek',
+    railLabel: 'Fuzetek',
     company: 'Fuzetek',
     role: 'Software Engineering Intern',
     period: 'Feb 2025 – Apr 2025',
@@ -90,45 +101,230 @@ const experiences = [
   },
 ]
 
+function prefersReducedMotion() {
+  return typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+}
+
 export default function Experience() {
-  const { ref } = useInViewOnce()
+  const [activeIndex, setActiveIndex] = useState(0)
+  const scopeRef = useRef(null)
+  const detailRef = useRef(null)
+  const tabRefs = useRef([])
+  const active = experiences[activeIndex]
 
-  // URL hash updates are handled centrally by the Navbar observer
+  const { contextSafe } = useGSAP(
+    () => {
+      const root = scopeRef.current
+      if (!root) return
 
-  const displayedExperiences = useMemo(() => {
-    return experiences
-  }, [])
+      const mm = gsap.matchMedia()
+
+      mm.add('(prefers-reduced-motion: reduce)', () => {
+        gsap.set(
+          [
+            ...gsap.utils.toArray('.gsap-section-header > *', root),
+            '.experience-split-panel',
+          ],
+          { autoAlpha: 1, y: 0, clearProps: 'transform' }
+        )
+      })
+
+      mm.add('(prefers-reduced-motion: no-preference)', () => {
+        const headerParts = gsap.utils.toArray('.gsap-section-header > *', root)
+        const panel = root.querySelector('.experience-split-panel')
+
+        const tl = gsap.timeline({
+          defaults: { ease: 'power2.out' },
+          scrollTrigger: {
+            trigger: root,
+            start: 'top 82%',
+            once: true,
+          },
+        })
+
+        if (headerParts.length) {
+          gsap.set(headerParts, { autoAlpha: 0, y: 18 })
+          tl.to(headerParts, { autoAlpha: 1, y: 0, duration: 0.5, stagger: 0.07 })
+        }
+
+        if (panel) {
+          gsap.set(panel, { autoAlpha: 0, y: 24 })
+          tl.to(panel, { autoAlpha: 1, y: 0, duration: 0.55 }, '-=0.25')
+        }
+      })
+
+      return () => mm.revert()
+    },
+    { scope: scopeRef }
+  )
+
+  const animateDetailSwap = contextSafe((nextIndex) => {
+    const el = detailRef.current
+    if (!el) {
+      setActiveIndex(nextIndex)
+      return
+    }
+
+    if (prefersReducedMotion()) {
+      setActiveIndex(nextIndex)
+      return
+    }
+
+    gsap.to(el, {
+      autoAlpha: 0,
+      y: 10,
+      duration: 0.18,
+      ease: 'power2.in',
+      onComplete: () => {
+        setActiveIndex(nextIndex)
+        requestAnimationFrame(() => {
+          const nextEl = detailRef.current
+          if (!nextEl) return
+          gsap.fromTo(
+            nextEl,
+            { autoAlpha: 0, y: 12 },
+            { autoAlpha: 1, y: 0, duration: 0.32, ease: 'power2.out' }
+          )
+        })
+      },
+    })
+  })
+
+  const selectIndex = useCallback(
+    (index) => {
+      if (index === activeIndex || index < 0 || index >= experiences.length) return
+      animateDetailSwap(index)
+    },
+    [activeIndex, animateDetailSwap]
+  )
+
+  const onRailKeyDown = (e, index) => {
+    let next = null
+    if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
+      e.preventDefault()
+      next = (index + 1) % experiences.length
+    } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+      e.preventDefault()
+      next = (index - 1 + experiences.length) % experiences.length
+    } else if (e.key === 'Home') {
+      e.preventDefault()
+      next = 0
+    } else if (e.key === 'End') {
+      e.preventDefault()
+      next = experiences.length - 1
+    }
+
+    if (next !== null) {
+      selectIndex(next)
+      requestAnimationFrame(() => {
+        tabRefs.current[next]?.focus()
+      })
+    }
+  }
 
   return (
-    <section 
+    <section
       className="py-16 md:py-28 relative overflow-hidden"
       aria-labelledby="experience-heading"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div ref={ref}>
-          {/* Section Header */}
-          <div className= 'text-center mb-14 md:mb-20'>
-            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border text-sm font-medium mb-4" style={{ backgroundColor: 'var(--pill-exp-bg)', color: 'var(--pill-exp-fg)', borderColor: 'rgba(16, 185, 129, 0.25)' }}>
-              <span className="w-1.5 h-1.5 rounded-full" aria-hidden="true" style={{ backgroundColor: 'var(--pill-exp-dot)' }} />
+        <div ref={scopeRef}>
+          <div className="gsap-section-header text-center mb-10 md:mb-14">
+            <span
+              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border text-sm font-medium mb-4"
+              style={{
+                backgroundColor: 'var(--pill-exp-bg)',
+                color: 'var(--pill-exp-fg)',
+                borderColor: 'rgba(16, 185, 129, 0.25)',
+              }}
+            >
+              <span
+                className="w-1.5 h-1.5 rounded-full"
+                aria-hidden="true"
+                style={{ backgroundColor: 'var(--pill-exp-dot)' }}
+              />
               Experience
             </span>
             <h2 id="experience-heading" className="section-heading mb-6">
               Professional <span className="gradient-text">Journey</span>
             </h2>
             <p className="section-subheading mx-auto">
-              A track record of impactful contributions across internships, 
+              A track record of impactful contributions across internships,
               freelance projects, and academic achievements.
             </p>
           </div>
 
-          {/* Timeline */}
-          <div className="relative" role="list" aria-label="Work experience timeline">
-            <div className="absolute left-4 md:left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-primary-500 via-accent-cyan to-accent-emerald transform md:-translate-x-1/2" aria-hidden="true" />
+          <div className="experience-split-panel glass-card overflow-hidden border border-border/60 min-h-[28rem] md:min-h-[32rem]">
+            <div className="grid lg:grid-cols-[minmax(0,34%)_minmax(0,66%)] lg:min-h-[32rem]">
+              {/* Company rail */}
+              <div
+                className="border-b lg:border-b-0 lg:border-r border-border/60 bg-surface/30 p-2 sm:p-3"
+                role="tablist"
+                aria-label="Work experience roles"
+                aria-orientation="vertical"
+              >
+                <div className="flex flex-col gap-1">
+                  {experiences.map((exp, index) => {
+                    const isActive = index === activeIndex
+                    return (
+                      <button
+                        key={exp.id}
+                        ref={(node) => {
+                          tabRefs.current[index] = node
+                        }}
+                        type="button"
+                        role="tab"
+                        id={`exp-tab-${exp.id}`}
+                        aria-selected={isActive}
+                        aria-controls="exp-tabpanel"
+                        tabIndex={isActive ? 0 : -1}
+                        onClick={() => selectIndex(index)}
+                        onKeyDown={(e) => onRailKeyDown(e, index)}
+                        className={`group relative w-full text-left rounded-xl px-3 py-2.5 sm:px-4 sm:py-3 transition-[background-color,border-color,color] duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 ${
+                          isActive
+                            ? 'bg-primary-500/10 border border-primary-500/30 text-foreground'
+                            : 'border border-transparent text-muted hover:bg-surface-hover hover:text-foreground'
+                        }`}
+                      >
+                        <span
+                          className={`absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-8 rounded-full transition-opacity ${
+                            isActive ? 'bg-primary-400 opacity-100' : 'opacity-0'
+                          }`}
+                          aria-hidden="true"
+                        />
+                        <span className="flex items-center gap-3 pl-1.5">
+                          <span
+                            className={`w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-gradient-to-br ${exp.color} flex items-center justify-center flex-shrink-0 shadow-md`}
+                            aria-hidden="true"
+                          >
+                            <exp.icon className="w-4 h-4 text-white" />
+                          </span>
+                          <span className="min-w-0 flex-1">
+                            <span className="block text-sm sm:text-base font-display font-semibold truncate">
+                              {exp.railLabel}
+                            </span>
+                            <span className="block text-[11px] sm:text-xs text-muted truncate mt-0.5">
+                              {exp.period}
+                            </span>
+                          </span>
+                        </span>
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
 
-            <div className="space-y-8 md:space-y-12">
-              {displayedExperiences.map((exp, index) => (
-                <ExperienceItem key={exp.company} exp={exp} index={index} />
-              ))}
+              {/* Detail pane */}
+              <div
+                role="tabpanel"
+                id="exp-tabpanel"
+                aria-labelledby={`exp-tab-${active.id}`}
+                className="p-4 sm:p-6 md:p-8"
+              >
+                <div ref={detailRef}>
+                  <ExperienceDetail exp={active} index={activeIndex} />
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -136,4 +332,3 @@ export default function Experience() {
     </section>
   )
 }
-

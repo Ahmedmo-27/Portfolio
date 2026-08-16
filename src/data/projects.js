@@ -14,6 +14,7 @@ import Code2 from 'lucide-react/dist/esm/icons/code-2'
 import Dumbbell from 'lucide-react/dist/esm/icons/dumbbell'
 import BookOpen from 'lucide-react/dist/esm/icons/book-open'
 import Heart from 'lucide-react/dist/esm/icons/heart'
+import GraduationCap from 'lucide-react/dist/esm/icons/graduation-cap'
 import { assetUrl } from '../utils/assetUrl'
 
 export const projects = [
@@ -47,6 +48,42 @@ export const projects = [
     },
   },
   {
+    id: 'sawy-academy',
+    title: 'Sawy Academy',
+    subtitle: 'Architecture Studio & Learning Platform',
+    description: 'Full-stack platform for Prof. Mohamed El Sawy’s Cairo architecture studio — portfolio and research showcase, online courses with protected HLS video, studio shop, and a full admin CMS.',
+    category: 'Full-Stack',
+    icon: GraduationCap,
+    color: 'from-amber-500 to-stone-600',
+    tech: ['Next.js', 'React', 'TypeScript', 'Express', 'MongoDB', 'Tailwind CSS', 'GSAP', 'Cloudflare R2', 'HLS.js', 'Vercel', 'Render'],
+    features: [
+      '**Architecture studio site** — portfolio, research, courses, products, services, and contact in one branded experience',
+      '**Protected HLS lessons** from private Cloudflare R2 with enrollment gates, device binding, and watermarking',
+      '**Commerce & InstaPay checkout** with payment-proof upload and admin order review',
+      '**Student auth & dashboard** for enrollments, profile, and learning access',
+      '**Admin CMS** — courses, orders, media pipeline, homepage builder, and studio content',
+      '**Scroll-driven UI** with GSAP pin/scrub for a studio-grade landing experience',
+    ],
+    impact: 'Deployed staging at **sawy-academy.vercel.app** · API on Render · Media via Cloudflare R2 + Workers',
+    role: 'Full-Stack Developer — Next.js frontend, Express/MongoDB API, protected video pipeline, and admin CMS',
+    ctas: [
+      { label: 'View Website', icon: ExternalLink, href: 'https://sawy-academy.vercel.app' },
+      { label: 'View Source Code', icon: Github, href: 'https://github.com/Ahmedmo-27/sawy-academy' },
+    ],
+    isHighlighted: false,
+    media: {
+      screenshots: [
+        assetUrl('/Projects/sawy-academy-home.png'),
+        assetUrl('/Projects/sawy-academy-courses.png'),
+        assetUrl('/Projects/sawy-academy-portfolio.png'),
+        assetUrl('/Projects/sawy-academy-lesson.png'),
+        assetUrl('/Projects/sawy-academy-admin.png'),
+      ],
+      video: null,
+      presentation: null,
+    },
+  },
+  {
     id: 'el-zatuna-lms',
     title: 'El Zatuna LMS',
     subtitle: 'Production Learning Platform · El Zatuna (Part-time)',
@@ -68,7 +105,7 @@ export const projects = [
       { label: 'View Website', icon: ExternalLink, href: 'https://elzatuna.com/' },
       { label: 'View Source Code', icon: Github, href: 'https://github.com/Ahmedmo-27/El-Zatuna' },
     ],
-    isHighlighted: true,
+    isHighlighted: false,
     media: {
       screenshots: [
         assetUrl('/Projects/elzatuna-hero.png'),
@@ -103,7 +140,7 @@ export const projects = [
       { label: 'View Website', icon: ExternalLink, href: 'https://the-mind-space.com' },
       { label: 'View Source Code', icon: Github, href: 'https://github.com/ahmedmo-27/tms-api' },
     ],
-    isHighlighted: true,
+    isHighlighted: false,
     media: {
       screenshots: [],
       video: null,
@@ -133,7 +170,7 @@ export const projects = [
       { label: 'App Store', icon: ExternalLink, href: 'https://apps.apple.com/tm/app/the-mind-space/id6738055505' },
       { label: 'View Website', icon: Globe, href: 'https://the-mind-space.com' },
     ],
-    isHighlighted: true,
+    isHighlighted: false,
     media: {
       screenshots: [],
       video: null,
@@ -163,7 +200,7 @@ export const projects = [
       { label: 'View Website', icon: ExternalLink, href: 'https://flame-factory.vercel.app' },
       { label: 'View Source Code', icon: Github, href: 'https://github.com/Ahmedmo-27/flame-factory' },
     ],
-    isHighlighted: true,
+    isHighlighted: false,
     media: {
       screenshots: [],
       video: null,
@@ -193,7 +230,7 @@ export const projects = [
       { label: 'Download APK', icon: Download, href: assetUrl('/Projects/MSP-MIU.apk') },
       { label: 'View Source Code', icon: Github, href: 'https://github.com/MSP-Tech-Club-MIU/MSP-MIU-Website' },
     ],
-    isHighlighted: true,
+    isHighlighted: false,
     media: {
       screenshots: ['/Projects/MSP - MIU (1).png',
          '/Projects/MSP - MIU (2).png', 
@@ -259,7 +296,7 @@ export const projects = [
     ctas: [
       { label: 'View Source Code', icon: Github, href: 'https://github.com/CyberTopians/Cybertopia' }
     ],
-    isHighlighted: true,
+    isHighlighted: false,
     media: {
       screenshots: [
         assetUrl('/Projects/CyberTopia.png'),
@@ -293,7 +330,7 @@ export const projects = [
       { label: 'Download APK', icon: Download, href: assetUrl('/Projects/Cinemeteor.apk') },
       { label: 'View Source Code', icon: Github, href: 'https://github.com/DEPI-3-Android/Cinemeteor' },
     ],
-    isHighlighted: true,
+    isHighlighted: false,
     media: {
       screenshots: [assetUrl('/Projects/Cinemeteor.png')],
       video: assetUrl('/Projects/Cinemeteor Demo Video.mp4'),
@@ -323,7 +360,7 @@ export const projects = [
       { label: 'View Scripts', icon: Github, href: 'https://github.com/NBE-DevOps-Internship-2025/Deployment-Automation-for-Banking-Systems' },
       { label: 'Documentation', icon: FileText, href: assetUrl('/Projects/DevOps.pdf') },
     ],
-    isHighlighted: true,
+    isHighlighted: false,
     media: {
       screenshots: [],
       video: null,

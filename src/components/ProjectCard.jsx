@@ -10,28 +10,28 @@ function parseBoldMarkdown(text) {
   return text.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
 }
 
-export default function ProjectCard({ project, index, mediaShouldLoad, activeProject, setActiveProject }) {
+export default function ProjectCard({ project, index, mediaShouldLoad, activeProject, setActiveProject, registerRef }) {
   return (
     <article
       key={project.id}
       data-project-id={project.id}
-      style={{ ['--animation-delay']: `${index * 0.15 + 0.2}s` }}
-      className={`${project.isHighlighted ? 'relative' : ''} projects-item `}
+      ref={(el) => {
+        if (typeof registerRef === 'function') registerRef(project.id)(el)
+      }}
+      className={`${project.isHighlighted ? 'relative' : ''} projects-item`}
       role="listitem"
       aria-labelledby={`project-title-${project.id}`}
     >
       {project.isHighlighted && (
         <div className="absolute -top-3 left-6 z-10">
           <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-accent-amber text-dark-900 text-xs font-bold shadow-lg">
-            ⭐ Featured Project
+            Featured Project
           </span>
         </div>
       )}
 
       <div
         className={`glass-card overflow-hidden group transition-transform hover:-translate-y-1 focus-visible:-translate-y-1 ${project.isHighlighted ? 'ring-2 ring-accent-amber/30' : ''}`}
-        tabIndex={0}
-        role="article"
       >
         <div className="grid lg:grid-cols-2 gap-0">
           <div className="relative bg-surface/50 p-4 sm:p-6">

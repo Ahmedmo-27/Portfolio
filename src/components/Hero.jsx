@@ -1,47 +1,127 @@
-import React, { useState, useEffect, lazy, Suspense } from 'react'
+import React, { useState, useEffect, useRef, lazy, Suspense } from 'react'
 import Download from 'lucide-react/dist/esm/icons/download'
 import Mail from 'lucide-react/dist/esm/icons/mail'
 import ExternalLink from 'lucide-react/dist/esm/icons/external-link'
 import Github from 'lucide-react/dist/esm/icons/github'
 import Linkedin from 'lucide-react/dist/esm/icons/linkedin'
 import Code2 from 'lucide-react/dist/esm/icons/code-2'
+import { useGSAP } from '@gsap/react'
+import { gsap } from '../utils/gsapSetup'
 const ProfileCard = lazy(() => import('./ProfileCard'))
 import { assetUrl } from '../utils/assetUrl'
 import SkeletonLoader from './SkeletonLoader'
 
 const Hero = () => {
   const [isLoading, setIsLoading] = useState(true)
+  const sectionRef = useRef(null)
+  const scrollBounceRef = useRef(null)
 
   useEffect(() => {
     const handleLoad = () => {
-      // Use requestIdleCallback to defer the state update until the browser is idle
       if ('requestIdleCallback' in window) {
         requestIdleCallback(() => {
-          setIsLoading(false);
-        }, { timeout: 500 });
+          setIsLoading(false)
+        }, { timeout: 500 })
       } else {
-        // Fallback for browsers that don't support requestIdleCallback
-        setTimeout(() => setIsLoading(false), 500);
+        setTimeout(() => setIsLoading(false), 500)
       }
-    };
-
-    // Check if the document is already loaded
-    if (document.readyState === 'complete') {
-      handleLoad();
-    } else {
-      window.addEventListener('load', handleLoad);
-      // Cleanup the event listener
-      return () => window.removeEventListener('load', handleLoad);
     }
-  }, []);
 
-  // Instead of replacing the whole hero DOM while loading (which causes layout shifts),
-  // render the final layout and show skeleton placeholders in-place. This keeps the
-  // document flow stable and reduces CLS.
+    if (document.readyState === 'complete') {
+      handleLoad()
+    } else {
+      window.addEventListener('load', handleLoad)
+      return () => window.removeEventListener('load', handleLoad)
+    }
+  }, [])
+
+  useGSAP(
+    () => {
+      if (isLoading) return
+
+      const root = sectionRef.current
+      if (!root) return
+
+      const mm = gsap.matchMedia()
+
+      mm.add('(prefers-reduced-motion: reduce)', () => {
+        gsap.set(
+          [
+            '.hero-badge',
+            '.hero-name',
+            '.hero-title-block',
+            '.hero-ctas > *',
+            '.hero-socials > *',
+            '.hero-profile-wrap',
+            '.hero-scroll-bounce',
+          ],
+          { autoAlpha: 1, y: 0, clearProps: 'transform' }
+        )
+      })
+
+      mm.add('(prefers-reduced-motion: no-preference)', () => {
+        const badge = root.querySelector('.hero-badge')
+        const name = root.querySelector('.hero-name')
+        const title = root.querySelector('.hero-title-block')
+        const ctas = gsap.utils.toArray('.hero-ctas > *', root)
+        const socials = gsap.utils.toArray('.hero-socials > *', root)
+        const profile = root.querySelector('.hero-profile-wrap')
+        const scrollEl = scrollBounceRef.current
+
+        const enterTargets = [badge, name, title, ...ctas, ...socials, profile].filter(Boolean)
+        gsap.set(enterTargets, { autoAlpha: 0, y: 28 })
+        if (scrollEl) gsap.set(scrollEl, { autoAlpha: 0 })
+
+        const tl = gsap.timeline({ defaults: { ease: 'power3.out' } })
+
+        if (badge) tl.to(badge, { autoAlpha: 1, y: 0, duration: 0.45 })
+        if (name) tl.to(name, { autoAlpha: 1, y: 0, duration: 0.55 }, '-=0.2')
+        if (title) tl.to(title, { autoAlpha: 1, y: 0, duration: 0.5 }, '-=0.28')
+        if (ctas.length) {
+          tl.to(ctas, { autoAlpha: 1, y: 0, duration: 0.45, stagger: 0.08 }, '-=0.25')
+        }
+        if (socials.length) {
+          tl.to(socials, { autoAlpha: 1, y: 0, duration: 0.4, stagger: 0.06 }, '-=0.2')
+        }
+        if (profile) {
+          tl.to(profile, { autoAlpha: 1, y: 0, duration: 0.6 }, '-=0.45')
+        }
+        if (scrollEl) {
+          tl.to(scrollEl, { autoAlpha: 1, duration: 0.4 }, '-=0.2')
+          const bounce = gsap.to(scrollEl, {
+            y: 8,
+            duration: 0.9,
+            ease: 'power1.inOut',
+            yoyo: true,
+            repeat: -1,
+            delay: 0.2,
+          })
+
+          const killBounce = () => {
+            bounce.kill()
+            gsap.to(scrollEl, { autoAlpha: 0, duration: 0.35, ease: 'power2.out' })
+            window.removeEventListener('scroll', killBounce)
+          }
+          window.addEventListener('scroll', killBounce, { passive: true, once: true })
+
+          return () => {
+            bounce.kill()
+            window.removeEventListener('scroll', killBounce)
+          }
+        }
+      })
+
+      return () => mm.revert()
+    },
+    { scope: sectionRef, dependencies: [isLoading], revertOnUpdate: true }
+  )
 
   return (
-    <section id="hero" className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20 pb-12 md:pb-25">
-      {/* Background Elements */}
+    <section
+      ref={sectionRef}
+      id="hero"
+      className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20 pb-12 md:pb-25"
+    >
       <div className="absolute inset-0 overflow-hidden">
         <div className="tech-grid" />
         <div className="absolute inset-0 hero-grid-pattern" />
@@ -49,33 +129,29 @@ const Hero = () => {
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
         <div className="grid lg:grid-cols-2 gap-8 md:gap-12 lg:gap-16 items-center">
-          {/* Left Content (show skeleton placeholders while loading) */}
           <div className="text-center lg:text-left order-2 lg:order-1 hero-col-preserve">
-            {/* Status Badge */}
             <div className="mb-4 md:mb-6 flex justify-center lg:justify-start">
               {isLoading ? (
                 <SkeletonLoader variant="text" className="h-8 w-40 rounded-full" style={{ minWidth: '160px' }} />
               ) : (
-                <span className="inline-flex items-center gap-2 px-3 py-1.5 md:px-4 md:py-2 rounded-full glass text-xs md:text-sm text-muted">
+                <span className="hero-badge inline-flex items-center gap-2 px-3 py-1.5 md:px-4 md:py-2 rounded-full glass text-xs md:text-sm text-muted">
                   <span className="w-2 h-2 rounded-full bg-accent-emerald" />
                   Open to Opportunities
                 </span>
               )}
             </div>
 
-            {/* Name */}
             {isLoading ? (
               <div className="space-y-3">
                 <SkeletonLoader variant="text" className="h-12 sm:h-14 md:h-16 lg:h-20 xl:h-24 w-full max-w-md mx-auto lg:mx-0 rounded-lg" style={{ minWidth: '360px' }} />
               </div>
             ) : (
-              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-display font-bold mb-3 md:mb-4">
+              <h1 className="hero-name text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-display font-bold mb-3 md:mb-4">
                 <span className="text-foreground">Ahmed</span>{' '}
                 <span className="gradient-text">Mostafa</span>
               </h1>
             )}
 
-            {/* Title with typing effect */}
             <div className="mb-4 md:mb-6">
               {isLoading ? (
                 <div className="space-y-2 max-w-sm mx-auto lg:mx-0">
@@ -83,7 +159,7 @@ const Hero = () => {
                   <SkeletonLoader variant="text" className="h-5 sm:h-6 md:h-7 lg:h-8 w-full rounded-md" />
                 </div>
               ) : (
-                <>
+                <div className="hero-title-block">
                   <div className="text-lg sm:text-xl md:text-2xl lg:text-3xl text-muted font-light tracking-wide font-mono">
                     <span className="text-primary-400">&lt;</span>
                     <span className="text-primary-400">Junior Software Engineer</span>
@@ -95,12 +171,11 @@ const Hero = () => {
                     <span className="mx-2 text-border">|</span>
                     <span>DevOps Interest</span>
                   </p>
-                </>
+                </div>
               )}
             </div>
 
-            {/* CTA Buttons */}
-            <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2 md:gap-3 mb-6 md:mb-8">
+            <div className="hero-ctas flex flex-wrap items-center justify-center lg:justify-start gap-2 md:gap-3 mb-6 md:mb-8">
               {isLoading ? (
                 <>
                   <SkeletonLoader variant="text" className="h-10 md:h-12 w-32 rounded-lg" style={{ minWidth: '128px' }} />
@@ -109,10 +184,10 @@ const Hero = () => {
                 </>
               ) : (
                 <>
-                  <a 
-                    href={assetUrl("Ahmed Mostafa's Full-Stack CV.pdf")} 
-                    download 
-                    className="btn-primary text-sm md:text-base px-4 py-2 md:px-6 md:py-3" 
+                  <a
+                    href={assetUrl("Ahmed Mostafa's Full-Stack CV.pdf")}
+                    download
+                    className="btn-primary text-sm md:text-base px-4 py-2 md:px-6 md:py-3"
                     target="_blank"
                   >
                     <Download className="w-4 h-4 md:w-5 md:h-5" />
@@ -130,10 +205,9 @@ const Hero = () => {
               )}
             </div>
 
-            {/* Social Links */}
-            <div className="flex items-center justify-center lg:justify-start gap-2 md:gap-3">
+            <div className="hero-socials flex items-center justify-center lg:justify-start gap-2 md:gap-3">
               {isLoading ? (
-                [1,2,3].map((i) => (
+                [1, 2, 3].map((i) => (
                   <SkeletonLoader key={i} variant="avatar" className="w-10 h-10 md:w-12 md:h-12 rounded-xl" style={{ minWidth: '40px', minHeight: '40px' }} />
                 ))
               ) : (
@@ -168,19 +242,24 @@ const Hero = () => {
             </div>
           </div>
 
-          {/* Right Content - Profile Card */}
-          <div className="order-1 lg:order-2 flex justify-center lg:justify-end mb-6 md:mb-0">
-            <Suspense fallback={<SkeletonLoader variant="card" className="w-full max-w-xs sm:max-w-sm rounded-3xl" style={{ height: 'min(80vh, 540px)', maxHeight: '540px', aspectRatio: '0.718', minHeight: '400px' }} />}>
+          <div className="hero-profile-wrap order-1 lg:order-2 flex justify-center lg:justify-end mb-6 md:mb-0">
+            <Suspense
+              fallback={
+                <SkeletonLoader
+                  variant="card"
+                  className="w-full max-w-xs sm:max-w-sm rounded-3xl"
+                  style={{ height: 'min(80vh, 540px)', maxHeight: '540px', aspectRatio: '0.718', minHeight: '400px' }}
+                />
+              }
+            >
               <ProfileCard className="w-full max-w-xs sm:max-w-sm" />
             </Suspense>
           </div>
         </div>
-
       </div>
 
-      {/* Scroll Indicator with tech theme - CSS animated */}
       <div className="absolute bottom-4 md:bottom-8 left-1/2 -translate-x-1/2 hero-scroll-indicator z-20">
-        <div className="hero-scroll-bounce flex flex-col items-center gap-2 text-muted">
+        <div ref={scrollBounceRef} className="hero-scroll-bounce flex flex-col items-center gap-2 text-muted">
           <div className="flex items-center gap-2 font-mono text-xs">
             <span className="text-primary-400">scroll</span>
             <span className="text-border">(</span>
@@ -194,4 +273,3 @@ const Hero = () => {
 }
 
 export default React.memo(Hero)
-
